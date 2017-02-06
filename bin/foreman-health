@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
+
+require 'foreman_maintain'
+
+require 'pp'
+
+ForemanMaintain.load_definitions
+pp ForemanMaintain.detect_features
