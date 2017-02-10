@@ -6,5 +6,5 @@ require 'foreman_maintain'
 
 require 'pp'
 
-ForemanMaintain.load_definitions
+ForemanMaintain.setup
 pp ForemanMaintain.detect_features
