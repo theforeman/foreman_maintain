@@ -2,7 +2,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   feature_name :foreman_database
 
   detect do
-    self.new if File.exists?('/etc/foreman/database.yml')
+    new if File.exist?('/etc/foreman/database.yml')
   end
 
   def query(sql)

@@ -1,0 +1,22 @@
+Metrics/LineLength:
+  Max: 100
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+# Features can contain version numbers
+Style/ClassAndModuleCamelCase:
+  Exclude:
+    - 'definitions/features/**/*'
+
+# Offense count: 1
+# Configuration parameters: MinBodyLength.
+Style/GuardClause:
+  Exclude:
+    - 'lib/foreman_maintain/system_helpers.rb'

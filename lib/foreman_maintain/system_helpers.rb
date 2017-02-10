@@ -36,8 +36,8 @@ module ForemanMaintain
     end
 
     def rpm_version(name)
-      rpm_version = execute(%{rpm -q '#{name}' --queryformat="%{VERSION}"})
-      if $?.success?
+      rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{VERSION}"))
+      if $CHILD_STATUS.success?
         version(rpm_version)
       end
     end
@@ -52,7 +52,7 @@ module ForemanMaintain
 
     def execute!(command, input = nil)
       output = execute(command, input)
-      if $?.success?
+      if $CHILD_STATUS.success?
         output
       else
         raise ExecutionError.new(command, input, output)
@@ -60,14 +60,14 @@ module ForemanMaintain
     end
 
     def execute(command, stdin = nil)
-      logger.debug("Running command #{ command.inspect } with stdin #{ stdin.inspect }")
-      IO.popen(command, "r+") do |f|
+      logger.debug("Running command #{command.inspect} with stdin #{stdin.inspect}")
+      IO.popen(command, 'r+') do |f|
         if stdin
           f.puts(stdin)
           f.close_write
         end
         output = f.read
-        logger.debug("output of the command:\n #{ output }")
+        logger.debug("output of the command:\n #{output}")
         output
       end
     end

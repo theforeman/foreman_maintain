@@ -2,7 +2,7 @@ class Features::ForemanTasks_0_6_x < ForemanMaintain::Feature
   feature_name :foreman_tasks
 
   detect do
-    self.new if check_min_version('ruby193-rubygem-foreman-tasks', '0.6')
+    new if check_min_version('ruby193-rubygem-foreman-tasks', '0.6')
   end
 
   def running_tasks_count

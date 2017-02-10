@@ -18,7 +18,7 @@ module ForemanMaintain
         Feature.sub_features.map do |feature_class|
           feature = detect_on_system(feature_class)
           if feature
-            logger.debug("detected #{ feature } of #{ feature_class }")
+            logger.debug("detected #{feature} of #{feature_class}")
           end
           feature
         end.flatten.compact
@@ -48,14 +48,14 @@ module ForemanMaintain
     def self.metadata
       return @metadata if @metadata
       @metadata = {}
-      if self.superclass.respond_to?(:metadata)
-        @metadata[:feature_name] = self.superclass.metadata[:feature_name]
+      if superclass.respond_to?(:metadata)
+        @metadata[:feature_name] = superclass.metadata[:feature_name]
       end
       @metadata
     end
 
     def self.inspect
-      "Feature Class #{metadata[:feature_name]}<#{self.name}>"
+      "Feature Class #{metadata[:feature_name]}<#{name}>"
     end
 
     def inspect
