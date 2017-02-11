@@ -1,9 +1,12 @@
 module ForemanMaintain
+  require 'foreman_maintain/concerns/logger'
+  require 'foreman_maintain/concerns/metadata'
+  require 'foreman_maintain/concerns/system_helpers'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/config'
-  require 'foreman_maintain/logger'
-  require 'foreman_maintain/system_helpers'
+  require 'foreman_maintain/filter'
   require 'foreman_maintain/feature'
+  require 'foreman_maintain/check'
 
   class << self
     attr_accessor :config
@@ -22,8 +25,12 @@ module ForemanMaintain
       end
     end
 
+    def features_detector
+      @features_detector ||= Feature::Detector.new
+    end
+
     def detect_features
-      Feature::Detector.new.run
+      features_detector.available_features
     end
   end
 end

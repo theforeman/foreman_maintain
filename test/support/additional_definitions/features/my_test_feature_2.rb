@@ -1,5 +1,5 @@
 require 'features/my_test_feature'
-class Features::MyTestFeature_2 < ForemanMaintain::Feature
+class Features::MyTestFeature_2 < Features::MyTestFeature
   feature_name :my_test_feature
 
   detect do

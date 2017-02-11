@@ -2,3 +2,6 @@
 
 module Features
 end
+
+module Checks
+end
