@@ -7,6 +7,9 @@ module ForemanMaintain
   require 'foreman_maintain/filter'
   require 'foreman_maintain/feature'
   require 'foreman_maintain/check'
+  require 'foreman_maintain/scenario'
+  require 'foreman_maintain/runner'
+  require 'foreman_maintain/reporter'
 
   class << self
     attr_accessor :config
@@ -31,6 +34,10 @@ module ForemanMaintain
 
     def detect_features
       features_detector.available_features
+    end
+
+    def detect_scenarios
+      Filter.new(Scenario).run
     end
   end
 end

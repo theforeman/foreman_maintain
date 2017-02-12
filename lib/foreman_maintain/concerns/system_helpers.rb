@@ -5,7 +5,7 @@ module ForemanMaintain
     module SystemHelpers
       include Logger
 
-      def included(klass)
+      def self.included(klass)
         klass.extend(self)
       end
 
@@ -40,6 +40,11 @@ module ForemanMaintain
         end
       end
 
+      def downstream_installation?
+        execute?('rpm -q satellite') ||
+          (execution('rpm -q foreman') =~ /6sat.noarch/)
+      end
+
       def rpm_version(name)
         rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{VERSION}"))
         if $CHILD_STATUS.success?
@@ -53,6 +58,11 @@ module ForemanMaintain
         parsed_data[1..-1].map do |row|
           Hash[*header.zip(row).flatten(1)]
         end
+      end
+
+      def execute?(command, input = nil)
+        execute(command, input)
+        $CHILD_STATUS.success?
       end
 
       def execute!(command, input = nil)

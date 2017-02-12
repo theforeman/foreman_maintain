@@ -13,7 +13,7 @@ Style/IfUnlessModifier:
 # Features can contain version numbers
 Style/ClassAndModuleCamelCase:
   Exclude:
-    - '**/features/**/*'
+    - '**/definitions/**/*'
 
 # Offense count: 1
 # Configuration parameters: MinBodyLength.

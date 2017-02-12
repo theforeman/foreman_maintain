@@ -18,7 +18,8 @@ module ForemanMaintain
     class Detector
       include Concerns::Logger
 
-      def feature_by_name(name)
+      # Returns instance of feature detected on system by name
+      def feature(name)
         detect_features unless @available_features
         @features_by_name[name]
       end

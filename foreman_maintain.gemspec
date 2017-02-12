@@ -23,6 +23,7 @@ DESC
   s.require_paths = ['lib']
 
   s.add_dependency 'clamp'
+  s.add_dependency 'highline'
 
   s.add_development_dependency 'rubocop'
 end

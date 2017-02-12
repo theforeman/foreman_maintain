@@ -5,3 +5,6 @@ end
 
 module Checks
 end
+
+module Scenarios
+end

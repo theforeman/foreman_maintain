@@ -9,6 +9,10 @@ module ForemanMaintain
         def requires_feature(*feature_names)
           metadata[:required_features].concat(feature_names)
         end
+
+        def description(description)
+          metadata[:description] = description
+        end
       end
 
       module ClassMethods
@@ -49,6 +53,14 @@ module ForemanMaintain
       def self.included(klass)
         klass.extend(DSL)
         klass.extend(ClassMethods)
+      end
+
+      def metadata
+        self.class.metadata
+      end
+
+      def description
+        metadata[:description] || self.to_s
       end
     end
   end

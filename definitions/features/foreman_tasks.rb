@@ -1,4 +1,4 @@
-class Features::ForemanTasks_0_6_x < ForemanMaintain::Feature
+class Features::ForemanTasks < ForemanMaintain::Feature
   feature_name :foreman_tasks
 
   detect do

@@ -7,7 +7,14 @@ module ForemanMaintain
 
     def initialize(base_class, conditions = {})
       @base_class = base_class
-      @tags = Array(conditions.fetch(:tags, []))
+      case conditions
+      when Symbol
+        @tags = [conditions]
+      when Array
+        @tags = conditions
+      else
+        @tags = Array(conditions.fetch(:tags, []))
+      end
       @detector = ForemanMaintain.features_detector
     end
 
@@ -22,7 +29,7 @@ module ForemanMaintain
 
     def check_required_features(sub_class)
       sub_class.metadata[:required_features].all? do |required_feature|
-        @detector.feature_by_name(required_feature)
+        @detector.feature(required_feature)
       end
     end
 

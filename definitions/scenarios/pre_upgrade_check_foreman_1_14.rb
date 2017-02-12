@@ -1,0 +1,1 @@
+class Scenarios::PreUpgrade
