@@ -5,14 +5,18 @@ Foreman/Satellite up and running. It supports multiple versions and subparts
 of the Foreman infrastructure, including server or smart proxy and is smart
 enough to provide the right tools for the specific version.
 
-The project's ambition is to provide unified tooling around:
+## Planned commands:
 
-* health: checking and fixing
-* upgrades: pre-upgrade checks, upgrades, post-upgrade checks
-* maintenance-mode: setting on and off
-* backup: save and restore
-* monitor: display or upload to external systems
-* shortcut for other tools: console/config
+```
+foreman-maintain health [check|fix] [all|tasks|qpid|certs|…]
+foreman-maintain upgrade [check|run|abort] [foreman_1_14, satellite_6_1, satellite_6_2]]
+foreman-maintain maintenance-mode [on|off]
+foreman-maintain backup [save|restore]
+foreman-maintain monitor [display|upload]
+foreman-maintain debug [save|upload|tail]
+foreman-maintain console
+foreman-maintain config
+```
 
 ## Implementation
 
