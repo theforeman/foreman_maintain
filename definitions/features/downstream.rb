@@ -1,7 +1,7 @@
-class Features::Upstream < ForemanMaintain::Feature
-  feature_name :upstream
+class Features::Downstream < ForemanMaintain::Feature
+  feature_name :downstream
 
   detect do
-    new unless downstream_installation?
+    new if downstream_installation?
   end
 end

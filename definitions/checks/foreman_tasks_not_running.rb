@@ -1,8 +1,9 @@
-class Checks::ForemanTasksNotPaused < ForemanMaintain::Check
+class Checks::ForemanTasksNotRunning < ForemanMaintain::Check
   requires_feature :foreman_tasks
-  tags :basic
+  description "check for running tasks"
 
   def run
-    feature(:foreman_tasks).paused_tasks_count
+    assert(feature(:foreman_tasks).running_tasks_count == 0,
+           "There are actively running tasks in the system")
   end
 end

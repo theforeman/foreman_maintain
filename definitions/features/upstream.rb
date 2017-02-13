@@ -1,7 +1,7 @@
-class Features::Foreman_1_7_x < ForemanMaintain::Feature
-  feature_name :foreman
+class Features::Upstream < ForemanMaintain::Feature
+  feature_name :upstream
 
   detect do
-    new if check_min_version('foreman', '1.7')
+    new unless downstream_installation?
   end
 end
