@@ -14,6 +14,7 @@ Style/IfUnlessModifier:
 Style/ClassAndModuleCamelCase:
   Exclude:
     - '**/definitions/**/*'
+    - 'test/support/additional_definitions/**/*'
 
 # Offense count: 1
 # Configuration parameters: MinBodyLength.
@@ -26,3 +27,10 @@ Style/HashSyntax:
 
 Style/GuardClause:
   Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*'

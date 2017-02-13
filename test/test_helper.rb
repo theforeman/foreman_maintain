@@ -2,6 +2,8 @@ require 'foreman_maintain'
 require 'minitest/spec'
 require 'minitest/autorun'
 
+require 'support/log_reporter'
+
 class TestHelper
   class << self
     attr_accessor :use_my_test_feature_2, :my_test_is_running

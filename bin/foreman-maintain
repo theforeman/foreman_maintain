@@ -7,17 +7,17 @@ require 'foreman_maintain'
 require 'pp'
 
 ForemanMaintain.setup
-puts "Detected features:"
+puts 'Detected features:'
 pp ForemanMaintain.detect_features
 
-puts "Detected scenarios:"
+puts 'Detected scenarios:'
 detected_scenarios = ForemanMaintain.detect_scenarios
 pp detected_scenarios
 
 scenario = Scenarios::PreUpgradeCheckSatellite_6_2
 
 unless detected_scenarios.include?(scenario)
-  "#{scenario} not detected among #{detected_scenarios}"
+  puts "#{scenario} not detected among #{detected_scenarios}"
   exit
 end
 

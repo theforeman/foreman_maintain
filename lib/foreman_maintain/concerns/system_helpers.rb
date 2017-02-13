@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'csv'
+require 'English'
+
 module ForemanMaintain
   module Concerns
     module SystemHelpers
@@ -42,7 +44,7 @@ module ForemanMaintain
 
       def downstream_installation?
         execute?('rpm -q satellite') ||
-          (execution('rpm -q foreman') =~ /6sat.noarch/)
+          (execute('rpm -q foreman') =~ /6sat.noarch/)
       end
 
       def rpm_version(name)

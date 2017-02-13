@@ -12,12 +12,10 @@ module ForemanMaintain
     end
 
     # Override to compose steps for the scenario
-    def compose
-    end
+    def compose; end
 
     def find_checks(conditions)
       Filter.new(Check, conditions).run.map(&:new)
     end
   end
 end
-

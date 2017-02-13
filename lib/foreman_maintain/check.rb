@@ -21,7 +21,7 @@ module ForemanMaintain
 
     # internal method called by executor
     def __run__(execution)
-      self.run
+      run
     rescue Fail => e
       execution.status = :fail
       execution.output << e.message

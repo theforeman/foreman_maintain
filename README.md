@@ -9,7 +9,7 @@ enough to provide the right tools for the specific version.
 
 ```
 foreman-maintain health [check|fix] [all|tasks|qpid|certs|…]
-foreman-maintain upgrade [check|run|abort] [foreman_1_14, satellite_6_1, satellite_6_2]]
+foreman-maintain upgrade [check|run|abort] [foreman_1_14, satellite_6_1, satellite_6_2]
 foreman-maintain maintenance-mode [on|off]
 foreman-maintain backup [save|restore]
 foreman-maintain monitor [display|upload]
@@ -17,6 +17,13 @@ foreman-maintain debug [save|upload|tail]
 foreman-maintain console
 foreman-maintain config
 ```
+
+## TODO
+
+* refactor metadata and constraints
+* procedures infra
+* clamp infra
+* bats tests
 
 ## Implementation
 
@@ -26,7 +33,9 @@ The tooling is composed from multiple components:
 * **Checks** - definitions of health checks to indicate health of the system
 * **Procedures** - steps for performing specific operations on the system
 * **Scenarios** - combinations of checks and procedures to achieve some goal
-  (such as upgrade)
+* **Filter** - searches the checks/procedures/scenarios based on metadata & available features
+* **Runner** - executes the scenario
+* **Reporter** - reports the results of the run
 
 This components are linked together by metadata, which makes it easier to extend
 the existing maintenance operations by new functionality.

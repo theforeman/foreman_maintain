@@ -60,7 +60,7 @@ module ForemanMaintain
       end
 
       def description
-        metadata[:description] || self.to_s
+        metadata[:description] || to_s
       end
     end
   end

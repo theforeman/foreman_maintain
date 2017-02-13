@@ -7,14 +7,14 @@ module ForemanMaintain
 
     def initialize(base_class, conditions = {})
       @base_class = base_class
-      case conditions
-      when Symbol
-        @tags = [conditions]
-      when Array
-        @tags = conditions
-      else
-        @tags = Array(conditions.fetch(:tags, []))
-      end
+      @tags = case conditions
+              when Symbol
+                [conditions]
+              when Array
+                conditions
+              else
+                Array(conditions.fetch(:tags, []))
+              end
       @detector = ForemanMaintain.features_detector
     end
 
