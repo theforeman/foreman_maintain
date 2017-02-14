@@ -21,6 +21,6 @@ unless detected_scenarios.include?(scenario)
   exit
 end
 
-reporter = ForemanMaintain::Reporter::StdoutReporter.new
+reporter = ForemanMaintain::Reporter::CLIReporter.new
 runner = ForemanMaintain::Runner.new(reporter, scenario.new)
 runner.run

@@ -17,7 +17,7 @@ module ForemanMaintain
     it 'reports human-readmable info about the run' do
       reporter.before_scenario_starts(scenario)
 
-      step = Checks::MyTestIsRunning.new
+      step = Checks::MyTestIsRunning.new(nil)
       execution = Runner::Execution.new(step, reporter)
 
       reporter.before_execution_starts(execution)

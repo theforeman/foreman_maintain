@@ -1,5 +1,5 @@
 class Checks::MyTestIsRunning < ForemanMaintain::Check
-  requires_feature :my_test_feature
+  for_feature(:my_test_feature)
   tags :basic
   description 'my test is running check'
 

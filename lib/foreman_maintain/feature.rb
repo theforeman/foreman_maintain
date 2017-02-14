@@ -1,17 +1,9 @@
 module ForemanMaintain
   class Feature
-    require 'foreman_maintain/feature/detector'
-
     include Concerns::Logger
     include Concerns::SystemHelpers
     include Concerns::Metadata
-
-    module DSL
-      def detect(&block)
-        metadata[:detection_block] = block
-      end
-    end
-    extend DSL
+    include Concerns::Finders
 
     def self.inspect
       "Feature Class #{metadata[:label]}<#{name}>"
@@ -19,6 +11,16 @@ module ForemanMaintain
 
     def inspect
       "#{self.class.metadata[:label]}<#{self.class.name}>"
+    end
+
+    def autodetect_default
+      false
+    end
+
+    # Override to generate additional feature instances that can't be
+    # autodetected directly
+    def additional_features
+      []
     end
   end
 end

@@ -5,16 +5,34 @@ module ForemanMaintain
         def label(label)
           metadata[:label] = label
         end
+
         def tags(*tags)
           metadata[:tags].concat(tags)
         end
 
-        def requires_feature(*feature_labels)
-          metadata[:required_features].concat(feature_labels)
-        end
-
         def description(description)
           metadata[:description] = description
+        end
+
+        def confine(&block)
+          metadata[:confine_blocks] << block
+        end
+
+        # Mark the class as autodetect: this means the instance
+        # of class will be initialized by detector and the confine block
+        # will be used to determine if it's valid on the system or not.
+        # The classes not marked as autodetect need to be initialized
+        # in from other places (such as `additional_features` in Feature)
+        def autodetect
+          @autodetect = autodetect_default
+        end
+
+        def autodetect?
+          @autodetect
+        end
+
+        def autodetect_default
+          true
         end
       end
 
@@ -49,7 +67,7 @@ module ForemanMaintain
 
         def initialize_metadata
           { :tags => [],
-            :required_features => [] }.tap do |metadata|
+            :confine_blocks => [] }.tap do |metadata|
             if superclass.respond_to?(:metadata)
               metadata[:label] = superclass.metadata[:label]
             end
@@ -68,6 +86,26 @@ module ForemanMaintain
 
       def description
         metadata[:description] || to_s
+      end
+
+      def tags
+        metadata[:tags]
+      end
+
+      def present?
+        @_present ||= evaluate_confines
+      end
+
+      private
+
+      def evaluate_confines
+        raise 'Recursive dependency in confine blocks detected' if @confines_evaluation_in_progress
+        @confines_evaluation_in_progress = true
+        metadata[:confine_blocks].all? do |block|
+          instance_exec(&block)
+        end
+      ensure
+        @confines_evaluation_in_progress = false
       end
     end
   end

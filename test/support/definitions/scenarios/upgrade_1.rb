@@ -1,5 +1,7 @@
 class Scenarios::Upgrade1 < ForemanMaintain::Scenario
-  requires_feature :my_test_feature
+  confine do
+    feature(:my_test_feature)
+  end
 
   tags :upgrade, :upgrade_1
 

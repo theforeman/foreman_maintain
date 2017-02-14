@@ -2,9 +2,11 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/logger'
   require 'foreman_maintain/concerns/metadata'
   require 'foreman_maintain/concerns/system_helpers'
+  require 'foreman_maintain/concerns/finders'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/config'
   require 'foreman_maintain/filter'
+  require 'foreman_maintain/detector'
   require 'foreman_maintain/feature'
   require 'foreman_maintain/check'
   require 'foreman_maintain/scenario'
@@ -28,16 +30,16 @@ module ForemanMaintain
       end
     end
 
-    def features_detector
-      @features_detector ||= Feature::Detector.new
+    def detector
+      @detector ||= Detector.new
     end
 
     def detect_features
-      features_detector.available_features
+      detector.available_features
     end
 
     def detect_scenarios
-      Filter.new(Scenario).run
+      detector.available_scenarios
     end
   end
 end

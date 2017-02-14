@@ -1,5 +1,7 @@
 class Scenarios::Upgrade2 < ForemanMaintain::Scenario
-  requires_feature :missing_feature
+  confine do
+    feature(:missing_feature)
+  end
 
   tags :upgrade, :upgrade_2
 
