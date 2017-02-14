@@ -1,5 +1,5 @@
 class Features::MyTestFeature < ForemanMaintain::Feature
-  feature_name :my_test_feature
+  label :my_test_feature
 
   detect do
     # simulate this being always true

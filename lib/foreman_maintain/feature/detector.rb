@@ -3,10 +3,10 @@ module ForemanMaintain
     class Detector
       include Concerns::Logger
 
-      # Returns instance of feature detected on system by name
-      def feature(name)
+      # Returns instance of feature detected on system by label
+      def feature(label)
         detect_features unless @available_features
-        @features_by_name[name]
+        @features_by_label[label]
       end
 
       def available_features(force = false)
@@ -15,7 +15,7 @@ module ForemanMaintain
       end
 
       def detect_features
-        @features_by_name = {}
+        @features_by_label = {}
         @available_features = Feature.sub_classes.map do |feature_class|
           features = detect_on_system(feature_class)
           unless features.empty?
@@ -43,12 +43,12 @@ module ForemanMaintain
 
       def initialize_features_by_name
         @available_features.each do |feature|
-          feature_name = feature.class.metadata[:feature_name]
-          next unless feature_name
-          if @features_by_name[feature_name]
-            raise "Double detection of feature with the same name #{feature_name}"
+          feature_label = feature.class.metadata[:label]
+          next unless feature_label
+          if @features_by_label[feature_label]
+            raise "Double detection of feature with the same label #{feature_label}"
           end
-          @features_by_name[feature_name] = feature
+          @features_by_label[feature_label] = feature
         end
       end
     end

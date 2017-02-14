@@ -2,12 +2,15 @@ module ForemanMaintain
   module Concerns
     module Metadata
       module DSL
+        def label(label)
+          metadata[:label] = label
+        end
         def tags(*tags)
           metadata[:tags].concat(tags)
         end
 
-        def requires_feature(*feature_names)
-          metadata[:required_features].concat(feature_names)
+        def requires_feature(*feature_labels)
+          metadata[:required_features].concat(feature_labels)
         end
 
         def description(description)
@@ -46,7 +49,11 @@ module ForemanMaintain
 
         def initialize_metadata
           { :tags => [],
-            :required_features => [] }
+            :required_features => [] }.tap do |metadata|
+            if superclass.respond_to?(:metadata)
+              metadata[:label] = superclass.metadata[:label]
+            end
+          end
         end
       end
 
