@@ -8,6 +8,7 @@ module ForemanMaintain
   require 'foreman_maintain/detector'
   require 'foreman_maintain/feature'
   require 'foreman_maintain/check'
+  require 'foreman_maintain/procedure'
   require 'foreman_maintain/scenario'
   require 'foreman_maintain/runner'
   require 'foreman_maintain/reporter'

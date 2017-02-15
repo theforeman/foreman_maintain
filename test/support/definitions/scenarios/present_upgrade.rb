@@ -9,5 +9,6 @@ class Scenarios::PresentUpgrade < ForemanMaintain::Scenario
 
   def compose
     steps.concat(find_checks(:basic))
+    steps << procedure(:present_service_restart)
   end
 end

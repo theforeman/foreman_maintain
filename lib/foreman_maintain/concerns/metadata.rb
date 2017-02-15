@@ -34,6 +34,14 @@ module ForemanMaintain
         def autodetect_default
           true
         end
+
+        # Specify what feature the definition related to.
+        def for_feature(feature_label)
+          metadata[:for_feature] = feature_label
+          confine do
+            feature(feature_label)
+          end
+        end
       end
 
       module ClassMethods

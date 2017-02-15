@@ -6,4 +6,8 @@ class Features::MissingService < ForemanMaintain::Feature
     # simulate this service is not present on the system
     false
   end
+
+  def restart
+    # pretend we restart the service
+  end
 end

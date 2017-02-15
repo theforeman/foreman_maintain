@@ -20,6 +20,8 @@ module ForemanMaintain
                    [['before_scenario_starts', 'present_service upgrade scenario'],
                     ['before_execution_starts', 'present service run check'],
                     ['after_execution_finishes', 'present service run check'],
+                    ['before_execution_starts', 'restart present service'],
+                    ['after_execution_finishes', 'restart present service'],
                     ['after_scenario_finishes', 'present_service upgrade scenario']],
                    'unexpected order of execution')
     end

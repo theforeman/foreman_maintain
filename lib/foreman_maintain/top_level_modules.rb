@@ -6,5 +6,8 @@ end
 module Checks
 end
 
+module Procedures
+end
+
 module Scenarios
 end

@@ -16,20 +16,26 @@ module ForemanMaintain
       return collection unless conditions
       collection.find_all do |object|
         conditions = normalize_filter_conditions(conditions)
+        if conditions[:label]
+          next unless object.metadata[:label] == conditions[:label]
+        end
         conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
       end
     end
 
     def normalize_filter_conditions(conditions)
-      ret = {}
+      ret = if conditions.is_a? Hash
+              conditions.dup
+            else
+              {}
+            end
       ret[:tags] = case conditions
                    when Symbol
                      [conditions]
                    when Array
                      conditions
-                   else
-                     Array(conditions.fetch(:tags, []))
                    end
+      ret[:tags] = Array(ret.fetch(:tags, []))
       ret
     end
 
@@ -49,14 +55,26 @@ module ForemanMaintain
     def available_checks(filter_conditions = nil)
       unless @available_checks
         ensure_features_detected
-        @available_checks = Check.all_sub_classes.reduce([]) do |array, check_class|
-          feature_label = check_class.metadata[:for_feature]
-          check = check_class.new(feature_label && feature(feature_label))
-          array << check if check.present?
-          array
-        end
+        @available_checks = find_present_objects(Check)
       end
       filter(@available_checks, filter_conditions)
+    end
+
+    def available_procedures(filter_conditions = nil)
+      unless @available_procedures
+        ensure_features_detected
+        @available_procedures = find_present_objects(Procedure)
+      end
+      filter(@available_procedures, filter_conditions)
+    end
+
+    def find_present_objects(object_base_class)
+      object_base_class.all_sub_classes.reduce([]) do |array, object_class|
+        feature_label = object_class.metadata[:for_feature]
+        object = object_class.new(feature_label && feature(feature_label))
+        array << object if object.present?
+        array
+      end
     end
 
     def available_scenarios(filter_conditions = nil)
