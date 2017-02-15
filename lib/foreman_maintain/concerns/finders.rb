@@ -10,7 +10,7 @@ module ForemanMaintain
       end
 
       def find_checks(conditions)
-        Filter.new(detector.available_checks, conditions).run
+        detector.available_checks(conditions)
       end
     end
   end

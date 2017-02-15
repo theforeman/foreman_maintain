@@ -3,9 +3,7 @@ module ForemanMaintain
     include Concerns::Logger
 
     def initialize
-      @features_by_label = {}
-      @available_features = []
-      @all_features_scanned = false
+      refresh
     end
 
     # Returns instance of feature detected on system by label
@@ -14,30 +12,63 @@ module ForemanMaintain
       detect_feature(label)
     end
 
-    def available_features(force = false)
-      ensure_features_detected(force)
-      @available_features
-    end
-
-    def available_checks(force = false)
-      return @available_checks if @available_checks
-      ensure_features_detected(force)
-      @available_checks = Check.all_sub_classes.reduce([]) do |array, check_class|
-        feature_label = check_class.metadata[:for_feature]
-        check = check_class.new(feature_label && feature(feature_label))
-        array << check if check.present?
-        array
+    def filter(collection, conditions)
+      return collection unless conditions
+      collection.find_all do |object|
+        conditions = normalize_filter_conditions(conditions)
+        conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
       end
     end
 
-    def available_scenarios(force = false)
-      return @available_scenarios if @available_scenarios
-      ensure_features_detected(force)
-      @available_scenarios = Scenario.all_sub_classes.map(&:new).select(&:present?)
+    def normalize_filter_conditions(conditions)
+      ret = {}
+      ret[:tags] = case conditions
+                   when Symbol
+                     [conditions]
+                   when Array
+                     conditions
+                   else
+                     Array(conditions.fetch(:tags, []))
+                   end
+      ret
     end
 
-    def ensure_features_detected(force)
-      return if !force && @all_features_scanned
+    def refresh
+      @features_by_label = {}
+      @available_features = []
+      @all_features_scanned = false
+      @available_checks = nil
+      @available_scenarios = nil
+    end
+
+    def available_features(filter_conditions = nil)
+      ensure_features_detected
+      filter(@available_features, filter_conditions)
+    end
+
+    def available_checks(filter_conditions = nil)
+      unless @available_checks
+        ensure_features_detected
+        @available_checks = Check.all_sub_classes.reduce([]) do |array, check_class|
+          feature_label = check_class.metadata[:for_feature]
+          check = check_class.new(feature_label && feature(feature_label))
+          array << check if check.present?
+          array
+        end
+      end
+      filter(@available_checks, filter_conditions)
+    end
+
+    def available_scenarios(filter_conditions = nil)
+      unless @available_scenarios
+        ensure_features_detected
+        @available_scenarios = Scenario.all_sub_classes.map(&:new).select(&:present?)
+      end
+      filter(@available_scenarios, filter_conditions)
+    end
+
+    def ensure_features_detected
+      return if @all_features_scanned
       @available_features = []
       @features_by_label = {}
       autodetect_features.keys.each do |label|

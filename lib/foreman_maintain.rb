@@ -5,7 +5,6 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/finders'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/config'
-  require 'foreman_maintain/filter'
   require 'foreman_maintain/detector'
   require 'foreman_maintain/feature'
   require 'foreman_maintain/check'
