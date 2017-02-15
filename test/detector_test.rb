@@ -10,13 +10,13 @@ module ForemanMaintain
 
     it 'detects features on the system based on #confine block' do
       features = detector.available_features
-      assert features.find { |f| f.class == Features::MyTestFeature },
+      assert features.find { |f| f.class == Features::PresentService },
              'failed to collect features that were initialized in `confine` block'
 
-      TestHelper.use_my_test_feature_2 = true
+      TestHelper.use_present_service_2 = true
       detector.refresh
       features = detector.available_features
-      assert features.find { |f| f.class == Features::MyTestFeature_2 },
+      assert features.find { |f| f.class == Features::PresentService2 },
              'failed to collect newer version of a feature'
     end
 
@@ -30,7 +30,7 @@ module ForemanMaintain
 
     it 'allows to filter checks based on metadata and present features' do
       checks = detector.available_checks(:basic)
-      assert(checks.find { |c| c.is_a? Checks::MyTestIsRunning },
+      assert(checks.find { |c| c.is_a? Checks::PresentServiceIsRunning },
              'checks that should be found is missing')
       refute(checks.find { |c| c.is_a? Checks::MissingServiceIsRunning },
              'checks that should not be found are present')
@@ -38,9 +38,9 @@ module ForemanMaintain
 
     it 'allows to filter scenarios based on metadata and present features' do
       scenarios = detector.available_scenarios(:tags => :upgrade)
-      assert(scenarios.find { |c| c.is_a? Scenarios::Upgrade1 },
+      assert(scenarios.find { |c| c.is_a? Scenarios::PresentUpgrade },
              'scenarios that should be found is missing')
-      refute(scenarios.find { |c| c.is_a? Scenarios::Upgrade2 },
+      refute(scenarios.find { |c| c.is_a? Scenarios::MissingUpgrade },
              'scenarios that should not be found are present')
     end
   end

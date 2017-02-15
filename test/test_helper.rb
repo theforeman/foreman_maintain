@@ -6,11 +6,11 @@ require 'support/log_reporter'
 
 class TestHelper
   class << self
-    attr_accessor :use_my_test_feature_2, :my_test_is_running
+    attr_accessor :use_present_service_2, :present_service_is_running
 
     def reset
-      self.use_my_test_feature_2 = false
-      self.my_test_is_running = false
+      self.use_present_service_2 = false
+      self.present_service_is_running = false
     end
   end
 end

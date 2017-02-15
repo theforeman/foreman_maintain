@@ -11,13 +11,13 @@ module ForemanMaintain
     end
 
     let :scenario do
-      Scenarios::Upgrade1.new
+      Scenarios::PresentUpgrade.new
     end
 
     it 'reports human-readmable info about the run' do
       reporter.before_scenario_starts(scenario)
 
-      step = Checks::MyTestIsRunning.new(nil)
+      step = Checks::PresentServiceIsRunning.new(nil)
       execution = Runner::Execution.new(step, reporter)
 
       reporter.before_execution_starts(execution)
@@ -32,11 +32,11 @@ module ForemanMaintain
       reporter.after_scenario_finishes(scenario)
 
       assert_equal <<STR, captured_out
-Running my_test upgrade scenario
+Running present_service upgrade scenario
 --------------------------------------------------------------------------------
-| my test is running check:                                         [OK]       |
+| present service run check:                                        [OK]       |
 --------------------------------------------------------------------------------
-| my test is running check:                                         [FAIL]     |
+| present service run check:                                        [FAIL]     |
 | The service is not running                                                   |
 --------------------------------------------------------------------------------
 STR
