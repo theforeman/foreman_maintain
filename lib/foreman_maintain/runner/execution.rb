@@ -49,6 +49,10 @@ module ForemanMaintain
         @reporter.after_execution_finishes(self)
       end
 
+      def update(line)
+        @reporter.on_execution_update(self, line)
+      end
+
       private
 
       def with_metadata_calculation
@@ -64,10 +68,6 @@ module ForemanMaintain
         @status = :fail
         @output << e.message
         logger.error(e)
-      end
-
-      def update(line)
-        @reporter.on_execution_update(self, line)
       end
     end
   end

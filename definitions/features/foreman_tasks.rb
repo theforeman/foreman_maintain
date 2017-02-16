@@ -17,7 +17,6 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     # feature(:foreman_database).query(<<-SQL).first['count'].to_i
     #  SELECT count(*) AS count FROM foreman_tasks_tasks WHERE state in ('running', 'paused')
     # SQL
-    sleep 2
     5
   end
 end

@@ -1,5 +1,5 @@
 module ForemanMaintain
-  class Check
+  class Check < Executable
     include Concerns::Logger
     include Concerns::SystemHelpers
     include Concerns::Metadata
@@ -25,7 +25,7 @@ module ForemanMaintain
 
     # internal method called by executor
     def __run__(execution)
-      run
+      super
     rescue Fail => e
       execution.status = :fail
       execution.output << e.message

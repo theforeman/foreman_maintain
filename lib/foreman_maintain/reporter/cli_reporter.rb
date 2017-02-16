@@ -6,13 +6,13 @@ module ForemanMaintain
     class CLIReporter < Reporter
       # Simple spinner able to keep updating current line
       class Spinner
-        def initialize(stdout, interval = 0.1)
-          @stdout = stdout
+        def initialize(reporter, interval = 0.1)
+          @reporter = reporter
           @mutex = Mutex.new
           @active = false
           @interval = interval
           @spinner_index = 0
-          @spinner_chars = %(|/-\\)
+          @spinner_chars = %w(| / - \\)
           @current_line = ''
           @puts_needed = false
           start_spinner
@@ -30,7 +30,7 @@ module ForemanMaintain
         def deactivate
           @mutex.synchronize do
             @active = false
-            @stdout.print "\r"
+            @reporter.print "\r"
           end
         end
 
@@ -48,27 +48,27 @@ module ForemanMaintain
         def spin
           @mutex.synchronize do
             return unless @active
-            @stdout.print "\r"
-            @stdout.print @spinner_chars[@spinner_index]
-            @stdout.print ' '
-            @stdout.print @current_line
+            @reporter.clear_line
+            @reporter.print "\r"
+            line = "#{@spinner_chars[@spinner_index]} #{@current_line}"
+            @reporter.print(line)
             @spinner_index = (@spinner_index + 1) % @spinner_chars.size
-            @puts_needed = true
           end
         end
       end
 
-      def initialize(stdout = STDOUT)
+      def initialize(stdout = STDOUT, stdin = STDIN)
         @stdout = stdout
-        @spinner = Spinner.new(@stdout)
+        @stdin = stdin
         @hl = HighLine.new
         @max_length = 80
         @line_char = '-'
         @cell_char = '|'
+        @spinner = Spinner.new(self)
       end
 
       def before_scenario_starts(scenario)
-        @stdout.puts "Running #{scenario.description || scenario.class}"
+        puts "Running #{scenario.description || scenario.class}"
         hline
       end
 
@@ -90,7 +90,54 @@ module ForemanMaintain
 
       def after_scenario_finishes(_scenario); end
 
-      private
+      def on_next_steps(runner, steps)
+        choice = if steps.size > 1
+                   multiple_steps_selection(steps)
+                 elsif ask_to_confirm("Continue with step [#{steps.first.description}]?")
+                   steps.first
+                 else
+                   :quit
+                 end
+        choice == :quit ? runner.ask_to_quit : runner.add_step(choice)
+      end
+
+      def multiple_steps_selection(steps)
+        puts 'There are multiple steps to proceed:'
+        steps.each_with_index do |step, index|
+          puts "#{index + 1}) #{step.description}"
+        end
+        ask_to_select('Select step to continue', steps, &:description)
+      end
+
+      def ask_to_confirm(message)
+        print "#{message}, [yN]"
+        answer = @stdin.gets.chomp
+        case answer
+        when 'y'
+          true
+        when 'n'
+          false
+        end
+      ensure
+        clear_line
+      end
+
+      def ask_to_select(message, steps)
+        print "#{message}, (q) for quit"
+        answer = @stdin.gets.chomp
+        case answer
+        when 'q'
+          :quit
+        when /^\d+$/
+          steps[answer.to_i - 1]
+        end
+      ensure
+        clear_line
+      end
+
+      def clear_line
+        print "\r" + ' ' * @max_length + "\r"
+      end
 
       def execution_info(execution, text, ljust = nil)
         prefix = "#{execution.name}:"
@@ -108,12 +155,22 @@ module ForemanMaintain
       end
 
       def hline
-        @stdout.puts @line_char * @max_length
+        puts @line_char * @max_length
       end
 
       def cell(content)
-        @stdout.print "#{@cell_char} #{content}".ljust(@max_length - 1)
-        @stdout.puts @cell_char
+        print "#{@cell_char} #{content}".ljust(@max_length - 1)
+        puts @cell_char
+      end
+
+      def print(string)
+        @stdout.print(string)
+        @stdout.flush
+      end
+
+      def puts(string)
+        @stdout.puts(string)
+        @stdout.flush
       end
     end
   end

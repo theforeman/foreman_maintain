@@ -16,7 +16,7 @@ pp detected_scenarios
 
 scenario_class = Scenarios::PreUpgradeCheckSatellite_6_2
 
-scenario = detected_scenarios.find { |s| s.is_a? Scenarios::PreUpgradeCheckSatellite_6_2 }
+scenario = detected_scenarios.first # find { |s| s.is_a? Scenarios::PreUpgradeCheckSatellite_6_2 }
 
 unless scenario
   puts "#{scenario_class} not detected among #{detected_scenarios}"

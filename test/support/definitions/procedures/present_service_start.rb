@@ -1,4 +1,4 @@
-class Procedures::PresentServiceRestart < ForemanMaintain::Procedure
+class Procedures::PresentServiceStart < ForemanMaintain::Procedure
   for_feature(:present_service)
   tags :start
   description 'start the present service'
