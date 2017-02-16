@@ -18,21 +18,17 @@ module ForemanMaintain
           metadata[:confine_blocks] << block
         end
 
-        # Mark the class as autodetect: this means the instance
-        # of class will be initialized by detector and the confine block
-        # will be used to determine if it's valid on the system or not.
-        # The classes not marked as autodetect need to be initialized
+        # Mark the class as manual: this means the instance
+        # of class will not be initialized by detector to check the confine block
+        # to determine if it's valid on the system or not.
+        # The classes marked for manual detect need to be initialized
         # in from other places (such as `additional_features` in Feature)
-        def autodetect
-          @autodetect = autodetect_default
+        def manual_detection
+          @autodetect = false
         end
 
         def autodetect?
-          @autodetect
-        end
-
-        def autodetect_default
-          true
+          defined?(@autodetect) ? @autodetect : true
         end
 
         # Specify what feature the definition related to.

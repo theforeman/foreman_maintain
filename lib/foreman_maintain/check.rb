@@ -30,9 +30,5 @@ module ForemanMaintain
       execution.status = :fail
       execution.output << e.message
     end
-
-    def autodetect_default
-      true
-    end
   end
 end

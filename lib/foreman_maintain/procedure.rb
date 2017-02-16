@@ -23,9 +23,5 @@ module ForemanMaintain
     def __run__(_execution)
       run
     end
-
-    def autodetect_default
-      true
-    end
   end
 end

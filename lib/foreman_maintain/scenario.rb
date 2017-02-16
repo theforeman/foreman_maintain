@@ -14,5 +14,13 @@ module ForemanMaintain
 
     # Override to compose steps for the scenario
     def compose; end
+
+    def self.inspect
+      "Scenario Class #{metadata[:description]}<#{name}>"
+    end
+
+    def inspect
+      "#{self.class.metadata[:description]}<#{self.class.name}>"
+    end
   end
 end

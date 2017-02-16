@@ -28,6 +28,19 @@ module ForemanMaintain
              'failed to detect feature that reference another feature in `confine` block'
     end
 
+    it 'allows to filter checks based on label or class' do
+      checks = detector.available_checks(:label => :present_service_is_running)
+      assert_equal(1, checks.size,
+                   'expected exactly one check to be found')
+      assert(checks.find { |c| c.is_a? Checks::PresentServiceIsRunning },
+             'checks that should be found is missing')
+      checks = detector.available_checks(:class => Checks::PresentServiceIsRunning)
+      assert_equal(1, checks.size,
+                   'expected exactly one check to be found')
+      assert(checks.find { |c| c.is_a? Checks::PresentServiceIsRunning },
+             'checks that should be found is missing')
+    end
+
     it 'allows to filter checks based on metadata and present features' do
       checks = detector.available_checks(:basic)
       assert(checks.find { |c| c.is_a? Checks::PresentServiceIsRunning },

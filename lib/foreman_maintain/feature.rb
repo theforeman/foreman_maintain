@@ -13,10 +13,6 @@ module ForemanMaintain
       "#{self.class.metadata[:label]}<#{self.class.name}>"
     end
 
-    def autodetect_default
-      false
-    end
-
     # Override to generate additional feature instances that can't be
     # autodetected directly
     def additional_features

@@ -1,6 +1,5 @@
 class Features::Server < ForemanMaintain::Feature
   label :server
-  autodetect
 
   confine do
     true

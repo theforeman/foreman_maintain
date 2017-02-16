@@ -19,6 +19,9 @@ module ForemanMaintain
         if conditions[:label]
           next unless object.metadata[:label] == conditions[:label]
         end
+        if conditions[:class]
+          next unless object.class == conditions[:class]
+        end
         conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
       end
     end

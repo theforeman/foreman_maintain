@@ -1,6 +1,7 @@
 module Features
   class SubService < ForemanMaintain::Feature
     label :sub_service
+    manual_detection
 
     def initialize(sub_service_name)
       @sub_serivce_name = sub_service_name
