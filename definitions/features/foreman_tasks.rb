@@ -1,9 +1,9 @@
 class Features::ForemanTasks < ForemanMaintain::Feature
-  feature_name :foreman_tasks
+  label :foreman_tasks
 
-  detect do
-    new if check_min_version('ruby193-rubygem-foreman-tasks', '0.6') ||
-           check_min_version('tfm-rubygem-foreman-tasks', '0.7')
+  confine do
+    check_min_version('ruby193-rubygem-foreman-tasks', '0.6') ||
+      check_min_version('tfm-rubygem-foreman-tasks', '0.7')
   end
 
   def running_tasks_count
@@ -17,7 +17,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     # feature(:foreman_database).query(<<-SQL).first['count'].to_i
     #  SELECT count(*) AS count FROM foreman_tasks_tasks WHERE state in ('running', 'paused')
     # SQL
-    sleep 5
+    sleep 2
     5
   end
 end

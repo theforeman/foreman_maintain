@@ -1,8 +1,8 @@
 class Features::ForemanDatabase < ForemanMaintain::Feature
-  feature_name :foreman_database
+  label :foreman_database
 
-  detect do
-    new if File.exist?('/etc/foreman/database.yml')
+  confine do
+    File.exist?('/etc/foreman/database.yml')
   end
 
   def query(sql)

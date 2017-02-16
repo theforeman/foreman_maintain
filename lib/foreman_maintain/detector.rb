@@ -14,32 +14,7 @@ module ForemanMaintain
 
     def filter(collection, conditions)
       return collection unless conditions
-      collection.find_all do |object|
-        conditions = normalize_filter_conditions(conditions)
-        if conditions[:label]
-          next unless object.metadata[:label] == conditions[:label]
-        end
-        if conditions[:class]
-          next unless object.class == conditions[:class]
-        end
-        conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
-      end
-    end
-
-    def normalize_filter_conditions(conditions)
-      ret = if conditions.is_a? Hash
-              conditions.dup
-            else
-              {}
-            end
-      ret[:tags] = case conditions
-                   when Symbol
-                     [conditions]
-                   when Array
-                     conditions
-                   end
-      ret[:tags] = Array(ret.fetch(:tags, []))
-      ret
+      collection.find_all { |object| match_object?(object, conditions) }
     end
 
     def refresh
@@ -99,6 +74,26 @@ module ForemanMaintain
     end
 
     private
+
+    # rubocop:disable Metrics/AbcSize
+    def match_object?(object, conditions)
+      conditions = normalize_filter_conditions(conditions)
+      return false if conditions[:label] && object.metadata[:label] != conditions[:label]
+      return false if conditions[:class] && object.class != conditions[:class]
+      conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
+    end
+
+    def normalize_filter_conditions(conditions)
+      ret = conditions.is_a?(Hash) ? conditions.dup : {}
+      ret[:tags] = case conditions
+                   when Symbol
+                     [conditions]
+                   when Array
+                     conditions
+                   end
+      ret[:tags] = Array(ret.fetch(:tags, []))
+      ret
+    end
 
     def detect_feature(label)
       return unless autodetect_features.key?(label)

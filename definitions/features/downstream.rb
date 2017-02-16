@@ -1,7 +1,7 @@
 class Features::Downstream < ForemanMaintain::Feature
-  feature_name :downstream
+  label :downstream
 
-  detect do
-    new if downstream_installation?
+  confine do
+    downstream_installation?
   end
 end

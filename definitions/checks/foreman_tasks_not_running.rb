@@ -1,5 +1,5 @@
 class Checks::ForemanTasksNotRunning < ForemanMaintain::Check
-  requires_feature :foreman_tasks
+  for_feature :foreman_tasks
   description 'check for running tasks'
   tags :pre_upgrade
 

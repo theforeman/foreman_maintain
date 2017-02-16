@@ -28,16 +28,7 @@ module ForemanMaintain
       private
 
       def ensure_one_object(object_type, label_or_class)
-        conditions = label_or_class_condition(label_or_class)
-        objects = case object_type
-                  when :procedure
-                    detector.available_procedures(conditions)
-                  when :check
-                    detector.available_checks(conditions)
-                  else
-                    raise "Unexpected object type #{object_type}"
-                  end
-
+        objects = find_objects(object_type, label_or_class)
         if objects.first.nil?
           raise "#{object_type} #{label_or_class} not present"
         elsif objects.size > 1
@@ -53,6 +44,18 @@ module ForemanMaintain
           { :label => label_or_class }
         when Class
           { :class => label_or_class }
+        end
+      end
+
+      def find_objects(object_type, label_or_class)
+        conditions = label_or_class_condition(label_or_class)
+        case object_type
+        when :procedure
+          detector.available_procedures(conditions)
+        when :check
+          detector.available_checks(conditions)
+        else
+          raise "Unexpected object type #{object_type}"
         end
       end
     end
