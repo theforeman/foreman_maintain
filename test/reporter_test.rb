@@ -53,7 +53,8 @@ STR
       restart_step = Procedures::PresentServiceRestart.new(nil)
       runner_mock.expect(:add_step, nil, [start_step])
       reporter.on_next_steps(runner_mock, [start_step])
-      assert_equal 'Continue with step [start the present service]?, [yN]', captured_out(false).strip
+      assert_equal 'Continue with step [start the present service]?, [yN]',
+                   captured_out(false).strip
 
       will_press('2')
       runner_mock.expect(:add_step, nil, [restart_step])

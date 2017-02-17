@@ -88,6 +88,10 @@ module ForemanMaintain
         self.class.metadata
       end
 
+      def label
+        metadata[:label] || generate_label
+      end
+
       def description
         metadata[:description] || to_s
       end
@@ -110,6 +114,10 @@ module ForemanMaintain
         end
       ensure
         @confines_evaluation_in_progress = false
+      end
+
+      def generate_label
+        self.class.name.split('::').last.split(/(?=[A-Z])/).map(&:downcase).join('_')
       end
     end
   end

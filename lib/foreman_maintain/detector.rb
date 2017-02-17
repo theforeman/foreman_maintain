@@ -58,7 +58,8 @@ module ForemanMaintain
     def available_scenarios(filter_conditions = nil)
       unless @available_scenarios
         ensure_features_detected
-        @available_scenarios = Scenario.all_sub_classes.map(&:new).select(&:present?)
+        @available_scenarios = Scenario.all_sub_classes.select(&:autodetect?).
+                               map(&:new).select(&:present?)
       end
       filter(@available_scenarios, filter_conditions)
     end
@@ -83,6 +84,7 @@ module ForemanMaintain
       conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
     end
 
+    # rubocop:disable Metrics/MethodLength
     def normalize_filter_conditions(conditions)
       ret = conditions.is_a?(Hash) ? conditions.dup : {}
       ret[:tags] = case conditions
@@ -90,6 +92,8 @@ module ForemanMaintain
                      [conditions]
                    when Array
                      conditions
+                   when Hash
+                     ret[:tags]
                    end
       ret[:tags] = Array(ret.fetch(:tags, []))
       ret
@@ -117,7 +121,6 @@ module ForemanMaintain
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
     def add_feature_by_label(feature_label, feature, allow_duplicities)
       if @features_by_label.key?(feature_label)
         if allow_duplicities

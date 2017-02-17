@@ -35,12 +35,20 @@ module ForemanMaintain
       @detector ||= Detector.new
     end
 
-    def detect_features
-      detector.available_features
+    def available_features(*args)
+      detector.available_features(*args)
     end
 
-    def detect_scenarios
-      detector.available_scenarios
+    def available_scenarios(*args)
+      detector.available_scenarios(*args)
+    end
+
+    def available_checks(*args)
+      detector.available_checks(*args)
+    end
+
+    def available_procedures(*args)
+      detector.available_procedures(*args)
     end
   end
 end

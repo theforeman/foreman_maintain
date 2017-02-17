@@ -25,6 +25,10 @@ module ForemanMaintain
         detector.available_procedures(conditions)
       end
 
+      def find_scenarios(conditions)
+        detector.available_scenarios(conditions)
+      end
+
       private
 
       def ensure_one_object(object_type, label_or_class)
