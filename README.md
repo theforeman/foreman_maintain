@@ -20,10 +20,16 @@ foreman-maintain config
 
 ## TODO
 
-* refactor metadata and constraints
-* procedures infra
-* clamp infra
-* bats tests
+* infrastructure for cli unit tests
+* infrastructure for bats tests
+* update README with latest documentation
+* define pre-upgrade checks for various versions
+* define checks and procedures for known issues
+* define procedure for turning on/off maintenance mode
+* define backup commands
+* define monitor commands
+* define console commands
+* define config commands
 
 ## Implementation
 
@@ -33,7 +39,7 @@ The tooling is composed from multiple components:
 * **Checks** - definitions of health checks to indicate health of the system
 * **Procedures** - steps for performing specific operations on the system
 * **Scenarios** - combinations of checks and procedures to achieve some goal
-* **Filter** - searches the checks/procedures/scenarios based on metadata & available features
+* **Detector** - searches the checks/procedures/scenarios based on metadata & available features
 * **Runner** - executes the scenario
 * **Reporter** - reports the results of the run
 
