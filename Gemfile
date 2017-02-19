@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'pry'
+
 if RUBY_VERSION >= '2.0'
   gem 'rubocop'
 else

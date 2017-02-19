@@ -117,7 +117,7 @@ module ForemanMaintain
       end
 
       def generate_label
-        self.class.name.split('::').last.split(/(?=[A-Z])/).map(&:downcase).join('_')
+        self.class.name.split('::').last.split(/(?=[A-Z])/).map(&:downcase).join('_').to_sym
       end
     end
   end

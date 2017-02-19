@@ -48,6 +48,8 @@ module ForemanMaintain
           { :label => label_or_class }
         when Class
           { :class => label_or_class }
+        else
+          raise 'Expecting symbol or class'
         end
       end
 

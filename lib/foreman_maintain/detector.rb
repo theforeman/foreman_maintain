@@ -82,10 +82,9 @@ module ForemanMaintain
       collection.sort_by { |item| item.label.to_s }
     end
 
-    # rubocop:disable Metrics/AbcSize
     def match_object?(object, conditions)
       conditions = normalize_filter_conditions(conditions)
-      return false if conditions[:label] && object.metadata[:label] != conditions[:label]
+      return false if conditions[:label] && object.label != conditions[:label]
       return false if conditions[:class] && object.class != conditions[:class]
       conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
     end
