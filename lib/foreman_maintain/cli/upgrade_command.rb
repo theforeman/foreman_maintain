@@ -38,7 +38,7 @@ module ForemanMaintain
         end
       end
 
-      subcommand 'check', 'Run pre-upgrade checks' do
+      subcommand 'check', 'Run pre-upgrade checks for upgradeing to specified version' do
         parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
         def execute
           versions_to_scenarios = available_target_versions(:pre_upgrade_check)
