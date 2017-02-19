@@ -1,2 +1,3 @@
+*.rbenv*
 .idea
 Gemfile.lock
