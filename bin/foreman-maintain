@@ -6,4 +6,4 @@ require 'foreman_maintain'
 ForemanMaintain.setup
 
 require 'foreman_maintain/cli'
-MainCommand.run
+ForemanMaintain::Cli::MainCommand.run
