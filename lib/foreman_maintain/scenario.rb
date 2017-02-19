@@ -9,6 +9,7 @@ module ForemanMaintain
 
     class ChecksScenario < Scenario
       manual_detection
+      attr_reader :filter_tags
 
       def initialize(filter_tags)
         @filter_tags = filter_tags

@@ -3,4 +3,7 @@
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'foreman_maintain'
+ForemanMaintain.setup
+
 require 'foreman_maintain/cli'
+MainCommand.run

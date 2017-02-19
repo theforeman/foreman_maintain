@@ -2,6 +2,8 @@ require 'test_helper'
 
 module ForemanMaintain
   describe Reporter::CLIReporter do
+    include CliAssertions
+
     let :capture do
       StringIO.new
     end
@@ -77,13 +79,12 @@ STR
       fake_stdin.rewind
     end
 
-    def captured_out(simulate_carriage_returns = true)
+    def captured_out(simulate_terminal = true)
       capture.rewind
       # simulate carriage returns to get the output as user would see it
       out = capture.read
-      out.gsub!(/^.*\r/, '') if simulate_carriage_returns
-      # remove coloring
-      out.gsub!(/\e.*?m/, '')
+      out = simulate_carriage_returns(out) if simulate_terminal
+      out = out.remove_colors(out)
       capture.rewind
       out
     end

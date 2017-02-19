@@ -30,11 +30,11 @@ module ForemanMaintain
       def available_checks
         filter = {}
         filter[:tags] = tags if respond_to?(:tags)
-        ForemanMaintain.available_checks(filter).sort_by(&:label)
+        ForemanMaintain.available_checks(filter)
       end
 
       def available_tags(collection)
-        collection.inject([]) { |array, check| array.concat(check.tags).uniq }
+        collection.inject([]) { |array, check| array.concat(check.tags).uniq }.sort_by(&:to_s)
       end
 
       def self.tags_option

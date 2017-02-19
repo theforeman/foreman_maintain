@@ -26,4 +26,5 @@ DESC
   s.add_dependency 'highline'
 
   s.add_development_dependency 'rubocop'
+  s.add_development_dependency 'mocha'
 end

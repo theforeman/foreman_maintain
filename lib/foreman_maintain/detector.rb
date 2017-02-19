@@ -13,8 +13,10 @@ module ForemanMaintain
     end
 
     def filter(collection, conditions)
-      return collection unless conditions
-      collection.find_all { |object| match_object?(object, conditions) }
+      if conditions
+        collection = collection.find_all { |object| match_object?(object, conditions) }
+      end
+      sort(collection)
     end
 
     def refresh
@@ -75,6 +77,10 @@ module ForemanMaintain
     end
 
     private
+
+    def sort(collection)
+      collection.sort_by { |item| item.label.to_s }
+    end
 
     # rubocop:disable Metrics/AbcSize
     def match_object?(object, conditions)
