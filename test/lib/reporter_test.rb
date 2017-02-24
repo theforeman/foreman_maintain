@@ -84,7 +84,7 @@ STR
       # simulate carriage returns to get the output as user would see it
       out = capture.read
       out = simulate_carriage_returns(out) if simulate_terminal
-      out = out.remove_colors(out)
+      out = remove_colors(out)
       capture.rewind
       out
     end

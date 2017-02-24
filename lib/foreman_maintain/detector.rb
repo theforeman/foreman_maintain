@@ -8,7 +8,6 @@ module ForemanMaintain
 
     # Returns instance of feature detected on system by label
     def feature(label)
-      return @features_by_label[label] if @features_by_label.key?(label)
       detect_feature(label)
     end
 
@@ -104,7 +103,9 @@ module ForemanMaintain
       ret
     end
 
+    # rubocop:disable Metrics/AbcSize
     def detect_feature(label)
+      return @features_by_label[label] if @features_by_label.key?(label)
       return unless autodetect_features.key?(label)
       present_feature = autodetect_features[label].find(&:present?)
       return unless present_feature

@@ -2,8 +2,9 @@ require 'test_helper'
 
 require 'foreman_maintain/cli'
 
-include CliAssertions
 module ForemanMaintain
+  include CliAssertions
+
   describe Cli::MainCommand do
     let :command do
       []
