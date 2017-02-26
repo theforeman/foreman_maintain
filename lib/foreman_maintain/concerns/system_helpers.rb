@@ -78,7 +78,7 @@ module ForemanMaintain
 
       def execute(command, stdin = nil)
         logger.debug("Running command #{command.inspect} with stdin #{stdin.inspect}")
-        IO.popen(command, 'r+') do |f|
+        IO.popen("#{command} 2>&1", 'r+') do |f|
           if stdin
             f.puts(stdin)
             f.close_write
