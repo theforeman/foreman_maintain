@@ -1,3 +1,4 @@
 *.rbenv*
 .idea
 Gemfile.lock
+log/

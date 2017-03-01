@@ -23,7 +23,7 @@ class Checks::DiskSpeedMinimal < ForemanMaintain::Check
       next if io_obj.read_speed >= EXPECTED_IO
 
       success = false
-      logger.info "\n Slow disk detected for #{dir} - #{io_obj.read_speed} #{io_obj.unit}."
+      logger.info "Slow disk detected #{dir}: #{io_obj.read_speed} #{io_obj.unit}."
       break
     end
 

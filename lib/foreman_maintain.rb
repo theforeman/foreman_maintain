@@ -4,6 +4,7 @@ end
 
 require 'forwardable'
 require 'json'
+require 'logger'
 
 module ForemanMaintain
   require 'foreman_maintain/concerns/logger'
@@ -23,11 +24,12 @@ module ForemanMaintain
   require 'foreman_maintain/utils'
 
   class << self
-    attr_accessor :config
+    attr_accessor :config, :logger
 
     def setup(configuration = {})
       self.config = Config.new(configuration)
       load_definitions
+      init_logger
     end
 
     def load_definitions
@@ -57,6 +59,16 @@ module ForemanMaintain
 
     def available_procedures(*args)
       detector.available_procedures(*args)
+    end
+
+    def init_logger
+      # Note - If timestamp added to filename then number of log files i.e second
+      # argument to Logger.new will not work as expected
+      filename = File.expand_path("#{config.log_dir}/foreman-maintain.log")
+      @logger = Logger.new(filename, 10, 10_240_000).tap do |logger|
+        logger.level = config.log_level || Logger::DEBUG
+        logger.datetime_format = '%Y-%m-%d %H:%M:%S%z '
+      end
     end
   end
 end
