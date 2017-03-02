@@ -1,3 +1,9 @@
+if RUBY_VERSION <= '1.8.7'
+  require 'rubygems'
+end
+
+require 'json'
+
 module ForemanMaintain
   require 'foreman_maintain/concerns/logger'
   require 'foreman_maintain/concerns/metadata'
@@ -13,6 +19,7 @@ module ForemanMaintain
   require 'foreman_maintain/scenario'
   require 'foreman_maintain/runner'
   require 'foreman_maintain/reporter'
+  require 'foreman_maintain/utils'
 
   class << self
     attr_accessor :config

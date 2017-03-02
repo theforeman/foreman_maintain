@@ -4,10 +4,10 @@ class Procedures::ForemanTasksResume < ForemanMaintain::Procedure
 
   def run
     say 'resuming paused tasks'
-    sleep 2
+    sleep 1
     say 'hold on'
-    sleep 2
+    sleep 1
     say 'almost there'
-    sleep 2
+    sleep 1
   end
 end

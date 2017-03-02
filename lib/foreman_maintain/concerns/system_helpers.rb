@@ -85,7 +85,7 @@ module ForemanMaintain
           end
           output = f.read
           logger.debug("output of the command:\n #{output}")
-          output
+          output.strip
         end
       end
     end

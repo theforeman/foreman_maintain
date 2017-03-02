@@ -23,3 +23,24 @@ module CliAssertions
     output.gsub(/\e.*?m/, '')
   end
 end
+
+module UnitTestHelper
+  def described_class
+    # Memoization doesn't work on class methods need to think how to cache it per test
+    # One option is to use 'let' per test file
+    @described_class ||=
+      begin
+        const_name = self.class.name
+        return described_class_ruby_187(const_name) if RUBY_VERSION >= '1.8.7'
+        Object.const_get(const_name)
+      end
+  end
+
+  def described_class_ruby_187(const_name)
+    const_name.split('::').inject(Object) do |mod, class_name|
+      mod.const_get(class_name)
+    end
+  end
+end
+
+include UnitTestHelper
