@@ -4,6 +4,10 @@ gemspec
 
 gem 'pry'
 
+if RUBY_VERSION <= '1.8.7'
+  gem 'json'
+end
+
 if RUBY_VERSION >= '2.0'
   gem 'rubocop'
 else
