@@ -16,12 +16,13 @@ Provides various features that helps keeping the Foreman/Satellite up and
 running.
 DESC
 
-  s.files = Dir['{bin,config,lib,definitions}/**/*']
+  s.files = Dir['{bin,lib,definitions}/**/*']
   s.extra_rdoc_files = [
     'LICENSE',
     'README.md'
   ]
   s.require_paths = ['lib']
+  s.executables = ['foreman-maintain']
 
   s.add_dependency 'clamp'
   s.add_dependency 'highline'
