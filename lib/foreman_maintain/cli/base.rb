@@ -37,8 +37,18 @@ module ForemanMaintain
         collection.inject([]) { |array, check| array.concat(check.tags).uniq }.sort_by(&:to_s)
       end
 
+      def self.label_option
+        option '--label', 'label',
+               'Limit only for a specific label. ' \
+                 '(Use "list" command to see available labels)' do |label|
+          underscorize(label).to_sym
+        end
+      end
+
       def self.tags_option
-        option '--tags', 'tags', 'Limit only for specific set of tags' do |tags|
+        option '--tags', 'tags',
+               'Limit only for specific set of labels. ' \
+                 '(Use list-tags command to see available tags)' do |tags|
           tags.split(',').map(&:strip).map { |tag| underscorize(tag).to_sym }
         end
       end

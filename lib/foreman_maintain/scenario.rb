@@ -7,23 +7,32 @@ module ForemanMaintain
 
     attr_reader :steps
 
-    class ChecksScenario < Scenario
+    class FilteredScenario < Scenario
       manual_detection
-      attr_reader :filter_tags
+      attr_reader :filter_label, :filter_tags
 
-      def initialize(filter_tags)
-        @filter_tags = filter_tags
-        @steps = ForemanMaintain.available_checks(:tags => filter_tags)
+      def initialize(filter)
+        @filter_tags = filter[:tags]
+        @filter_label = filter[:label]
+        @steps = ForemanMaintain.available_checks(filter)
       end
 
       def description
-        "checks with tags #{tag_string(@filter_tags)}"
+        if @filter_label
+          "check with label [#{dashize(@filter_label)}]"
+        else
+          "checks with tags #{tag_string(@filter_tags)}"
+        end
       end
 
       private
 
       def tag_string(tags)
-        tags.map { |tag| "[#{tag}]" }.join(' ')
+        tags.map { |tag| dashize("[#{tag}]") }.join(' ')
+      end
+
+      def dashize(string)
+        string.to_s.tr('_', '-')
       end
     end
 

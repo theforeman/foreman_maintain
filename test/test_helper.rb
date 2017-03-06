@@ -13,6 +13,8 @@ module CliAssertions
     capture_io do
       ForemanMaintain::Cli::MainCommand.run('foreman-maintain', command + args)
     end
+  rescue SystemExit # rubocop:disable Lint/HandleExceptions
+    # don't accept system exit from running a command
   end
 
   def simulate_carriage_returns(output)
