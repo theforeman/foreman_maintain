@@ -10,10 +10,11 @@ enough to provide the right tools for the specific version.
 ```
 Subcommands:
     health                        Health related commands
-      list-checks                   List the checks based on criteria
+      list                          List the checks based on criteria
       list-tags                     List the tags to use for filtering checks
       check                         Run the health checks against the system
-        --tags tags                   Limit only for specific set of tags
+        --label label               Run only a specific check
+        --tags tags                 Limit only for specific set of tags
 
     upgrade                       Upgrade related commands
       list-versions                List versions this system is upgradable to

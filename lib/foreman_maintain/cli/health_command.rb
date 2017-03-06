@@ -1,7 +1,7 @@
 module ForemanMaintain
   module Cli
     class HealthCommand < Base
-      subcommand 'list-checks', 'List the checks based on criteria' do
+      subcommand 'list', 'List the checks based on criteria' do
         tags_option
 
         def execute
@@ -28,10 +28,33 @@ module ForemanMaintain
       end
 
       subcommand 'check', 'Run the health checks against the system' do
+        label_option
         tags_option
 
         def execute
-          run_scenario(Scenario::ChecksScenario.new(tags || [:basic]))
+          scenario = Scenario::FilteredScenario.new(filter)
+          if scenario.steps.empty?
+            puts "No scenario matching #{humanized_filter}"
+            exit 1
+          else
+            run_scenario(scenario)
+          end
+        end
+
+        def filter
+          if label
+            { :label => label }
+          else
+            { :tags => tags || [:basic] }
+          end
+        end
+
+        def humanized_filter
+          if label
+            "label #{label_string(label)}"
+          else
+            "tags #{tags.map { |tag| tag_string(tag) }}"
+          end
         end
       end
     end
