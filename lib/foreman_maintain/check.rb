@@ -10,10 +10,6 @@ module ForemanMaintain
     class Fail < StandardError
     end
 
-    def initialize(associated_feature)
-      @associated_feature = associated_feature
-    end
-
     def assert(condition, error_message)
       raise Fail, error_message unless condition
     end

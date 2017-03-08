@@ -42,13 +42,15 @@ module ForemanMaintain
         end
 
         def self.eval_dsl(metadata, &block)
-          self.new(metadata).tap do |dsl|
+          new(metadata).tap do |dsl|
             dsl.instance_eval(&block)
           end.data
         end
       end
 
       module ClassMethods
+        include Finders
+
         def inherited(klass)
           sub_classes << klass
         end
@@ -85,6 +87,18 @@ module ForemanMaintain
           @metadata
         end
 
+        def label
+          metadata[:label] || generate_label
+        end
+
+        def description
+          metadata[:description] || to_s
+        end
+
+        def tags
+          metadata[:tags]
+        end
+
         def initialize_metadata
           { :tags => [],
             :confine_blocks => [] }.tap do |metadata|
@@ -92,6 +106,26 @@ module ForemanMaintain
               metadata[:label] = superclass.metadata[:label]
             end
           end
+        end
+
+        def present?
+          evaluate_confines
+        end
+
+        private
+
+        def evaluate_confines
+          raise 'Recursive confine block call detected' if @confines_evaluation_in_progress
+          @confines_evaluation_in_progress = true
+          metadata[:confine_blocks].all? do |block|
+            instance_exec(&block)
+          end
+        ensure
+          @confines_evaluation_in_progress = false
+        end
+
+        def generate_label
+          name.split('::').last.split(/(?=[A-Z])/).map(&:downcase).join('_').to_sym
         end
       end
 
@@ -104,35 +138,15 @@ module ForemanMaintain
       end
 
       def label
-        metadata[:label] || generate_label
+        self.class.label
       end
 
       def description
-        metadata[:description] || to_s
+        self.class.description
       end
 
       def tags
-        metadata[:tags]
-      end
-
-      def present?
-        @_present ||= evaluate_confines
-      end
-
-      private
-
-      def evaluate_confines
-        raise 'Recursive dependency in confine blocks detected' if @confines_evaluation_in_progress
-        @confines_evaluation_in_progress = true
-        metadata[:confine_blocks].all? do |block|
-          instance_exec(&block)
-        end
-      ensure
-        @confines_evaluation_in_progress = false
-      end
-
-      def generate_label
-        self.class.name.split('::').last.split(/(?=[A-Z])/).map(&:downcase).join('_').to_sym
+        self.class.tags
       end
     end
   end

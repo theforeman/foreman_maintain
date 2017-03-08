@@ -7,23 +7,21 @@ module DefinitionsTestHelper
     @detector ||= ForemanMaintain.detector
   end
 
-  def load_feature(feature_label)
-    feature = detector.send(:autodetect_features)[feature_label.to_sym].first
-    raise "Feature #{feature_label} not present in autodetect features" unless feature
-    yield feature
+  def feature_class(feature_label)
+    feature_class = detector.send(:autodetect_features)[feature_label.to_sym].first
+    raise "Feature #{feature_label} not present in autodetect features" unless feature_class
+    feature_class
   end
 
   def assume_feature_present(feature_label)
-    load_feature(feature_label) do |feature|
-      feature.stubs(:present? => true)
-      yield feature if block_given?
-    end
+    feature_class = self.feature_class(feature_label)
+    feature_class.stubs(:present? => true)
+    yield feature_class if block_given?
   end
 
   def assume_feature_absent(feature_label)
-    load_feature(feature_label) do |feature|
-      feature.stubs(:present? => false)
-      yield feature if block_given?
+    feature_class(feature_label) do |feature_class|
+      feature_class.stubs(:present? => false)
     end
   end
 
@@ -43,7 +41,7 @@ module DefinitionsTestHelper
   # assume_feature_absent), assert the scenario with given filter is considered
   # present
   def assert_scenario(filter)
-    scenario = find_scenarios(:tags => [:pre_upgrade_check, :satellite_6_2]).first
+    scenario = find_scenarios(filter).first
     assert scenario, "Expected the scenario #{filter} to be present"
     scenario
   end

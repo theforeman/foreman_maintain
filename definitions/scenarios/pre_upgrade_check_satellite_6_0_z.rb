@@ -8,7 +8,7 @@ class Scenarios::PreUpgradeCheckSatellite_6_0_z < ForemanMaintain::Scenario
   end
 
   def compose
-    steps.concat(find_checks(:basic))
-    steps.concat(find_checks(:pre_upgrade))
+    add_steps(find_checks(:basic))
+    add_steps(find_checks(:pre_upgrade))
   end
 end

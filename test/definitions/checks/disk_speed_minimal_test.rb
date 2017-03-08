@@ -3,7 +3,7 @@ require 'test_helper'
 describe Checks::DiskSpeedMinimal do
   include DefinitionsTestHelper
 
-  let(:check_disk_io) { described_class.new(nil) }
+  let(:check_disk_io) { described_class.new }
 
   it 'should confine existence of hdparm and fio' do
     described_class.stubs(:execute?).with('which hdparm').returns(true)
