@@ -1,21 +1,27 @@
 module ForemanMaintain
   module Concerns
     module Metadata
-      module DSL
+      class DSL
+        attr_reader :data
+
+        def initialize(data = {})
+          @data = data
+        end
+
         def label(label)
-          metadata[:label] = label
+          @data[:label] = label
         end
 
         def tags(*tags)
-          metadata[:tags].concat(tags)
+          @data[:tags].concat(tags)
         end
 
         def description(description)
-          metadata[:description] = description
+          @data[:description] = description
         end
 
         def confine(&block)
-          metadata[:confine_blocks] << block
+          @data[:confine_blocks] << block
         end
 
         # Mark the class as manual: this means the instance
@@ -24,19 +30,21 @@ module ForemanMaintain
         # The classes marked for manual detect need to be initialized
         # in from other places (such as `additional_features` in Feature)
         def manual_detection
-          @autodetect = false
-        end
-
-        def autodetect?
-          defined?(@autodetect) ? @autodetect : true
+          @data[:autodetect] = false
         end
 
         # Specify what feature the definition related to.
         def for_feature(feature_label)
-          metadata[:for_feature] = feature_label
+          @data[:for_feature] = feature_label
           confine do
             feature(feature_label)
           end
+        end
+
+        def self.eval_dsl(metadata, &block)
+          self.new(metadata).tap do |dsl|
+            dsl.instance_eval(&block)
+          end.data
         end
       end
 
@@ -56,6 +64,10 @@ module ForemanMaintain
           @sub_classes ||= []
         end
 
+        def autodetect?
+          metadata.fetch(:autodetect, true)
+        end
+
         def all_sub_classes(ignore_abstract_classes = true)
           ret = []
           ret << self if !ignore_abstract_classes || !abstract_class
@@ -65,8 +77,12 @@ module ForemanMaintain
           ret
         end
 
-        def metadata
+        def metadata(&block)
           @metadata ||= initialize_metadata
+          if block
+            DSL.eval_dsl(@metadata, &block)
+          end
+          @metadata
         end
 
         def initialize_metadata
@@ -80,7 +96,6 @@ module ForemanMaintain
       end
 
       def self.included(klass)
-        klass.extend(DSL)
         klass.extend(ClassMethods)
       end
 

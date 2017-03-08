@@ -1,7 +1,9 @@
 class Features::Upstream < ForemanMaintain::Feature
-  label :upstream
+  metadata do
+    label :upstream
 
-  confine do
-    !downstream_installation?
+    confine do
+      !downstream_installation?
+    end
   end
 end

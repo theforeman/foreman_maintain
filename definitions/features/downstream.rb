@@ -1,8 +1,10 @@
 class Features::Downstream < ForemanMaintain::Feature
-  label :downstream
+  metadata do
+    label :downstream
 
-  confine do
-    downstream_installation?
+    confine do
+      downstream_installation?
+    end
   end
 
   def current_version

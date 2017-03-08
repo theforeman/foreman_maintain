@@ -1,8 +1,10 @@
 class Features::Server < ForemanMaintain::Feature
-  label :server
+  metadata do
+    label :server
 
-  confine do
-    true
+    confine do
+      true
+    end
   end
 
   def additional_features

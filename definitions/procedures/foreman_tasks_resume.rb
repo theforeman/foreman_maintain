@@ -1,6 +1,8 @@
 class Procedures::ForemanTasksResume < ForemanMaintain::Procedure
-  for_feature :foreman_tasks
-  description 'resume paused tasks'
+  metadata do
+    for_feature :foreman_tasks
+    description 'resume paused tasks'
+  end
 
   def run
     say 'resuming paused tasks'

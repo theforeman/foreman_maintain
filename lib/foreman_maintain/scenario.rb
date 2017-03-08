@@ -8,7 +8,9 @@ module ForemanMaintain
     attr_reader :steps
 
     class FilteredScenario < Scenario
-      manual_detection
+      metadata do
+        manual_detection
+      end
       attr_reader :filter_label, :filter_tags
 
       def initialize(filter)

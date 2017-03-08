@@ -1,15 +1,17 @@
 class Checks::DiskSpeedMinimal < ForemanMaintain::Check
+  metadata do
+    label :disk_io
+    description 'Check for recommended disk speed of pulp, mongodb, pgsql dir.'
+    tags :basic
+
+    confine do
+      execute?('which hdparm') && execute?('which fio')
+    end
+  end
+
   EXPECTED_IO = 80
   DEFAULT_UNIT   = 'MB/sec'.freeze
   DEFAULT_DIRS   = ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'].freeze
-
-  label :disk_io
-  description 'Check for recommended disk speed of pulp, mongodb, pgsql dir.'
-  tags :basic
-
-  confine do
-    execute?('which hdparm') && execute?('which fio')
-  end
 
   def run
     success = true

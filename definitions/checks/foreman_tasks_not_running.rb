@@ -1,7 +1,9 @@
 class Checks::ForemanTasksNotRunning < ForemanMaintain::Check
-  for_feature :foreman_tasks
-  description 'check for running tasks'
-  tags :pre_upgrade
+  metadata do
+    for_feature :foreman_tasks
+    description 'check for running tasks'
+    tags :pre_upgrade
+  end
 
   def run
     assert(feature(:foreman_tasks).running_tasks_count == 0,
