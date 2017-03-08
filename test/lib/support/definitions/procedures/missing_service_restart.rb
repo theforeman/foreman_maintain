@@ -1,7 +1,9 @@
 class Procedures::MissingServiceRestart < ForemanMaintain::Procedure
-  for_feature(:missing_service)
-  tags :basic
-  description 'restart missing service'
+  metadata do
+    for_feature(:missing_service)
+    tags :basic
+    description 'restart missing service'
+  end
 
   def run
     feature(:missing_service).restart

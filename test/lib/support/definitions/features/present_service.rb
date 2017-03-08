@@ -1,8 +1,10 @@
 class Features::PresentService < ForemanMaintain::Feature
-  label :present_service
+  metadata do
+    label :present_service
 
-  confine do
-    0.zero?
+    confine do
+      0.zero?
+    end
   end
 
   def start

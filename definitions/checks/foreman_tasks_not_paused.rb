@@ -1,7 +1,9 @@
 class Checks::ForemanTasksNotPaused < ForemanMaintain::Check
-  for_feature :foreman_tasks
-  description 'check for paused tasks'
-  tags :basic
+  metadata do
+    for_feature :foreman_tasks
+    description 'check for paused tasks'
+    tags :basic
+  end
 
   def run
     assert(feature(:foreman_tasks).paused_tasks_count == 0,

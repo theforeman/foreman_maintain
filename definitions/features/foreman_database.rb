@@ -1,8 +1,10 @@
 class Features::ForemanDatabase < ForemanMaintain::Feature
-  label :foreman_database
+  metadata do
+    label :foreman_database
 
-  confine do
-    File.exist?('/etc/foreman/database.yml')
+    confine do
+      File.exist?('/etc/foreman/database.yml')
+    end
   end
 
   def query(sql)

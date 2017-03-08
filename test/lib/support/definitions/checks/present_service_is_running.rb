@@ -1,8 +1,10 @@
 class Checks::PresentServiceIsRunning < ForemanMaintain::Check
-  label :present_service_is_running
-  for_feature(:present_service)
-  tags :basic
-  description 'present service run check'
+  metadata do
+    label :present_service_is_running
+    for_feature(:present_service)
+    tags :basic
+    description 'present service run check'
+  end
 
   def run
     assert(feature(:present_service).running?,

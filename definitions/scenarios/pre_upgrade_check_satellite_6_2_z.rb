@@ -1,8 +1,10 @@
 class Scenarios::PreUpgradeCheckSatellite_6_2_z < ForemanMaintain::Scenario
-  tags :pre_upgrade_check, :satellite_6_2_z
-  description 'checks before upgrading to Satellite 6.2.z'
-  confine do
-    feature(:downstream) && feature(:downstream).current_version.to_s.start_with?('6.2.')
+  metadata do
+    description 'checks before upgrading to Satellite 6.2.z'
+    tags :pre_upgrade_check, :satellite_6_2_z
+    confine do
+      feature(:downstream) && feature(:downstream).current_version.to_s.start_with?('6.2.')
+    end
   end
 
   def compose

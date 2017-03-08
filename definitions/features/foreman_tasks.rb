@@ -1,9 +1,11 @@
 class Features::ForemanTasks < ForemanMaintain::Feature
-  label :foreman_tasks
+  metadata do
+    label :foreman_tasks
 
-  confine do
-    check_min_version('ruby193-rubygem-foreman-tasks', '0.6') ||
-      check_min_version('tfm-rubygem-foreman-tasks', '0.7')
+    confine do
+      check_min_version('ruby193-rubygem-foreman-tasks', '0.6') ||
+        check_min_version('tfm-rubygem-foreman-tasks', '0.7')
+    end
   end
 
   def running_tasks_count
