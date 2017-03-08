@@ -34,7 +34,7 @@ module ForemanMaintain
     def available_checks(filter_conditions = nil)
       unless @available_checks
         ensure_features_detected
-        @available_checks = find_present_objects(Check)
+        @available_checks = find_present_classes(Check)
       end
       filter(@available_checks, filter_conditions)
     end
@@ -42,16 +42,14 @@ module ForemanMaintain
     def available_procedures(filter_conditions = nil)
       unless @available_procedures
         ensure_features_detected
-        @available_procedures = find_present_objects(Procedure)
+        @available_procedures = find_present_classes(Procedure)
       end
       filter(@available_procedures, filter_conditions)
     end
 
-    def find_present_objects(object_base_class)
+    def find_present_classes(object_base_class)
       object_base_class.all_sub_classes.reduce([]) do |array, object_class|
-        feature_label = object_class.metadata[:for_feature]
-        object = object_class.new(feature_label && feature(feature_label))
-        array << object if object.present?
+        array << object_class if object_class.present?
         array
       end
     end
@@ -60,7 +58,7 @@ module ForemanMaintain
       unless @available_scenarios
         ensure_features_detected
         @available_scenarios = Scenario.all_sub_classes.select(&:autodetect?).
-                               map(&:new).select(&:present?)
+                               select(&:present?).map(&:new)
       end
       filter(@available_scenarios, filter_conditions)
     end
@@ -84,7 +82,7 @@ module ForemanMaintain
     def match_object?(object, conditions)
       conditions = normalize_filter_conditions(conditions)
       return false if conditions[:label] && object.label != conditions[:label]
-      return false if conditions[:class] && object.class != conditions[:class]
+      return false if conditions[:class] && object != conditions[:class]
       conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
     end
 
@@ -107,8 +105,9 @@ module ForemanMaintain
     def detect_feature(label)
       return @features_by_label[label] if @features_by_label.key?(label)
       return unless autodetect_features.key?(label)
-      present_feature = autodetect_features[label].find(&:present?)
-      return unless present_feature
+      present_feature_class = autodetect_features[label].find(&:present?)
+      return unless present_feature_class
+      present_feature = present_feature_class.new
       @available_features << present_feature
       # we don't allow duplicities of features that are autodetected
       add_feature_by_label(label, present_feature, false)
@@ -116,14 +115,15 @@ module ForemanMaintain
       @available_features.concat(additional_features)
       additional_features.each do |feature|
         # we allow duplicities if the feature is added via additional_features
-        add_feature_by_label(feature.metadata[:label], feature, true)
+        add_feature_by_label(feature.label, feature, true)
       end
+      present_feature
     end
 
     def autodetect_features
       @autodetect_features ||= Feature.sub_classes.reduce({}) do |hash, feature_class|
         hash.update(feature_class.metadata[:label] =>
-                      feature_class.all_sub_classes.select(&:autodetect?).reverse.map(&:new))
+                      feature_class.all_sub_classes.select(&:autodetect?).reverse)
       end
     end
 

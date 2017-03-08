@@ -23,7 +23,7 @@ module ForemanMaintain
     it 'reports human-readmable info about the run' do
       reporter.before_scenario_starts(scenario)
 
-      step = Checks::PresentServiceIsRunning.new(nil)
+      step = Checks::PresentServiceIsRunning.new
       execution = Runner::Execution.new(step, reporter)
 
       reporter.before_execution_starts(execution)
@@ -51,8 +51,8 @@ STR
     it 'asks about the next steps' do
       runner_mock = MiniTest::Mock.new
       will_press('y')
-      start_step = Procedures::PresentServiceStart.new(nil)
-      restart_step = Procedures::PresentServiceRestart.new(nil)
+      start_step = Procedures::PresentServiceStart.new
+      restart_step = Procedures::PresentServiceRestart.new
       runner_mock.expect(:add_step, nil, [start_step])
       reporter.on_next_steps(runner_mock, [start_step])
       assert_equal 'Continue with step [start the present service]?, [yN]',

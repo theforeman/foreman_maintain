@@ -2,8 +2,11 @@ module ForemanMaintain
   class Executable
     attr_accessor :associated_feature
 
-    def initialize(associated_feature)
-      @associated_feature = associated_feature
+    def associated_feature
+      return @associated_feature if defined? @associated_feature
+      if metadata[:for_feature]
+        @associated_feature = feature(metadata[:for_feature])
+      end
     end
 
     # public method to be overriden
@@ -39,6 +42,18 @@ module ForemanMaintain
     def __run__(execution)
       @_execution = execution
       run
+    end
+
+    # method defined both on object and class to ensure we work always with object
+    # even when the definitions provide us only class
+    def ensure_instance
+      self
+    end
+
+    class << self
+      def ensure_instance
+        new
+      end
     end
   end
 end

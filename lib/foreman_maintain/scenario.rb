@@ -11,12 +11,13 @@ module ForemanMaintain
       metadata do
         manual_detection
       end
+
       attr_reader :filter_label, :filter_tags
 
       def initialize(filter)
         @filter_tags = filter[:tags]
         @filter_label = filter[:label]
-        @steps = ForemanMaintain.available_checks(filter)
+        @steps = ForemanMaintain.available_checks(filter).map(&:ensure_instance)
       end
 
       def description
@@ -45,6 +46,16 @@ module ForemanMaintain
 
     # Override to compose steps for the scenario
     def compose; end
+
+    def add_steps(steps)
+      steps.each do |step|
+        self.steps << step.ensure_instance
+      end
+    end
+
+    def add_step(step)
+      add_steps([step])
+    end
 
     def self.inspect
       "Scenario Class #{metadata[:description]}<#{name}>"
