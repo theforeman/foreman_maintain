@@ -9,3 +9,6 @@
 :definitions_dirs:
   - 'test/lib/support/definitions'
   - 'test/lib/support/additional_definitions'
+
+# Mention file path to store data
+:storage_file: 'test/data_test.yml'

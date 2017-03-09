@@ -1,7 +1,7 @@
 require 'fileutils'
 module ForemanMaintain
   class Config
-    attr_accessor :definitions_dirs, :log_level, :log_dir
+    attr_accessor :definitions_dirs, :log_level, :log_dir, :storage_file
 
     def initialize(options = {})
       @definitions_dirs = options.fetch(:definitions_dirs,
@@ -9,6 +9,7 @@ module ForemanMaintain
 
       @log_level = options.fetch(:log_level, ::Logger::DEBUG)
       @log_dir = find_log_dir_path(options.fetch(:log_dir, 'log'))
+      @storage_file = options.fetch(:storage_file, 'data.yml')
     end
 
     private
