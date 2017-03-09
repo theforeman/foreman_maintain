@@ -7,3 +7,6 @@
 
 # Mention definitions directories. Default
 # :definitions_dirs:
+
+# Mention file path to store data
+# :storage_file: 'data.yml'

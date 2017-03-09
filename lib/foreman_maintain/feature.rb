@@ -4,6 +4,7 @@ module ForemanMaintain
     include Concerns::SystemHelpers
     include Concerns::Metadata
     include Concerns::Finders
+    include ForemanMaintain::Concerns::Hammer
 
     def self.inspect
       "Feature Class #{metadata[:label]}<#{name}>"
