@@ -2,7 +2,7 @@ module Procedures::SyncPlans
   class Enable < ForemanMaintain::Procedure
     metadata do
       for_feature :sync_plans
-      description 're-enable active sync plans'
+      description 're-enable sync plans'
     end
 
     def run
@@ -12,7 +12,10 @@ module Procedures::SyncPlans
     private
 
     def enabled_sync_plans
-      feature(:sync_plans).make_enable
+      with_spinner('re-enabling sync plans') do |spinner|
+        record_ids = feature(:sync_plans).make_enable
+        spinner.update "Total #{record_ids.length} sync plans are now enabled."
+      end
     end
   end
 end
