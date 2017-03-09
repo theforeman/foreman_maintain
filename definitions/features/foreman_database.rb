@@ -6,7 +6,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   end
 
   def query(sql)
-    parse_csv(psql(%{COPY (#{sql}) TO STDOUT WITH CSV HEADER)}))
+    parse_csv(psql(%{COPY (#{sql}) TO STDOUT WITH CSV HEADER}))
   end
 
   def psql(query)
