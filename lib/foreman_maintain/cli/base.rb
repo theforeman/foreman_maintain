@@ -49,7 +49,7 @@ module ForemanMaintain
         option '--tags', 'tags',
                'Limit only for specific set of labels. ' \
                  '(Use list-tags command to see available tags)' do |tags|
-          tags.split(',').map(&:strip).map { |tag| underscorize(tag).to_sym }
+          tags && tags.split(',').map(&:strip).map { |tag| underscorize(tag).to_sym }
         end
       end
     end
