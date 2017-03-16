@@ -2,19 +2,37 @@ require 'foreman_maintain'
 require 'minitest/spec'
 require 'minitest/autorun'
 require 'mocha/mini_test'
+require 'stringio'
 
 module CliAssertions
   def assert_cmd(expected_output, args = [])
-    output, _err = run_cmd(args)
+    output = run_cmd(args)
     assert_equal expected_output, remove_colors(simulate_carriage_returns(output))
   end
 
+  def capture_io_with_stderr
+    orig_stdout = $stdout
+    orig_stderr = $stderr
+    captured_output = StringIO.new
+    $stdout = captured_output
+    $stderr = captured_output
+
+    yield
+
+    return captured_output.string
+  ensure
+    $stdout = orig_stdout
+    $stderr = orig_stderr
+  end
+
   def run_cmd(args = [])
-    capture_io do
-      ForemanMaintain::Cli::MainCommand.run('foreman-maintain', command + args)
+    capture_io_with_stderr do
+      begin
+        ForemanMaintain::Cli::MainCommand.run('foreman-maintain', command + args)
+      rescue SystemExit # rubocop:disable Lint/HandleExceptions
+        # don't accept system exit from running a command
+      end
     end
-  rescue SystemExit # rubocop:disable Lint/HandleExceptions
-    # don't accept system exit from running a command
   end
 
   def simulate_carriage_returns(output)
