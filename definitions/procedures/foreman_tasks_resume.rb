@@ -5,11 +5,13 @@ class Procedures::ForemanTasksResume < ForemanMaintain::Procedure
   end
 
   def run
-    say 'resuming paused tasks'
-    sleep 1
-    say 'hold on'
-    sleep 1
-    say 'almost there'
-    sleep 1
+    with_spinner('resuming paused tasks') do |spinner|
+      sleep 1
+      spinner.update 'hold on'
+      sleep 1
+      spinner.update 'almost there'
+      sleep 1
+      spinner.update 'finished'
+    end
   end
 end

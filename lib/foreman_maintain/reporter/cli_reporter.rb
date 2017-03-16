@@ -19,7 +19,14 @@ module ForemanMaintain
         end
 
         def update(line)
-          @mutex.synchronize { @current_line = line }
+          @mutex.synchronize do
+            @current_line = line
+            print_current_line
+          end
+        end
+
+        def active?
+          @mutex.synchronize { @active }
         end
 
         def activate
@@ -28,9 +35,9 @@ module ForemanMaintain
         end
 
         def deactivate
+          return unless active?
           @mutex.synchronize do
             @active = false
-            @reporter.print "\r"
           end
         end
 
@@ -48,12 +55,15 @@ module ForemanMaintain
         def spin
           @mutex.synchronize do
             return unless @active
-            @reporter.clear_line
-            @reporter.print "\r"
-            line = "#{@spinner_chars[@spinner_index]} #{@current_line}"
-            @reporter.print(line)
+            print_current_line
             @spinner_index = (@spinner_index + 1) % @spinner_chars.size
           end
+        end
+
+        def print_current_line
+          @reporter.clear_line
+          line = "#{@spinner_chars[@spinner_index]} #{@current_line}"
+          @reporter.print(line)
         end
       end
 
@@ -65,6 +75,7 @@ module ForemanMaintain
         @line_char = '-'
         @cell_char = '|'
         @spinner = Spinner.new(self)
+        @last_line = ''
       end
 
       def before_scenario_starts(scenario)
@@ -73,19 +84,51 @@ module ForemanMaintain
       end
 
       def before_execution_starts(execution)
-        @spinner.update(execution_info(execution, 'running'))
-        @spinner.activate
+        puts(execution_info(execution, ''))
       end
 
-      def on_execution_update(execution, update)
-        @spinner.update(execution_info(execution, update))
+      def print(string)
+        new_line_if_needed
+        @stdout.print(string)
+        @stdout.flush
+        record_last_line(string)
+      end
+
+      def puts(string)
+        # we don't print the new line right away, as we want to be able to put
+        # the status label at the end of the last line, if possible.
+        # Therefore, we just mark that we need to print the new line next time
+        # we are printing something.
+        new_line_if_needed
+        @stdout.print(string)
+        @stdout.flush
+        @new_line_next_time = true
+        record_last_line(string)
+      end
+
+      def new_line_if_needed
+        if @new_line_next_time
+          @stdout.print("\n")
+          @stdout.flush
+          @new_line_next_time = false
+        end
+      end
+
+      def with_spinner(message)
+        new_line_if_needed
+        @spinner.activate
+        @spinner.update(message)
+        yield @spinner
+      ensure
+        @spinner.deactivate
+        @new_line_next_time = true
       end
 
       def after_execution_finishes(execution)
-        @spinner.deactivate
-        cell(execution_info(execution, status_label(execution, 11), @max_length - 15))
-        cell(execution.output) if execution.fail?
+        puts_status(execution.status)
+        puts(execution.output) if execution.fail?
         hline
+        new_line_if_needed
       end
 
       def after_scenario_finishes(_scenario); end
@@ -139,38 +182,36 @@ module ForemanMaintain
         print "\r" + ' ' * @max_length + "\r"
       end
 
-      def execution_info(execution, text, ljust = nil)
+      def execution_info(execution, text)
         prefix = "#{execution.name}:"
-        prefix = prefix.ljust(ljust) if ljust
         "#{prefix} #{text}"
       end
 
-      def status_label(execution, ljust)
+      def puts_status(status)
+        label_offset = 10
+        padding = @max_length - @last_line.size - label_offset
+        if padding < 0
+          new_line_if_needed
+          padding = @max_length - label_offset
+        end
+        @stdout.print(' ' * padding + status_label(status))
+      end
+
+      def status_label(status)
         mapping = { :success => { :label => '[OK]', :color => :green },
                     :fail => { :label => '[FAIL]', :color => :red },
                     :running => { :label => '[RUNNING]', :color => :blue },
                     :skipped => { :label => '[SKIPPED]', :color => :yellow } }
-        properties = mapping[execution.status]
-        @hl.color(properties[:label].ljust(ljust), properties[:color], :bold)
+        properties = mapping[status]
+        @hl.color(properties[:label], properties[:color], :bold)
       end
 
       def hline
         puts @line_char * @max_length
       end
 
-      def cell(content)
-        print "#{@cell_char} #{content}".ljust(@max_length - 1)
-        puts @cell_char
-      end
-
-      def print(string)
-        @stdout.print(string)
-        @stdout.flush
-      end
-
-      def puts(string)
-        @stdout.puts(string)
-        @stdout.flush
+      def record_last_line(string)
+        @last_line = string.lines.to_a.last
       end
     end
   end
