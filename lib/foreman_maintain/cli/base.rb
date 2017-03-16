@@ -41,6 +41,7 @@ module ForemanMaintain
         option '--label', 'label',
                'Limit only for a specific label. ' \
                  '(Use "list" command to see available labels)' do |label|
+          raise ArgumentError, 'value not specified' if label.nil? || label.empty?
           underscorize(label).to_sym
         end
       end
@@ -49,6 +50,7 @@ module ForemanMaintain
         option '--tags', 'tags',
                'Limit only for specific set of labels. ' \
                  '(Use list-tags command to see available tags)' do |tags|
+          raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
           tags.split(',').map(&:strip).map { |tag| underscorize(tag).to_sym }
         end
       end
