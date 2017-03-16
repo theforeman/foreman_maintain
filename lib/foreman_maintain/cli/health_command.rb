@@ -51,9 +51,9 @@ module ForemanMaintain
 
         def humanized_filter
           if label
-            "label #{label_string(label)}"
+            "label #{label_string(filter[:label])}"
           else
-            "tags #{tags.map { |tag| tag_string(tag) }}"
+            "tags #{filter[:tags].map { |tag| tag_string(tag) }.join}"
           end
         end
       end
