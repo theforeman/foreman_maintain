@@ -8,10 +8,7 @@ class Checks::PresentServiceIsRunning < ForemanMaintain::Check
 
   def run
     assert(feature(:present_service).running?,
-           'present service is not running')
-  end
-
-  def next_steps
-    [procedure(Procedures::PresentServiceStart)] if fail?
+           'present service is not running',
+           :next_steps => Procedures::PresentServiceStart.new)
   end
 end

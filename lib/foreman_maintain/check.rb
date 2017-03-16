@@ -10,8 +10,23 @@ module ForemanMaintain
     class Fail < StandardError
     end
 
-    def assert(condition, error_message)
-      raise Fail, error_message unless condition
+    # run condition and mark the check as failed when not passing
+    #
+    # ==== Options
+    #
+    # * +:next_steps* - one or more procedures that can be followed to address
+    #                   the failure, will be offered to the user when running
+    #                   in interactive mode
+    def assert(condition, error_message, options = {})
+      unexpected_options = options.keys - [:next_steps]
+      unless unexpected_options.empty?
+        raise ArgumentError, "Unexpected options #{unexpected_options.inspect}"
+      end
+      unless condition
+        next_steps = Array(options.fetch(:next_steps, []))
+        self.next_steps.concat(next_steps)
+        raise Fail, error_message
+      end
     end
 
     # public method to be overriden

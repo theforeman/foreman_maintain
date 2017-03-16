@@ -89,14 +89,11 @@ class Checks::ForemanIsRuning < ForemanMaintain::Check
 
   def run
     # we are using methods of a feature.
+    # we can define additional steps to be executed as a follow-up
+    # of assertion failure
     assert(feature(:foreman).running?
-           'There are currently paused tasks in the system')
-  end
-
-  # we can define additional steps to be executed after this check is finished
-  # based on the result
-  def next_steps
-    [procedure(Procedures::ForemanStart)] if fail?
+           'There are currently paused tasks in the system'),
+           :next_steps => Procedures::ForemanStart.new)
   end
 end
 ```

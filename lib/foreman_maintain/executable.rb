@@ -14,8 +14,11 @@ module ForemanMaintain
       raise NotImplementedError
     end
 
-    # override to offer steps to be executed after this one
-    def next_steps; end
+    # next steps to be offered to the user after the step is run
+    # It can be added for example from the assert method
+    def next_steps
+      @next_steps ||= []
+    end
 
     def execution
       if @_execution

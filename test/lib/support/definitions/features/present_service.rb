@@ -14,4 +14,8 @@ class Features::PresentService < ForemanMaintain::Feature
   def restart
     # pretend we restart the service
   end
+
+  def running?
+    false
+  end
 end

@@ -6,11 +6,9 @@ class Checks::ForemanTasksNotPaused < ForemanMaintain::Check
   end
 
   def run
-    assert(feature(:foreman_tasks).paused_tasks_count == 0,
-           'There are currently paused tasks in the system')
-  end
-
-  def next_steps
-    [procedure(Procedures::ForemanTasksResume)] if fail?
+    paused_tasks_count = feature(:foreman_tasks).paused_tasks_count
+    assert(paused_tasks_count == 0,
+           "There are currently #{paused_tasks_count} paused tasks in the system",
+           :next_steps => Procedures::ForemanTasksResume.new)
   end
 end
