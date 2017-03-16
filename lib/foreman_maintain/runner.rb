@@ -33,7 +33,7 @@ module ForemanMaintain
     private
 
     def ask_about_offered_steps(steps)
-      if steps
+      if steps && !steps.empty?
         steps = steps.map(&:ensure_instance)
         @reporter.on_next_steps(self, steps)
       end
