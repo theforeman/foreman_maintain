@@ -78,6 +78,20 @@ OUTPUT
         end
         run_cmd(['--tags=pre-upgrade-check'])
       end
+
+      it 'raises errors on empty arguments' do
+        assert_cmd <<OUTPUT, %w(--label)
+ERROR: option '--label': value not specified
+
+See: 'foreman-maintain health check --help'
+OUTPUT
+
+        assert_cmd <<OUTPUT, %w(--tags)
+ERROR: option '--tags': value not specified
+
+See: 'foreman-maintain health check --help'
+OUTPUT
+      end
     end
   end
 end
