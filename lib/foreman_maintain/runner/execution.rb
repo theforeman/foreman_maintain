@@ -3,6 +3,8 @@ module ForemanMaintain
     # Class representing an execution of a single step in scenario
     class Execution
       include Concerns::Logger
+      extend Forwardable
+      def_delegators :@reporter, :with_spinner, :puts, :print
 
       # Step performed as part of the execution
       attr_reader :step

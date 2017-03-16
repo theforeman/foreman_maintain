@@ -20,7 +20,7 @@ module ForemanMaintain
       Scenarios::PresentUpgrade.new
     end
 
-    it 'reports human-readmable info about the run' do
+    it 'reports human-readable info about the run' do
       reporter.before_scenario_starts(scenario)
 
       step = Checks::PresentServiceIsRunning.new
@@ -40,10 +40,10 @@ module ForemanMaintain
       assert_equal <<STR, captured_out
 Running present_service upgrade scenario
 --------------------------------------------------------------------------------
-| present service run check:                                        [OK]       |
+present service run check:                                            [OK]
 --------------------------------------------------------------------------------
-| present service run check:                                        [FAIL]     |
-| The service is not running                                                   |
+present service run check:                                            [FAIL]
+The service is not running
 --------------------------------------------------------------------------------
 STR
     end

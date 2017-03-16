@@ -1,5 +1,8 @@
 module ForemanMaintain
   class Executable
+    extend Forwardable
+    def_delegators :execution, :success?, :fail?
+    def_delegators :execution, :puts, :print, :with_spinner
     attr_accessor :associated_feature
 
     def associated_feature
@@ -28,17 +31,9 @@ module ForemanMaintain
       end
     end
 
-    def success?
-      execution.success?
-    end
-
-    def fail?
-      execution.fail?
-    end
-
     # update reporter about the current message
     def say(message)
-      @_execution.update(message)
+      execution.update(message)
     end
 
     # internal method called by executor

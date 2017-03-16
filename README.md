@@ -104,6 +104,23 @@ Similarly as features, also checks (and in fact all definitions) can used
 Every definition has a `label` (if not stated explicitly, it's
 determined from the class name).
 
+In case some operation take more time, it's possible to enable a spinner
+and update the spinner continuously with `with_spinner` method.
+
+```ruby
+def run
+  with_spinner do |spinner|
+    spinner.update 'checking foreman is running'
+    if feature(:foreman).running?
+      spinner.update 'foreman is not started, starting'
+      feature(:foreman).start
+    else
+      spinner.update 'foreman is started, restarting'
+    end
+  end
+end
+```
+
 ### Procedures
 
 Procedure defines some operation that can be performed against the system.
