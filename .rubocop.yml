@@ -48,3 +48,8 @@ Style/DotPosition:
 
 Security/YAMLLoad:
  Enabled: false
+
+# default 10 lines seems to be too constraining, especially when trying to do
+# some proper logging
+Metrics/MethodLength:
+  Max: 15

@@ -162,6 +162,28 @@ class Scenarios::PreUpgradeCheckForeman_1_14 < ForemanMaintain::Scenario
 end
 ```
 
+### Hammer
+
+In some cases, it's useful to be able to use the hammer as part of check/fix procedures.
+The easiest way to achieve this is to include `ForemanMaintain::Concerns::Hammer` module:
+
+```ruby
+include ForemanMaintain::Concerns::Hammer
+
+def run
+  hammer('task resume')
+end
+```
+
+We expect the credentials for the hammer commands to to be stored inside the hammer settings:
+
+```
+# ~/.hammer/cli.modules.d/foreman.yml
+:foreman:
+  :username: 'admin'
+  :password: 'changeme'
+```
+
 ## Implementation components
 
 In order to process the definitions, there are other components present in the `lib` directory.

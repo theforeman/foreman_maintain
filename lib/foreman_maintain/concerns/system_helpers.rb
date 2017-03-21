@@ -79,7 +79,8 @@ module ForemanMaintain
 
       def execute(command, options = {})
         stdin, hidden_patterns = parse_execute_options(options)
-        logger.debug(hide_strings("Running command #{command} with stdin #{stdin.inspect}", hidden_patterns))
+        logger.debug(hide_strings("Running command #{command} with stdin #{stdin.inspect}",
+                                  hidden_patterns))
         IO.popen("#{command} 2>&1", 'r+') do |f|
           if stdin
             f.puts(stdin)
@@ -96,7 +97,7 @@ module ForemanMaintain
         stdin = options.delete(:stdin)
         hidden_strings = Array(options.delete(:hidden_patterns))
         raise ArgumentError, "Unexpected options: #{options.keys.inspect}" unless options.empty?
-        return stdin, hidden_strings
+        [stdin, hidden_strings]
       end
 
       def shellescape(string)
@@ -105,7 +106,7 @@ module ForemanMaintain
 
       def hide_strings(string, hidden_patterns)
         hidden_patterns.reduce(string) do |result, hidden_pattern|
-          result.gsub(hidden_pattern, "[FILTERED]")
+          result.gsub(hidden_pattern, '[FILTERED]')
         end
       end
     end
