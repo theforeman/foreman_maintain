@@ -86,7 +86,6 @@ module ForemanMaintain
       conditions[:tags].all? { |tag| object.metadata[:tags].include?(tag) }
     end
 
-    # rubocop:disable Metrics/MethodLength
     def normalize_filter_conditions(conditions)
       ret = conditions.is_a?(Hash) ? conditions.dup : {}
       ret[:tags] = case conditions
