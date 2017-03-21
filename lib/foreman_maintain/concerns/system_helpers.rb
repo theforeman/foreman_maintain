@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'csv'
 require 'English'
+require 'shellwords'
 
 module ForemanMaintain
   module Concerns
@@ -63,12 +64,12 @@ module ForemanMaintain
       end
 
       def execute?(command, input = nil)
-        execute(command, input)
+        execute(command, :stdin => input)
         $CHILD_STATUS.success?
       end
 
-      def execute!(command, input = nil)
-        output = execute(command, input)
+      def execute!(command, options = {})
+        output = execute(command, options)
         if $CHILD_STATUS.success?
           output
         else
@@ -76,16 +77,35 @@ module ForemanMaintain
         end
       end
 
-      def execute(command, stdin = nil)
-        logger.debug("Running command #{command} with stdin #{stdin.inspect}")
+      def execute(command, options = {})
+        stdin, hidden_patterns = parse_execute_options(options)
+        logger.debug(hide_strings("Running command #{command} with stdin #{stdin.inspect}", hidden_patterns))
         IO.popen("#{command} 2>&1", 'r+') do |f|
           if stdin
             f.puts(stdin)
             f.close_write
           end
           output = f.read
-          logger.debug("output of the command:\n #{output}")
+          logger.debug("output of the command:\n #{hide_strings(output, hidden_patterns)}")
           output.strip
+        end
+      end
+
+      def parse_execute_options(options)
+        options = options.dup
+        stdin = options.delete(:stdin)
+        hidden_strings = Array(options.delete(:hidden_patterns))
+        raise ArgumentError, "Unexpected options: #{options.keys.inspect}" unless options.empty?
+        return stdin, hidden_strings
+      end
+
+      def shellescape(string)
+        Shellwords.escape(string)
+      end
+
+      def hide_strings(string, hidden_patterns)
+        hidden_patterns.reduce(string) do |result, hidden_pattern|
+          result.gsub(hidden_pattern, "[FILTERED]")
         end
       end
     end

@@ -12,6 +12,6 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   end
 
   def psql(query)
-    execute("su - postgres -c 'psql -d foreman'", query)
+    execute("su - postgres -c 'psql -d foreman'", :stdin => query)
   end
 end
