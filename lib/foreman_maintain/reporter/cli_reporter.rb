@@ -112,6 +112,14 @@ module ForemanMaintain
         record_last_line(string)
       end
 
+      def ask(message)
+        print message
+        # the answer is confirmed by ENTER which will emit a new line
+        @new_line_next_time = false
+        @last_line = ''
+        @stdin.gets.chomp.downcase || ''
+      end
+
       def new_line_if_needed
         if @new_line_next_time
           @stdout.print("\n")
@@ -132,7 +140,7 @@ module ForemanMaintain
 
       def after_execution_finishes(execution)
         puts_status(execution.status)
-        puts(execution.output) if execution.fail?
+        puts(execution.output) unless execution.output.empty?
         hline
         new_line_if_needed
       end
@@ -157,8 +165,7 @@ module ForemanMaintain
       end
 
       def ask_decision(message)
-        print "#{message}, [y(yes), n(no), q(quit)]"
-        answer = @stdin.gets || ''
+        answer = ask("#{message}, [y(yes), n(no), q(quit)]")
         filter_decision(answer.downcase.chomp) || ask_decision(message)
       ensure
         clear_line
@@ -173,8 +180,7 @@ module ForemanMaintain
       end
 
       def ask_to_select(message, steps)
-        print "#{message}, [n(next), q(quit)]"
-        answer = @stdin.gets.chomp.downcase
+        answer = ask("#{message}, [n(next), q(quit)]")
         if %w[n no next].include?(answer)
           return
         elsif answer =~ /^\d+$/
@@ -205,6 +211,7 @@ module ForemanMaintain
           padding = @max_length - label_offset
         end
         @stdout.print(' ' * padding + status_label(status))
+        @new_line_next_time = true
       end
 
       def status_label(status)

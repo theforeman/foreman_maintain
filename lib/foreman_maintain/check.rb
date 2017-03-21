@@ -38,8 +38,7 @@ module ForemanMaintain
     def __run__(execution)
       super
     rescue Error::Fail => e
-      execution.status = :fail
-      execution.output << e.message
+      fail!(e.message)
     end
   end
 end

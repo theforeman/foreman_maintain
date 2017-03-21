@@ -25,5 +25,7 @@ module ForemanMaintain
     def print(_message); end
 
     def puts(_message); end
+
+    def ask(_message); end
   end
 end

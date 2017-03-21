@@ -4,7 +4,7 @@ module ForemanMaintain
     class Execution
       include Concerns::Logger
       extend Forwardable
-      def_delegators :@reporter, :with_spinner, :puts, :print
+      def_delegators :@reporter, :with_spinner, :puts, :print, :ask
 
       # Step performed as part of the execution
       attr_reader :step

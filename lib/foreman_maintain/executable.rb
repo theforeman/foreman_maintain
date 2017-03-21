@@ -1,8 +1,8 @@
 module ForemanMaintain
   class Executable
     extend Forwardable
-    def_delegators :execution, :success?, :fail?
-    def_delegators :execution, :puts, :print, :with_spinner
+    def_delegators :execution, :success?, :fail?, :output
+    def_delegators :execution, :puts, :print, :with_spinner, :ask
     attr_accessor :associated_feature
 
     def associated_feature
@@ -29,6 +29,11 @@ module ForemanMaintain
       else
         raise 'Trying to get execution information before the run started happened'
       end
+    end
+
+    def fail!(message)
+      execution.status = :fail
+      execution.output << message
     end
 
     # update reporter about the current message
