@@ -46,3 +46,5 @@ Style/EachWithObject:
 Style/DotPosition:
   EnforcedStyle: trailing
 
+Security/YAMLLoad:
+ Enabled: false
