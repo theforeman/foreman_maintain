@@ -1,0 +1,11 @@
+# Directory where the logs are stored.
+# The default file is named as /log/foreman_maintain.log
+:log_dir: '~/foreman_maintain/log'
+
+# Logger levels: mention one of debug, info, warning, error, fatal
+:log_level: 'unknown'
+
+# Mention definitions directories. Default
+:definitions_dirs:
+  - 'test/lib/support/definitions'
+  - 'test/lib/support/additional_definitions'

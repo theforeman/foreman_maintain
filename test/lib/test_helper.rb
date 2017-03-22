@@ -24,7 +24,5 @@ end
 TEST_DIR = File.dirname(__FILE__)
 
 ForemanMaintain.setup(
-  :definitions_dirs => [File.join(TEST_DIR, 'support', 'definitions'),
-                        File.join(TEST_DIR, 'support', 'additional_definitions')],
-  :log_level => Logger::UNKNOWN
+  :config_file => File.join(TEST_DIR, '../../', 'config/foreman_maintain.yml.test')
 )

@@ -2,3 +2,4 @@
 .idea
 Gemfile.lock
 log/
+config/foreman_maintain.yml

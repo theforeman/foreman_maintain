@@ -1,0 +1,9 @@
+# Directory where the logs are stored.
+# The default file is named as /log/foreman_maintain.log
+:log_dir: 'log'
+
+# Logger levels: mention one of debug, info, warning, error, fatal
+:log_level: 'error'
+
+# Mention definitions directories. Default
+# :definitions_dirs:
