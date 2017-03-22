@@ -8,7 +8,7 @@ module ForemanMaintain
                                         [File.join(source_path, 'definitions')])
 
       @log_level = options.fetch(:log_level, ::Logger::DEBUG)
-      @log_dir = options.fetch(:log_dir, find_log_dir_path)
+      @log_dir = find_log_dir_path(options.fetch(:log_dir, 'log'))
     end
 
     private
@@ -17,8 +17,8 @@ module ForemanMaintain
       File.expand_path('../../..', __FILE__)
     end
 
-    def find_log_dir_path
-      log_dir_path = File.expand_path('log')
+    def find_log_dir_path(log_dir)
+      log_dir_path = File.expand_path(log_dir)
       begin
         FileUtils.mkdir_p(log_dir_path, :mode => 0o750) unless File.exist?(log_dir_path)
       rescue => e
