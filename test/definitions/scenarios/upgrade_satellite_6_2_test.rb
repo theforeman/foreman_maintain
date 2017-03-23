@@ -36,8 +36,8 @@ module Scenarios
     end
 
     it 'composes the pre upgrade checks for migration from satellite 6.1.x to 6.2' do
-      assert(scenario.steps.find { |step| step.is_a? Checks::ForemanTasksNotPaused })
-      assert(scenario.steps.find { |step| step.is_a? Checks::ForemanTasksNotRunning })
+      assert(scenario.steps.find { |step| step.is_a? Checks::ForemanTasks::NotPaused })
+      assert(scenario.steps.find { |step| step.is_a? Checks::ForemanTasks::NotRunning })
     end
   end
 end
