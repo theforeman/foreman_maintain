@@ -1,7 +1,5 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 
-require 'support/log_reporter'
-
 class TestHelper
   class << self
     attr_accessor :use_present_service_2, :present_service_is_running

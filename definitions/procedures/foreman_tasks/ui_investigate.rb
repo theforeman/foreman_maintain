@@ -10,12 +10,11 @@ module Procedures::ForemanTasks
 
     def initialize(options = {})
       options = options.dup
-      @search_query = options.delete('search_query')
+      @search_query = options.delete('search_query') || ''
       raise ArgumentError, "Unexpected keys #{options.keys}" unless options.keys.empty?
     end
 
     def run
-      hostname = execute('hostname -f')
       ask(<<MESSAGE)
 Go to https://#{hostname}/foreman_tasks/tasks?search=#{CGI.escape(search_query)}
 press ENTER after the paused tasks are resolved.

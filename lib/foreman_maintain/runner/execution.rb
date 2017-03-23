@@ -18,6 +18,8 @@ module ForemanMaintain
       # Output of the execution, to be filled by execution step
       attr_accessor :output
 
+      attr_reader :reporter
+
       def initialize(step, reporter)
         @step = step
         @reporter = reporter
