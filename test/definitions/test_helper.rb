@@ -13,9 +13,10 @@ module DefinitionsTestHelper
     feature_class
   end
 
-  def assume_feature_present(feature_label)
+  def assume_feature_present(feature_label, stubs = nil)
     feature_class = self.feature_class(feature_label)
     feature_class.stubs(:present? => true)
+    feature_class.any_instance.stubs(stubs) if stubs
     yield feature_class if block_given?
   end
 
@@ -24,6 +25,13 @@ module DefinitionsTestHelper
       feature_class.stubs(:present? => false)
     end
   end
+
+  def run_step(step)
+    ForemanMaintain::Runner::Execution.new(step, Support::LogReporter.new).tap(&:run)
+  end
+
+  alias run_check run_step
+  alias run_procedure run_step
 
   def version(version_str)
     ForemanMaintain::Concerns::SystemHelpers::Version.new(version_str)

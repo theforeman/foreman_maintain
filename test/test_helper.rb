@@ -3,6 +3,7 @@ require 'minitest/spec'
 require 'minitest/autorun'
 require 'mocha/mini_test'
 require 'stringio'
+require File.expand_path('../lib/support/log_reporter', __FILE__)
 
 module CliAssertions
   def assert_cmd(expected_output, args = [])

@@ -32,6 +32,10 @@ module ForemanMaintain
         end
       end
 
+      def hostname
+        execute('hostname -f')
+      end
+
       def version(value)
         Version.new(value)
       end
