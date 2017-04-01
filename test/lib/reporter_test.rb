@@ -37,15 +37,15 @@ module ForemanMaintain
 
       reporter.after_scenario_finishes(scenario)
 
-      assert_equal <<STR, captured_out
-Running present_service upgrade scenario
---------------------------------------------------------------------------------
-present service run check:                                            [OK]
---------------------------------------------------------------------------------
-present service run check:                                            [FAIL]
-The service is not running
---------------------------------------------------------------------------------
-STR
+      assert_equal <<-STR.strip_heredoc, captured_out
+        Running present_service upgrade scenario
+        --------------------------------------------------------------------------------
+        present service run check:                                            [OK]
+        --------------------------------------------------------------------------------
+        present service run check:                                            [FAIL]
+        The service is not running
+        --------------------------------------------------------------------------------
+      STR
     end
 
     it 'asks about the next steps' do
@@ -61,12 +61,12 @@ STR
       will_press('2')
       runner_mock.expect(:add_step, nil, [restart_step])
       reporter.on_next_steps(runner_mock, [start_step, restart_step])
-      assert_equal <<STR.strip, captured_out(false).strip
-There are multiple steps to proceed:
-1) start the present service
-2) restart present service
-Select step to continue, (q) for quit
-STR
+      assert_equal <<-STR.strip_heredoc.strip, captured_out(false).strip
+        There are multiple steps to proceed:
+        1) start the present service
+        2) restart present service
+        Select step to continue, (q) for quit
+      STR
 
       will_press('q')
       runner_mock.expect(:ask_to_quit, nil)

@@ -11,21 +11,21 @@ module ForemanMaintain
     end
 
     it 'prints help' do
-      assert_cmd <<OUTPUT
-Usage:
-    foreman-maintain [OPTIONS] SUBCOMMAND [ARG] ...
+      assert_cmd <<-OUTPUT.strip_heredoc
+        Usage:
+            foreman-maintain [OPTIONS] SUBCOMMAND [ARG] ...
 
-Parameters:
-    SUBCOMMAND                    subcommand
-    [ARG] ...                     subcommand arguments
+        Parameters:
+            SUBCOMMAND                    subcommand
+            [ARG] ...                     subcommand arguments
 
-Subcommands:
-    health                        Health related commands
-    upgrade                       Upgrade related commands
+        Subcommands:
+            health                        Health related commands
+            upgrade                       Upgrade related commands
 
-Options:
-    -h, --help                    print help
-OUTPUT
+        Options:
+            -h, --help                    print help
+      OUTPUT
     end
   end
 end

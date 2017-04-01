@@ -53,3 +53,11 @@ Security/YAMLLoad:
 # some proper logging
 Metrics/MethodLength:
   Max: 15
+
+Style/SymbolArray:
+  Description: 'Use %i or %I for arrays of symbols.'
+  StyleGuide: '#percent-i'
+  Enabled: false
+
+Style/InverseMethods:
+  Enabled: false
