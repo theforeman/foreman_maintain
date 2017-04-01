@@ -11,10 +11,8 @@ Gem::Specification.new do |s|
   s.version = ForemanMaintain::VERSION
   s.platform = Gem::Platform::RUBY
   s.summary = 'Foreman maintenance tool belt'
-  s.description = <<DESC
-Provides various features that helps keeping the Foreman/Satellite up and
-running.
-DESC
+  s.description = "Provides various features that helps keeping \
+the Foreman/Satellite up and running."
 
   s.files = Dir['{bin,lib,definitions}/**/*']
   s.extra_rdoc_files = [

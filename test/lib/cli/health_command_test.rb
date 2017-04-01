@@ -11,22 +11,22 @@ module ForemanMaintain
     end
 
     it 'prints help' do
-      assert_cmd <<OUTPUT
-Usage:
-    foreman-maintain health [OPTIONS] SUBCOMMAND [ARG] ...
+      assert_cmd <<-OUTPUT.strip_heredoc
+        Usage:
+            foreman-maintain health [OPTIONS] SUBCOMMAND [ARG] ...
 
-Parameters:
-    SUBCOMMAND                    subcommand
-    [ARG] ...                     subcommand arguments
+        Parameters:
+            SUBCOMMAND                    subcommand
+            [ARG] ...                     subcommand arguments
 
-Subcommands:
-    list                          List the checks based on criteria
-    list-tags                     List the tags to use for filtering checks
-    check                         Run the health checks against the system
+        Subcommands:
+            list                          List the checks based on criteria
+            list-tags                     List the tags to use for filtering checks
+            check                         Run the health checks against the system
 
-Options:
-    -h, --help                    print help
-OUTPUT
+        Options:
+            -h, --help                    print help
+      OUTPUT
     end
 
     describe 'list-checks' do
@@ -34,10 +34,10 @@ OUTPUT
         %w(health list)
       end
       it 'lists the defined checks' do
-        assert_cmd <<OUTPUT
-[external-service-is-accessible] external_service_is_accessible         [pre-upgrade-check]
-[present-service-is-running] present service run check                  [basic]
-OUTPUT
+        assert_cmd <<-OUTPUT.strip_heredoc
+          [external-service-is-accessible] external_service_is_accessible         [pre-upgrade-check]
+          [present-service-is-running] present service run check                  [basic]
+        OUTPUT
       end
     end
 
@@ -46,10 +46,10 @@ OUTPUT
         %w(health list-tags)
       end
       it 'lists the defined tags' do
-        assert_cmd <<OUTPUT
-[basic]
-[pre-upgrade-check]
-OUTPUT
+        assert_cmd <<-OUTPUT.strip_heredoc
+          [basic]
+          [pre-upgrade-check]
+        OUTPUT
       end
     end
 
@@ -80,17 +80,17 @@ OUTPUT
       end
 
       it 'raises errors on empty arguments' do
-        assert_cmd <<OUTPUT, %w(--label)
-ERROR: option '--label': value not specified
+        assert_cmd <<-OUTPUT.strip_heredoc, %w(--label)
+          ERROR: option '--label': value not specified
 
-See: 'foreman-maintain health check --help'
-OUTPUT
+          See: 'foreman-maintain health check --help'
+        OUTPUT
 
-        assert_cmd <<OUTPUT, %w(--tags)
-ERROR: option '--tags': value not specified
+        assert_cmd <<-OUTPUT.strip_heredoc, %w(--tags)
+          ERROR: option '--tags': value not specified
 
-See: 'foreman-maintain health check --help'
-OUTPUT
+          See: 'foreman-maintain health check --help'
+        OUTPUT
       end
     end
   end
