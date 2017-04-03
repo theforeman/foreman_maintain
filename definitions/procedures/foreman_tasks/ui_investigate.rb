@@ -15,10 +15,10 @@ module Procedures::ForemanTasks
     end
 
     def run
-      ask(<<MESSAGE)
-Go to https://#{hostname}/foreman_tasks/tasks?search=#{CGI.escape(search_query)}
-press ENTER after the paused tasks are resolved.
-MESSAGE
+      ask(<<-MESSAGE.strip_heredoc)
+        Go to https://#{hostname}/foreman_tasks/tasks?search=#{CGI.escape(search_query)}
+        press ENTER after the paused tasks are resolved.
+      MESSAGE
     end
   end
 end

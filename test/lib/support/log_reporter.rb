@@ -18,7 +18,7 @@ class Support
       end
     end
 
-    %w(print puts ask).each do |method|
+    %w[print puts ask].each do |method|
       define_method(method) do |message|
         log_method(method, message)
         @output << message

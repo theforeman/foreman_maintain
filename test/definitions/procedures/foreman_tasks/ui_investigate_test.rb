@@ -11,9 +11,9 @@ describe Procedures::ForemanTasks::Resume do
     subject.stubs(:hostname => 'example.com')
     result = run_procedure(subject)
     assert result.success?, 'the procedure was expected to succeed'
-    assert_equal <<MSG.strip, result.reporter.output.strip
-Go to https://example.com/foreman_tasks/tasks?search=state+%3D+paused
-press ENTER after the paused tasks are resolved.
-MSG
+    assert_equal <<-MSG.strip_heredoc.strip, result.reporter.output.strip
+      Go to https://example.com/foreman_tasks/tasks?search=state+%3D+paused
+      press ENTER after the paused tasks are resolved.
+    MSG
   end
 end
