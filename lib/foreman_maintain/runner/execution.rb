@@ -37,6 +37,10 @@ module ForemanMaintain
         @status == :fail
       end
 
+      def skipped?
+        @status == :skipped
+      end
+
       def run
         @status = :running
         @reporter.before_execution_starts(self)

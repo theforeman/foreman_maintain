@@ -20,7 +20,11 @@ module ForemanMaintain
       Scenarios::PresentUpgrade.new
     end
 
-    it 'reports human-readable info about the run' do
+    def decision_question(description)
+      "Continue with step [#{description}]?, [y(yes), n(no), q(quit)]"
+    end
+
+    it 'reports human-readmable info about the run' do
       reporter.before_scenario_starts(scenario)
 
       step = Checks::PresentServiceIsRunning.new
@@ -55,8 +59,7 @@ module ForemanMaintain
       restart_step = Procedures::PresentServiceRestart.new
       runner_mock.expect(:add_step, nil, [start_step])
       reporter.on_next_steps(runner_mock, [start_step])
-      assert_equal 'Continue with step [start the present service]?, [yN]',
-                   captured_out(false).strip
+      assert_equal decision_question('start the present service'), captured_out(false).strip
 
       will_press('2')
       runner_mock.expect(:add_step, nil, [restart_step])
@@ -65,12 +68,25 @@ module ForemanMaintain
         There are multiple steps to proceed:
         1) start the present service
         2) restart present service
-        Select step to continue, (q) for quit
+        Select step to continue, [n(next), q(quit)]
       STR
 
       will_press('q')
       runner_mock.expect(:ask_to_quit, nil)
       reporter.on_next_steps(runner_mock, [start_step, restart_step])
+    end
+
+    describe 'skip_to_next' do
+      it 'option N/n is to skip the current prompted step' do
+        runner_mock = MiniTest::Mock.new
+        restart_step = Procedures::PresentServiceRestart.new
+
+        will_press('n')
+        runner_mock.expect(:skip_to_next, nil, [restart_step])
+        reporter.on_next_steps(runner_mock, [restart_step])
+
+        assert_equal decision_question('restart present service'), captured_out(false).strip
+      end
     end
 
     def will_press(string)

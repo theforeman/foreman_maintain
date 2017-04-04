@@ -25,6 +25,7 @@ module ForemanMaintain
   require 'foreman_maintain/runner'
   require 'foreman_maintain/reporter'
   require 'foreman_maintain/utils'
+  require 'foreman_maintain/error'
 
   class << self
     attr_accessor :config, :logger

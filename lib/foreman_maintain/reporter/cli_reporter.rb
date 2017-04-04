@@ -4,6 +4,12 @@ require 'highline'
 module ForemanMaintain
   class Reporter
     class CLIReporter < Reporter
+      DECISION_MAPPER = {
+        %w[y yes] => 'add_step',
+        %w[n next no] => 'skip_to_next',
+        %w[q quit] => 'ask_to_quit'
+      }.freeze
+
       # Simple spinner able to keep updating current line
       class Spinner
         def initialize(reporter, interval = 0.1)
@@ -134,14 +140,12 @@ module ForemanMaintain
       def after_scenario_finishes(_scenario); end
 
       def on_next_steps(runner, steps)
-        choice = if steps.size > 1
-                   multiple_steps_selection(steps)
-                 elsif ask_to_confirm("Continue with step [#{steps.first.description}]?")
-                   steps.first
-                 else
-                   :quit
-                 end
-        choice == :quit ? runner.ask_to_quit : runner.add_step(choice)
+        if steps.size > 1
+          runner.ask_to_quit if multiple_steps_selection(steps) == :quit
+        else
+          decision = ask_decision("Continue with step [#{steps.first.description}]?")
+          runner.send(decision, steps.first)
+        end
       end
 
       def multiple_steps_selection(steps)
@@ -152,27 +156,33 @@ module ForemanMaintain
         ask_to_select('Select step to continue', steps, &:description)
       end
 
-      def ask_to_confirm(message)
-        print "#{message}, [yN]"
-        answer = @stdin.gets.chomp
-        case answer
-        when 'y'
-          true
-        when 'n'
-          false
-        end
+      def ask_decision(message)
+        print "#{message}, [y(yes), n(no), q(quit)]"
+        answer = @stdin.gets || ''
+        filter_decision(answer.downcase.chomp) || ask_decision(message)
       ensure
         clear_line
       end
 
+      def filter_decision(answer)
+        decision = nil
+        DECISION_MAPPER.each do |options, decision_call|
+          decision = decision_call if options.include?(answer)
+        end
+        decision
+      end
+
       def ask_to_select(message, steps)
-        print "#{message}, (q) for quit"
-        answer = @stdin.gets.chomp
-        case answer
-        when 'q'
-          :quit
-        when /^\d+$/
+        print "#{message}, [n(next), q(quit)]"
+        answer = @stdin.gets.chomp.downcase
+        if %w[n no next].include?(answer)
+          return
+        elsif answer =~ /^\d+$/
           steps[answer.to_i - 1]
+        elsif %w[q quit].include?(answer)
+          :quit
+        else
+          ask_to_select(message, steps)
         end
       ensure
         clear_line
