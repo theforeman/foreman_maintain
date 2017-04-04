@@ -37,7 +37,7 @@ module ForemanMaintain
     # internal method called by executor
     def __run__(execution)
       super
-    rescue Fail => e
+    rescue Error::Fail => e
       execution.status = :fail
       execution.output << e.message
     end

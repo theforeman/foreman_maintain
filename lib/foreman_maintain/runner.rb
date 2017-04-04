@@ -22,12 +22,16 @@ module ForemanMaintain
       @reporter.after_scenario_finishes(@scenario)
     end
 
-    def ask_to_quit
+    def ask_to_quit(_step = nil)
       @quit = true
     end
 
     def add_step(step)
       @steps_to_run.unshift(step)
+    end
+
+    def skip_to_next(step)
+      prepend_next_steps_if_any(step)
     end
 
     private
@@ -37,6 +41,12 @@ module ForemanMaintain
         steps = steps.map(&:ensure_instance)
         @reporter.on_next_steps(self, steps)
       end
+    end
+
+    def prepend_next_steps_if_any(step)
+      @steps_to_run.unshift(*step.next_steps) if step.next_steps
+    rescue
+      nil
     end
   end
 end
