@@ -4,7 +4,7 @@ module ForemanMaintain
       class Device
         include ForemanMaintain::Concerns::SystemHelpers
 
-        EXTERNAL_MOUNT_TYPE = %w(fuseblk nfs).freeze
+        EXTERNAL_MOUNT_TYPE = %w[fuseblk nfs].freeze
 
         attr_accessor :dir, :name, :unit, :read_speed
 

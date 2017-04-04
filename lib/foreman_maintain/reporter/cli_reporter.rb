@@ -12,7 +12,7 @@ module ForemanMaintain
           @active = false
           @interval = interval
           @spinner_index = 0
-          @spinner_chars = %w(| / - \\)
+          @spinner_chars = %w[| / - \\]
           @current_line = ''
           @puts_needed = false
           start_spinner
