@@ -7,7 +7,7 @@ module ForemanMaintain
   describe Cli::HealthCommand do
     include CliAssertions
     let :command do
-      %w(health)
+      %w[health]
     end
 
     it 'prints help' do
@@ -31,7 +31,7 @@ module ForemanMaintain
 
     describe 'list-checks' do
       let :command do
-        %w(health list)
+        %w[health list]
       end
       it 'lists the defined checks' do
         assert_cmd <<-OUTPUT.strip_heredoc
@@ -43,7 +43,7 @@ module ForemanMaintain
 
     describe 'list-tags' do
       let :command do
-        %w(health list-tags)
+        %w[health list-tags]
       end
       it 'lists the defined tags' do
         assert_cmd <<-OUTPUT.strip_heredoc
@@ -55,7 +55,7 @@ module ForemanMaintain
 
     describe 'check' do
       let :command do
-        %w(health check)
+        %w[health check]
       end
 
       it 'runs the checks by label' do
@@ -80,13 +80,13 @@ module ForemanMaintain
       end
 
       it 'raises errors on empty arguments' do
-        assert_cmd <<-OUTPUT.strip_heredoc, %w(--label)
+        assert_cmd <<-OUTPUT.strip_heredoc, %w[--label]
           ERROR: option '--label': value not specified
 
           See: 'foreman-maintain health check --help'
         OUTPUT
 
-        assert_cmd <<-OUTPUT.strip_heredoc, %w(--tags)
+        assert_cmd <<-OUTPUT.strip_heredoc, %w[--tags]
           ERROR: option '--tags': value not specified
 
           See: 'foreman-maintain health check --help'
