@@ -5,9 +5,9 @@ module ForemanMaintain
   class Reporter
     class CLIReporter < Reporter
       DECISION_MAPPER = {
-        %w[y yes] => 'add_step',
-        %w[n next no] => 'skip_to_next',
-        %w[q quit] => 'ask_to_quit'
+        %w[y yes] => :yes,
+        %w[n next no] => :no,
+        %w[q quit] => :quit
       }.freeze
 
       # Simple spinner able to keep updating current line
@@ -117,7 +117,7 @@ module ForemanMaintain
         # the answer is confirmed by ENTER which will emit a new line
         @new_line_next_time = false
         @last_line = ''
-        @stdin.gets.chomp.downcase || ''
+        (@stdin.gets || '').chomp.downcase || ''
       end
 
       def new_line_if_needed
@@ -147,16 +147,25 @@ module ForemanMaintain
 
       def after_scenario_finishes(_scenario); end
 
-      def on_next_steps(runner, steps)
+      def on_next_steps(steps)
+        return if steps.empty?
         if steps.size > 1
-          runner.ask_to_quit if multiple_steps_selection(steps) == :quit
+          multiple_steps_decision(steps)
         else
-          decision = ask_decision("Continue with step [#{steps.first.description}]?")
-          runner.send(decision, steps.first)
+          single_step_decision(steps.first)
         end
       end
 
-      def multiple_steps_selection(steps)
+      def single_step_decision(step)
+        answer = ask_decision("Continue with step [#{step.description}]?")
+        if answer == :yes
+          step
+        else
+          answer
+        end
+      end
+
+      def multiple_steps_decision(steps)
         puts 'There are multiple steps to proceed:'
         steps.each_with_index do |step, index|
           puts "#{index + 1}) #{step.description}"
@@ -165,33 +174,44 @@ module ForemanMaintain
       end
 
       def ask_decision(message)
-        answer = ask("#{message}, [y(yes), n(no), q(quit)]")
-        filter_decision(answer.downcase.chomp) || ask_decision(message)
+        until_valid_decision do
+          filter_decision(ask("#{message}, [y(yes), n(no), q(quit)]"))
+        end
       ensure
         clear_line
       end
 
       def filter_decision(answer)
         decision = nil
-        DECISION_MAPPER.each do |options, decision_call|
-          decision = decision_call if options.include?(answer)
+        DECISION_MAPPER.each do |options, decision_label|
+          decision = decision_label if options.include?(answer)
         end
         decision
       end
 
       def ask_to_select(message, steps)
-        answer = ask("#{message}, [n(next), q(quit)]")
-        if %w[n no next].include?(answer)
-          return
-        elsif answer =~ /^\d+$/
-          steps[answer.to_i - 1]
-        elsif %w[q quit].include?(answer)
-          :quit
-        else
-          ask_to_select(message, steps)
+        until_valid_decision do
+          answer = ask("#{message}, [n(next), q(quit)]")
+          if answer =~ /^\d+$/ && (answer.to_i - 1) < steps.size
+            steps[answer.to_i - 1]
+          else
+            decision = filter_decision(answer)
+            if decision == :yes
+              steps.first
+            else
+              decision
+            end
+          end
         end
       ensure
         clear_line
+      end
+
+      # loop over the block until it returns some non-false value
+      def until_valid_decision
+        decision = nil
+        decision = yield until decision
+        decision
       end
 
       def clear_line
