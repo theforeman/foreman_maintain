@@ -28,9 +28,9 @@ class Support
       end
     end
 
-    def on_next_steps(runner, steps)
-      runner.add_step(steps.first)
+    def on_next_steps(steps)
       @log << [__method__.to_s].concat(stringified_args(*steps))
+      steps.first
     end
 
     def stringified_args(*args)

@@ -30,23 +30,21 @@ module ForemanMaintain
       @steps_to_run.unshift(step)
     end
 
-    def skip_to_next(step)
-      prepend_next_steps_if_any(step)
-    end
-
     private
 
     def ask_about_offered_steps(steps)
       if steps && !steps.empty?
         steps = steps.map(&:ensure_instance)
-        @reporter.on_next_steps(self, steps)
+        decision = @reporter.on_next_steps(steps)
+        case decision
+        when :quit
+          ask_to_quit
+        when Executable
+          add_step(decision)
+        else
+          raise "Unexpected decision #{decision}" unless decision == :no
+        end
       end
-    end
-
-    def prepend_next_steps_if_any(step)
-      @steps_to_run.unshift(*step.next_steps) if step.next_steps
-    rescue
-      nil
     end
   end
 end

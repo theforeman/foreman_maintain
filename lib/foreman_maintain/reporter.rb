@@ -16,7 +16,7 @@ module ForemanMaintain
 
     def after_scenario_finishes(_scenario); end
 
-    def on_next_steps_offer(_runner, _steps); end
+    def on_next_steps(_steps); end
 
     def with_spinner(_message, &_block)
       yield DummySpinner.new
