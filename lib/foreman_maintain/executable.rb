@@ -3,6 +3,7 @@ module ForemanMaintain
     extend Forwardable
     def_delegators :execution, :success?, :fail?, :output
     def_delegators :execution, :puts, :print, :with_spinner, :ask
+
     attr_accessor :associated_feature
 
     def associated_feature
@@ -12,15 +13,15 @@ module ForemanMaintain
       end
     end
 
-    # public method to be overriden
-    def run
-      raise NotImplementedError
-    end
-
     # next steps to be offered to the user after the step is run
     # It can be added for example from the assert method
     def next_steps
       @next_steps ||= []
+    end
+
+    # public method to be overriden
+    def run
+      raise NotImplementedError
     end
 
     def execution
@@ -43,7 +44,7 @@ module ForemanMaintain
 
     # internal method called by executor
     def __run__(execution)
-      @_execution = execution
+      setup_execution_state(execution)
       run
     end
 
@@ -51,6 +52,13 @@ module ForemanMaintain
     # even when the definitions provide us only class
     def ensure_instance
       self
+    end
+
+    # clean the execution-specific state to prepare for the next execution
+    # attempts
+    def setup_execution_state(execution)
+      @_execution = execution
+      @next_steps = []
     end
 
     class << self

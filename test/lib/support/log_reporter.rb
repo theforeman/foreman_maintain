@@ -1,10 +1,12 @@
 class Support
   class LogReporter < ForemanMaintain::Reporter
     attr_reader :log, :output
+    attr_accessor :planned_next_steps_answers
 
     def initialize
       @log = []
       @output = ''
+      @planned_next_steps_answers = []
     end
 
     def log_method(method, *args)
@@ -30,7 +32,17 @@ class Support
 
     def on_next_steps(steps)
       @log << [__method__.to_s].concat(stringified_args(*steps))
-      steps.first
+      next_answer = @planned_next_steps_answers.shift
+      case next_answer
+      when 'y'
+        steps.first
+      when 'n', nil
+        :quit
+      when /\d/
+        steps[next_answer.to_i - 1]
+      else
+        raise "Unexpected next answer #{next_answer}"
+      end
     end
 
     def stringified_args(*args)
