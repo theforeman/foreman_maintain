@@ -11,6 +11,10 @@ class Features::PresentService < ForemanMaintain::Feature
     # pretend we start the service
   end
 
+  def stop
+    # pretend we stop the service
+  end
+
   def restart
     # pretend we restart the service
   end

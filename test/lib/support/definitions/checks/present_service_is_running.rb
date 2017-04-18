@@ -2,7 +2,7 @@ class Checks::PresentServiceIsRunning < ForemanMaintain::Check
   metadata do
     label :present_service_is_running
     for_feature(:present_service)
-    tags :basic
+    tags :default
     description 'present service run check'
   end
 

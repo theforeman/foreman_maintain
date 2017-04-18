@@ -45,7 +45,7 @@ module ForemanMaintain
           if label
             { :label => label }
           else
-            { :tags => tags || [:basic] }
+            { :tags => tags || [:default] }
           end
         end
 

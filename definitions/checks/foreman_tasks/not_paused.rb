@@ -3,7 +3,7 @@ module Checks::ForemanTasks
     metadata do
       for_feature :foreman_tasks
       description 'check for paused tasks'
-      tags :basic
+      tags :default
     end
 
     def run

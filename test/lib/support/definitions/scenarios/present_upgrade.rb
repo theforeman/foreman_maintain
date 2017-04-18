@@ -9,7 +9,7 @@ class Scenarios::PresentUpgrade < ForemanMaintain::Scenario
   end
 
   def compose
-    add_steps(find_checks(:basic))
+    add_steps(find_checks(:default))
     add_step(procedure(Procedures::PresentServiceRestart))
   end
 end

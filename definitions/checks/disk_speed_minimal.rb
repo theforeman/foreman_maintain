@@ -2,7 +2,7 @@ class Checks::DiskSpeedMinimal < ForemanMaintain::Check
   metadata do
     label :disk_io
     description 'Check for recommended disk speed of pulp, mongodb, pgsql dir.'
-    tags :basic
+    tags :pre_upgrade
 
     confine do
       execute?('which hdparm') && execute?('which fio')

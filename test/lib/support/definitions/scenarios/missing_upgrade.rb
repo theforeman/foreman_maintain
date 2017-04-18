@@ -8,6 +8,6 @@ class Scenarios::MissingUpgrade < ForemanMaintain::Scenario
   end
 
   def compose
-    add_steps(find_checks(:basic))
+    add_steps(find_checks(:default))
   end
 end
