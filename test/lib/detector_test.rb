@@ -42,7 +42,7 @@ module ForemanMaintain
     end
 
     it 'allows to filter checks based on metadata and present features' do
-      checks = detector.available_checks(:basic)
+      checks = detector.available_checks(:default)
       assert_includes(checks, Checks::PresentServiceIsRunning,
                       'checks that should be found is missing')
       refute_includes(checks, Checks::MissingServiceIsRunning,

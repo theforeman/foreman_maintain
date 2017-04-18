@@ -85,7 +85,7 @@ class Checks::ForemanIsRuning < ForemanMaintain::Check
 
   description 'check foreman service is running'
 
-  tags :basic
+  tags :default
 
   def run
     # we are using methods of a feature.
@@ -157,7 +157,7 @@ class Scenarios::PreUpgradeCheckForeman_1_14 < ForemanMaintain::Scenario
   # Method to be called when composing the steps of the scenario
   def compose
     # we can search for the checks by metadata
-    steps.concat(find_checks(:basic))
+    steps.concat(find_checks(:default))
   end
 end
 ```

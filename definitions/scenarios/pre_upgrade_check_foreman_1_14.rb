@@ -8,6 +8,6 @@ class Scenarios::PreUpgradeCheckForeman_1_14 < ForemanMaintain::Scenario
   end
 
   def compose
-    add_steps(find_checks(:basic))
+    add_steps(find_checks(:default))
   end
 end

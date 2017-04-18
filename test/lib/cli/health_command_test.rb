@@ -36,7 +36,8 @@ module ForemanMaintain
       it 'lists the defined checks' do
         assert_cmd <<-OUTPUT.strip_heredoc
           [external-service-is-accessible] external_service_is_accessible         [pre-upgrade-check]
-          [present-service-is-running] present service run check                  [basic]
+          [present-service-is-running] present service run check                  [default]
+          [service-is-stopped] service not running check                          [default]
         OUTPUT
       end
     end
@@ -47,7 +48,7 @@ module ForemanMaintain
       end
       it 'lists the defined tags' do
         assert_cmd <<-OUTPUT.strip_heredoc
-          [basic]
+          [default]
           [pre-upgrade-check]
         OUTPUT
       end
@@ -67,7 +68,7 @@ module ForemanMaintain
 
       it 'runs the default checks' do
         Cli::HealthCommand.any_instance.expects(:run_scenario).with do |scenario|
-          scenario.filter_tags.must_equal [:basic]
+          scenario.filter_tags.must_equal [:default]
         end
         run_cmd
       end
