@@ -2,24 +2,35 @@ module ForemanMaintain
   # Class responsible for running the scenario
   class Runner
     require 'foreman_maintain/runner/execution'
-    def initialize(reporter, scenario)
+    def initialize(reporter, *scenarios)
       @reporter = reporter
-      @scenario = scenario
-      @executions = []
-      @steps_to_run = @scenario.steps.dup
+      @scenarios = scenarios
+      @scenarios_with_dependencies = scenarios_with_dependencies
       @quit = false
     end
 
+    def scenarios_with_dependencies
+      @scenarios.map do |scenario|
+        scenario.before_scenarios + [scenario]
+      end.flatten
+    end
+
     def run
-      @reporter.before_scenario_starts(@scenario)
+      scenarios_with_dependencies.each do |scenario|
+        run_scenario(scenario)
+      end
+    end
+
+    def run_scenario(scenario)
+      @steps_to_run = scenario.steps.dup
+      @reporter.before_scenario_starts(scenario)
       while !@quit && !@steps_to_run.empty?
         step = @steps_to_run.shift
         execution = Execution.new(step, @reporter)
         execution.run
-        @executions << execution
         ask_about_offered_steps(step)
       end
-      @reporter.after_scenario_finishes(@scenario)
+      @reporter.after_scenario_finishes(scenario)
     end
 
     def ask_to_quit(_step = nil)

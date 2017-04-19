@@ -18,6 +18,7 @@ module ForemanMaintain
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'
   require 'foreman_maintain/detector'
+  require 'foreman_maintain/param'
   require 'foreman_maintain/feature'
   require 'foreman_maintain/executable'
   require 'foreman_maintain/check'
