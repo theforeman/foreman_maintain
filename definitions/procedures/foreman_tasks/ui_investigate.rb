@@ -4,19 +4,14 @@ module Procedures::ForemanTasks
     metadata do
       for_feature :foreman_tasks
       description 'investigate the tasks via UI'
+      param :search_query
     end
 
     attr_reader :search_query
 
-    def initialize(options = {})
-      options = options.dup
-      @search_query = options.delete('search_query') || ''
-      raise ArgumentError, "Unexpected keys #{options.keys}" unless options.keys.empty?
-    end
-
     def run
       ask(<<-MESSAGE.strip_heredoc)
-        Go to https://#{hostname}/foreman_tasks/tasks?search=#{CGI.escape(search_query)}
+        Go to https://#{hostname}/foreman_tasks/tasks?search=#{CGI.escape(@search_query.to_s)}
         press ENTER after the paused tasks are resolved.
       MESSAGE
     end

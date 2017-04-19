@@ -3,10 +3,7 @@ class Checks::DiskSpeedMinimal < ForemanMaintain::Check
     label :disk_io
     description 'Check for recommended disk speed of pulp, mongodb, pgsql dir.'
     tags :pre_upgrade
-
-    confine do
-      execute?('which hdparm') && execute?('which fio')
-    end
+    preparation_steps { Procedures::InstallPackage.new(:packages => %w[hdparm fio]) }
   end
 
   EXPECTED_IO = 80

@@ -17,6 +17,8 @@ module ForemanMaintain
       end
 
       class ExecutionError < StandardError
+        attr_reader :command, :input, :output
+
         def initialize(command, input, output)
           @command = command
           @input = input
@@ -44,8 +46,12 @@ module ForemanMaintain
         Version.new(value)
       end
 
+      def install_packages(packages)
+        execute!("yum install -y #{packages.join(' ')}")
+      end
+
       def check_min_version(name, minimal_version)
-        current_version = rpm_version(name)
+        current_version = package_version(name)
         if current_version
           return current_version >= version(minimal_version)
         end
@@ -54,6 +60,11 @@ module ForemanMaintain
       def downstream_installation?
         execute?('rpm -q satellite') ||
           (execute('rpm -q foreman') =~ /6sat.noarch/)
+      end
+
+      def package_version(name)
+        # space for extension to support non-rpm distributions
+        rpm_version(name)
       end
 
       def rpm_version(name)
@@ -81,7 +92,10 @@ module ForemanMaintain
         if $CHILD_STATUS.success?
           output
         else
-          raise ExecutionError.new(command, input, output)
+          stdin, hidden_patterns = parse_execute_options(options)
+          raise ExecutionError.new(hide_strings(command, hidden_patterns),
+                                   hide_strings(stdin, hidden_patterns),
+                                   hide_strings(output, hidden_patterns))
         end
       end
 
