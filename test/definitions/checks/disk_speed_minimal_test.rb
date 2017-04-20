@@ -16,10 +16,16 @@ describe Checks::DiskSpeedMinimal do
   it 'executes successfully for disk with minimal speed' do
     check_disk_io.stubs(:check_only_single_device?).returns(true)
 
-    io_obj = mock(:read_speed => 90, :slow_disk_error_msg => 'Slow disk')
+    io_obj = MiniTest::Mock.new
+    io_obj.expect(:read_speed, 90)
+    io_obj.expect(:slow_disk_error_msg, 'Slow disk')
+    io_obj.expect(:name, '/dev/sda')
+
     ForemanMaintain::Utils::Disk::Device.stubs(:new).returns(io_obj)
 
-    refute check_disk_io.run
+    step = run_step(check_disk_io)
+    assert_equal(:success, step.status)
+    assert_empty(step.output)
   end
 
   it 'raise error if disk speed does not meet minimal requirement' do
@@ -27,12 +33,17 @@ describe Checks::DiskSpeedMinimal do
     err_msg = 'Slow disk'
 
     check_disk_io.stubs(:check_only_single_device?).returns(true)
-    io_obj = mock(:unit => 'MB/sec',
-                  :slow_disk_error_msg => err_msg)
-    io_obj.stubs(:read_speed).returns(slow_speed)
+
+    io_obj = MiniTest::Mock.new
+    2.times { io_obj.expect(:read_speed, slow_speed) }
+    io_obj.expect(:slow_disk_error_msg, err_msg)
+    io_obj.expect(:name, '/dev/sda')
+    io_obj.expect(:unit, 'MB/sec')
+
     ForemanMaintain::Utils::Disk::Device.stubs(:new).returns(io_obj)
 
-    exception = assert_raises(ForemanMaintain::Check::Fail) { check_disk_io.run }
-    assert_equal(err_msg, exception.message)
+    step = run_step(check_disk_io)
+    assert_equal(:fail, step.status)
+    assert_equal(err_msg, step.output)
   end
 end

@@ -33,6 +33,14 @@ module DefinitionsTestHelper
   alias run_check run_step
   alias run_procedure run_step
 
+  def mock_with_spinner(definition)
+    mock_spinner = MiniTest::Mock.new
+    mock_spinner.expect(:update, nil)
+
+    definition.stubs(:with_spinner).returns(mock_spinner)
+    mock_spinner
+  end
+
   def version(version_str)
     ForemanMaintain::Concerns::SystemHelpers::Version.new(version_str)
   end

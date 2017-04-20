@@ -2,6 +2,8 @@ module ForemanMaintain
   module Utils
     module Disk
       class Device
+        extend Forwardable
+
         include ForemanMaintain::Concerns::SystemHelpers
 
         EXTERNAL_MOUNT_TYPE = %w[fuseblk nfs].freeze
@@ -10,18 +12,12 @@ module ForemanMaintain
 
         attr_reader :io_device
 
+        def_delegators :io_device, :unit, :read_speed
+
         def initialize(dir)
           @dir = dir
           @name = find_device
           @io_device = init_io_device
-        end
-
-        def unit
-          @unit ||= io_device.unit
-        end
-
-        def read_speed
-          @read_speed ||= io_device.read_speed
         end
 
         def slow_disk_error_msg
