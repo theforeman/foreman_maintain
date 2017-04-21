@@ -15,18 +15,14 @@ module ForemanMaintain
     #                   the failure, will be offered to the user when running
     #                   in interactive mode
     #
-    # * +:warn* - issue warning instead of failure: this is less strict check,
-    #      that could be considered as non-critical for continuing with the scenario
+    # * +:error_type* - error type if wants to override failure
     def assert(condition, error_message, options = {})
-      options = options.validate_options!(:next_steps, :warn)
+      options = options.validate_options!(:next_steps, :error_type)
+      error_type = options.fetch(:error_type, Error::Fail)
       unless condition
         next_steps = Array(options.fetch(:next_steps, []))
         self.next_steps.concat(next_steps)
-        if options[:warn]
-          warn!(error_message)
-        else
-          fail!(error_message)
-        end
+        raise error_type, error_message
       end
     end
 
