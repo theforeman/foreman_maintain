@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'csv'
-require 'English'
 require 'shellwords'
 
 module ForemanMaintain
@@ -16,24 +15,6 @@ module ForemanMaintain
       class Version < Gem::Version
       end
 
-      class ExecutionError < StandardError
-        attr_reader :command, :input, :output
-
-        def initialize(command, input, output)
-          @command = command
-          @input = input
-          @output = output
-          super(generate_message)
-        end
-
-        def generate_message
-          ret = "Could not execute #{command}"
-          ret << "with input '#{input}'" if input
-          ret << ":\n #{output}" if output && !output.empty?
-          ret
-        end
-      end
-
       def hostname
         execute('hostname -f')
       end
@@ -47,7 +28,7 @@ module ForemanMaintain
       end
 
       def install_packages(packages)
-        execute!("yum install -y #{packages.join(' ')}")
+        execute!("yum install #{packages.join(' ')}", :interactive => true)
       end
 
       def check_min_version(name, minimal_version)
@@ -88,48 +69,25 @@ module ForemanMaintain
       end
 
       def execute!(command, options = {})
-        output = execute(command, options)
-        if $CHILD_STATUS.success?
-          output
+        command_runner = Utils::CommandRunner.new(logger, command, options)
+        execution.puts '' if command_runner.interactive? && respond_to?(:execution)
+        command_runner.run
+        if command_runner.success?
+          command_runner.output
         else
-          stdin, hidden_patterns = parse_execute_options(options)
-          raise ExecutionError.new(hide_strings(command, hidden_patterns),
-                                   hide_strings(stdin, hidden_patterns),
-                                   hide_strings(output, hidden_patterns))
+          raise command_runner.execution_error
         end
       end
 
       def execute(command, options = {})
-        stdin, hidden_patterns = parse_execute_options(options)
-        logger.debug(hide_strings("Running command #{command} with stdin #{stdin.inspect}",
-                                  hidden_patterns))
-        IO.popen("#{command} 2>&1", 'r+') do |f|
-          if stdin
-            f.puts(stdin)
-            f.close_write
-          end
-          output = f.read
-          logger.debug("output of the command:\n #{hide_strings(output, hidden_patterns)}")
-          output.strip
-        end
-      end
-
-      def parse_execute_options(options)
-        options = options.dup
-        stdin = options.delete(:stdin)
-        hidden_strings = Array(options.delete(:hidden_patterns))
-        raise ArgumentError, "Unexpected options: #{options.keys.inspect}" unless options.empty?
-        [stdin, hidden_strings]
+        command_runner = Utils::CommandRunner.new(logger, command, options)
+        execution.puts '' if command_runner.interactive? && respond_to?(:execution)
+        command_runner.run
+        command_runner.output
       end
 
       def shellescape(string)
         Shellwords.escape(string)
-      end
-
-      def hide_strings(string, hidden_patterns)
-        hidden_patterns.reduce(string) do |result, hidden_pattern|
-          result.gsub(hidden_pattern, '[FILTERED]')
-        end
       end
     end
   end
