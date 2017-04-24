@@ -29,6 +29,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     export_csv("SELECT * FROM foreman_tasks_tasks WHERE #{condition(state)}",
                'foreman_tasks_tasks.csv', state)
     yield('Backup Tasks [DONE]')
+    @backup_dir = nil
   end
 
   def running_tasks_count
@@ -84,7 +85,8 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   private
 
   def backup_dir(state)
-    "/var/lib/foreman/backup-tasks/#{state}/#{Time.now.strftime('%Y-%m-%d_%H-%M-%S')}"
+    @backup_dir ||=
+      "/var/lib/foreman/backup-tasks/#{state}/#{Time.now.strftime('%Y-%m-%d_%H-%M-%S')}"
   end
 
   def backup_table(table, state, fkey = 'execution_plan_uuid')
@@ -99,8 +101,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     dir = prepare_for_backup(state)
     filepath = "#{dir}/#{file_name}"
     execute("echo \"COPY (#{sql}) TO STDOUT WITH CSV;\" \
-      | su - postgres -c '/usr/bin/psql -d foreman' > #{filepath}")
-    execute("bzip2 -9 #{filepath}")
+      | su - postgres -c '/usr/bin/psql -d foreman' | bzip2 -9 > #{filepath}.bz2")
   end
 
   def old_tasks_condition(state = "'stopped', 'paused'")
