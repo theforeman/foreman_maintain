@@ -225,7 +225,7 @@ module ForemanMaintain
 
       def puts_status(status)
         label_offset = 10
-        padding = @max_length - @last_line.size - label_offset
+        padding = @max_length - @last_line.to_s.size - label_offset
         if padding < 0
           new_line_if_needed
           padding = @max_length - label_offset

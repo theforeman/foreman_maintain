@@ -165,7 +165,9 @@ module ForemanMaintain
           preparation_steps.each { |step| raise ArgumentError unless step.is_a?(Executable) }
           all_preparation_steps = []
           preparation_steps.each do |step|
-            all_preparation_steps.concat(step.preparation_steps(recursion_depth + 1, trace + [step]))
+            all_preparation_steps.concat(
+              step.preparation_steps(recursion_depth + 1, trace + [step])
+            )
             all_preparation_steps << step
           end
           @preparation_steps = all_preparation_steps
