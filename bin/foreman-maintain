@@ -4,8 +4,7 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'foreman_maintain'
 
-custom_config_file = File.join('./config', 'foreman_maintain.yml')
-ForemanMaintain.setup(:config_file => custom_config_file)
+ForemanMaintain.setup(:config_file => ForemanMaintain.config_file)
 
 require 'foreman_maintain/cli'
 ForemanMaintain::Cli::MainCommand.run

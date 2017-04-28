@@ -1,5 +1,7 @@
 module Checks::SyncPlans
   class WithEnabledStatus < ForemanMaintain::Check
+    include ForemanMaintain::Concerns::Hammer
+
     metadata do
       for_feature :sync_plans
       description 'check for enabled sync plans'

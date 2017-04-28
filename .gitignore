@@ -3,4 +3,5 @@
 Gemfile.lock
 log/
 config/foreman_maintain.yml
+config/foreman-maintain-hammer.yml
 data.yml

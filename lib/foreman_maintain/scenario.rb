@@ -38,7 +38,10 @@ module ForemanMaintain
     end
 
     class PreparationScenario < Scenario
-      metadata { manual_detection }
+      metadata do
+        manual_detection
+        description "preparation steps required to run the next scenarios"
+      end
 
       attr_reader :main_scenario
 

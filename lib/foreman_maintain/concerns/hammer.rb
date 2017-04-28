@@ -1,6 +1,12 @@
 module ForemanMaintain
   module Concerns
     module Hammer
+      def self.included(base)
+        base.metadata do
+          preparation_steps { Procedures::HammerSetup.new }
+        end
+      end
+
       # Run a hammer command, examples:
       # hammer('host list')
       def hammer(args)

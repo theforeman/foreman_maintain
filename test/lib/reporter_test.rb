@@ -24,7 +24,7 @@ module ForemanMaintain
       "Continue with step [#{description}]?, [y(yes), n(no), q(quit)]"
     end
 
-    it 'reports human-readmable info about the run' do
+    it 'reports human-readable info about the run' do
       reporter.before_scenario_starts(scenario)
 
       step = Checks::PresentServiceIsRunning.new
