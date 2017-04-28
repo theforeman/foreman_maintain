@@ -76,7 +76,7 @@ module ForemanMaintain
       def initialize(stdout = STDOUT, stdin = STDIN)
         @stdout = stdout
         @stdin = stdin
-        @hl = HighLine.new
+        @hl = HighLine.new(@stdin, @stdout)
         @max_length = 80
         @line_char = '-'
         @cell_char = '|'
@@ -112,12 +112,16 @@ module ForemanMaintain
         record_last_line(string)
       end
 
-      def ask(message)
-        print message
+      def ask(message, options = {})
+        new_line_if_needed
+        options.validate_options!(:password)
         # the answer is confirmed by ENTER which will emit a new line
         @new_line_next_time = false
         @last_line = ''
-        (@stdin.gets || '').chomp.downcase || ''
+        # add space at the end as otherwise highline would add new line there :/
+        message = "#{message} " unless message =~ /\s\Z/
+        answer = @hl.ask(message) { |q| q.echo = false if options[:password] }
+        answer.to_s.chomp.downcase if answer
       end
 
       def new_line_if_needed

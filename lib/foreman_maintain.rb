@@ -50,6 +50,10 @@ module ForemanMaintain
       init_logger
     end
 
+    def config_file
+      File.expand_path('../config/foreman_maintain.yml', File.dirname(__FILE__))
+    end
+
     def load_definitions
       # we need to add the load paths first, in case there is crossreferencing
       # between the definitions directories
