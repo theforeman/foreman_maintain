@@ -14,3 +14,6 @@
 # Mention directory to store whole backup data
 :backup_dir: '/var/lib/foreman-maintain'
 
+# Mention path where foreman-proxy certificates stored on filesystem
+# :foreman_proxy_cert_path: '/etc/foreman'
+
