@@ -37,6 +37,11 @@ module ForemanMaintain
       execution.output << message
     end
 
+    def warn!(message)
+      execution.status = :warning
+      execution.output << message
+    end
+
     # update reporter about the current message
     def say(message)
       execution.update(message)

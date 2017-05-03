@@ -36,6 +36,10 @@ module ForemanMaintain
         execute('hostname -f')
       end
 
+      def file_exists?(filename)
+        File.exist?(filename)
+      end
+
       def version(value)
         Version.new(value)
       end

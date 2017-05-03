@@ -238,7 +238,8 @@ module ForemanMaintain
         mapping = { :success => { :label => '[OK]', :color => :green },
                     :fail => { :label => '[FAIL]', :color => :red },
                     :running => { :label => '[RUNNING]', :color => :blue },
-                    :skipped => { :label => '[SKIPPED]', :color => :yellow } }
+                    :skipped => { :label => '[SKIPPED]', :color => :yellow },
+                    :warning => { :label => '[WARNING]', :color => :yellow } }
         properties = mapping[status]
         @hl.color(properties[:label], properties[:color], :bold)
       end

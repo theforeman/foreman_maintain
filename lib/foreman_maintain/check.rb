@@ -7,9 +7,6 @@ module ForemanMaintain
 
     attr_accessor :associated_feature
 
-    class Fail < StandardError
-    end
-
     # run condition and mark the check as failed when not passing
     #
     # ==== Options
@@ -25,7 +22,7 @@ module ForemanMaintain
       unless condition
         next_steps = Array(options.fetch(:next_steps, []))
         self.next_steps.concat(next_steps)
-        raise Fail, error_message
+        raise Error::Fail, error_message
       end
     end
 
@@ -39,6 +36,8 @@ module ForemanMaintain
       super
     rescue Error::Fail => e
       fail!(e.message)
+    rescue Error::Warn => e
+      warn!(e.message)
     end
   end
 end
