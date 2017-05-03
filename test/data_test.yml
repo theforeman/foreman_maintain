@@ -1,0 +1,6 @@
+---
+:upgrade:
+  :sync_plans:
+    :enabled: []
+    :disabled:
+    - 1

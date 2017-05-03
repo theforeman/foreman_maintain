@@ -39,8 +39,8 @@ module ForemanMaintain
         @status == :fail
       end
 
-      def skipped?
-        @status == :skipped
+      def warning?
+        @status == :warning
       end
 
       def run
