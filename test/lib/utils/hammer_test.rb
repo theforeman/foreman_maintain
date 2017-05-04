@@ -7,7 +7,9 @@ module ForemanMaintain
     end
 
     it 'executes hammer in non-interactive mode and english locale' do
-      subject.expects(:execute).with(%{LANG=en_US.utf-8 hammer -c "#{subject.config_file}" --interactive=no task resume})
+      subject.expects(:execute).with(
+        %(LANG=en_US.utf-8 hammer -c "#{subject.config_file}" --interactive=no task resume)
+      )
       subject.run_command('task resume')
     end
 

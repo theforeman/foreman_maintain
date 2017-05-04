@@ -85,8 +85,8 @@ module ForemanMaintain
       end
 
       def before_scenario_starts(scenario)
-        puts "Running #{scenario.description || scenario.class}"
-        hline
+        puts "\nRunning #{scenario.description || scenario.class}"
+        hline('=')
       end
 
       def before_execution_starts(execution)
@@ -248,8 +248,8 @@ module ForemanMaintain
         @hl.color(properties[:label], properties[:color], :bold)
       end
 
-      def hline
-        puts @line_char * @max_length
+      def hline(line_char = @line_char)
+        puts line_char * @max_length
       end
 
       def record_last_line(string)
