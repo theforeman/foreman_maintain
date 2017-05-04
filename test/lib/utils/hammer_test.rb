@@ -25,6 +25,7 @@ module ForemanMaintain
 
     it 'provides the info about the setting of hammer via `ready?` method' do
       subject.expects(:execute).returns('Invalid username or password')
+      subject.stubs(:configured?).returns(true)
       refute subject.ready?, 'hammer#ready? expected non-true'
     end
   end

@@ -30,7 +30,7 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
       if hammer.setup_from_answers(username, password)
         return true
       else
-        puts 'Invalid credentials '
+        puts 'Invalid credentials'
       end
     end
   end

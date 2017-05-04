@@ -26,8 +26,20 @@ module DefinitionsTestHelper
     end
   end
 
+  def log_reporter
+    @log_reporter
+  end
+
+  def reset_reporter
+    @log_reporter = Support::LogReporter.new
+  end
+
   def run_step(step)
-    ForemanMaintain::Runner::Execution.new(step, Support::LogReporter.new).tap(&:run)
+    ForemanMaintain::Runner::Execution.new(step, @log_reporter).tap(&:run)
+  end
+
+  def assert_stdout(expected_output)
+    assert_equal expected_output.strip, log_reporter.output.strip
   end
 
   alias run_check run_step
@@ -45,12 +57,12 @@ module DefinitionsTestHelper
     ForemanMaintain::Concerns::SystemHelpers::Version.new(version_str)
   end
 
-  def self.included(base)
-    base.instance_eval do
-      after do
-        detector.refresh
-      end
-    end
+  def setup
+    reset_reporter
+  end
+
+  def teardown
+    detector.refresh
   end
 
   # given the current feature assumptions (see assume_feature_present and
@@ -71,4 +83,7 @@ module DefinitionsTestHelper
   end
 end
 
-ForemanMaintain.setup
+TEST_DIR = File.dirname(__FILE__)
+ForemanMaintain.setup(
+  :config_file => File.join(TEST_DIR, 'config/foreman_maintain.yml.test')
+)

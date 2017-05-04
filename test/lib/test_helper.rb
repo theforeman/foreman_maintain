@@ -22,5 +22,5 @@ end
 TEST_DIR = File.dirname(__FILE__)
 
 ForemanMaintain.setup(
-  :config_file => File.join(TEST_DIR, '../../', 'config/foreman_maintain.yml.test')
+  :config_file => File.join(TEST_DIR, 'config/foreman_maintain.yml.test')
 )

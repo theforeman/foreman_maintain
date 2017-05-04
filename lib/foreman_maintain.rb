@@ -43,15 +43,13 @@ module ForemanMaintain
 
     def setup(options = {})
       # using a queue, we can log the messages which are generated before initializing logger
-      @pre_setup_log_messages = []
-      custom_configs = load_custom_configs(options[:config_file])
-      self.config = Config.new(custom_configs)
+      self.config = Config.new(options)
       load_definitions
       init_logger
     end
 
     def config_file
-      File.expand_path('../config/foreman_maintain.yml', File.dirname(__FILE__))
+      config.config_file
     end
 
     def load_definitions
@@ -96,22 +94,9 @@ module ForemanMaintain
     end
 
     def pickup_log_messages
-      return if @pre_setup_log_messages.empty?
-      @pre_setup_log_messages.each { |msg| logger.info msg }
-      @pre_setup_log_messages.clear
-    end
-
-    def load_custom_configs(file_path)
-      file_path ||= ''
-      custom_configs = {}
-      if File.exist?(file_path)
-        custom_configs = YAML.load(File.open(file_path)) || {}
-      else
-        @pre_setup_log_messages << "Config file #{file_path} not found, using default configuration"
-      end
-      custom_configs
-    rescue => e
-      raise "Couldn't load configuration file. Error: #{e.message}"
+      return if config.pre_setup_log_messages.empty?
+      config.pre_setup_log_messages.each { |msg| logger.info msg }
+      config.pre_setup_log_messages.clear
     end
 
     def storage(label)
