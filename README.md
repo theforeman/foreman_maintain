@@ -55,10 +55,12 @@ definitions.
 
 ```ruby
 class Features::Foreman < ForemanMaintain::Feature
-  label :foreman
+  metadata do
+    label :foreman
 
-  confine do
-    check_min_version('foreman', '1.7')
+    confine do
+      check_min_version('foreman', '1.7')
+    end
   end
 
   # helper method that can be used in other definitions like this:
@@ -81,11 +83,11 @@ Checks define assertions to determine status of the system.
 
 ```ruby
 class Checks::ForemanIsRuning < ForemanMaintain::Check
-  for_feature :foreman
-
-  description 'check foreman service is running'
-
-  tags :default
+  metadata do
+    for_feature :foreman
+    description 'check foreman service is running'
+    tags :default
+  end
 
   def run
     # we are using methods of a feature.
@@ -128,15 +130,59 @@ It can be part of a scenario or be linked from a check as a remediation step.
 
 ```ruby
 class Procedures::ForemanStart < ForemanMaintain::Procedure
-  for_feature :foreman
-
-  description 'start foreman service'
+  metadata do
+    for_feature :foreman
+    description 'start foreman service'
+  end
 
   def run
     feature(:foreman).start
   end
 end
 ```
+
+### Preparation steps
+
+Some steps can require some additional steps to be performed before we
+can proceed. A typical example is installing additional dependencies.
+A preparation step is usually a procedure.
+
+```ruby
+class Procedures::InstallPackage < ForemanMaintain::Procedure
+  metadata do
+    # definitions of parameters of the procedure
+    param :packages, 'List of packages to install', :array => true
+  end
+
+  def run
+    install_packages(@packages)
+  end
+
+  # if false, the step will be considered as done: it will not be executed
+  def necessary?
+    @packages.any? { |package| package_version(package).nil? }
+  end
+
+  def description
+    "Install package(s) #{@packages.join(', ')}"
+  end
+end
+
+class Checks::DiskIO < ForemanMaintain::Check
+  metadata do
+    description 'check foreman service is running'
+    preparation_steps { Procedures::InstallPackage.new(:packages => %w[hdparm]) }
+  end
+
+  def run
+    execute!('hdparam ...')
+  end
+end
+```
+
+When running a scenario, all the preparation steps in that scenario
+will be collected, and run if necessary (the `necessary?` method
+returning `true`). The preparation steps will be run as separate scenario.
 
 ### Scenarios
 
@@ -146,13 +192,13 @@ achieve some complex maintenance operation in the system (such as upgrade).
 
 ```ruby
 class Scenarios::PreUpgradeCheckForeman_1_14 < ForemanMaintain::Scenario
-  description 'checks before upgrading to Foreman 1.14'
-
-  confine do
-    feature(:upstream)
+  metadata do
+    description 'checks before upgrading to Foreman 1.14'
+    confine do
+      feature(:upstream)
+    end
+    tags :pre_upgrade_check
   end
-
-  tags :pre_upgrade_check
 
   # Method to be called when composing the steps of the scenario
   def compose
