@@ -1,13 +1,7 @@
 module Procedures::ForemanTasks
   class Delete < ForemanMaintain::Procedure
-    def initialize(options = {})
-      @state = options[:state]
-
-      self.class.instance_exec(@state) do |state|
-        metadata do
-          description "Delete #{state} tasks"
-        end
-      end
+    metadata do
+      param :state, 'In what state should the task be deleted'
     end
 
     def run
@@ -30,6 +24,10 @@ module Procedures::ForemanTasks
           "Deleted #{@state} stopped and paused tasks: #{count_tasks_before - count_tasks_later}"
         )
       end
+    end
+
+    def description
+      "Delete #{@state} tasks"
     end
   end
 end
