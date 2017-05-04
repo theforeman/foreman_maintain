@@ -20,6 +20,10 @@ module ForemanMaintain
       self.class.eql?(other.class) && options.eql?(other.options)
     end
 
+    def hash
+      [self.class, options].hash
+    end
+
     # public method to be overriden to perform after-initialization steps
     def after_initialize; end
 

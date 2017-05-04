@@ -4,6 +4,7 @@ class Checks::PresentServiceIsRunning < ForemanMaintain::Check
     for_feature(:present_service)
     tags :default
     description 'present service run check'
+    preparation_steps { Procedures::Setup.new }
   end
 
   def run

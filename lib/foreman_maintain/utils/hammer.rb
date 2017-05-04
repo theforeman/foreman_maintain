@@ -18,8 +18,8 @@ module ForemanMaintain
 
       # tries to setup hammer based on default configuration and returns true
       # if it succeeds
+      # rubocop:disable Metrics/AbcSize
       def setup_from_default
-        default_config_file = File.expand_path('~/.hammer/cli.modules.d/foreman.yml')
         return unless File.exist?(default_config_file)
         hammer_config = YAML.load_file(default_config_file)
         foreman_config = hammer_config.fetch(:foreman, {})
@@ -60,6 +60,10 @@ module ForemanMaintain
       end
 
       private
+
+      def default_config_file
+        @default_config_file ||= File.expand_path('~/.hammer/cli.modules.d/foreman.yml')
+      end
 
       def command_base
         %(LANG=en_US.utf-8 hammer -c "#{config_file}" --interactive=no)

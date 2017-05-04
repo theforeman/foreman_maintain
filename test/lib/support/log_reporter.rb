@@ -1,12 +1,13 @@
 class Support
   class LogReporter < ForemanMaintain::Reporter
-    attr_reader :log, :output
+    attr_reader :log, :output, :input
     attr_accessor :planned_next_steps_answers
 
     def initialize
       @log = []
       @output = ''
       @planned_next_steps_answers = []
+      @input = []
     end
 
     def log_method(method, *args)
@@ -21,11 +22,14 @@ class Support
     end
 
     %w[print puts ask].each do |method|
-      define_method(method) do |message|
-        log_method(method, message)
+      define_method(method) do |message, *args|
+        log_method(method, [message] + args)
         @output << message
         if method != 'print'
           @output << "\n"
+        end
+        if method == 'ask'
+          @input.shift || ''
         end
       end
     end
