@@ -42,8 +42,9 @@ module ForemanMaintain
       reporter.after_scenario_finishes(scenario)
 
       assert_equal <<-STR.strip_heredoc, captured_out
+
         Running present_service upgrade scenario
-        --------------------------------------------------------------------------------
+        ================================================================================
         present service run check:                                            [OK]
         --------------------------------------------------------------------------------
         present service run check:                                            [FAIL]

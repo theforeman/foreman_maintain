@@ -25,7 +25,7 @@ module ForemanMaintain
         foreman_config = hammer_config.fetch(:foreman, {})
         if !foreman_config[:username].to_s.empty? && !foreman_config[:password].to_s.empty?
           save_config(hammer_config)
-          ready?
+          ready? && default_config_file
         end
       end
 
