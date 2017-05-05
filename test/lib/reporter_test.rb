@@ -73,6 +73,31 @@ module ForemanMaintain
       assert_equal :quit, reporter.on_next_steps([start_step, restart_step])
     end
 
+    describe 'assumeyes' do
+      let(:reporter) do
+        Reporter::CLIReporter.new(capture, fake_stdin, :assumeyes => true)
+      end
+
+      it 'answers yes when assumeyes is active' do
+        start_step = Procedures::PresentServiceStart.new
+        reporter.on_next_steps([start_step])
+        assert_match 'start the present service', captured_out(false).strip
+        assert_match 'assuming yes', captured_out(false).strip
+      end
+
+      it 'chooses the first option when multiple options are present' do
+        start_step = Procedures::PresentServiceStart.new
+        restart_step = Procedures::PresentServiceRestart.new
+        assert_equal start_step, reporter.on_next_steps([start_step, restart_step])
+        assert_equal <<-STR.strip_heredoc.strip, captured_out(false).strip
+        There are multiple steps to proceed:
+        1) start the present service
+        2) restart present service
+        (assuming first option)
+        STR
+      end
+    end
+
     describe 'skip_to_next' do
       it 'option N/n is to skip the current prompted step' do
         restart_step = Procedures::PresentServiceRestart.new

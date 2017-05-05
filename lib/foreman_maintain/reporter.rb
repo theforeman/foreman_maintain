@@ -27,5 +27,9 @@ module ForemanMaintain
     def puts(_message); end
 
     def ask(_message); end
+
+    def assumeyes?
+      false
+    end
   end
 end

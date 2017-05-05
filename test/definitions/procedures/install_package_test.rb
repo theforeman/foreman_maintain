@@ -15,7 +15,7 @@ describe Procedures::InstallPackage do
   end
 
   it 'installs the specified packages' do
-    subject.expects(:install_packages).with(['cheetah'])
+    subject.expects(:install_packages).with(['cheetah'], :assumeyes => false)
     result = run_procedure(subject)
     assert result.success?, 'the procedure was expected to succeed'
   end

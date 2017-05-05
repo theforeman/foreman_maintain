@@ -2,11 +2,17 @@ module ForemanMaintain
   # Class responsible for running the scenario
   class Runner
     require 'foreman_maintain/runner/execution'
-    def initialize(reporter, *scenarios)
+    def initialize(reporter, scenarios, options = {})
+      options.validate_options!(:assumeyes)
+      @assumeyes = options.fetch(:assumeyes, false)
       @reporter = reporter
-      @scenarios = scenarios
+      @scenarios = Array(scenarios)
       @scenarios_with_dependencies = scenarios_with_dependencies
       @quit = false
+    end
+
+    def assumeyes?
+      @assumeyes
     end
 
     def scenarios_with_dependencies
@@ -26,6 +32,7 @@ module ForemanMaintain
       @reporter.before_scenario_starts(scenario)
       while !@quit && !@steps_to_run.empty?
         step = @steps_to_run.shift
+        @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
         execution = Execution.new(step, @reporter)
         execution.run
         ask_about_offered_steps(step)
@@ -47,8 +54,14 @@ module ForemanMaintain
 
     private
 
+    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
     def ask_about_offered_steps(step)
+      if assumeyes? && rerun_check?(step)
+        @reporter.puts 'Check still failing after attempt to fix. Skipping'
+        return :no
+      end
       if step.next_steps && !step.next_steps.empty?
+        @last_decision_step = step
         steps = step.next_steps.map(&:ensure_instance)
         decision = @reporter.on_next_steps(steps)
         case decision
@@ -60,6 +73,10 @@ module ForemanMaintain
           add_steps(*chosen_steps)
         end
       end
+    end
+
+    def rerun_check?(step)
+      @last_decision_step == step
     end
   end
 end
