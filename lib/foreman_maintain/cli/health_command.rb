@@ -30,6 +30,7 @@ module ForemanMaintain
       subcommand 'check', 'Run the health checks against the system' do
         label_option
         tags_option
+        interactive_option
 
         def execute
           scenario = Scenario::FilteredScenario.new(filter)

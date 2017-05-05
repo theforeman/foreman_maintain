@@ -27,8 +27,11 @@ module ForemanMaintain
         Version.new(value)
       end
 
-      def install_packages(packages)
-        execute!("yum install #{packages.join(' ')}", :interactive => true)
+      def install_packages(packages, options = {})
+        options.validate_options!(:assumeyes)
+        yum_options = []
+        yum_options << '-y' if options[:assumeyes]
+        execute!("yum #{yum_options.join(' ')} install #{packages.join(' ')}", :interactive => true)
       end
 
       def check_min_version(name, minimal_version)

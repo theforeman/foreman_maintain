@@ -20,11 +20,13 @@ module ForemanMaintain
       end
 
       def reporter
-        @reporter ||= ForemanMaintain::Reporter::CLIReporter.new
+        @reporter ||= ForemanMaintain::Reporter::CLIReporter.new(STDOUT,
+                                                                 STDIN,
+                                                                 :assumeyes => assumeyes?)
       end
 
       def run_scenario(scenario)
-        ForemanMaintain::Runner.new(reporter, scenario).run
+        ForemanMaintain::Runner.new(reporter, scenario, :assumeyes => assumeyes?).run
       end
 
       def available_checks
@@ -53,6 +55,11 @@ module ForemanMaintain
           raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
           tags.split(',').map(&:strip).map { |tag| underscorize(tag).to_sym }
         end
+      end
+
+      def self.interactive_option
+        option ['-y', '--assumeyes'], :flag,
+               'Automatically answer yes for all questions'
       end
     end
   end

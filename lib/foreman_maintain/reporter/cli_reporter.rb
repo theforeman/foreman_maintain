@@ -73,9 +73,11 @@ module ForemanMaintain
         end
       end
 
-      def initialize(stdout = STDOUT, stdin = STDIN)
+      def initialize(stdout = STDOUT, stdin = STDIN, options = {})
         @stdout = stdout
         @stdin = stdin
+        options.validate_options!(:assumeyes)
+        @assumeyes = options.fetch(:assumeyes, false)
         @hl = HighLine.new(@stdin, @stdout)
         @max_length = 80
         @line_char = '-'
@@ -160,6 +162,16 @@ module ForemanMaintain
         end
       end
 
+      def clear_line
+        print "\r" + ' ' * @max_length + "\r"
+      end
+
+      private
+
+      def assumeyes?
+        @assumeyes
+      end
+
       def single_step_decision(step)
         answer = ask_decision("Continue with step [#{step.description}]?")
         if answer == :yes
@@ -178,6 +190,10 @@ module ForemanMaintain
       end
 
       def ask_decision(message)
+        if assumeyes?
+          print("#{message} (assuming yes)")
+          return :yes
+        end
         until_valid_decision do
           filter_decision(ask("#{message}, [y(yes), n(no), q(quit)]"))
         end
@@ -193,7 +209,12 @@ module ForemanMaintain
         decision
       end
 
+      # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
       def ask_to_select(message, steps)
+        if assumeyes?
+          puts('(assuming first option)')
+          return steps.first
+        end
         until_valid_decision do
           answer = ask("#{message}, [n(next), q(quit)]")
           if answer =~ /^\d+$/ && (answer.to_i - 1) < steps.size
@@ -216,10 +237,6 @@ module ForemanMaintain
         decision = nil
         decision = yield until decision
         decision
-      end
-
-      def clear_line
-        print "\r" + ' ' * @max_length + "\r"
       end
 
       def execution_info(execution, text)

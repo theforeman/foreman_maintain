@@ -4,7 +4,7 @@ class Procedures::InstallPackage < ForemanMaintain::Procedure
   end
 
   def run
-    install_packages(@packages)
+    install_packages(@packages, :assumeyes => assumeyes?)
   end
 
   def necessary?

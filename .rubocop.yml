@@ -35,6 +35,7 @@ Metrics/BlockLength:
   Exclude:
     - 'test/**/*'
     - 'lib/foreman_maintain/cli.rb'
+    - 'lib/foreman_maintain/cli/**/*'
 
 Metrics/ClassLength:
   Enabled: false

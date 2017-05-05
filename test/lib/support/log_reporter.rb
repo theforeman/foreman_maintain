@@ -3,21 +3,23 @@ class Support
     attr_reader :log, :output, :input
     attr_accessor :planned_next_steps_answers
 
-    def initialize
+    def initialize(options = {})
+      options.validate_options!(:assumeyes)
       @log = []
       @output = ''
       @planned_next_steps_answers = []
       @input = []
+      @assumeyes = options.fetch(:assumeyes, false)
     end
 
-    def log_method(method, *args)
+    def log_method(method, args)
       @log << [method].concat(stringified_args(*args))
     end
 
     %w[before_scenario_starts before_execution_starts on_execution_update
        after_execution_finishes after_scenario_finishes].each do |method|
       define_method(method) do |*args|
-        log_method(method, *args)
+        log_method(method, args)
       end
     end
 
@@ -36,12 +38,12 @@ class Support
 
     def on_next_steps(steps)
       @log << [__method__.to_s].concat(stringified_args(*steps))
-      next_answer = @planned_next_steps_answers.shift
+      next_answer = @assumeyes ? 'y' : @planned_next_steps_answers.shift
       case next_answer
       when 'y'
         steps.first
       when 'n', nil
-        :quit
+        :no
       when /\d/
         steps[next_answer.to_i - 1]
       else
