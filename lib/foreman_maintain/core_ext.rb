@@ -2,7 +2,11 @@ module ForemanMaintain
   module CoreExt
     module StripHeredoc
       def strip_heredoc
-        indent = scan(/^[ \t]*(?=\S)/).min.size || 0
+        indent = 0
+        indented_lines = scan(/^[ \t]+(?=\S)/)
+        unless indented_lines.empty?
+          indent = indented_lines.min.size
+        end
         gsub(/^[ \t]{#{indent}}/, '')
       end
     end

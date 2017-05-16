@@ -1,7 +1,7 @@
 require 'test_helper'
 
 module Scenarios
-  describe PreUpgradeCheckSatellite_6_2 do
+  describe Satellite_6_2::PreUpgradeCheck do
     include DefinitionsTestHelper
 
     before do

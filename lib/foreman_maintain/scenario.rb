@@ -71,6 +71,22 @@ module ForemanMaintain
       end.uniq
     end
 
+    def steps_with_error
+      steps.find_all(&:fail?)
+    end
+
+    def steps_with_warning
+      steps.find_all(&:warning?)
+    end
+
+    def passed?
+      (steps_with_error + steps_with_warning).empty?
+    end
+
+    def failed?
+      !passed?
+    end
+
     # scenarios to be run before this scenario
     def before_scenarios
       scenarios = []

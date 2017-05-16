@@ -2,7 +2,7 @@ module ForemanMaintain
   class Executable
     extend Forwardable
     attr_reader :options
-    def_delegators :execution, :success?, :fail?, :output, :assumeyes?
+    def_delegators :execution, :success?, :fail?, :warning?, :output, :assumeyes?
     def_delegators :execution, :puts, :print, :with_spinner, :ask
 
     attr_accessor :associated_feature
@@ -56,6 +56,32 @@ module ForemanMaintain
       @next_steps ||= []
     end
 
+    # make the step to fail: the failure is considered significant and
+    # the next steps should not continue. The specific behaviour depends
+    # on the scenario it's being used on. In check-sets scenario, the next
+    # steps of the same scenario might continue, while the following scenarios
+    # would be aborted.
+    def fail!(message)
+      raise Error::Fail, message
+    end
+
+    # make the step a warning: this doesn't indicate the whole scenario should
+    # not continue, but the user will be warning about proceeding
+    def warn!(message)
+      raise Error::Warn, message
+    end
+
+    # rubocop:disable Style/AccessorMethodName
+    def set_fail(message)
+      execution.status = :fail
+      execution.output << message
+    end
+
+    def set_warn(message)
+      execution.status = :warning
+      execution.output << message
+    end
+
     # public method to be overriden
     def run
       raise NotImplementedError
@@ -74,16 +100,6 @@ module ForemanMaintain
     # procedure would not be necessary when the package is already installed.
     def necessary?
       true
-    end
-
-    def fail!(message)
-      execution.status = :fail
-      execution.output << message
-    end
-
-    def warn!(message)
-      execution.status = :warning
-      execution.output << message
     end
 
     # update reporter about the current message

@@ -230,6 +230,10 @@ module ForemanMaintain
         self.class.label
       end
 
+      def label_dashed
+        label.to_s.tr('_', '-')
+      end
+
       def description
         self.class.description
       end

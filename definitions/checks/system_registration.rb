@@ -11,7 +11,7 @@ class Checks::SystemRegistration < ForemanMaintain::Check
 
   def run
     if system_is_self_registerd?
-      raise ForemanMaintain::Error::Warn, 'System is self registered'
+      warn! 'System is self registered'
     else
       puts 'System is not self registered'
     end

@@ -28,6 +28,10 @@ module ForemanMaintain
         end
       end
 
+      def find_scenario(tag)
+        available_target_versions(tag)[target_version]
+      end
+
       def print_versions(target_versions)
         target_versions.keys.sort.each { |version| puts version }
       end
@@ -38,7 +42,7 @@ module ForemanMaintain
         end
       end
 
-      subcommand 'check', 'Run pre-upgrade checks for upgradeing to specified version' do
+      subcommand 'check', 'Run pre-upgrade checks for upgrading to specified version' do
         parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
         interactive_option
 
@@ -51,6 +55,26 @@ module ForemanMaintain
             puts "The specified version #{target_version} is unavailable"
             puts 'Possible target versions are:'
             print_versions(versions_to_scenarios)
+          end
+        end
+      end
+
+      subcommand 'run', 'Run full upgrade to a specified version' do
+        parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
+        interactive_option
+
+        def execute
+          scenarios = [find_scenario(:pre_upgrade_check),
+                       find_scenario(:pre_migrations),
+                       find_scenario(:migrations),
+                       find_scenario(:post_migrations),
+                       find_scenario(:post_upgrade_check)].compact
+          if scenarios.empty?
+            puts "The specified version #{target_version} is unavailable"
+            puts 'Possible target versions are:'
+            print_versions(available_target_versions(:pre_upgrade_check))
+          else
+            run_scenario(scenarios)
           end
         end
       end

@@ -11,6 +11,10 @@ class Features::Downstream < ForemanMaintain::Feature
     @current_version ||= rpm_version('satellite') || version_from_source
   end
 
+  def current_minor_version
+    current_version.to_s[/^\d+\.\d+/]
+  end
+
   private
 
   def version_from_source

@@ -22,15 +22,18 @@ module ForemanMaintain
     end
 
     def run
+      @last_scenario = nil
       scenarios_with_dependencies.each do |scenario|
+        next if scenario.steps.empty?
         run_scenario(scenario)
+        @last_scenario = scenario
       end
     end
 
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def run_scenario(scenario)
-      @steps_to_run = scenario.steps.dup
       @steps_to_run = ForemanMaintain::DependencyGraph.sort(@steps_to_run)
-      @reporter.before_scenario_starts(scenario)
+      return unless confirm_scenario(scenario)
       while !@quit && !@steps_to_run.empty?
         step = @steps_to_run.shift
         @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
@@ -39,6 +42,18 @@ module ForemanMaintain
         ask_about_offered_steps(step)
       end
       @reporter.after_scenario_finishes(scenario)
+    end
+
+    def confirm_scenario(scenario)
+      decision = @reporter.before_scenario_starts(scenario, @last_scenario)
+      case decision
+      when :yes
+        true
+      when :quit, :no
+        false
+      else
+        raise "Unexpected decision #{decision}"
+      end
     end
 
     def ask_to_quit(_step = nil)
@@ -55,7 +70,7 @@ module ForemanMaintain
 
     private
 
-    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity
     def ask_about_offered_steps(step)
       if assumeyes? && rerun_check?(step)
         @reporter.puts 'Check still failing after attempt to fix. Skipping'

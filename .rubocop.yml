@@ -37,6 +37,9 @@ Metrics/BlockLength:
     - 'lib/foreman_maintain/cli.rb'
     - 'lib/foreman_maintain/cli/**/*'
 
+Metrics/ModuleLength:
+  Enabled: false
+
 Metrics/ClassLength:
   Enabled: false
 

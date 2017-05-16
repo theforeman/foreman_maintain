@@ -81,5 +81,32 @@ module ForemanMaintain
         'unexpected order of execution'
       )
     end
+
+    describe 'scenario states' do
+      let(:success_scenario) do
+        Scenarios::Dummy::Success.new
+      end
+
+      let(:warn_scenario) do
+        Scenarios::Dummy::Warn.new
+      end
+
+      let(:fail_scenario) do
+        Scenarios::Dummy::Fail.new
+      end
+
+      let(:warn_and_fail_scenario) do
+        Scenarios::Dummy::WarnAndFail.new
+      end
+
+      it 'does not continue when the reporter does not confirm the scenario' do
+        runner = Runner.new(reporter, [success_scenario])
+        reporter.confirm_scenario = :no
+        runner.run
+        assert_equal([
+                       ['before_scenario_starts', 'Scenarios::Dummy::Success']
+                     ], reporter.log, 'unexpected order of execution')
+      end
+    end
   end
 end

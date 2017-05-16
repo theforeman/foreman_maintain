@@ -19,14 +19,20 @@ module ForemanMaintain
         HighLine.color("[#{dashize(string)}]", :cyan)
       end
 
+      def print_check_info(check)
+        desc = "#{label_string(check.label)} #{check.description}".ljust(80)
+        tags = check.tags.map { |t| tag_string(t) }.join(' ').to_s
+        puts "#{desc} #{tags}".strip
+      end
+
       def reporter
         @reporter ||= ForemanMaintain::Reporter::CLIReporter.new(STDOUT,
                                                                  STDIN,
                                                                  :assumeyes => assumeyes?)
       end
 
-      def run_scenario(scenario)
-        ForemanMaintain::Runner.new(reporter, scenario, :assumeyes => assumeyes?).run
+      def run_scenario(scenarios)
+        ForemanMaintain::Runner.new(reporter, scenarios, :assumeyes => assumeyes?).run
       end
 
       def available_checks

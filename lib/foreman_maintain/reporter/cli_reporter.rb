@@ -4,12 +4,6 @@ require 'highline'
 module ForemanMaintain
   class Reporter
     class CLIReporter < Reporter
-      DECISION_MAPPER = {
-        %w[y yes] => :yes,
-        %w[n next no] => :no,
-        %w[q quit] => :quit
-      }.freeze
-
       # Simple spinner able to keep updating current line
       class Spinner
         def initialize(reporter, interval = 0.1)
@@ -86,9 +80,20 @@ module ForemanMaintain
         @last_line = ''
       end
 
-      def before_scenario_starts(scenario)
-        puts "\nRunning #{scenario.description || scenario.class}"
-        hline('=')
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      def before_scenario_starts(scenario, last_scenario = nil)
+        decision = if last_scenario && last_scenario.steps_with_error.any?
+                     :quit
+                   elsif last_scenario && last_scenario.steps_with_warning.any?
+                     ask_decision("Continue with [#{scenario.description}]")
+                   else
+                     :yes
+                   end
+        if decision == :yes
+          puts "Running #{scenario.description || scenario.class}"
+          hline('=')
+        end
+        decision
       end
 
       def before_execution_starts(execution)
@@ -151,92 +156,13 @@ module ForemanMaintain
         new_line_if_needed
       end
 
-      def after_scenario_finishes(_scenario); end
-
-      def on_next_steps(steps)
-        return if steps.empty?
-        if steps.size > 1
-          multiple_steps_decision(steps)
-        else
-          single_step_decision(steps.first)
-        end
+      def after_scenario_finishes(scenario)
+        scenario_failure_message(scenario)
+        puts "\n"
       end
 
       def clear_line
         print "\r" + ' ' * @max_length + "\r"
-      end
-
-      private
-
-      def assumeyes?
-        @assumeyes
-      end
-
-      def single_step_decision(step)
-        answer = ask_decision("Continue with step [#{step.description}]?")
-        if answer == :yes
-          step
-        else
-          answer
-        end
-      end
-
-      def multiple_steps_decision(steps)
-        puts 'There are multiple steps to proceed:'
-        steps.each_with_index do |step, index|
-          puts "#{index + 1}) #{step.description}"
-        end
-        ask_to_select('Select step to continue', steps, &:description)
-      end
-
-      def ask_decision(message)
-        if assumeyes?
-          print("#{message} (assuming yes)")
-          return :yes
-        end
-        until_valid_decision do
-          filter_decision(ask("#{message}, [y(yes), n(no), q(quit)]"))
-        end
-      ensure
-        clear_line
-      end
-
-      def filter_decision(answer)
-        decision = nil
-        DECISION_MAPPER.each do |options, decision_label|
-          decision = decision_label if options.include?(answer)
-        end
-        decision
-      end
-
-      # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
-      def ask_to_select(message, steps)
-        if assumeyes?
-          puts('(assuming first option)')
-          return steps.first
-        end
-        until_valid_decision do
-          answer = ask("#{message}, [n(next), q(quit)]")
-          if answer =~ /^\d+$/ && (answer.to_i - 1) < steps.size
-            steps[answer.to_i - 1]
-          else
-            decision = filter_decision(answer)
-            if decision == :yes
-              steps.first
-            else
-              decision
-            end
-          end
-        end
-      ensure
-        clear_line
-      end
-
-      # loop over the block until it returns some non-false value
-      def until_valid_decision
-        decision = nil
-        decision = yield until decision
-        decision
       end
 
       def execution_info(execution, text)
@@ -271,6 +197,48 @@ module ForemanMaintain
 
       def record_last_line(string)
         @last_line = string.lines.to_a.last
+      end
+
+      private
+
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def scenario_failure_message(scenario)
+        return if scenario.passed?
+        message = []
+        message << <<-MESSAGE.strip_heredoc
+        Scenario [#{scenario.description}] failed.
+        MESSAGE
+        recommend = []
+        unless scenario.steps_with_error.empty?
+          message << <<-MESSAGE.strip_heredoc
+          The following steps ended up in failing state:
+
+          #{format_steps(scenario.steps_with_error, "\n", 2)}
+          MESSAGE
+          recommend << <<-MESSAGE.strip_heredoc
+          Resolve the failed steps and rerun
+          the command. In case the failures are false positives,
+          use --whitelist="#{scenario.steps_with_error.map(&:label_dashed).join(',')}"
+          MESSAGE
+        end
+
+        unless scenario.steps_with_warning.empty?
+          message << <<-MESSAGE.strip_heredoc
+          The following steps ended up in warning state:
+
+          #{format_steps(scenario.steps_with_warning, "\n", 2)}
+          MESSAGE
+
+          recommend << <<-MESSAGE.strip_heredoc
+          The steps in warning state itself might not mean there is an error,
+          but it should be reviews to ensure the behavior is expected
+          MESSAGE
+        end
+        puts((message + recommend).join("\n"))
+      end
+
+      def format_steps(steps, join_with = ', ', indent = 0)
+        steps.map { |s| "#{' ' * indent}[#{s.label_dashed}]" }.join(join_with)
       end
     end
   end
