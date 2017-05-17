@@ -142,6 +142,14 @@ module ForemanMaintain
       def format_shell_args(options = {})
         options.map { |shell_optn, val| " #{shell_optn} '#{shellescape(val)}'" }.join
       end
+
+      def fetch_etc_hostname
+        execute('hostname')
+      end
+
+      def server_ip_address
+        execute("ip route get 8.8.8.8 | grep -oP '(?<=src )(\\d{1,3}.){4}'").strip
+      end
     end
   end
 end
