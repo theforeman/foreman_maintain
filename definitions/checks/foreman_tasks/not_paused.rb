@@ -1,5 +1,6 @@
 module Checks::ForemanTasks
   class NotPaused < ForemanMaintain::Check
+    include ForemanMaintain::Concerns::Hammer
     metadata do
       for_feature :foreman_tasks
       description 'check for paused tasks'
