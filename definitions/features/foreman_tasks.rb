@@ -82,6 +82,10 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     end
   end
 
+  def resume_task_using_hammer
+    hammer('task resume')
+  end
+
   private
 
   def backup_dir(state)
