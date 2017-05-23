@@ -9,3 +9,5 @@ test/definitions/config/data_test.yml
 test/definitions/config/foreman-maintain-hammer.yml
 test/definitions/config/foreman-maintain-hammer-default.yml
 data.yml
+.ruby-version
+.ruby-gemset
