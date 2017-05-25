@@ -62,3 +62,6 @@ Style/SymbolArray:
 
 Style/InverseMethods:
   Enabled: false
+
+Style/FormatStringToken:
+  EnforcedStyle: template
