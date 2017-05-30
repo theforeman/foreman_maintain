@@ -48,6 +48,7 @@ class Features::SyncPlans < ForemanMaintain::Feature
   ensure
     new_data = sync_plan_data(enabled, updated_record_ids)
     save_state(new_data)
+    updated_record_ids
   end
 
   def data
