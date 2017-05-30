@@ -5,6 +5,7 @@ class Checks::ServiceIsStopped < ForemanMaintain::Check
     tags :default
     description 'service not running check'
     preparation_steps { Procedures::Setup.new }
+    after :present_service_is_running
   end
 
   def run

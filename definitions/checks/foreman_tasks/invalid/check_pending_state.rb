@@ -6,6 +6,7 @@ module Checks::ForemanTasks
         for_feature :foreman_tasks
         tags :pre_upgrade
         description 'Check for pending tasks which are safe to delete'
+        before :check_foreman_tasks_in_planning_state
       end
 
       def run

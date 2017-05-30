@@ -32,6 +32,15 @@ module ForemanMaintain
           @data[:confine_blocks] << block
         end
 
+        def before(*step_labels)
+          raise Error::MultipleBeforeDetected, step_labels if step_labels.count > 1
+          @data[:before].concat(step_labels)
+        end
+
+        def after(*step_labels)
+          @data[:after].concat(step_labels)
+        end
+
         # Parametrize the definition.
         #
         # == Arguments
@@ -143,11 +152,21 @@ module ForemanMaintain
           metadata[:params] || []
         end
 
+        def before
+          metadata[:before] || []
+        end
+
+        def after
+          metadata[:after] || []
+        end
+
         def initialize_metadata
           { :tags => [],
             :confine_blocks => [],
             :params => {},
-            :preparation_steps_blocks => [] }.tap do |metadata|
+            :preparation_steps_blocks => [],
+            :before => [],
+            :after => [] }.tap do |metadata|
             if superclass.respond_to?(:metadata)
               metadata[:label] = superclass.metadata[:label]
             end

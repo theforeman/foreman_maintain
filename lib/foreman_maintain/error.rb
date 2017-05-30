@@ -6,6 +6,16 @@ module ForemanMaintain
     class Warn < StandardError
     end
 
+    class MultipleBeforeDetected < StandardError
+      def initialize(step_labels)
+        @step_labels = step_labels
+      end
+
+      def message
+        "multiple metadata detected instead of 1. \n before [#{@step_labels.join(', ')}]\n"
+      end
+    end
+
     class ExecutionError < StandardError
       attr_reader :command, :input, :output, :exit_status
 

@@ -4,6 +4,8 @@ module Checks::ForemanTasks
       for_feature :foreman_tasks
       description 'check for running tasks'
       tags :pre_upgrade
+      after :foreman_tasks_not_paused
+      before :check_old_foreman_tasks
     end
 
     def run

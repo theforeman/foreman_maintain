@@ -6,6 +6,7 @@ module Checks::SyncPlans
       for_feature :sync_plans
       description 'check for enabled sync plans'
       tags :pre_upgrade
+      before :disk_io
     end
 
     def run

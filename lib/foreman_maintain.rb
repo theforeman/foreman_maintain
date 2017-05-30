@@ -18,10 +18,12 @@ module ForemanMaintain
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'
   require 'foreman_maintain/detector'
+  require 'foreman_maintain/dependency_graph'
   require 'foreman_maintain/param'
   require 'foreman_maintain/feature'
   require 'foreman_maintain/executable'
   require 'foreman_maintain/check'
+  require 'foreman_maintain/object_cache'
   require 'foreman_maintain/procedure'
   require 'foreman_maintain/scenario'
   require 'foreman_maintain/runner'
@@ -60,6 +62,10 @@ module ForemanMaintain
         file_paths = File.expand_path(File.join(definitions_dir, '**', '*.rb'))
         Dir.glob(file_paths).each { |f| require f }
       end
+    end
+
+    def cache
+      ObjectCache.instance
     end
 
     def detector

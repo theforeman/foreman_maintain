@@ -16,6 +16,7 @@ module ForemanMaintain
         @filter_tags = filter[:tags]
         @filter_label = filter[:label]
         @steps = ForemanMaintain.available_checks(filter).map(&:ensure_instance)
+        @steps = DependencyGraph.sort(@steps)
       end
 
       def description
@@ -79,9 +80,7 @@ module ForemanMaintain
     end
 
     def add_steps(steps)
-      steps.each do |step|
-        self.steps << step.ensure_instance
-      end
+      self.steps.concat(steps)
     end
 
     def add_step(step)
