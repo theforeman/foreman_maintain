@@ -34,5 +34,9 @@ module ForemanMaintain
         ret
       end
     end
+
+    # Error caused by incorrect usage, usually connected to passed CLI options
+    class UsageError < StandardError
+    end
   end
 end

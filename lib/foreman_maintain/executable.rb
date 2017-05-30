@@ -2,8 +2,10 @@ module ForemanMaintain
   class Executable
     extend Forwardable
     attr_reader :options
-    def_delegators :execution, :success?, :fail?, :warning?, :output, :assumeyes?
-    def_delegators :execution, :puts, :print, :with_spinner, :ask
+    def_delegators :execution,
+                   :success?, :fail?, :warning?, :output,
+                   :assumeyes?, :whitelisted?,
+                   :execution, :puts, :print, :with_spinner, :ask
 
     attr_accessor :associated_feature
 

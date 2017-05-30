@@ -32,7 +32,9 @@ module ForemanMaintain
       end
 
       def run_scenario(scenarios)
-        ForemanMaintain::Runner.new(reporter, scenarios, :assumeyes => assumeyes?).run
+        ForemanMaintain::Runner.new(reporter, scenarios,
+                                    :assumeyes => assumeyes?,
+                                    :whitelist => whitelist || []).run
       end
 
       def available_checks
@@ -66,6 +68,12 @@ module ForemanMaintain
       def self.interactive_option
         option ['-y', '--assumeyes'], :flag,
                'Automatically answer yes for all questions'
+
+        option ['-w', '--whitelist'], :whitelist,
+               'Comma-separated list of labels of steps to be ignored' do |whitelist|
+          raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
+          whitelist.split(',').map(&:strip)
+        end
       end
     end
   end

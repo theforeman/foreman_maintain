@@ -71,16 +71,27 @@ module ForemanMaintain
       end.uniq
     end
 
-    def steps_with_error
-      steps.find_all(&:fail?)
+    def steps_with_error(options = {})
+      filter_whitelisted(steps.find_all(&:fail?), options)
     end
 
-    def steps_with_warning
-      steps.find_all(&:warning?)
+    def steps_with_warning(options = {})
+      filter_whitelisted(steps.find_all(&:warning?), options)
+    end
+
+    def filter_whitelisted(steps, options)
+      options.validate_options!(:whitelisted)
+      if options.key?(:whitelisted)
+        steps.select do |step|
+          options[:whitelisted] ? step.whitelisted? : !step.whitelisted?
+        end
+      else
+        steps
+      end
     end
 
     def passed?
-      (steps_with_error + steps_with_warning).empty?
+      (steps_with_error(:whitelisted => false) + steps_with_warning(:whitelisted => false)).empty?
     end
 
     def failed?

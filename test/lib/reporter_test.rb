@@ -112,7 +112,7 @@ module ForemanMaintain
       MESSAGE
     end
 
-    it 'informs the user about warnings and failures of the last scenario ===' do
+    it 'informs the user about warnings and failures of the last scenario' do
       run_scenario(warn_and_fail_scenario)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
@@ -140,6 +140,21 @@ module ForemanMaintain
 
         The steps in warning state itself might not mean there is an error,
         but it should be reviews to ensure the behavior is expected
+      MESSAGE
+    end
+
+    it 'ignores whitelisted warnings and failures of the last scenario' do
+      run_scenario(warn_and_fail_scenario, :whitelisted => true)
+      reporter.after_scenario_finishes(warn_and_fail_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+        check that ends up with warning:                                      [WARNING]
+        this check is always causing warnings
+        --------------------------------------------------------------------------------
+        check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
       MESSAGE
     end
 
@@ -194,9 +209,9 @@ module ForemanMaintain
       out
     end
 
-    def run_scenario(scenario)
+    def run_scenario(scenario, options = {})
       scenario.steps.each do |step|
-        ForemanMaintain::Runner::Execution.new(step, reporter).tap(&:run)
+        ForemanMaintain::Runner::Execution.new(step, reporter, options).tap(&:run)
       end
     end
   end

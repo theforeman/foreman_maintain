@@ -20,15 +20,21 @@ module ForemanMaintain
 
       attr_reader :reporter
 
-      def initialize(step, reporter)
+      def initialize(step, reporter, options = {})
+        options.validate_options!(:whitelisted)
         @step = step
         @reporter = reporter
         @status = :pending
         @output = ''
+        @whitelisted = options[:whitelisted]
       end
 
       def name
         @step.description
+      end
+
+      def whitelisted?
+        @whitelisted
       end
 
       def success?

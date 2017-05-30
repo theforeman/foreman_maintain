@@ -80,15 +80,17 @@ module ForemanMaintain
         @last_line = ''
       end
 
-      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def before_scenario_starts(scenario, last_scenario = nil)
-        decision = if last_scenario && last_scenario.steps_with_error.any?
-                     :quit
-                   elsif last_scenario && last_scenario.steps_with_warning.any?
-                     ask_decision("Continue with [#{scenario.description}]")
-                   else
-                     :yes
-                   end
+        decision = :yes
+        if last_scenario
+          decision = if last_scenario.steps_with_error(:whitelisted => false).any?
+                       :quit
+                     elsif last_scenario.steps_with_warning(:whitelisted => false).any?
+                       ask_decision("Continue with [#{scenario.description}]")
+                     else
+                       :yes
+                     end
+        end
         if decision == :yes
           puts "Running #{scenario.description || scenario.class}"
           hline('=')
@@ -209,24 +211,26 @@ module ForemanMaintain
         Scenario [#{scenario.description}] failed.
         MESSAGE
         recommend = []
-        unless scenario.steps_with_error.empty?
+        steps_with_error = scenario.steps_with_error(:whitelisted => false)
+        unless steps_with_error.empty?
           message << <<-MESSAGE.strip_heredoc
           The following steps ended up in failing state:
 
-          #{format_steps(scenario.steps_with_error, "\n", 2)}
+          #{format_steps(steps_with_error, "\n", 2)}
           MESSAGE
           recommend << <<-MESSAGE.strip_heredoc
           Resolve the failed steps and rerun
           the command. In case the failures are false positives,
-          use --whitelist="#{scenario.steps_with_error.map(&:label_dashed).join(',')}"
+          use --whitelist="#{steps_with_error.map(&:label_dashed).join(',')}"
           MESSAGE
         end
 
-        unless scenario.steps_with_warning.empty?
+        steps_with_warning = scenario.steps_with_warning(:whitelisted => false)
+        unless steps_with_warning.empty?
           message << <<-MESSAGE.strip_heredoc
           The following steps ended up in warning state:
 
-          #{format_steps(scenario.steps_with_warning, "\n", 2)}
+          #{format_steps(steps_with_warning, "\n", 2)}
           MESSAGE
 
           recommend << <<-MESSAGE.strip_heredoc

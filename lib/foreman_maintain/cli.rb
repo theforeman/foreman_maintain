@@ -7,8 +7,25 @@ require 'foreman_maintain/cli/upgrade_command'
 module ForemanMaintain
   module Cli
     class MainCommand < Base
+      include Concerns::Logger
+
       subcommand 'health', 'Health related commands', HealthCommand
       subcommand 'upgrade', 'Upgrade related commands', UpgradeCommand
+
+      def run(*arguments)
+        logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")
+        begin
+          super
+          exit_code = 0
+        rescue Error::UsageError => e
+          puts e.message
+          logger.error(e)
+          exit_code = 1
+        end
+        return exit_code
+      ensure
+        logger.info("foreman-maintain command finished with #{exit_code}")
+      end
     end
   end
 end

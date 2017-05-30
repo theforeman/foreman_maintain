@@ -3,11 +3,13 @@ module ForemanMaintain
   class Runner
     require 'foreman_maintain/runner/execution'
     def initialize(reporter, scenarios, options = {})
-      options.validate_options!(:assumeyes)
+      options.validate_options!(:assumeyes, :whitelist)
       @assumeyes = options.fetch(:assumeyes, false)
+      @whitelist = options.fetch(:whitelist, [])
       @reporter = reporter
       @scenarios = Array(scenarios)
       @scenarios_with_dependencies = scenarios_with_dependencies
+      validate_whitelist!
       @quit = false
     end
 
@@ -37,11 +39,25 @@ module ForemanMaintain
       while !@quit && !@steps_to_run.empty?
         step = @steps_to_run.shift
         @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
-        execution = Execution.new(step, @reporter)
+        execution = Execution.new(step, @reporter, :whitelisted => whitelisted_step?(step))
         execution.run
         ask_about_offered_steps(step)
       end
       @reporter.after_scenario_finishes(scenario)
+    end
+
+    def validate_whitelist!
+      valid_labels = @scenarios_with_dependencies.inject([]) do |step_labels, scenario|
+        step_labels.concat(scenario.steps.map(&:label_dashed))
+      end.map(&:to_s)
+      invalid_whitelist_labels = @whitelist - valid_labels
+      unless invalid_whitelist_labels.empty?
+        raise Error::UsageError, "Invalid whitelist value #{invalid_whitelist_labels.join(',')}"
+      end
+    end
+
+    def whitelisted_step?(step)
+      @whitelist.include?(step.label_dashed.to_s)
     end
 
     def confirm_scenario(scenario)
