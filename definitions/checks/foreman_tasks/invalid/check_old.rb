@@ -6,6 +6,8 @@ module Checks::ForemanTasks
         for_feature :foreman_tasks
         tags :pre_upgrade
         description 'Check for old tasks in paused/stopped state'
+        before :check_foreman_tasks_in_pending_state
+        after :foreman_tasks_not_paused
       end
 
       def run

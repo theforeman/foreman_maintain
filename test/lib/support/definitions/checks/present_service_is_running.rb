@@ -5,6 +5,7 @@ class Checks::PresentServiceIsRunning < ForemanMaintain::Check
     tags :default
     description 'present service run check'
     preparation_steps { Procedures::Setup.new }
+    after :external_service_is_accessible
   end
 
   def run

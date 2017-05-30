@@ -29,6 +29,7 @@ module ForemanMaintain
 
     def run_scenario(scenario)
       @steps_to_run = scenario.steps.dup
+      @steps_to_run = ForemanMaintain::DependencyGraph.sort(@steps_to_run)
       @reporter.before_scenario_starts(scenario)
       while !@quit && !@steps_to_run.empty?
         step = @steps_to_run.shift

@@ -6,6 +6,7 @@ module Checks::ForemanTasks
         for_feature :foreman_tasks
         tags :pre_upgrade
         description 'Check for tasks in planning state'
+        after Checks::ForemanTasks::Invalid::CheckPendingState
       end
 
       def run
