@@ -173,7 +173,7 @@ module ForemanMaintain
       end
 
       def single_step_decision(step)
-        answer = ask_decision("Continue with step [#{step.description}]?")
+        answer = ask_decision("Continue with step [#{step.runtime_message}]?")
         if answer == :yes
           step
         else
@@ -184,9 +184,9 @@ module ForemanMaintain
       def multiple_steps_decision(steps)
         puts 'There are multiple steps to proceed:'
         steps.each_with_index do |step, index|
-          puts "#{index + 1}) #{step.description}"
+          puts "#{index + 1}) #{step.runtime_message}"
         end
-        ask_to_select('Select step to continue', steps, &:description)
+        ask_to_select('Select step to continue', steps, &:runtime_message)
       end
 
       def ask_decision(message)

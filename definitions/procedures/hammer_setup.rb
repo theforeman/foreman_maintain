@@ -1,4 +1,8 @@
 class Procedures::HammerSetup < ForemanMaintain::Procedure
+  metadata do
+    description 'setup hammer'
+  end
+
   def run
     setup_from_default || setup_from_answers
     puts "New settings saved into #{hammer.config_file}"
@@ -7,10 +11,6 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
 
   def necessary?
     !hammer.ready?
-  end
-
-  def description
-    'Setup hammer'
   end
 
   private
