@@ -1,6 +1,7 @@
 class Procedures::InstallPackage < ForemanMaintain::Procedure
   metadata do
     param :packages, 'List of packages to install', :array => true
+    description 'install packages(s)'
   end
 
   def run
@@ -11,7 +12,7 @@ class Procedures::InstallPackage < ForemanMaintain::Procedure
     @packages.any? { |package| package_version(package).nil? }
   end
 
-  def description
+  def runtime_message
     "Install package(s) #{@packages.join(', ')}"
   end
 end
