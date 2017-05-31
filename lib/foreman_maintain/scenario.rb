@@ -2,13 +2,16 @@ module ForemanMaintain
   class Scenario
     include Concerns::Logger
     include Concerns::SystemHelpers
-    include Concerns::Metadata
+    include Concerns::ScenarioMetadata
     include Concerns::Finders
 
     attr_reader :steps
 
     class FilteredScenario < Scenario
-      metadata { manual_detection }
+      metadata do
+        manual_detection
+        run_strategy :fail_slow
+      end
 
       attr_reader :filter_label, :filter_tags
 
@@ -42,6 +45,7 @@ module ForemanMaintain
       metadata do
         manual_detection
         description 'preparation steps required to run the next scenarios'
+        run_strategy :fail_slow
       end
 
       attr_reader :main_scenario
@@ -71,12 +75,16 @@ module ForemanMaintain
       end.uniq
     end
 
+    def executed_steps
+      steps.find_all(&:executed?)
+    end
+
     def steps_with_error(options = {})
-      filter_whitelisted(steps.find_all(&:fail?), options)
+      filter_whitelisted(executed_steps.find_all(&:fail?), options)
     end
 
     def steps_with_warning(options = {})
-      filter_whitelisted(steps.find_all(&:warning?), options)
+      filter_whitelisted(executed_steps.find_all(&:warning?), options)
     end
 
     def filter_whitelisted(steps, options)

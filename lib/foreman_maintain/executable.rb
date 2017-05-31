@@ -89,6 +89,10 @@ module ForemanMaintain
       raise NotImplementedError
     end
 
+    def executed?
+      @_execution ? true : false
+    end
+
     def execution
       if @_execution
         @_execution

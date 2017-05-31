@@ -131,9 +131,13 @@ module ForemanMaintain
         def metadata(&block)
           @metadata ||= initialize_metadata
           if block
-            DSL.eval_dsl(@metadata, &block)
+            metadata_class.eval_dsl(@metadata, &block)
           end
           @metadata
+        end
+
+        def metadata_class
+          DSL
         end
 
         def label

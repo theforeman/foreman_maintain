@@ -41,7 +41,7 @@ module ForemanMaintain
         @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
         execution = Execution.new(step, @reporter, :whitelisted => whitelisted_step?(step))
         execution.run
-        ask_about_offered_steps(step)
+        post_step_decisions(scenario, execution)
       end
       @reporter.after_scenario_finishes(scenario)
     end
@@ -86,6 +86,16 @@ module ForemanMaintain
 
     private
 
+    def post_step_decisions(scenario, execution)
+      step = execution.step
+      next_steps_decision = ask_about_offered_steps(step)
+      if next_steps_decision != :yes &&
+         execution.fail? && !execution.whitelisted? &&
+         scenario.run_strategy == :fail_fast
+        ask_to_quit
+      end
+    end
+
     # rubocop:disable Metrics/CyclomaticComplexity
     def ask_about_offered_steps(step)
       if assumeyes? && rerun_check?(step)
@@ -103,6 +113,7 @@ module ForemanMaintain
           chosen_steps = [decision]
           chosen_steps << step if step.is_a?(Check)
           add_steps(*chosen_steps)
+          :yes
         end
       end
     end

@@ -82,17 +82,9 @@ module ForemanMaintain
       )
     end
 
-    describe 'scenario states' do
+    describe 'scnario confirmation in before_scenario_starts' do
       let(:success_scenario) do
         Scenarios::Dummy::Success.new
-      end
-
-      let(:warn_scenario) do
-        Scenarios::Dummy::Warn.new
-      end
-
-      let(:fail_scenario) do
-        Scenarios::Dummy::Fail.new
       end
 
       let(:warn_and_fail_scenario) do
@@ -105,7 +97,41 @@ module ForemanMaintain
         runner.run
         assert_equal([
                        ['before_scenario_starts', 'Scenarios::Dummy::Success']
-                     ], reporter.log, 'unexpected order of execution')
+                     ], reporter.log, 'unexpected execution')
+      end
+    end
+
+    describe 'run_strategy' do
+      let(:fail_fast_scenario) do
+        Scenarios::Dummy::FailFast.new
+      end
+
+      let(:fail_slow_scenario) do
+        Scenarios::Dummy::FailSlow.new
+      end
+
+      specify 'fail_fast scenario gets stopped right on first failure' do
+        runner = Runner.new(reporter, [fail_fast_scenario])
+        runner.run
+        assert_equal([
+                       ['before_scenario_starts', 'Scenarios::Dummy::FailFast'],
+                       ['before_execution_starts', 'check that ends up with fail'],
+                       ['after_execution_finishes', 'check that ends up with fail'],
+                       ['after_scenario_finishes', 'Scenarios::Dummy::FailFast']
+                     ], reporter.log, 'unexpected execution')
+      end
+
+      specify 'fail_slow scenario runs the next steps despite the failures' do
+        runner = Runner.new(reporter, [fail_slow_scenario])
+        runner.run
+        assert_equal([
+                       ['before_scenario_starts', 'Scenarios::Dummy::FailSlow'],
+                       ['before_execution_starts', 'check that ends up with fail'],
+                       ['after_execution_finishes', 'check that ends up with fail'],
+                       ['before_execution_starts', 'check that ends up with success'],
+                       ['after_execution_finishes', 'check that ends up with success'],
+                       ['after_scenario_finishes', 'Scenarios::Dummy::FailSlow']
+                     ], reporter.log, 'unexpected execution')
       end
     end
   end
