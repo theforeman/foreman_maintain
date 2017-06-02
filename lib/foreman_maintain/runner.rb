@@ -29,13 +29,14 @@ module ForemanMaintain
         next if scenario.steps.empty?
         run_scenario(scenario)
         @last_scenario = scenario
+        break if @quit
       end
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def run_scenario(scenario)
       @steps_to_run = ForemanMaintain::DependencyGraph.sort(@steps_to_run)
-      return unless confirm_scenario(scenario)
+      confirm_scenario(scenario)
       while !@quit && !@steps_to_run.empty?
         step = @steps_to_run.shift
         @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
@@ -66,6 +67,7 @@ module ForemanMaintain
       when :yes
         true
       when :quit, :no
+        ask_to_quit
         false
       else
         raise "Unexpected decision #{decision}"

@@ -92,11 +92,12 @@ module ForemanMaintain
       end
 
       it 'does not continue when the reporter does not confirm the scenario' do
-        runner = Runner.new(reporter, [success_scenario])
+        runner = Runner.new(reporter, [success_scenario, success_scenario])
         reporter.confirm_scenario = :no
         runner.run
         assert_equal([
-                       ['before_scenario_starts', 'Scenarios::Dummy::Success']
+                       ['before_scenario_starts', 'Scenarios::Dummy::Success'],
+                       ['after_scenario_finishes', 'Scenarios::Dummy::Success']
                      ], reporter.log, 'unexpected execution')
       end
     end
