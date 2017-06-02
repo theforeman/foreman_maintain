@@ -3,6 +3,8 @@ module Procedures::SyncPlans
     metadata do
       for_feature :sync_plans
       description 're-enable sync plans'
+      tags :post_migrations
+      before :disk_io
     end
 
     def run

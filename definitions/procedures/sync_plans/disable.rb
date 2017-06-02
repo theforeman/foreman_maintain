@@ -3,6 +3,7 @@ module Procedures::SyncPlans
     metadata do
       for_feature :sync_plans
       description 'disable active sync plans'
+      tags :pre_migrations
     end
 
     def run
