@@ -80,22 +80,9 @@ module ForemanMaintain
         @last_line = ''
       end
 
-      def before_scenario_starts(scenario, last_scenario = nil)
-        decision = :yes
-        if last_scenario
-          decision = if last_scenario.steps_with_error(:whitelisted => false).any?
-                       :quit
-                     elsif last_scenario.steps_with_warning(:whitelisted => false).any?
-                       ask_decision("Continue with [#{scenario.description}]")
-                     else
-                       :yes
-                     end
-        end
-        if decision == :yes
-          puts "Running #{scenario.description || scenario.class}"
-          hline('=')
-        end
-        decision
+      def before_scenario_starts(scenario)
+        puts "Running #{scenario.description || scenario.class}"
+        hline('=')
       end
 
       def before_execution_starts(execution)

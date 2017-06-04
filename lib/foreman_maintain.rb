@@ -28,6 +28,7 @@ module ForemanMaintain
   require 'foreman_maintain/procedure'
   require 'foreman_maintain/scenario'
   require 'foreman_maintain/runner'
+  require 'foreman_maintain/upgrade_runner'
   require 'foreman_maintain/reporter'
   require 'foreman_maintain/utils'
   require 'foreman_maintain/error'

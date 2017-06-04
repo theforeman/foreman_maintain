@@ -1,7 +1,7 @@
 class Support
   class LogReporter < ForemanMaintain::Reporter
     attr_reader :log, :output, :input
-    attr_accessor :planned_next_steps_answers, :confirm_scenario
+    attr_accessor :planned_next_steps_answers
 
     def initialize(options = {})
       options.validate_options!(:assumeyes)
@@ -10,19 +10,13 @@ class Support
       @planned_next_steps_answers = []
       @input = []
       @assumeyes = options.fetch(:assumeyes, false)
-      @confirm_scenario = :yes
     end
 
     def log_method(method, args)
       @log << [method].concat(stringified_args(*args))
     end
 
-    def before_scenario_starts(scenario, _last_scenario)
-      log_method(__method__.to_s, [scenario])
-      confirm_scenario
-    end
-
-    %w[before_execution_starts on_execution_update
+    %w[before_scenario_starts before_execution_starts on_execution_update
        after_execution_finishes after_scenario_finishes].each do |method|
       define_method(method) do |*args|
         log_method(method, args)

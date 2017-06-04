@@ -38,7 +38,7 @@ module ForemanMaintain
 
       subcommand 'list-versions', 'List versions this system is upgradable to' do
         def execute
-          print_versions(available_target_versions(:pre_upgrade_check))
+          print_versions(available_target_versions(:pre_upgrade_checks))
         end
       end
 
@@ -47,7 +47,7 @@ module ForemanMaintain
         interactive_option
 
         def execute
-          versions_to_scenarios = available_target_versions(:pre_upgrade_check)
+          versions_to_scenarios = available_target_versions(:pre_upgrade_checks)
           scenario = versions_to_scenarios[target_version]
           if scenario
             run_scenario(scenario)
@@ -64,15 +64,15 @@ module ForemanMaintain
         interactive_option
 
         def execute
-          scenarios = [find_scenario(:pre_upgrade_check),
+          scenarios = [find_scenario(:pre_upgrade_checks),
                        find_scenario(:pre_migrations),
                        find_scenario(:migrations),
                        find_scenario(:post_migrations),
-                       find_scenario(:post_upgrade_check)].compact
+                       find_scenario(:post_upgrade_checks)].compact
           if scenarios.empty?
             puts "The specified version #{target_version} is unavailable"
             puts 'Possible target versions are:'
-            print_versions(available_target_versions(:pre_upgrade_check))
+            print_versions(available_target_versions(:pre_upgrade_checks))
           else
             run_scenario(scenarios)
           end

@@ -3,7 +3,7 @@ require 'test_helper'
 module ForemanMaintain
   describe Runner do
     let :scenario do
-      Scenarios::PresentUpgrade.new
+      Scenarios::PresentUpgrade::PreUpgradeChecks.new
     end
 
     let :reporter do
@@ -17,7 +17,7 @@ module ForemanMaintain
     it 'performs all steps in the scenario' do
       reporter.planned_next_steps_answers = %w[y n]
       runner.run
-      assert_equal([['before_scenario_starts', 'present_service upgrade scenario'],
+      assert_equal([['before_scenario_starts', 'present_service pre_upgrade_checks scenario'],
                     ['before_execution_starts', 'present service run check'],
                     ['after_execution_finishes', 'present service run check'],
                     ['on_next_steps', 'start the present service'],
@@ -32,7 +32,7 @@ module ForemanMaintain
                     ['on_next_steps', 'stop the running service'],
                     ['before_execution_starts', 'restart present service'],
                     ['after_execution_finishes', 'restart present service'],
-                    ['after_scenario_finishes', 'present_service upgrade scenario']],
+                    ['after_scenario_finishes', 'present_service pre_upgrade_checks scenario']],
                    reporter.log,
                    'unexpected order of execution')
     end
@@ -41,7 +41,7 @@ module ForemanMaintain
       reporter = Support::LogReporter.new(:assumeyes => true)
       runner = Runner.new(reporter, scenario, :assumeyes => true)
       runner.run
-      assert_equal([['before_scenario_starts', 'present_service upgrade scenario'],
+      assert_equal([['before_scenario_starts', 'present_service pre_upgrade_checks scenario'],
                     ['before_execution_starts', 'present service run check'],
                     ['after_execution_finishes', 'present service run check'],
                     ['on_next_steps', 'start the present service'],
@@ -62,7 +62,7 @@ module ForemanMaintain
                     ['puts', 'Check still failing after attempt to fix. Skipping'],
                     ['before_execution_starts', 'restart present service'],
                     ['after_execution_finishes', 'restart present service'],
-                    ['after_scenario_finishes', 'present_service upgrade scenario']],
+                    ['after_scenario_finishes', 'present_service pre_upgrade_checks scenario']],
                    reporter.log,
                    'unexpected order of execution')
     end
@@ -87,18 +87,19 @@ module ForemanMaintain
         Scenarios::Dummy::Success.new
       end
 
+      let(:warn_scenario) do
+        Scenarios::Dummy::Warn.new
+      end
+
       let(:warn_and_fail_scenario) do
         Scenarios::Dummy::WarnAndFail.new
       end
 
       it 'does not continue when the reporter does not confirm the scenario' do
-        runner = Runner.new(reporter, [success_scenario, success_scenario])
-        reporter.confirm_scenario = :no
+        runner = Runner.new(reporter, [warn_scenario, success_scenario])
         runner.run
-        assert_equal([
-                       ['before_scenario_starts', 'Scenarios::Dummy::Success'],
-                       ['after_scenario_finishes', 'Scenarios::Dummy::Success']
-                     ], reporter.log, 'unexpected execution')
+        reporter.log.last.
+          must_equal(['ask', 'Continue with [Scenarios::Dummy::Success], [y(yes), n(no), q(quit)]'])
       end
     end
 

@@ -1,6 +1,8 @@
 module ForemanMaintain
   # Class responsible for running the scenario
   class Runner
+    attr_reader :reporter
+
     require 'foreman_maintain/runner/execution'
     def initialize(reporter, scenarios, options = {})
       options.validate_options!(:assumeyes, :whitelist)
@@ -8,53 +10,38 @@ module ForemanMaintain
       @whitelist = options.fetch(:whitelist, [])
       @reporter = reporter
       @scenarios = Array(scenarios)
-      @scenarios_with_dependencies = scenarios_with_dependencies
-      validate_whitelist!
       @quit = false
+      @last_scenario = nil
+    end
+
+    def quit?
+      @quit
     end
 
     def assumeyes?
       @assumeyes
     end
 
-    def scenarios_with_dependencies
-      @scenarios.map do |scenario|
-        scenario.before_scenarios + [scenario]
-      end.flatten
-    end
-
     def run
-      @last_scenario = nil
-      scenarios_with_dependencies.each do |scenario|
-        next if scenario.steps.empty?
+      @scenarios.each do |scenario|
         run_scenario(scenario)
-        @last_scenario = scenario
         break if @quit
       end
     end
 
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def run_scenario(scenario)
-      @steps_to_run = ForemanMaintain::DependencyGraph.sort(@steps_to_run)
+      return if scenario.steps.empty?
+      raise 'The runner is already in quit state' if @quit
+      scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
+      return if quit? # the before scenarios caused the stop of the execution
       confirm_scenario(scenario)
-      while !@quit && !@steps_to_run.empty?
-        step = @steps_to_run.shift
-        @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
-        execution = Execution.new(step, @reporter, :whitelisted => whitelisted_step?(step))
-        execution.run
-        post_step_decisions(scenario, execution)
-      end
+      return if quit?
+      @reporter.before_scenario_starts(scenario)
+      run_steps(scenario, scenario.steps)
       @reporter.after_scenario_finishes(scenario)
-    end
-
-    def validate_whitelist!
-      valid_labels = @scenarios_with_dependencies.inject([]) do |step_labels, scenario|
-        step_labels.concat(scenario.steps.map(&:label_dashed))
-      end.map(&:to_s)
-      invalid_whitelist_labels = @whitelist - valid_labels
-      unless invalid_whitelist_labels.empty?
-        raise Error::UsageError, "Invalid whitelist value #{invalid_whitelist_labels.join(',')}"
-      end
+    ensure
+      @last_scenario = scenario unless scenario.steps.empty?
     end
 
     def whitelisted_step?(step)
@@ -62,16 +49,15 @@ module ForemanMaintain
     end
 
     def confirm_scenario(scenario)
-      decision = @reporter.before_scenario_starts(scenario, @last_scenario)
-      case decision
-      when :yes
-        true
-      when :quit, :no
-        ask_to_quit
-        false
-      else
-        raise "Unexpected decision #{decision}"
-      end
+      return unless @last_scenario
+      decision = if @last_scenario.steps_with_error(:whitelisted => false).any?
+                   :quit
+                 elsif @last_scenario.steps_with_warning(:whitelisted => false).any?
+                   reporter.ask_decision("Continue with [#{scenario.description}]")
+                 end
+
+      ask_to_quit if [:quit, :no].include?(decision)
+      decision
     end
 
     def ask_to_quit(_step = nil)
@@ -87,6 +73,17 @@ module ForemanMaintain
     end
 
     private
+
+    def run_steps(scenario, steps)
+      @steps_to_run = ForemanMaintain::DependencyGraph.sort(steps)
+      while !@quit && !@steps_to_run.empty?
+        step = @steps_to_run.shift
+        @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
+        execution = Execution.new(step, @reporter, :whitelisted => whitelisted_step?(step))
+        execution.run
+        post_step_decisions(scenario, execution)
+      end
+    end
 
     def post_step_decisions(scenario, execution)
       step = execution.step
