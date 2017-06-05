@@ -35,7 +35,7 @@ module ForemanMaintain
       end
 
       def clear_register
-        versions_to_tags.clear
+        versions_to_tags.lear
       end
     end
 
@@ -60,15 +60,26 @@ module ForemanMaintain
 
     def run
       phases_to_run.each do |phase|
-        break if quit?
-        next_scenario = scenario(phase)
-        next if next_scenario.nil? || next_scenario.steps.empty?
-        run_scenario(next_scenario)
-        # if we started from the :pre_upgrade_checks, ensure to ask before
-        # continuing with the rest of the upgrade
-        @ask_to_confirm_upgrade = (self.phase == :pre_upgrade_checks)
-        self.phase = phase
+        return run_rollback if quit?
+        run_phase(phase)
       end
+    end
+
+    def run_rollback
+      # we only are able to rollback from pre_migrations phase
+      return if phase != :pre_migrations ||
+                !scenario(:pre_migrations).steps.any?(&:executed?)
+      pre_rollback_phase = phase
+      @quit = false
+      @last_scenario = nil # to prevent the unnecessary confirmation questions
+      [:post_migrations, :post_upgrade_checks].each do |phase|
+        if quit? && phase == :post_upgrade_checks
+          self.phase = pre_rollback_phase
+          return # rubocop:disable Lint/NonLocalExitFromIterator
+        end
+        run_phase(phase)
+      end
+      self.phase = :pre_upgrade_checks # rollback finished
     end
 
     def storage
@@ -88,6 +99,16 @@ module ForemanMaintain
     end
 
     private
+
+    def run_phase(phase)
+      next_scenario = scenario(phase)
+      return if next_scenario.nil? || next_scenario.steps.empty?
+      self.phase = phase
+      run_scenario(next_scenario)
+      # if we started from the :pre_upgrade_checks, ensure to ask before
+      # continuing with the rest of the upgrade
+      @ask_to_confirm_upgrade = phase == :pre_upgrade_checks
+    end
 
     def to_hash
       ret = { :phase => phase, :scenarios => {} }

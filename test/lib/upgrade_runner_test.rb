@@ -2,6 +2,11 @@ require 'test_helper'
 
 module ForemanMaintain
   describe UpgradeRunner do
+    after do
+      ForemanMaintain.detector.refresh
+      TestHelper.reset
+    end
+
     let :reporter do
       Support::LogReporter.new
     end
@@ -60,16 +65,49 @@ module ForemanMaintain
         must_equal ['before_scenario_starts', 'present_service pre_migrations scenario']
     end
 
-    it 'runs migrations if pre_migrations succeed'
+    it 'runs migrations if pre_migrations succeed' do
+      reporter.input << 'y'
+      upgrade_runner_with_whitelist.run
+      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::Migration']
+    end
 
-    it 'runs post_migrations if migrations succeed'
+    it 'runs post_migrations and post_upgrade checks if pre_migrations fail' do
+      reporter.input << 'y'
+      TestHelper.migrations_fail_at = :pre_migrations
+      upgrade_runner_with_whitelist.run
+      upgrade_runner_with_whitelist.phase.must_equal :pre_upgrade_checks
+      reporter.log.wont_include ['before_execution_starts', 'Procedures::Upgrade::Migration']
+      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostMigration']
+      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostUpgradeCheck']
+      upgrade_runner_with_whitelist.exit_code.must_equal 1
+    end
 
-    it 'fails if migrations fail'
+    it 'runs post_migrations if migrations succeed' do
+      reporter.input << 'y'
+      upgrade_runner_with_whitelist.run
+      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostMigration']
+    end
 
-    it 'runs post_upgrade_checks if post_migrations succeed'
+    it 'fails if migrations fail' do
+      reporter.input << 'y'
+      TestHelper.migrations_fail_at = :migrations
+      upgrade_runner_with_whitelist.run
+      upgrade_runner_with_whitelist.phase.must_equal :migrations
+      upgrade_runner_with_whitelist.exit_code.must_equal 1
+    end
 
-    it 'fails if post_migrations fail'
+    it 'runs post_upgrade_checks if post_migrations succeed' do
+      reporter.input << 'y'
+      upgrade_runner_with_whitelist.run
+      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostUpgradeCheck']
+    end
 
-    it 'runs post_migrations and post_upgrade checks if pre_migrations fail'
+    it 'fails if post_migrations fail' do
+      reporter.input << 'y'
+      TestHelper.migrations_fail_at = :post_migrations
+      upgrade_runner_with_whitelist.run
+      upgrade_runner_with_whitelist.phase.must_equal :post_migrations
+      upgrade_runner_with_whitelist.exit_code.must_equal 1
+    end
   end
 end

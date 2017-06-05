@@ -1,7 +1,7 @@
 module ForemanMaintain
   # Class responsible for running the scenario
   class Runner
-    attr_reader :reporter
+    attr_reader :reporter, :exit_code
 
     require 'foreman_maintain/runner/execution'
     require 'foreman_maintain/runner/stored_execution'
@@ -13,6 +13,7 @@ module ForemanMaintain
       @scenarios = Array(scenarios)
       @quit = false
       @last_scenario = nil
+      @exit_code = 0
     end
 
     def quit?
@@ -33,7 +34,7 @@ module ForemanMaintain
     # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def run_scenario(scenario)
       return if scenario.steps.empty?
-      raise 'The runner is already in quit state' if @quit
+      raise 'The runner is already in quit state' if quit?
       scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
       return if quit? # the before scenarios caused the stop of the execution
       confirm_scenario(scenario)
@@ -61,8 +62,9 @@ module ForemanMaintain
       decision
     end
 
-    def ask_to_quit(_step = nil)
+    def ask_to_quit(exit_code = 1)
       @quit = true
+      @exit_code = exit_code
     end
 
     def add_steps(*steps)

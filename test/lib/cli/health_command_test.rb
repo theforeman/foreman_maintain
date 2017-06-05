@@ -41,6 +41,7 @@ module ForemanMaintain
           [external-service-is-accessible] external_service_is_accessible         [pre-upgrade-check]
           [present-service-is-running] present service run check                  [default]
           [service-is-stopped] service not running check                          [default]
+          [upgrade-post-upgrade-check] Procedures::Upgrade::PostUpgradeCheck      [post-upgrade-checks]
         OUTPUT
       end
     end
@@ -52,6 +53,7 @@ module ForemanMaintain
       it 'lists the defined tags' do
         assert_cmd <<-OUTPUT.strip_heredoc
           [default]
+          [post-upgrade-checks]
           [pre-upgrade-check]
         OUTPUT
       end
