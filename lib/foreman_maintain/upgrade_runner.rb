@@ -67,10 +67,45 @@ module ForemanMaintain
         # if we started from the :pre_upgrade_checks, ensure to ask before
         # continuing with the rest of the upgrade
         @ask_to_confirm_upgrade = (self.phase == :pre_upgrade_checks)
+        self.phase = phase
       end
     end
 
+    def storage
+      # TODO: determine from upgrade scenario
+      ForemanMaintain.storage(:upgrade)
+    end
+
+    # serializes the state of the run to storage
+    def save
+      storage[:serialized] = to_hash
+      storage.save
+    end
+
+    # deserializes the state of the run from the storage
+    def load
+      load_from_hash(storage[:serialized])
+    end
+
     private
+
+    def to_hash
+      ret = { :phase => phase, :scenarios => {} }
+      @scenario_cache.each do |key, scenario|
+        ret[:scenarios][key] = scenario.to_hash
+      end
+      ret
+    end
+
+    def load_from_hash(hash)
+      unless @scenario_cache.empty?
+        raise "Some scenarios are already initialized: #{@scenario_cache.keys}"
+      end
+      self.phase = hash[:phase]
+      hash[:scenarios].each do |key, scenario_hash|
+        @scenario_cache[key] = Scenario.new_from_hash(scenario_hash)
+      end
+    end
 
     def confirm_scenario(scenario)
       decision = super(scenario)

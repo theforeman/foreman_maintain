@@ -4,6 +4,7 @@ module ForemanMaintain
     include Concerns::SystemHelpers
     include Concerns::ScenarioMetadata
     include Concerns::Finders
+    extend Concerns::Finders
 
     attr_reader :steps
 
@@ -130,6 +131,34 @@ module ForemanMaintain
 
     def inspect
       "#{self.class.metadata[:description]}<#{self.class.name}>"
+    end
+
+    def to_hash
+      { :label => label,
+        :steps => steps.map(&:to_hash) }
+    end
+
+    def self.new_from_hash(hash)
+      scenarios = find_scenarios(:label => hash[:label])
+      unless scenarios.size == 1
+        raise "Could not find scenario #{hash[:label]}, found #{scenarios.size} scenarios"
+      end
+      scenario = scenarios.first
+      scenario.load_step_states(hash[:steps])
+      scenario
+    end
+
+    def load_step_states(steps_hash)
+      steps = self.steps.dup
+      steps_hash.each do |step_hash|
+        until steps.empty?
+          step = steps.shift
+          if step.matches_hash?(step_hash)
+            step.update_from_hash(step_hash)
+            break
+          end
+        end
+      end
     end
   end
 end

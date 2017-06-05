@@ -30,14 +30,27 @@ module ForemanMaintain
                                      'present_service pre_upgrade_checks scenario'])
     end
 
-    it 'remembers the state of the previous run of the upgrade'
-
     it 'asks for confirmation before getting into pre_migrations from pre upgrade checks' do
       upgrade_runner_with_whitelist.run
       reporter.log.last.must_equal ['ask', <<-MESSAGE.strip_heredoc.strip]
         The script will now start with the modification part of the upgrade.
         Confirm to continue, [y(yes), n(no), q(quit)]
       MESSAGE
+    end
+
+    it 'remembers the state of the previous run of the upgrade' do
+      upgrade_runner_with_whitelist.storage.data.clear
+      upgrade_runner_with_whitelist.run
+      upgrade_runner_with_whitelist.save
+      original_scenario = upgrade_runner_with_whitelist.scenario(:pre_upgrade_checks)
+
+      ForemanMaintain.detector.refresh
+      new_upgrade_runner = UpgradeRunner.new('1.15', reporter)
+      new_upgrade_runner.load
+      new_upgrade_runner.phase.must_equal :pre_migrations
+      restored_scenario = new_upgrade_runner.scenario(:pre_upgrade_checks)
+      restored_scenario.steps.map { |s| s.execution.status }.
+        must_equal(original_scenario.steps.map { |step| step.execution.status })
     end
 
     it 'does not run the pre_upgrade_checks again when already in pre_migrations phase' do

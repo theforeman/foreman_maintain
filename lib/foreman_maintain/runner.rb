@@ -4,6 +4,7 @@ module ForemanMaintain
     attr_reader :reporter
 
     require 'foreman_maintain/runner/execution'
+    require 'foreman_maintain/runner/stored_execution'
     def initialize(reporter, scenarios, options = {})
       options.validate_options!(:assumeyes, :whitelist)
       @assumeyes = options.fetch(:assumeyes, false)

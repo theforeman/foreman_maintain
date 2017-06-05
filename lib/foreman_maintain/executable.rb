@@ -1,6 +1,7 @@
 module ForemanMaintain
   class Executable
     extend Forwardable
+    extend Concerns::Finders
     attr_reader :options
     def_delegators :execution,
                    :success?, :fail?, :warning?, :output,
@@ -130,6 +131,27 @@ module ForemanMaintain
     def setup_execution_state(execution)
       @_execution = execution
       @next_steps = []
+    end
+
+    # serialization methods
+    def to_hash
+      ret = { :label => label, :param_values => @param_values }
+      if @_execution
+        ret[:status] = @_execution.status
+        ret[:output] = @_execution.output
+      end
+      ret
+    end
+
+    def matches_hash?(hash)
+      label == hash[:label] && @param_values == hash[:param_values]
+    end
+
+    def update_from_hash(hash)
+      raise "The step is not matching the hash #{hash.inspect}" unless matches_hash?(hash)
+      raise "Can't update step that was already executed" if @_execution
+      @_execution = Runner::StoredExecution.new(self, :status => hash[:status],
+                                                      :output => hash[:output])
     end
 
     class << self
