@@ -20,16 +20,20 @@ class Features::SyncPlans < ForemanMaintain::Feature
     ).map { |r| r['id'].to_i }
   end
 
-  def disabled_plans_count
-    data[:disabled].length
-  end
-
   def make_disable(ids)
     update_records(ids, false)
   end
 
   def make_enable
     update_records(data[:disabled], true)
+  end
+
+  def load_from_storage(storage)
+    @data = storage.data.fetch(:sync_plans, :enabled => [], :disabled => [])
+  end
+
+  def save_to_storage(storage)
+    storage[:sync_plans] = @data
   end
 
   private
@@ -46,30 +50,20 @@ class Features::SyncPlans < ForemanMaintain::Feature
     end
     updated_record_ids
   ensure
-    new_data = sync_plan_data(enabled, updated_record_ids)
-    save_state(new_data)
+    update_data(enabled, updated_record_ids)
   end
 
   def data
-    upgrade_storage = ForemanMaintain.storage(:upgrade)
-    @data ||= upgrade_storage.data.fetch(:sync_plans, :enabled => [], :disabled => [])
+    raise 'Use load_from_storage before accessing the data' unless defined? @data
     @data
   end
 
-  def sync_plan_data(enabled, new_ids)
-    sync_plan_hash = data
+  def update_data(enabled, new_ids)
     if enabled
-      sync_plan_hash[:disabled] -= new_ids
-      sync_plan_hash[:enabled] = new_ids
+      @data[:disabled] -= new_ids
+      @data[:enabled] = new_ids
     else
-      sync_plan_hash[:disabled].concat(new_ids)
+      @data[:disabled].concat(new_ids)
     end
-    sync_plan_hash
-  end
-
-  def save_state(sync_plan_hash = {})
-    storage = ForemanMaintain.storage(:upgrade)
-    storage[:sync_plans] = sync_plan_hash
-    storage.save
   end
 end

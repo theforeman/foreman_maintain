@@ -21,12 +21,13 @@ module ForemanMaintain
       attr_reader :reporter
 
       def initialize(step, reporter, options = {})
-        options.validate_options!(:whitelisted)
+        options.validate_options!(:whitelisted, :storage)
         @step = step
         @reporter = reporter
         @status = :pending
         @output = ''
         @whitelisted = options[:whitelisted]
+        @storage = options[:storage]
       end
 
       def name
@@ -47,6 +48,11 @@ module ForemanMaintain
 
       def warning?
         @status == :warning
+      end
+
+      # yaml storage to preserve key/value pairs between runs.
+      def storage
+        @storage || ForemanMaintain.storage(:default)
       end
 
       def run

@@ -75,17 +75,29 @@ module ForemanMaintain
       end
     end
 
+    def storage
+      ForemanMaintain.storage(:default)
+    end
+
     private
 
     def run_steps(scenario, steps)
       @steps_to_run = ForemanMaintain::DependencyGraph.sort(steps)
       while !@quit && !@steps_to_run.empty?
-        step = @steps_to_run.shift
-        @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
-        execution = Execution.new(step, @reporter, :whitelisted => whitelisted_step?(step))
-        execution.run
+        execution = run_step(@steps_to_run.shift)
         post_step_decisions(scenario, execution)
       end
+    end
+
+    def run_step(step)
+      @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
+      execution = Execution.new(step, @reporter,
+                                :whitelisted => whitelisted_step?(step),
+                                :storage => storage)
+      execution.run
+      execution
+    ensure
+      storage.save
     end
 
     def post_step_decisions(scenario, execution)

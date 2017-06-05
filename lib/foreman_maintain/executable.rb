@@ -6,7 +6,7 @@ module ForemanMaintain
     def_delegators :execution,
                    :success?, :fail?, :warning?, :output,
                    :assumeyes?, :whitelisted?,
-                   :execution, :puts, :print, :with_spinner, :ask
+                   :execution, :puts, :print, :with_spinner, :ask, :storage
 
     attr_accessor :associated_feature
 

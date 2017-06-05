@@ -83,8 +83,7 @@ module ForemanMaintain
     end
 
     def storage
-      # TODO: determine from upgrade scenario
-      ForemanMaintain.storage(:upgrade)
+      ForemanMaintain.storage("upgrade_#{version}")
     end
 
     # serializes the state of the run to storage
@@ -98,8 +97,6 @@ module ForemanMaintain
       load_from_hash(storage[:serialized])
     end
 
-    private
-
     def run_phase(phase)
       next_scenario = scenario(phase)
       return if next_scenario.nil? || next_scenario.steps.empty?
@@ -109,6 +106,8 @@ module ForemanMaintain
       # continuing with the rest of the upgrade
       @ask_to_confirm_upgrade = phase == :pre_upgrade_checks
     end
+
+    private
 
     def to_hash
       ret = { :phase => phase, :scenarios => {} }
