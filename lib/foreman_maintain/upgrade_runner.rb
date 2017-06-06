@@ -94,6 +94,7 @@ module ForemanMaintain
 
     # deserializes the state of the run from the storage
     def load
+      return unless storage[:serialized]
       load_from_hash(storage[:serialized])
     end
 
