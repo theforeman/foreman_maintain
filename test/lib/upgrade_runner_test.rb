@@ -44,6 +44,7 @@ module ForemanMaintain
     end
 
     it 'remembers the state of the previous run of the upgrade' do
+      reporter.input << 'y'
       upgrade_runner_with_whitelist.storage.data.clear
       upgrade_runner_with_whitelist.run
       upgrade_runner_with_whitelist.save
@@ -52,7 +53,7 @@ module ForemanMaintain
       ForemanMaintain.detector.refresh
       new_upgrade_runner = UpgradeRunner.new('1.15', reporter)
       new_upgrade_runner.load
-      new_upgrade_runner.phase.must_equal :pre_migrations
+      new_upgrade_runner.phase.must_equal :post_upgrade_checks
       restored_scenario = new_upgrade_runner.scenario(:pre_upgrade_checks)
       restored_scenario.steps.map { |s| s.execution.status }.
         must_equal(original_scenario.steps.map { |step| step.execution.status })
@@ -61,8 +62,8 @@ module ForemanMaintain
     it 'does not run the pre_upgrade_checks again when already in pre_migrations phase' do
       upgrade_runner.send(:phase=, :pre_migrations)
       upgrade_runner.run
-      reporter.log.first.
-        must_equal ['before_scenario_starts', 'present_service pre_migrations scenario']
+      reporter.log.wont_include ['before_execution_starts', 'present service run check']
+      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PreMigration']
     end
 
     it 'runs migrations if pre_migrations succeed' do

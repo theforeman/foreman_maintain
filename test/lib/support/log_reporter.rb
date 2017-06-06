@@ -1,6 +1,6 @@
 class Support
   class LogReporter < ForemanMaintain::Reporter
-    attr_reader :log, :output, :input
+    attr_reader :log, :output, :input, :executions
     attr_accessor :planned_next_steps_answers
 
     def initialize(options = {})
@@ -10,14 +10,20 @@ class Support
       @planned_next_steps_answers = []
       @input = []
       @assumeyes = options.fetch(:assumeyes, false)
+      @executions = []
     end
 
     def log_method(method, args)
       @log << [method].concat(stringified_args(*args))
     end
 
+    def after_execution_finishes(execution)
+      log_method(__method__.to_s, [execution])
+      @executions << [execution.name, execution.status]
+    end
+
     %w[before_scenario_starts before_execution_starts on_execution_update
-       after_execution_finishes after_scenario_finishes].each do |method|
+       after_scenario_finishes].each do |method|
       define_method(method) do |*args|
         log_method(method, args)
       end

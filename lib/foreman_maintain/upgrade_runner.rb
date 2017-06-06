@@ -59,9 +59,13 @@ module ForemanMaintain
     end
 
     def run
-      phases_to_run.each do |phase|
+      PHASES.each do |phase|
         return run_rollback if quit?
-        run_phase(phase)
+        if skip?(phase)
+          skip_phase(phase)
+        else
+          run_phase(phase)
+        end
       end
     end
 
@@ -99,16 +103,34 @@ module ForemanMaintain
     end
 
     def run_phase(phase)
-      next_scenario = scenario(phase)
-      return if next_scenario.nil? || next_scenario.steps.empty?
-      self.phase = phase
-      run_scenario(next_scenario)
-      # if we started from the :pre_upgrade_checks, ensure to ask before
-      # continuing with the rest of the upgrade
-      @ask_to_confirm_upgrade = phase == :pre_upgrade_checks
+      with_non_empty_scenario(phase) do |scenario|
+        self.phase = phase
+        run_scenario(scenario)
+        # if we started from the :pre_upgrade_checks, ensure to ask before
+        # continuing with the rest of the upgrade
+        @ask_to_confirm_upgrade = phase == :pre_upgrade_checks
+      end
+    end
+
+    def skip_phase(skipped_phase)
+      with_non_empty_scenario(skipped_phase) do |scenario|
+        @reporter.before_scenario_starts(scenario)
+        @reporter.puts <<-MESSAGE.strip_heredoc
+          Skipping #{skipped_phase} phase as the last active phase was #{skipped_phase}.
+          To enforce to run the phase, use `upgrade advanced run --phase #{phase}`
+        MESSAGE
+        @reporter.after_scenario_finishes(scenario)
+      end
     end
 
     private
+
+    def with_non_empty_scenario(phase)
+      next_scenario = scenario(phase)
+      unless next_scenario.nil? || next_scenario.steps.empty?
+        yield next_scenario
+      end
+    end
 
     def to_hash
       ret = { :phase => phase, :scenarios => {} }
@@ -136,17 +158,19 @@ module ForemanMaintain
             The script will now start with the modification part of the upgrade.
             Confirm to continue
         MESSAGE
-        ask_to_quit if [:no, :quit].include?(response)
+        if [:no, :quit].include?(response)
+          self.phase = :pre_upgrade_checks # turn back to pre_upgrade_checks
+          ask_to_quit
+        end
       end
       response
     ensure
       @ask_to_confirm_upgrade = false
     end
 
-    def phases_to_run
-      phases_to_run = PHASES.dup
-      phases_to_run.shift until phases_to_run.first == phase
-      phases_to_run
+    def skip?(next_phase)
+      # the next_phase was run before the current phase
+      PHASES.index(next_phase) < PHASES.index(phase)
     end
 
     def phase=(phase)

@@ -141,6 +141,12 @@ module ForemanMaintain
       def after_execution_finishes(execution)
         puts_status(execution.status)
         puts(execution.output) unless execution.output.empty?
+        if execution.status == :already_run
+          puts(<<-MESSAGE.strip_heredoc)
+            The step was skipped as it was already run and it is marked
+            as run_once. Use --force to enforce the execution.
+MESSAGE
+        end
         hline
         new_line_if_needed
       end
@@ -175,6 +181,7 @@ module ForemanMaintain
                     :fail => { :label => '[FAIL]', :color => :red },
                     :running => { :label => '[RUNNING]', :color => :blue },
                     :skipped => { :label => '[SKIPPED]', :color => :yellow },
+                    :already_run => { :label => '[ALREADY RUN]', :color => :yellow },
                     :warning => { :label => '[WARNING]', :color => :yellow } }
         properties = mapping[status]
         @hl.color(properties[:label], properties[:color], :bold)

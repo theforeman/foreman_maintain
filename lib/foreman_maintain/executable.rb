@@ -4,7 +4,7 @@ module ForemanMaintain
     extend Concerns::Finders
     attr_reader :options
     def_delegators :execution,
-                   :success?, :fail?, :warning?, :output,
+                   :success?, :skipped?, :fail?, :warning?, :output,
                    :assumeyes?, :whitelisted?,
                    :execution, :puts, :print, :with_spinner, :ask, :storage
 

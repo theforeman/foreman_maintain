@@ -6,6 +6,12 @@ module Scenarios::Dummy
     end
   end
 
+  class RunOnce < ForemanMaintain::Scenario
+    def compose
+      add_steps([Procedures::RunOnce, Checks::Dummy::Fail])
+    end
+  end
+
   class Warn < ForemanMaintain::Scenario
     def compose
       add_steps([Checks::Dummy::Warn, Checks::Dummy::Success])

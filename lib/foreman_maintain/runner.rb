@@ -6,9 +6,10 @@ module ForemanMaintain
     require 'foreman_maintain/runner/execution'
     require 'foreman_maintain/runner/stored_execution'
     def initialize(reporter, scenarios, options = {})
-      options.validate_options!(:assumeyes, :whitelist)
+      options.validate_options!(:assumeyes, :whitelist, :force)
       @assumeyes = options.fetch(:assumeyes, false)
       @whitelist = options.fetch(:whitelist, [])
+      @force = options.fetch(:force, false)
       @reporter = reporter
       @scenarios = Array(scenarios)
       @quit = false
@@ -93,7 +94,8 @@ module ForemanMaintain
       @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
       execution = Execution.new(step, @reporter,
                                 :whitelisted => whitelisted_step?(step),
-                                :storage => storage)
+                                :storage => storage,
+                                :force => @force)
       execution.run
       execution
     ensure

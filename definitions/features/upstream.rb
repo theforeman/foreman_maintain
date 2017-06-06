@@ -7,7 +7,7 @@ class Features::Upstream < ForemanMaintain::Feature
     end
   end
 
-  def set_repositories(_version)
+  def setup_repositories(_version)
     raise NotImplementedError
   end
 end

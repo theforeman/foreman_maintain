@@ -103,6 +103,40 @@ module ForemanMaintain
       end
     end
 
+    describe 'skipping run steps' do
+      let(:scenario) do
+        Scenarios::Dummy::RunOnce.new
+      end
+
+      it 'skips the step marked as run_once if already run' do
+        runner = Runner.new(reporter, [scenario])
+        runner.run
+
+        new_reporter = Support::LogReporter.new
+        new_runner = Runner.new(new_reporter, [scenario])
+        new_runner.run
+        scenario.steps.map { |x| x.execution.status }.must_equal([:success, :fail])
+        reporter.executions.must_equal [['Procedures::RunOnce', :success],
+                                        ['check that ends up with fail', :fail]]
+        new_reporter.executions.must_equal [['Procedures::RunOnce', :already_run],
+                                            ['check that ends up with fail', :fail]]
+      end
+
+      it 'runs the step marked as run_once if already run but called with --force' do
+        runner = Runner.new(reporter, [scenario])
+        runner.run
+
+        new_reporter = Support::LogReporter.new
+        new_runner = Runner.new(new_reporter, [scenario], :force => true)
+        new_runner.run
+        scenario.steps.map { |x| x.execution.status }.must_equal([:success, :fail])
+        reporter.executions.must_equal [['Procedures::RunOnce', :success],
+                                        ['check that ends up with fail', :fail]]
+        new_reporter.executions.must_equal [['Procedures::RunOnce', :success],
+                                            ['check that ends up with fail', :fail]]
+      end
+    end
+
     describe 'run_strategy' do
       let(:fail_fast_scenario) do
         Scenarios::Dummy::FailFast.new

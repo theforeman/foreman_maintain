@@ -34,7 +34,8 @@ module ForemanMaintain
       def run_scenario(scenarios)
         ForemanMaintain::Runner.new(reporter, scenarios,
                                     :assumeyes => assumeyes?,
-                                    :whitelist => whitelist || []).run
+                                    :whitelist => whitelist || [],
+                                    :force => force?).run
       end
 
       def available_checks
@@ -74,6 +75,9 @@ module ForemanMaintain
           raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
           whitelist.split(',').map(&:strip)
         end
+
+        option ['-f', '--force'], :flag,
+               'Force steps that would be skipped as they were already run'
       end
     end
   end

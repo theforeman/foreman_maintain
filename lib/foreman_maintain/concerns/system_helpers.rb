@@ -46,7 +46,8 @@ module ForemanMaintain
         options.validate_options!(:assumeyes)
         yum_options = []
         yum_options << '-y' if options[:assumeyes]
-        execute!("yum #{yum_options.join(' ')} #{action} #{packages.join(' ')}", :interactive => true)
+        execute!("yum #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
+                 :interactive => true)
       end
 
       def check_min_version(name, minimal_version)
@@ -66,7 +67,7 @@ module ForemanMaintain
         rpm_version(name)
       end
 
-      def rpm_version(name, queryformat = "VERSION")
+      def rpm_version(name, queryformat = 'VERSION')
         rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{#{queryformat}}"))
         if $CHILD_STATUS.success?
           version(rpm_version)

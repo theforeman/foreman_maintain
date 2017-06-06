@@ -15,17 +15,17 @@ class Features::Downstream < ForemanMaintain::Feature
     current_version.to_s[/^\d+\.\d+/]
   end
 
-  def set_repositories(version)
+  def setup_repositories(version)
     activation_key = ENV['EXTERNAL_SAT_ACTIVATION_KEY']
     org = ENV['EXTERNAL_SAT_ORG']
     if activation_key
-      org_options = org ? %{--org #{shellescape(org)}} : ''
-      execute!(%{subscription-manager register #{org_options}\
-                  --activationkey #{shellescape(activation_key)} --force})
+      org_options = org ? %(--org #{shellescape(org)}) : ''
+      execute!(%(subscription-manager register #{org_options}\
+                  --activationkey #{shellescape(activation_key)} --force))
     else
-      execute!(%{subscription-manager repos --disable '*'})
-      enable_options = rh_repos(version).map { |r| "--enable=#{r}"}.join(" ")
-      execute!(%{subscription-manager repos #{enable_options}})
+      execute!(%(subscription-manager repos --disable '*'))
+      enable_options = rh_repos(version).map { |r| "--enable=#{r}" }.join(' ')
+      execute!(%(subscription-manager repos #{enable_options}))
     end
   end
 
@@ -41,7 +41,7 @@ class Features::Downstream < ForemanMaintain::Feature
   def rh_version
     return @rh_version if defined? @rh_version
     release_package = execute!('rpm -qf /etc/redhat-release')
-    @rh_version = rpm_version(release_package, "RELEASE")
+    @rh_version = rpm_version(release_package, 'RELEASE')
   end
 
   def version_from_source
