@@ -6,6 +6,9 @@ include CliAssertions
 module ForemanMaintain
   describe Cli::UpgradeCommand do
     include CliAssertions
+    before do
+      ForemanMaintain.detector.refresh
+    end
     let :command do
       %w[upgrade]
     end
