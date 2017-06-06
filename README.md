@@ -21,6 +21,16 @@ Subcommands:
       check TARGET_VERSION         Run pre-upgrade checks for upgradeing to specified version
 ```
 
+### Upgrades
+
+#### Satellite notes
+To use custom organzation/activation key for configuring repositories during
+upgrade, set the following environment variables
+```
+export EXTERNAL_SAT_ORG='Sat6-CI'
+export EXTERNAL_SAT_ACTIVATION_KEY='Satellite QA RHEL7'
+```
+
 ## Implementation
 
 `foreman_maintain` maps the CLI commands into definitions. This allows to keep the set

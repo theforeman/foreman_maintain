@@ -103,7 +103,7 @@ module ForemanMaintain
     end
 
     # public method to be overriden: it can perform additional checks
-    # to say, if the step is actually necessary to run. For example an `InstallPackage`
+    # to say, if the step is actually necessary to run. For example an `Packages::Install`
     # procedure would not be necessary when the package is already installed.
     def necessary?
       true

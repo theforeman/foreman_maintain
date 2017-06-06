@@ -1,10 +1,10 @@
 require 'test_helper'
 
-describe Procedures::InstallPackage do
+describe Procedures::Packages::Install do
   include DefinitionsTestHelper
 
   subject do
-    Procedures::InstallPackage.new(:packages => ['cheetah'])
+    Procedures::Packages::Install.new(:packages => ['cheetah'])
   end
 
   context 'package is already installed' do
