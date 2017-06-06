@@ -39,13 +39,16 @@ module ForemanMaintain
         end
       end
 
-      subcommand 'test', 'tmp-test' do
-        parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
-        interactive_option
+      subcommand 'advanced', 'Advanced commands: use with caution' do
+        subcommand 'run', 'Run specific phase of the upgrade' do
+          option '--phase', 'phase', 'phase to be run', :required => true
+          parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
+          interactive_option
 
-        def execute
-          upgrade_runner.run_phase(:migrations)
-          exit upgrade_runner.exit_code
+          def execute
+            upgrade_runner.run_phase(phase.to_sym)
+            exit upgrade_runner.exit_code
+          end
         end
       end
 
