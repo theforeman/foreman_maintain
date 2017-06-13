@@ -80,7 +80,9 @@ module ForemanMaintain
     end
 
     def add_steps(steps)
-      self.steps.concat(steps)
+      steps.each do |step|
+        self.steps << step.ensure_instance
+      end
     end
 
     def add_step(step)

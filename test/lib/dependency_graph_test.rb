@@ -1,3 +1,5 @@
+require 'test_helper'
+
 module ForemanMaintain
   describe DependencyGraph do
     let(:scenario) { Scenarios::PresentUpgrade.new }
@@ -10,28 +12,24 @@ module ForemanMaintain
     end
 
     it 'do not add node if not found(nil)' do
-      subject.add(:some_key)
+      subject.add_to_graph(:some_key)
       refute subject.graph.key?(nil)
     end
 
     it 'add node if found' do
-      subject.add(:present_service_is_running)
-      assert_empty subject.graph.fetch(Checks::PresentServiceIsRunning)
+      subject.add_to_graph(:present_service_is_running)
+      assert_empty subject.graph.fetch(:present_service_is_running)
     end
 
-    it 'should find dependencies for Class, String and symbol' do
-      subject.collection << Checks::ExternalServiceIsAccessible
+    it 'should find dependencies' do
+      subject = DependencyGraph.new(scenario.steps << Checks::ExternalServiceIsAccessible.new)
 
-      dependencies =
-        [Checks::ExternalServiceIsAccessible,
-         'Checks::ExternalServiceIsAccessible',
-         :external_service_is_accessible]
+      dependencies = [:external_service_is_accessible]
 
-      subject.add(:present_service_is_running, dependencies)
-      childrens = subject.graph.fetch(Checks::PresentServiceIsRunning)
+      subject.add_to_graph(:present_service_is_running, dependencies)
+      childrens = subject.graph.fetch(:present_service_is_running)
 
-      assert_equal 3, childrens.count
-      assert_equal Checks::ExternalServiceIsAccessible, *childrens.uniq
+      assert_equal 1, childrens.count
     end
   end
 end

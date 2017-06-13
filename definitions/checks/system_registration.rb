@@ -3,7 +3,6 @@ class Checks::SystemRegistration < ForemanMaintain::Check
     label :verify_self_registration
     description 'Check whether system is self-registered or not'
     tags :default
-    after :disk_io
 
     confine do
       file_exists?('/etc/rhsm/rhsm.conf')
