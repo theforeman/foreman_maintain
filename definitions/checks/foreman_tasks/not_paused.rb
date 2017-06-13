@@ -5,7 +5,6 @@ module Checks::ForemanTasks
       for_feature :foreman_tasks
       description 'check for paused tasks'
       tags :default
-      after :disk_io, :verify_self_registration
     end
 
     def run

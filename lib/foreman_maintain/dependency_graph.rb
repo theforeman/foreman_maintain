@@ -4,7 +4,7 @@ module ForemanMaintain
   class DependencyGraph
     include TSort
 
-    attr_reader :graph, :collection
+    attr_reader :graph, :collection, :labels
 
     def self.sort(collection)
       new(collection).tsort.map(&:ensure_instance)
@@ -12,20 +12,18 @@ module ForemanMaintain
 
     def initialize(collection)
       @graph = Hash.new([])
-      @collection = sanitize_collection(collection)
-      generate_rule
+      @collection = collection
+      @labels = extract_labels
+      generate_label_graph
+      convert_label_graph_to_object_graph
     end
 
-    def add(key, dependencies = [])
-      key = cache.fetch(key) unless key.is_a?(Class)
-
+    def add_to_graph(key, dependencies = [])
       return unless key
 
       dependencies = dependencies.map do |dep|
-        klass = find_class(dep)
-
-        next unless collection.include?(klass)
-        klass
+        next unless labels.include?(dep)
+        dep
       end.compact
 
       graph[key] = dependencies
@@ -45,6 +43,19 @@ module ForemanMaintain
       ForemanMaintain.cache
     end
 
+    def convert_label_graph_to_object_graph
+      graph.keys.each do |key|
+        graph[cache.fetch(key)] = graph[key].map { |dep| cache.fetch(dep) }
+        graph.delete(key)
+      end
+
+      graph
+    end
+
+    def extract_labels
+      collection.map(&:label)
+    end
+
     def find_class(dep)
       case dep
       when Class
@@ -60,17 +71,19 @@ module ForemanMaintain
       end
     end
 
-    def generate_rule
-      collection.each do |klass|
-        add(klass.before.first, [klass]) unless klass.before.empty?
-        add(klass, klass.after)
+    def generate_label_graph
+      collection.each do |object|
+        klass = object.class
+        key = object.label
+
+        add_to_graph(klass.before.first, [key])
+        add_to_graph(key, klass.after)
+        map_label_to_object(object)
       end
     end
 
-    def sanitize_collection(collection)
-      collection.map do |object|
-        object.is_a?(Class) ? object : object.class
-      end.compact
+    def map_label_to_object(object)
+      cache.fetch(object.label, object)
     end
   end
 end

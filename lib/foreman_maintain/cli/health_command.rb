@@ -5,7 +5,9 @@ module ForemanMaintain
         tags_option
 
         def execute
-          DependencyGraph.sort(available_checks).each { |check| print_check_info(check) }
+          DependencyGraph.sort(available_checks.map(&:ensure_instance)).each do |check|
+            print_check_info(check)
+          end
         end
 
         def print_check_info(check)

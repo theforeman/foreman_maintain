@@ -18,8 +18,9 @@ module ForemanMaintain
     end
 
     it 'misses for a non-existing key' do
-      Detector.any_instance.stubs(:available_checks).returns(['A Class name'])
-      refute_nil cache.fetch(:key_not_found)
+      mock_obj = mock
+      Detector.any_instance.stubs(:available_checks).returns([mock_obj])
+      refute_nil cache.fetch(:key_not_found, mock_obj)
     end
 
     it 'does not cache nil values' do
