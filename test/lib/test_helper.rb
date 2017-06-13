@@ -20,7 +20,6 @@ module ResetTestState
 end
 
 TEST_DIR = File.dirname(__FILE__)
+CONFIG_FILE = File.join(TEST_DIR, 'config/foreman_maintain.yml.test').freeze
 
-ForemanMaintain.setup(
-  :config_file => File.join(TEST_DIR, 'config/foreman_maintain.yml.test')
-)
+ForemanMaintain.setup
