@@ -32,14 +32,16 @@ module ForemanMaintain
       end
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-    def run_scenario(scenario)
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+    def run_scenario(scenario, confirm = true)
       return if scenario.steps.empty?
       raise 'The runner is already in quit state' if quit?
+      if confirm
+        confirm_scenario(scenario)
+        return if quit?
+      end
       scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
       return if quit? # the before scenarios caused the stop of the execution
-      confirm_scenario(scenario)
-      return if quit?
       @reporter.before_scenario_starts(scenario)
       run_steps(scenario, scenario.steps)
       @reporter.after_scenario_finishes(scenario)
@@ -112,7 +114,6 @@ module ForemanMaintain
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def ask_about_offered_steps(step)
       if assumeyes? && rerun_check?(step)
         @reporter.puts 'Check still failing after attempt to fix. Skipping'

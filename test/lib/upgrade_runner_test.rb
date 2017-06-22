@@ -41,6 +41,8 @@ module ForemanMaintain
         The script will now start with the modification part of the upgrade.
         Confirm to continue, [y(yes), n(no), q(quit)]
       MESSAGE
+      assert_equal(:pre_upgrade_checks, upgrade_runner_with_whitelist.phase,
+                   'The phase should not be switched until confirmed')
     end
 
     it 'remembers the state of the previous run of the upgrade' do

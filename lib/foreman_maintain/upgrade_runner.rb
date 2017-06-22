@@ -72,8 +72,7 @@ module ForemanMaintain
     def run_rollback
       # we only are able to rollback from pre_migrations phase
       return if phase != :pre_migrations ||
-                !scenario(:pre_migrations).steps.any?(&:executed?)
-      pre_rollback_phase = phase
+                !scenario(:pre_migrations).steps.any? { |s| s.executed? && s.success? }
       @quit = false
       @last_scenario = nil # to prevent the unnecessary confirmation questions
       [:post_migrations, :post_upgrade_checks].each do |phase|
@@ -104,8 +103,10 @@ module ForemanMaintain
 
     def run_phase(phase)
       with_non_empty_scenario(phase) do |scenario|
+        confirm_scenario(scenario)
+        return if quit?
         self.phase = phase
-        run_scenario(scenario)
+        run_scenario(scenario, false)
         # if we started from the :pre_upgrade_checks, ensure to ask before
         # continuing with the rest of the upgrade
         @ask_to_confirm_upgrade = phase == :pre_upgrade_checks
@@ -159,7 +160,6 @@ module ForemanMaintain
             Confirm to continue
         MESSAGE
         if [:no, :quit].include?(response)
-          self.phase = :pre_upgrade_checks # turn back to pre_upgrade_checks
           ask_to_quit
         end
       end
