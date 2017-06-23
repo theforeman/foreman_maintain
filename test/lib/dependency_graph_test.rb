@@ -4,32 +4,22 @@ module ForemanMaintain
   describe DependencyGraph do
     let(:scenario) { Scenarios::PresentUpgrade::PreUpgradeChecks.new }
 
-    subject { DependencyGraph.new(scenario.steps) }
+    let(:step_1) { Checks::ExternalServiceIsAccessible.new }
+    let(:step_2) { Procedures::PresentServiceRestart.new }
+    let(:step_3) { Procedures::PresentServiceStart.new }
 
-    it 'should initialize with a graph and a collection' do
-      refute_empty subject.collection
-      refute_empty subject.graph
+    let(:steps) { [step_1, step_2, step_3] }
+
+
+    it 'preserves the order the steps were added' do
+      ordered_steps = DependencyGraph.sort(steps)
+      ordered_steps.map(&:label).must_equal [:external_service_is_accessible, :present_service_restart, :present_service_start]
     end
 
-    it 'do not add node if not found(nil)' do
-      subject.add_to_graph(:some_key)
-      refute subject.graph.key?(nil)
-    end
-
-    it 'add node if found' do
-      subject.add_to_graph(:present_service_is_running)
-      assert_empty subject.graph.fetch(:present_service_is_running)
-    end
-
-    it 'should find dependencies' do
-      subject = DependencyGraph.new(scenario.steps << Checks::ExternalServiceIsAccessible.new)
-
-      dependencies = [:external_service_is_accessible]
-
-      subject.add_to_graph(:present_service_is_running, dependencies)
-      childrens = subject.graph.fetch(:present_service_is_running)
-
-      assert_equal 1, childrens.count
+    it 'should satisfy order requirements' do
+      step_2.class.stubs(:before => [step_1.label])
+      ordered_steps = DependencyGraph.sort(steps)
+      ordered_steps.map(&:label).must_equal [:present_service_restart, :external_service_is_accessible, :present_service_start]
     end
   end
 end

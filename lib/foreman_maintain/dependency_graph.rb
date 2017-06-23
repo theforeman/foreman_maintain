@@ -13,24 +13,18 @@ module ForemanMaintain
     def initialize(collection)
       @graph = Hash.new([])
       @collection = collection
-      @labels = extract_labels
+      @steps_by_labels = @collection.group_by(&:label)
       generate_label_graph
-      convert_label_graph_to_object_graph
     end
 
     def add_to_graph(key, dependencies = [])
       return unless key
 
-      dependencies = dependencies.map do |dep|
-        next unless labels.include?(dep)
-        dep
-      end.compact
-
       graph[key] = dependencies
     end
 
     def tsort_each_node(&block)
-      graph.each_key(&block)
+      @collection.each(&block)
     end
 
     def tsort_each_child(node, &block)
@@ -39,51 +33,19 @@ module ForemanMaintain
 
     private
 
-    def cache
-      @cache ||= ObjectCache.new
-    end
-
-    def convert_label_graph_to_object_graph
-      graph.keys.each do |key|
-        graph[cache.fetch(key)] = graph[key].map { |dep| cache.fetch(dep) }
-        graph.delete(key)
-      end
-
-      graph
-    end
-
-    def extract_labels
-      collection.map(&:label)
-    end
-
-    def find_class(dep)
-      case dep
-      when Class
-        dep
-      when String
-        if dep.include?('::')
-          dep.split('::').reduce(Object) { |o, e| o.const_get(e) }
-        else
-          cache.fetch(dep)
-        end
-      else
-        cache.fetch(dep)
-      end
-    end
-
     def generate_label_graph
       collection.each do |object|
-        klass = object.class
-        key = object.label
-
-        add_to_graph(klass.before.first, [key])
-        add_to_graph(key, klass.after)
-        map_label_to_object(object)
+        klass = object.is_a?(Class) ? object : object.class
+        klass.before.each do |label|
+          add_to_graph(labels_to_objects(label).first, [object])
+        end
+        add_to_graph(object, labels_to_objects(klass.after))
       end
     end
 
-    def map_label_to_object(object)
-      cache.fetch(object.label, object)
+    def labels_to_objects(labels)
+      labels = Array(labels)
+      labels.map { |label| @steps_by_labels[label] }.compact.flatten
     end
   end
 end

@@ -154,6 +154,13 @@ module ForemanMaintain
                                                       :output => hash[:output])
     end
 
+    def inspect
+      ret = "#{self.class.name} label:#{self.label}"
+      ret << " params: #{@param_values.inspect}" unless @param_values.empty?
+      ret << " status: #{execution.status}" if executed?
+      ret
+    end
+
     class << self
       def ensure_instance
         new
