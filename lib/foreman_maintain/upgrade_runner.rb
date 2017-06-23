@@ -118,7 +118,7 @@ module ForemanMaintain
     private
 
     def rollback_pre_migrations
-      raise "Unexpected phase #{phase}, expecting #{:pre_migrations}" unless phase == :pre_migrations
+      raise "Unexpected phase #{phase}, expecting pre_migrations" unless phase == :pre_migrations
       rollback_needed = scenario(:pre_migrations).steps.any? { |s| s.executed? && s.success? }
       if rollback_needed
         @quit = false

@@ -155,7 +155,7 @@ module ForemanMaintain
     end
 
     def inspect
-      ret = "#{self.class.name} label:#{self.label}"
+      ret = "#{self.class.name} label:#{label}"
       ret << " params: #{@param_values.inspect}" unless @param_values.empty?
       ret << " status: #{execution.status}" if executed?
       ret
