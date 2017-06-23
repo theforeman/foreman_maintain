@@ -71,18 +71,9 @@ module ForemanMaintain
 
     def run_rollback
       # we only are able to rollback from pre_migrations phase
-      return if phase != :pre_migrations ||
-                !scenario(:pre_migrations).steps.any? { |s| s.executed? && s.success? }
-      @quit = false
-      @last_scenario = nil # to prevent the unnecessary confirmation questions
-      [:post_migrations, :post_upgrade_checks].each do |phase|
-        if quit? && phase == :post_upgrade_checks
-          self.phase = pre_rollback_phase
-          return # rubocop:disable Lint/NonLocalExitFromIterator
-        end
-        run_phase(phase)
+      if phase == :pre_migrations
+        rollback_pre_migrations
       end
-      self.phase = :pre_upgrade_checks # rollback finished
     end
 
     def storage
@@ -125,6 +116,23 @@ module ForemanMaintain
     end
 
     private
+
+    def rollback_pre_migrations
+      raise "Unexpected phase #{phase}, expecting #{:pre_migrations}" unless phase == :pre_migrations
+      rollback_needed = scenario(:pre_migrations).steps.any? { |s| s.executed? && s.success? }
+      if rollback_needed
+        @quit = false
+        @last_scenario = nil # to prevent the unnecessary confirmation questions
+        [:post_migrations, :post_upgrade_checks].each do |phase|
+          if quit? && phase == :post_upgrade_checks
+            self.phase = :pre_migrations
+            return # rubocop:disable Lint/NonLocalExitFromIterator
+          end
+          run_phase(phase)
+        end
+      end
+      self.phase = :pre_upgrade_checks # rollback finished
+    end
 
     def with_non_empty_scenario(phase)
       next_scenario = scenario(phase)
