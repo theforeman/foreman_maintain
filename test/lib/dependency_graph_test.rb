@@ -2,7 +2,7 @@ require 'test_helper'
 
 module ForemanMaintain
   describe DependencyGraph do
-    let(:scenario) { Scenarios::PresentUpgrade.new }
+    let(:scenario) { Scenarios::PresentUpgrade::PreUpgradeChecks.new }
 
     subject { DependencyGraph.new(scenario.steps) }
 

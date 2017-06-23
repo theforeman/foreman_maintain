@@ -2,8 +2,6 @@ require 'singleton'
 
 module ForemanMaintain
   class ObjectCache
-    include Singleton
-
     attr_reader :cache
 
     def initialize

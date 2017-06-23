@@ -40,7 +40,7 @@ module ForemanMaintain
     private
 
     def cache
-      ForemanMaintain.cache
+      @cache ||= ObjectCache.new
     end
 
     def convert_label_graph_to_object_graph

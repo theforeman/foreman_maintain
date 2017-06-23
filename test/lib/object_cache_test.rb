@@ -5,11 +5,7 @@ module ForemanMaintain
     include ResetTestState
 
     let :cache do
-      ObjectCache.instance
-    end
-
-    it 'ensures class is singleton' do
-      assert_raises(NoMethodError) { ObjectCache.new }
+      ObjectCache.new
     end
 
     it 'has a hit on a existing key' do
