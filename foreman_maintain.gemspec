@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.description = "Provides various features that helps keeping \
 the Foreman/Satellite up and running."
 
-  s.files = Dir['{bin,lib,definitions}/**/*']
+  s.files = Dir['{bin,lib,definitions}/**/*'] + Dir['config/foreman_maintain.yml.*']
   s.extra_rdoc_files = [
     'LICENSE',
     'README.md'
