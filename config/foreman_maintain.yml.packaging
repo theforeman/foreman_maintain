@@ -9,8 +9,8 @@
 # :definitions_dirs:
 
 # Mention file path to store data
-:storage_file: '/lib/foreman-maintain/data.yml'
+:storage_file: '/var/lib/foreman-maintain/data.yml'
 
 # Mention directory to store whole backup data
-:backup_dir: '/lib/foreman-maintain'
+:backup_dir: '/var/lib/foreman-maintain'
 

@@ -16,7 +16,7 @@ module ForemanMaintain
       @log_dir = find_dir_path(@options.fetch(:log_dir, 'log'))
       @storage_file = @options.fetch(:storage_file, 'data.yml')
       @backup_dir = find_dir_path(
-        @options.fetch(:backup_dir, '/lib/foreman-maintain')
+        @options.fetch(:backup_dir, '/var/lib/foreman-maintain')
       )
     end
 
@@ -35,7 +35,7 @@ module ForemanMaintain
     end
 
     def config_file_path
-      File.exist?(CONFIG_FILE) ? CONFIG_FILE : 'config/foreman_maintain.yml'
+      File.exist?(CONFIG_FILE) ? CONFIG_FILE : File.join(source_path, 'config/foreman_maintain.yml')
     end
 
     def source_path
