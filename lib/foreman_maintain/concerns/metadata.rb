@@ -90,7 +90,7 @@ module ForemanMaintain
           end
         end
 
-        # Ensure to not run the step twice: expects the scenario to be presisted
+        # Ensure to not run the step twice: expects the scenario to be persisted
         # between runs to work properly
         def run_once
           @data[:run_once] = true

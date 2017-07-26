@@ -24,7 +24,7 @@ module ForemanMaintain
 
         Subcommands:
             list-versions                 List versions this system is upgradable to
-            check                         Run pre-upgrade checks for upgrading to specified version
+            check                         Run pre-upgrade checks before upgrading to specified version
             advanced                      Advanced commands: use with caution
             run                           Run full upgrade to a specified version
 

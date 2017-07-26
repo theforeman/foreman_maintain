@@ -12,7 +12,7 @@ module ForemanMaintain
 
         # Possible run strategies:
         #
-        #  * +:fail_fast+ - the scenario stops as soon first step fails
+        #  * +:fail_fast+ - the scenario stops as soon as the first step fails
         #  * +:fail_slow+ - the step failure doesn't cause the scenario to stop:
         #                   it runs all the steps, for the tailures to be reported
         #                   at the end

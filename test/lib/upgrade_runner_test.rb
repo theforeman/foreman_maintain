@@ -38,8 +38,9 @@ module ForemanMaintain
     it 'asks for confirmation before getting into pre_migrations from pre upgrade checks' do
       upgrade_runner_with_whitelist.run
       reporter.log.last.must_equal ['ask', <<-MESSAGE.strip_heredoc.strip]
-        The script will now start with the modification part of the upgrade.
-        Confirm to continue, [y(yes), n(no), q(quit)]
+        The pre-upgrade checks indicate that the system is ready for upgrade.
+        It's recommended to perform a backup at this stage.
+        Confirm to continue with the the modification part of the upgrade, [y(yes), n(no), q(quit)]
       MESSAGE
       assert_equal(:pre_upgrade_checks, upgrade_runner_with_whitelist.phase,
                    'The phase should not be switched until confirmed')

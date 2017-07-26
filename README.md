@@ -20,7 +20,7 @@ Subcommands:
       list-versions                 List versions this system is upgradable to
       check TARGET_VERSION          Run pre-upgrade checks for upgradeing to specified version
       run TARGET_VERSION            Run the full upgrade
-      advance
+      advanced
         run --phase=phase TARGET_VERSION  Run just a specific phase of the upgrade
 ```
 

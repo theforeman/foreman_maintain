@@ -145,7 +145,7 @@ module ForemanMaintain
           puts(<<-MESSAGE.strip_heredoc)
             The step was skipped as it was already run and it is marked
             as run_once. Use --force to enforce the execution.
-MESSAGE
+          MESSAGE
         end
         hline
         new_line_if_needed
@@ -202,7 +202,7 @@ MESSAGE
         return if scenario.passed?
         message = []
         message << <<-MESSAGE.strip_heredoc
-        Scenario [#{scenario.description}] failed.
+          Scenario [#{scenario.description}] failed.
         MESSAGE
         recommend = []
         steps_with_error = scenario.steps_with_error(:whitelisted => false)

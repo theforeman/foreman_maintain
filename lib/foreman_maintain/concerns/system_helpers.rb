@@ -41,7 +41,7 @@ module ForemanMaintain
       def packages_action(action, packages, options = {})
         expected_actions = [:install, :update]
         unless expected_actions.include?(action)
-          raise "Unexpected action #{action} expected #{expected_actions.inspect}"
+          raise ArgumentError, "Unexpected action #{action} expected #{expected_actions.inspect}"
         end
         options.validate_options!(:assumeyes)
         yum_options = []
@@ -59,7 +59,7 @@ module ForemanMaintain
 
       def downstream_installation?
         execute?('rpm -q satellite') ||
-          (execute('rpm -q foreman') =~ /6sat.noarch/)
+          (execute('rpm -q foreman') =~ /sat.noarch/)
       end
 
       def package_version(name)

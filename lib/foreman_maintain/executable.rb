@@ -69,7 +69,7 @@ module ForemanMaintain
     end
 
     # make the step a warning: this doesn't indicate the whole scenario should
-    # not continue, but the user will be warning about proceeding
+    # not continue, but the user will be warned before proceeding
     def warn!(message)
       raise Error::Warn, message
     end

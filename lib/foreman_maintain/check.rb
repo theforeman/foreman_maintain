@@ -15,7 +15,7 @@ module ForemanMaintain
     #                   the failure, will be offered to the user when running
     #                   in interactive mode
     #
-    # * +:warn* - issue warning instead of failure: this is less string check,
+    # * +:warn* - issue warning instead of failure: this is less strict check,
     #      that could be considered as non-critical for continuing with the scenario
     def assert(condition, error_message, options = {})
       options = options.validate_options!(:next_steps, :warn)

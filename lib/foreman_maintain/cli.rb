@@ -17,7 +17,10 @@ module ForemanMaintain
         begin
           super
           exit_code = 0
-        rescue Error::UsageError => e
+        rescue StandardError => e
+          if e.is_a?(Clamp::HelpWanted) || e.is_a?(ArgumentError) || e.is_a?(Clamp::UsageError)
+            raise e
+          end
           puts e.message
           logger.error(e)
           exit_code = 1

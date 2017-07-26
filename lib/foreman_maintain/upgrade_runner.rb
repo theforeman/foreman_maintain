@@ -108,7 +108,7 @@ module ForemanMaintain
       with_non_empty_scenario(skipped_phase) do |scenario|
         @reporter.before_scenario_starts(scenario)
         @reporter.puts <<-MESSAGE.strip_heredoc
-          Skipping #{skipped_phase} phase as the last active phase was #{skipped_phase}.
+          Skipping #{skipped_phase} phase as it was already run before.
           To enforce to run the phase, use `upgrade advanced run --phase #{phase}`
         MESSAGE
         @reporter.after_scenario_finishes(scenario)
@@ -117,6 +117,7 @@ module ForemanMaintain
 
     private
 
+    # rubocop:disable Metrics/AbcSize
     def rollback_pre_migrations
       raise "Unexpected phase #{phase}, expecting pre_migrations" unless phase == :pre_migrations
       rollback_needed = scenario(:pre_migrations).steps.any? { |s| s.executed? && s.success? }
@@ -132,6 +133,9 @@ module ForemanMaintain
         end
       end
       self.phase = :pre_upgrade_checks # rollback finished
+      @reporter.puts <<-MESSAGE.strip_heredoc
+        The upgrade failed and system was restored to pre-upgrade state.
+      MESSAGE
     end
 
     def with_non_empty_scenario(phase)
@@ -164,8 +168,9 @@ module ForemanMaintain
       # we have not asked the user already about next steps
       if decision.nil? && @ask_to_confirm_upgrade
         response = reporter.ask_decision(<<-MESSAGE.strip_heredoc.strip)
-            The script will now start with the modification part of the upgrade.
-            Confirm to continue
+            The pre-upgrade checks indicate that the system is ready for upgrade.
+            It's recommended to perform a backup at this stage.
+            Confirm to continue with the the modification part of the upgrade
         MESSAGE
         if [:no, :quit].include?(response)
           ask_to_quit
