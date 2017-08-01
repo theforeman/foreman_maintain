@@ -1,6 +1,7 @@
 module ForemanMaintain
   class Param
     attr_reader :name, :description, :options
+
     def initialize(name, description, options, &block)
       options.validate_options!(:description, :required, :flag, :array)
       @name = name
