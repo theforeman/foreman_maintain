@@ -159,7 +159,7 @@ module ForemanMaintain
         end
 
         def params
-          metadata[:params] || []
+          metadata[:params] || {}
         end
 
         def before
@@ -250,6 +250,10 @@ module ForemanMaintain
 
       def description
         self.class.description
+      end
+
+      def runtime_message
+        description + (params.empty? ? '' : " (#{params})")
       end
 
       def tags

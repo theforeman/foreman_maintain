@@ -13,7 +13,7 @@ module Procedures::Packages
       @packages.any? { |package| package_version(package).nil? }
     end
 
-    def description
+    def runtime_message
       "Install package(s) #{@packages.join(', ')}"
     end
   end

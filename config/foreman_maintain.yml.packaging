@@ -1,15 +1,16 @@
 # Directory where the logs are stored.
 # The default file is named as /log/foreman_maintain.log
-:log_dir: 'log'
+:log_dir: '/var/log/foreman-maintain/'
 
 # Logger levels: mention one of debug, info, warning, error, fatal
-:log_level: 'error'
+# :log_level: 'error'
 
 # Mention definitions directories. Default
 # :definitions_dirs:
 
 # Mention file path to store data
-# :storage_file: 'data.yml'
+:storage_file: '/var/lib/foreman-maintain/data.yml'
 
 # Mention directory to store whole backup data
-# :backup_dir: '/lib/foreman-maintain'
+:backup_dir: '/var/lib/foreman-maintain'
+

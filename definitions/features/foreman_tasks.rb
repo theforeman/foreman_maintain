@@ -88,9 +88,13 @@ class Features::ForemanTasks < ForemanMaintain::Feature
 
   private
 
+  def parent_backup_dir
+    File.expand_path(ForemanMaintain.config.backup_dir)
+  end
+
   def backup_dir(state)
     @backup_dir ||=
-      "/var/lib/foreman/backup-tasks/#{state}/#{Time.now.strftime('%Y-%m-%d_%H-%M-%S')}"
+      "#{parent_backup_dir}/backup-tasks/#{state}/#{Time.now.strftime('%Y-%m-%d_%H-%M-%S')}"
   end
 
   def backup_table(table, state, fkey = 'execution_plan_uuid')

@@ -16,22 +16,33 @@ module ForemanMaintain
 
       attr_reader :filter_label, :filter_tags
 
-      def initialize(filter)
+      def initialize(filter, definition_kinds = [:check])
         @filter_tags = filter[:tags]
         @filter_label = filter[:label]
-        @steps = ForemanMaintain.available_checks(filter).map(&:ensure_instance)
+        @definition_kinds = definition_kinds
+        @steps = []
+        @steps += checks(filter) if definition_kinds.include?(:check)
+        @steps += procedures(filter) if definition_kinds.include?(:procedure)
         @steps = DependencyGraph.sort(@steps)
       end
 
-      def description
+      def runtime_message
         if @filter_label
-          "check with label [#{dashize(@filter_label)}]"
+          "#{kind_list} with label [#{dashize(@filter_label)}]"
         else
-          "checks with tags #{tag_string(@filter_tags)}"
+          "#{kinds_list} with tags #{tag_string(@filter_tags)}"
         end
       end
 
       private
+
+      def kinds_list
+        @definition_kinds.map { |kind| kind.to_s + 's' }.join(' and ')
+      end
+
+      def kind_list
+        @definition_kinds.map(&:to_s).join(' or ')
+      end
 
       def tag_string(tags)
         tags.map { |tag| dashize("[#{tag}]") }.join(' ')
@@ -39,6 +50,14 @@ module ForemanMaintain
 
       def dashize(string)
         string.to_s.tr('_', '-')
+      end
+
+      def checks(filter)
+        ForemanMaintain.available_checks(filter).map(&:ensure_instance)
+      end
+
+      def procedures(filter)
+        ForemanMaintain.available_procedures(filter).map(&:ensure_instance)
       end
     end
 

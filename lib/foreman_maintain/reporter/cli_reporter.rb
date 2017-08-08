@@ -160,6 +160,77 @@ module ForemanMaintain
         print "\r" + ' ' * @max_length + "\r"
       end
 
+      def assumeyes?
+        @assumeyes
+      end
+
+      def single_step_decision(step)
+        answer = ask_decision("Continue with step [#{step.runtime_message}]?")
+        if answer == :yes
+          step
+        else
+          answer
+        end
+      end
+
+      def multiple_steps_decision(steps)
+        puts 'There are multiple steps to proceed:'
+        steps.each_with_index do |step, index|
+          puts "#{index + 1}) #{step.runtime_message}"
+        end
+        ask_to_select('Select step to continue', steps, &:runtime_message)
+      end
+
+      def ask_decision(message)
+        if assumeyes?
+          print("#{message} (assuming yes)")
+          return :yes
+        end
+        until_valid_decision do
+          filter_decision(ask("#{message}, [y(yes), n(no), q(quit)]"))
+        end
+      ensure
+        clear_line
+      end
+
+      def filter_decision(answer)
+        decision = nil
+        DECISION_MAPPER.each do |options, decision_label|
+          decision = decision_label if options.include?(answer)
+        end
+        decision
+      end
+
+      # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+      def ask_to_select(message, steps)
+        if assumeyes?
+          puts('(assuming first option)')
+          return steps.first
+        end
+        until_valid_decision do
+          answer = ask("#{message}, [n(next), q(quit)]")
+          if answer =~ /^\d+$/ && (answer.to_i - 1) < steps.size
+            steps[answer.to_i - 1]
+          else
+            decision = filter_decision(answer)
+            if decision == :yes
+              steps.first
+            else
+              decision
+            end
+          end
+        end
+      ensure
+        clear_line
+      end
+
+      # loop over the block until it returns some non-false value
+      def until_valid_decision
+        decision = nil
+        decision = yield until decision
+        decision
+      end
+
       def execution_info(execution, text)
         prefix = "#{execution.name}:"
         "#{prefix} #{text}"
@@ -197,7 +268,6 @@ module ForemanMaintain
 
       private
 
-      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def scenario_failure_message(scenario)
         return if scenario.passed?
         message = []

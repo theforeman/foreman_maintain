@@ -4,6 +4,8 @@ $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'foreman_maintain'
 
+CONFIG_FILE = '/etc/foreman-maintain/foreman_maintain.yml'.freeze
+
 ForemanMaintain.setup
 
 require 'foreman_maintain/cli'
