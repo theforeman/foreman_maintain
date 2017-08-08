@@ -1,11 +1,20 @@
 module ForemanMaintain
   module Cli
     class UpgradeCommand < Base
+      def self.target_version_option
+        option '--target-version', 'TARGET_VERSION', 'Target version of the upgrade',
+               :required => false
+      end
+
       def validate_target_version!
-        raise Error::UsageError, 'target version not specified' unless target_version
         unless UpgradeRunner.available_targets.include?(target_version)
+          message_start = if target_version
+                            "Can't upgrade to #{target_version}"
+                          else
+                            '--target-version not specified'
+                          end
           message = <<-MESSAGE.strip_heredoc
-            Can't upgrade to #{target_version}
+            #{message_start}
             Possible target versions are:
           MESSAGE
           versions = UpgradeRunner.available_targets.join("\n")
@@ -33,7 +42,7 @@ module ForemanMaintain
       end
 
       subcommand 'check', 'Run pre-upgrade checks before upgrading to specified version' do
-        parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
+        target_version_option
         interactive_option
 
         def execute
@@ -45,7 +54,7 @@ module ForemanMaintain
       subcommand 'advanced', 'Advanced commands: use with caution' do
         subcommand 'run', 'Run specific phase of the upgrade' do
           option '--phase', 'phase', 'phase to be run', :required => true
-          parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
+          target_version_option
           interactive_option
 
           def execute
@@ -56,7 +65,7 @@ module ForemanMaintain
       end
 
       subcommand 'run', 'Run full upgrade to a specified version' do
-        parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
+        target_version_option
         interactive_option
 
         def execute

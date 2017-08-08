@@ -51,7 +51,7 @@ module ForemanMaintain
 
       it 'runs the upgrade checks for version' do
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
-        run_cmd(['1.15'])
+        run_cmd(['--target-version=1.15'])
       end
     end
 
@@ -62,7 +62,7 @@ module ForemanMaintain
 
       it 'runs the specific phase' do
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
-        run_cmd(['--phase=pre_migrations', '1.15'])
+        run_cmd(['--phase=pre_migrations', '--target-version=1.15'])
       end
     end
 
@@ -73,7 +73,7 @@ module ForemanMaintain
 
       it 'runs the full upgrade for version' do
         UpgradeRunner.any_instance.expects(:run)
-        run_cmd(['1.15'])
+        run_cmd(['--target-version=1.15'])
       end
     end
   end
