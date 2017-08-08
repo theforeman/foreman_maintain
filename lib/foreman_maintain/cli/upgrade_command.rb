@@ -51,25 +51,17 @@ module ForemanMaintain
         end
       end
 
-      subcommand 'advanced', 'Advanced commands: use with caution' do
-        subcommand 'run', 'Run specific phase of the upgrade' do
-          option '--phase', 'phase', 'phase to be run', :required => true
-          target_version_option
-          interactive_option
-
-          def execute
-            upgrade_runner.run_phase(phase.to_sym)
-            exit upgrade_runner.exit_code
-          end
-        end
-      end
-
       subcommand 'run', 'Run full upgrade to a specified version' do
         target_version_option
         interactive_option
+        option '--phase', 'phase', 'run only a specific phase', :required => false
 
         def execute
-          upgrade_runner.run
+          if phase
+            upgrade_runner.run_phase(phase.to_sym)
+          else
+            upgrade_runner.run
+          end
           upgrade_runner.save
           exit upgrade_runner.exit_code
         end

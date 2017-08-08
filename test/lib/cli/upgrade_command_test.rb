@@ -25,7 +25,6 @@ module ForemanMaintain
         Subcommands:
             list-versions                 List versions this system is upgradable to
             check                         Run pre-upgrade checks before upgrading to specified version
-            advanced                      Advanced commands: use with caution
             run                           Run full upgrade to a specified version
 
         Options:
@@ -55,17 +54,6 @@ module ForemanMaintain
       end
     end
 
-    describe 'advanced run' do
-      let :command do
-        %w[upgrade advanced run]
-      end
-
-      it 'runs the specific phase' do
-        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
-        run_cmd(['--phase=pre_migrations', '--target-version=1.15'])
-      end
-    end
-
     describe 'run' do
       let :command do
         %w[upgrade run]
@@ -74,6 +62,11 @@ module ForemanMaintain
       it 'runs the full upgrade for version' do
         UpgradeRunner.any_instance.expects(:run)
         run_cmd(['--target-version=1.15'])
+      end
+
+      it 'with --phase it runs only a specific phase of the upgrade' do
+        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
+        run_cmd(['--phase=pre_migrations', '--target-version=1.15'])
       end
     end
   end
