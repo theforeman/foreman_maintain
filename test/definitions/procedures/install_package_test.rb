@@ -1,10 +1,10 @@
 require 'test_helper'
 
-describe Procedures::InstallPackage do
+describe Procedures::Packages::Install do
   include DefinitionsTestHelper
 
   subject do
-    Procedures::InstallPackage.new(:packages => ['cheetah'])
+    Procedures::Packages::Install.new(:packages => ['cheetah'])
   end
 
   context 'package is already installed' do
@@ -15,7 +15,7 @@ describe Procedures::InstallPackage do
   end
 
   it 'installs the specified packages' do
-    subject.expects(:install_packages).with(['cheetah'], :assumeyes => false)
+    subject.expects(:packages_action).with(:install, ['cheetah'], :assumeyes => false)
     result = run_procedure(subject)
     assert result.success?, 'the procedure was expected to succeed'
   end

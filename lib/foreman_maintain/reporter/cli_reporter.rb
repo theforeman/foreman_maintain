@@ -4,12 +4,6 @@ require 'highline'
 module ForemanMaintain
   class Reporter
     class CLIReporter < Reporter
-      DECISION_MAPPER = {
-        %w[y yes] => :yes,
-        %w[n next no] => :no,
-        %w[q quit] => :quit
-      }.freeze
-
       # Simple spinner able to keep updating current line
       class Spinner
         def initialize(reporter, interval = 0.1)
@@ -87,7 +81,7 @@ module ForemanMaintain
       end
 
       def before_scenario_starts(scenario)
-        puts "\nRunning #{scenario.description || scenario.class}"
+        puts "Running #{scenario.description || scenario.class}"
         hline('=')
       end
 
@@ -147,26 +141,24 @@ module ForemanMaintain
       def after_execution_finishes(execution)
         puts_status(execution.status)
         puts(execution.output) unless execution.output.empty?
+        if execution.status == :already_run
+          puts(<<-MESSAGE.strip_heredoc)
+            The step was skipped as it was already run and it is marked
+            as run_once. Use --force to enforce the execution.
+          MESSAGE
+        end
         hline
         new_line_if_needed
       end
 
-      def after_scenario_finishes(_scenario); end
-
-      def on_next_steps(steps)
-        return if steps.empty?
-        if steps.size > 1
-          multiple_steps_decision(steps)
-        else
-          single_step_decision(steps.first)
-        end
+      def after_scenario_finishes(scenario)
+        scenario_failure_message(scenario)
+        puts "\n"
       end
 
       def clear_line
         print "\r" + ' ' * @max_length + "\r"
       end
-
-      private
 
       def assumeyes?
         @assumeyes
@@ -260,6 +252,7 @@ module ForemanMaintain
                     :fail => { :label => '[FAIL]', :color => :red },
                     :running => { :label => '[RUNNING]', :color => :blue },
                     :skipped => { :label => '[SKIPPED]', :color => :yellow },
+                    :already_run => { :label => '[ALREADY RUN]', :color => :yellow },
                     :warning => { :label => '[WARNING]', :color => :yellow } }
         properties = mapping[status]
         @hl.color(properties[:label], properties[:color], :bold)
@@ -271,6 +264,49 @@ module ForemanMaintain
 
       def record_last_line(string)
         @last_line = string.lines.to_a.last
+      end
+
+      private
+
+      def scenario_failure_message(scenario)
+        return if scenario.passed?
+        message = []
+        message << <<-MESSAGE.strip_heredoc
+          Scenario [#{scenario.description}] failed.
+        MESSAGE
+        recommend = []
+        steps_with_error = scenario.steps_with_error(:whitelisted => false)
+        unless steps_with_error.empty?
+          message << <<-MESSAGE.strip_heredoc
+          The following steps ended up in failing state:
+
+          #{format_steps(steps_with_error, "\n", 2)}
+          MESSAGE
+          recommend << <<-MESSAGE.strip_heredoc
+          Resolve the failed steps and rerun
+          the command. In case the failures are false positives,
+          use --whitelist="#{steps_with_error.map(&:label_dashed).join(',')}"
+          MESSAGE
+        end
+
+        steps_with_warning = scenario.steps_with_warning(:whitelisted => false)
+        unless steps_with_warning.empty?
+          message << <<-MESSAGE.strip_heredoc
+          The following steps ended up in warning state:
+
+          #{format_steps(steps_with_warning, "\n", 2)}
+          MESSAGE
+
+          recommend << <<-MESSAGE.strip_heredoc
+          The steps in warning state itself might not mean there is an error,
+          but it should be reviews to ensure the behavior is expected
+          MESSAGE
+        end
+        puts((message + recommend).join("\n"))
+      end
+
+      def format_steps(steps, join_with = ', ', indent = 0)
+        steps.map { |s| "#{' ' * indent}[#{s.label_dashed}]" }.join(join_with)
       end
     end
   end

@@ -90,6 +90,12 @@ module ForemanMaintain
           end
         end
 
+        # Ensure to not run the step twice: expects the scenario to be persisted
+        # between runs to work properly
+        def run_once
+          @data[:run_once] = true
+        end
+
         def self.eval_dsl(metadata, &block)
           new(metadata).tap do |dsl|
             dsl.instance_eval(&block)
@@ -131,9 +137,13 @@ module ForemanMaintain
         def metadata(&block)
           @metadata ||= initialize_metadata
           if block
-            DSL.eval_dsl(@metadata, &block)
+            metadata_class.eval_dsl(@metadata, &block)
           end
           @metadata
+        end
+
+        def metadata_class
+          DSL
         end
 
         def label
@@ -158,6 +168,10 @@ module ForemanMaintain
 
         def after
           metadata[:after] || []
+        end
+
+        def run_once?
+          metadata[:run_once]
         end
 
         def initialize_metadata
@@ -230,6 +244,10 @@ module ForemanMaintain
         self.class.label
       end
 
+      def label_dashed
+        label.to_s.tr('_', '-')
+      end
+
       def description
         self.class.description
       end
@@ -244,6 +262,10 @@ module ForemanMaintain
 
       def params
         self.class.params
+      end
+
+      def run_once?
+        self.class.run_once?
       end
 
       def preparation_steps(*args)

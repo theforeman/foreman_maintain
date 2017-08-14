@@ -51,9 +51,9 @@ module ForemanMaintain
 
     it 'allows to filter scenarios based on metadata and present features' do
       scenarios = detector.available_scenarios(:tags => :upgrade)
-      assert(scenarios.find { |c| c.is_a? Scenarios::PresentUpgrade },
+      assert(scenarios.find { |c| c.is_a? Scenarios::PresentUpgrade::PreUpgradeChecks },
              'scenarios that should be found is missing')
-      refute(scenarios.find { |c| c.is_a? Scenarios::MissingUpgrade },
+      refute(scenarios.find { |c| c.is_a? Scenarios::MissingUpgrade::PreUpgradeChecks },
              'scenarios that should not be found are present')
     end
   end

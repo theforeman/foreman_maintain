@@ -2,13 +2,17 @@ module ForemanMaintain
   class Scenario
     include Concerns::Logger
     include Concerns::SystemHelpers
-    include Concerns::Metadata
+    include Concerns::ScenarioMetadata
     include Concerns::Finders
+    extend Concerns::Finders
 
     attr_reader :steps
 
     class FilteredScenario < Scenario
-      metadata { manual_detection }
+      metadata do
+        manual_detection
+        run_strategy :fail_slow
+      end
 
       attr_reader :filter_label, :filter_tags
 
@@ -61,6 +65,7 @@ module ForemanMaintain
       metadata do
         manual_detection
         description 'preparation steps required to run the next scenarios'
+        run_strategy :fail_slow
       end
 
       attr_reader :main_scenario
@@ -90,6 +95,37 @@ module ForemanMaintain
       end.uniq
     end
 
+    def executed_steps
+      steps.find_all(&:executed?)
+    end
+
+    def steps_with_error(options = {})
+      filter_whitelisted(executed_steps.find_all(&:fail?), options)
+    end
+
+    def steps_with_warning(options = {})
+      filter_whitelisted(executed_steps.find_all(&:warning?), options)
+    end
+
+    def filter_whitelisted(steps, options)
+      options.validate_options!(:whitelisted)
+      if options.key?(:whitelisted)
+        steps.select do |step|
+          options[:whitelisted] ? step.whitelisted? : !step.whitelisted?
+        end
+      else
+        steps
+      end
+    end
+
+    def passed?
+      (steps_with_error(:whitelisted => false) + steps_with_warning(:whitelisted => false)).empty?
+    end
+
+    def failed?
+      !passed?
+    end
+
     # scenarios to be run before this scenario
     def before_scenarios
       scenarios = []
@@ -114,6 +150,34 @@ module ForemanMaintain
 
     def inspect
       "#{self.class.metadata[:description]}<#{self.class.name}>"
+    end
+
+    def to_hash
+      { :label => label,
+        :steps => steps.map(&:to_hash) }
+    end
+
+    def self.new_from_hash(hash)
+      scenarios = find_scenarios(:label => hash[:label])
+      unless scenarios.size == 1
+        raise "Could not find scenario #{hash[:label]}, found #{scenarios.size} scenarios"
+      end
+      scenario = scenarios.first
+      scenario.load_step_states(hash[:steps])
+      scenario
+    end
+
+    def load_step_states(steps_hash)
+      steps = self.steps.dup
+      steps_hash.each do |step_hash|
+        until steps.empty?
+          step = steps.shift
+          if step.matches_hash?(step_hash)
+            step.update_from_hash(step_hash)
+            break
+          end
+        end
+      end
     end
   end
 end

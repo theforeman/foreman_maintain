@@ -4,7 +4,7 @@ module ForemanMaintain
     class Execution
       include Concerns::Logger
       extend Forwardable
-      def_delegators :@reporter, :with_spinner, :puts, :print, :ask, :assumeyes?
+      def_delegators :reporter, :with_spinner, :puts, :print, :ask, :assumeyes?
 
       # Step performed as part of the execution
       attr_reader :step
@@ -20,32 +20,57 @@ module ForemanMaintain
 
       attr_reader :reporter
 
-      def initialize(step, reporter)
+      def initialize(step, reporter, options = {})
+        options.validate_options!(:whitelisted, :storage, :force)
         @step = step
         @reporter = reporter
         @status = :pending
         @output = ''
+        @whitelisted = options[:whitelisted]
+        @storage = options[:storage]
+        @force = options[:force]
       end
 
       def name
         @step.description
       end
 
+      def whitelisted?
+        @whitelisted
+      end
+
       def success?
-        @status == :success
+        [:success, :already_run, :skipped].include?(@status)
       end
 
       def fail?
         @status == :fail
       end
 
+      def skipped?
+        @status == :skipped
+      end
+
+      def skip?
+        !@force && step.run_once? && step.executed? && step.success?
+      end
+
       def warning?
         @status == :warning
       end
 
+      # yaml storage to preserve key/value pairs between runs.
+      def storage
+        @storage || ForemanMaintain.storage(:default)
+      end
+
       def run
-        @status = :running
         @reporter.before_execution_starts(self)
+        if skip?
+          @status = :already_run
+          return
+        end
+        @status = :running
         with_metadata_calculation do
           capture_errors do
             step.__run__(self)

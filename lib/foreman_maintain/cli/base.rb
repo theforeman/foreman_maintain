@@ -25,14 +25,23 @@ module ForemanMaintain
         HighLine.color("[#{dashize(string)}]", :cyan)
       end
 
+      def print_check_info(check)
+        desc = "#{label_string(check.label)} #{check.description}".ljust(80)
+        tags = check.tags.map { |t| tag_string(t) }.join(' ').to_s
+        puts "#{desc} #{tags}".strip
+      end
+
       def reporter
         @reporter ||= ForemanMaintain::Reporter::CLIReporter.new(STDOUT,
                                                                  STDIN,
                                                                  :assumeyes => assumeyes?)
       end
 
-      def run_scenario(scenario)
-        ForemanMaintain::Runner.new(reporter, scenario, :assumeyes => assumeyes?).run
+      def run_scenario(scenarios)
+        ForemanMaintain::Runner.new(reporter, scenarios,
+                                    :assumeyes => assumeyes?,
+                                    :whitelist => whitelist || [],
+                                    :force => force?).run
       end
 
       def available_checks
@@ -87,6 +96,15 @@ module ForemanMaintain
       def self.interactive_option
         option ['-y', '--assumeyes'], :flag,
                'Automatically answer yes for all questions'
+
+        option ['-w', '--whitelist'], 'whitelist',
+               'Comma-separated list of labels of steps to be ignored' do |whitelist|
+          raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
+          whitelist.split(',').map(&:strip)
+        end
+
+        option ['-f', '--force'], :flag,
+               'Force steps that would be skipped as they were already run'
       end
     end
   end

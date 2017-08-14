@@ -14,12 +14,19 @@ module ForemanMaintain
     # * +:next_steps* - one or more procedures that can be followed to address
     #                   the failure, will be offered to the user when running
     #                   in interactive mode
+    #
+    # * +:warn* - issue warning instead of failure: this is less strict check,
+    #      that could be considered as non-critical for continuing with the scenario
     def assert(condition, error_message, options = {})
-      options = options.validate_options!(:next_steps)
+      options = options.validate_options!(:next_steps, :warn)
       unless condition
         next_steps = Array(options.fetch(:next_steps, []))
         self.next_steps.concat(next_steps)
-        raise Error::Fail, error_message
+        if options[:warn]
+          warn!(error_message)
+        else
+          fail!(error_message)
+        end
       end
     end
 
@@ -32,9 +39,9 @@ module ForemanMaintain
     def __run__(execution)
       super
     rescue Error::Fail => e
-      fail!(e.message)
+      set_fail(e.message)
     rescue Error::Warn => e
-      warn!(e.message)
+      set_warn(e.message)
     end
   end
 end

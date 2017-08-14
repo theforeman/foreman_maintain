@@ -20,35 +20,33 @@ module ForemanMaintain
       Scenarios::PresentUpgrade.new
     end
 
+    let(:warn_scenario) do
+      Scenarios::Dummy::Warn.new
+    end
+
+    let(:fail_scenario) do
+      Scenarios::Dummy::Fail.new
+    end
+
+    let(:warn_and_fail_scenario) do
+      Scenarios::Dummy::WarnAndFail.new
+    end
+
     def decision_question(description)
       "Continue with step [#{description}]?, [y(yes), n(no), q(quit)]"
     end
 
     it 'reports human-readable info about the run' do
-      reporter.before_scenario_starts(scenario)
-
-      step = Checks::PresentServiceIsRunning.new
-      execution = Runner::Execution.new(step, reporter)
-
-      reporter.before_execution_starts(execution)
-      execution.status = :success
-      reporter.after_execution_finishes(execution)
-
-      reporter.before_execution_starts(execution)
-      execution.status = :fail
-      execution.output = 'The service is not running'
-      reporter.after_execution_finishes(execution)
-
-      reporter.after_scenario_finishes(scenario)
+      reporter.before_scenario_starts(fail_scenario)
+      run_scenario(fail_scenario)
 
       assert_equal <<-STR.strip_heredoc, captured_out
-
-        Running present_service upgrade scenario
+        Running Scenarios::Dummy::Fail
         ================================================================================
-        present service run check:                                            [OK]
+        check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
         --------------------------------------------------------------------------------
-        present service run check:                                            [FAIL]
-        The service is not running
+        check that ends up with success:                                      [OK]
         --------------------------------------------------------------------------------
       STR
     end
@@ -71,6 +69,93 @@ module ForemanMaintain
 
       will_press('q')
       assert_equal :quit, reporter.on_next_steps([start_step, restart_step])
+    end
+
+    it 'informs the user about failures of the last scenario' do
+      run_scenario(fail_scenario)
+      reporter.after_scenario_finishes(fail_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      check that ends up with fail:                                         [FAIL]
+      this check is always causing failure
+      --------------------------------------------------------------------------------
+      check that ends up with success:                                      [OK]
+      --------------------------------------------------------------------------------
+      Scenario [Scenarios::Dummy::Fail] failed.
+
+      The following steps ended up in failing state:
+
+        [dummy-check-fail]
+
+      Resolve the failed steps and rerun
+      the command. In case the failures are false positives,
+      use --whitelist=\"dummy-check-fail\"
+      MESSAGE
+    end
+
+    it 'informs the user about warnings of the last scenario' do
+      run_scenario(warn_scenario)
+      reporter.after_scenario_finishes(warn_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+        check that ends up with warning:                                      [WARNING]
+        this check is always causing warnings
+        --------------------------------------------------------------------------------
+        check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::Dummy::Warn] failed.
+
+        The following steps ended up in warning state:
+
+          [dummy-check-warn]
+
+        The steps in warning state itself might not mean there is an error,
+        but it should be reviews to ensure the behavior is expected
+      MESSAGE
+    end
+
+    it 'informs the user about warnings and failures of the last scenario' do
+      run_scenario(warn_and_fail_scenario)
+      reporter.after_scenario_finishes(warn_and_fail_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+        check that ends up with warning:                                      [WARNING]
+        this check is always causing warnings
+        --------------------------------------------------------------------------------
+        check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::Dummy::WarnAndFail] failed.
+
+        The following steps ended up in failing state:
+
+          [dummy-check-fail]
+
+        The following steps ended up in warning state:
+
+          [dummy-check-warn]
+
+        Resolve the failed steps and rerun
+        the command. In case the failures are false positives,
+        use --whitelist=\"dummy-check-fail\"
+
+        The steps in warning state itself might not mean there is an error,
+        but it should be reviews to ensure the behavior is expected
+      MESSAGE
+    end
+
+    it 'ignores whitelisted warnings and failures of the last scenario' do
+      run_scenario(warn_and_fail_scenario, :whitelisted => true)
+      reporter.after_scenario_finishes(warn_and_fail_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+        check that ends up with warning:                                      [WARNING]
+        this check is always causing warnings
+        --------------------------------------------------------------------------------
+        check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+      MESSAGE
     end
 
     describe 'assumeyes' do
@@ -122,6 +207,12 @@ module ForemanMaintain
       out = remove_colors(out)
       capture.rewind
       out
+    end
+
+    def run_scenario(scenario, options = {})
+      scenario.steps.each do |step|
+        ForemanMaintain::Runner::Execution.new(step, reporter, options).tap(&:run)
+      end
     end
   end
 end

@@ -1,57 +1,69 @@
 module ForemanMaintain
   module Cli
     class UpgradeCommand < Base
-      def tags_to_versions
-        { :satellite_6_0_z => '6.0.z',
-          :satellite_6_1 => '6.1',
-          :satellite_6_1_z => '6.1.z',
-          :satellite_6_2 => '6.2',
-          :satellite_6_2_z => '6.2.z',
-          :satellite_6_3 => '6.3' }
+      def self.target_version_option
+        option '--target-version', 'TARGET_VERSION', 'Target version of the upgrade',
+               :required => false
       end
 
-      # We search for scenarios available for the system and determine
-      # user-friendly version numbers for it.
-      # This method returns a hash of mapping the versions to scenarios to run
-      # The tag is determining which kind of scenario we're searching for
-      # (such as pre_upgrade_check)
-      def available_target_versions(tag)
-        conditions = { :tags => [tag] }
-        find_scenarios(conditions).inject({}) do |hash, scenario|
-          # find tag that represent the version upgrade
-          version_tag = scenario.tags.find { |t| tags_to_versions.key?(t) }
-          if version_tag
-            hash.update(tags_to_versions[version_tag] => scenario)
-          else
-            hash
-          end
+      def validate_target_version!
+        unless UpgradeRunner.available_targets.include?(target_version)
+          message_start = if target_version
+                            "Can't upgrade to #{target_version}"
+                          else
+                            '--target-version not specified'
+                          end
+          message = <<-MESSAGE.strip_heredoc
+            #{message_start}
+            Possible target versions are:
+          MESSAGE
+          versions = UpgradeRunner.available_targets.join("\n")
+          raise Error::UsageError, message + versions
         end
       end
 
+      def upgrade_runner
+        return @upgrade_runner if defined? @upgrade_runner
+        validate_target_version!
+        @upgrade_runner = ForemanMaintain::UpgradeRunner.new(target_version, reporter,
+                                                             :assumeyes => assumeyes?,
+                                                             :whitelist => whitelist || [],
+                                                             :force => force?).tap(&:load)
+      end
+
       def print_versions(target_versions)
-        target_versions.keys.sort.each { |version| puts version }
+        target_versions.sort.each { |version| puts version }
       end
 
       subcommand 'list-versions', 'List versions this system is upgradable to' do
         def execute
-          print_versions(available_target_versions(:pre_upgrade_check))
+          print_versions(UpgradeRunner.available_targets)
         end
       end
 
-      subcommand 'check', 'Run pre-upgrade checks for upgradeing to specified version' do
-        parameter 'TARGET_VERSION', 'Target version of the upgrade', :required => false
+      subcommand 'check', 'Run pre-upgrade checks before upgrading to specified version' do
+        target_version_option
         interactive_option
 
         def execute
-          versions_to_scenarios = available_target_versions(:pre_upgrade_check)
-          scenario = versions_to_scenarios[target_version]
-          if scenario
-            run_scenario(scenario)
+          upgrade_runner.run_phase(:pre_upgrade_checks)
+          exit upgrade_runner.exit_code
+        end
+      end
+
+      subcommand 'run', 'Run full upgrade to a specified version' do
+        target_version_option
+        interactive_option
+        option '--phase', 'phase', 'run only a specific phase', :required => false
+
+        def execute
+          if phase
+            upgrade_runner.run_phase(phase.to_sym)
           else
-            puts "The specified version #{target_version} is unavailable"
-            puts 'Possible target versions are:'
-            print_versions(versions_to_scenarios)
+            upgrade_runner.run
           end
+          upgrade_runner.save
+          exit upgrade_runner.exit_code
         end
       end
     end

@@ -1,9 +1,12 @@
 module ForemanMaintain
   class Executable
     extend Forwardable
+    extend Concerns::Finders
     attr_reader :options
-    def_delegators :execution, :success?, :fail?, :output, :assumeyes?
-    def_delegators :execution, :puts, :print, :with_spinner, :ask
+    def_delegators :execution,
+                   :success?, :skipped?, :fail?, :warning?, :output,
+                   :assumeyes?, :whitelisted?,
+                   :execution, :puts, :print, :with_spinner, :ask, :storage
 
     attr_accessor :associated_feature
 
@@ -56,9 +59,39 @@ module ForemanMaintain
       @next_steps ||= []
     end
 
+    # make the step to fail: the failure is considered significant and
+    # the next steps should not continue. The specific behaviour depends
+    # on the scenario it's being used on. In check-sets scenario, the next
+    # steps of the same scenario might continue, while the following scenarios
+    # would be aborted.
+    def fail!(message)
+      raise Error::Fail, message
+    end
+
+    # make the step a warning: this doesn't indicate the whole scenario should
+    # not continue, but the user will be warned before proceeding
+    def warn!(message)
+      raise Error::Warn, message
+    end
+
+    # rubocop:disable Style/AccessorMethodName
+    def set_fail(message)
+      execution.status = :fail
+      execution.output << message
+    end
+
+    def set_warn(message)
+      execution.status = :warning
+      execution.output << message
+    end
+
     # public method to be overriden
     def run
       raise NotImplementedError
+    end
+
+    def executed?
+      @_execution ? true : false
     end
 
     def execution
@@ -70,20 +103,10 @@ module ForemanMaintain
     end
 
     # public method to be overriden: it can perform additional checks
-    # to say, if the step is actually necessary to run. For example an `InstallPackage`
+    # to say, if the step is actually necessary to run. For example an `Packages::Install`
     # procedure would not be necessary when the package is already installed.
     def necessary?
       true
-    end
-
-    def fail!(message)
-      execution.status = :fail
-      execution.output << message
-    end
-
-    def warn!(message)
-      execution.status = :warning
-      execution.output << message
     end
 
     # update reporter about the current message
@@ -108,6 +131,34 @@ module ForemanMaintain
     def setup_execution_state(execution)
       @_execution = execution
       @next_steps = []
+    end
+
+    # serialization methods
+    def to_hash
+      ret = { :label => label, :param_values => @param_values }
+      if @_execution
+        ret[:status] = @_execution.status
+        ret[:output] = @_execution.output
+      end
+      ret
+    end
+
+    def matches_hash?(hash)
+      label == hash[:label] && @param_values == hash[:param_values]
+    end
+
+    def update_from_hash(hash)
+      raise "The step is not matching the hash #{hash.inspect}" unless matches_hash?(hash)
+      raise "Can't update step that was already executed" if @_execution
+      @_execution = Runner::StoredExecution.new(self, :status => hash[:status],
+                                                      :output => hash[:output])
+    end
+
+    def inspect
+      ret = "#{self.class.name} label:#{label}"
+      ret << " params: #{@param_values.inspect}" unless @param_values.empty?
+      ret << " status: #{execution.status}" if executed?
+      ret
     end
 
     class << self

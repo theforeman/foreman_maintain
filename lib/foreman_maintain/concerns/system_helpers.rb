@@ -13,6 +13,17 @@ module ForemanMaintain
 
       # class we use for comparing the versions
       class Version < Gem::Version
+        def major
+          segments[0]
+        end
+
+        def minor
+          segments[1]
+        end
+
+        def build
+          segments[2]
+        end
       end
 
       def hostname
@@ -27,11 +38,16 @@ module ForemanMaintain
         Version.new(value)
       end
 
-      def install_packages(packages, options = {})
+      def packages_action(action, packages, options = {})
+        expected_actions = [:install, :update]
+        unless expected_actions.include?(action)
+          raise ArgumentError, "Unexpected action #{action} expected #{expected_actions.inspect}"
+        end
         options.validate_options!(:assumeyes)
         yum_options = []
         yum_options << '-y' if options[:assumeyes]
-        execute!("yum #{yum_options.join(' ')} install #{packages.join(' ')}", :interactive => true)
+        execute!("yum #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
+                 :interactive => true)
       end
 
       def check_min_version(name, minimal_version)
@@ -43,7 +59,7 @@ module ForemanMaintain
 
       def downstream_installation?
         execute?('rpm -q satellite') ||
-          (execute('rpm -q foreman') =~ /6sat.noarch/)
+          (execute('rpm -q foreman') =~ /sat.noarch/)
       end
 
       def package_version(name)
@@ -51,8 +67,8 @@ module ForemanMaintain
         rpm_version(name)
       end
 
-      def rpm_version(name)
-        rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{VERSION}"))
+      def rpm_version(name, queryformat = 'VERSION')
+        rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{#{queryformat}}"))
         if $CHILD_STATUS.success?
           version(rpm_version)
         end

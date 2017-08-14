@@ -35,9 +35,13 @@ module ForemanMaintain
       end
       it 'lists the defined checks' do
         assert_cmd <<-OUTPUT.strip_heredoc
+          [dummy-check-fail] check that ends up with fail
+          [dummy-check-success] check that ends up with success
+          [dummy-check-warn] check that ends up with warning
           [external-service-is-accessible] external_service_is_accessible         [pre-upgrade-check]
           [present-service-is-running] present service run check                  [default]
           [service-is-stopped] service not running check                          [default]
+          [upgrade-post-upgrade-check] Procedures::Upgrade::PostUpgradeCheck      [post-upgrade-checks]
         OUTPUT
       end
     end
@@ -49,6 +53,7 @@ module ForemanMaintain
       it 'lists the defined tags' do
         assert_cmd <<-OUTPUT.strip_heredoc
           [default]
+          [post-upgrade-checks]
           [pre-upgrade-check]
         OUTPUT
       end
