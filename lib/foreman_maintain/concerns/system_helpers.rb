@@ -108,6 +108,12 @@ module ForemanMaintain
       def shellescape(string)
         Shellwords.escape(string)
       end
+
+      def json_parse(json_string)
+        JSON.parse(json_string)
+      rescue
+        nil
+      end
     end
   end
 end
