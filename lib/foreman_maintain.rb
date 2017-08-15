@@ -6,6 +6,8 @@ require 'forwardable'
 require 'json'
 require 'logger'
 require 'yaml'
+require 'rest-client'
+require 'uri'
 
 module ForemanMaintain
   require 'foreman_maintain/core_ext'

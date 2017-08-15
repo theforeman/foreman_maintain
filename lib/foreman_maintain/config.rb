@@ -3,7 +3,7 @@ module ForemanMaintain
   class Config
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
-                  :storage_file, :backup_dir, :foreman_proxy_cert_path
+                  :storage_file, :backup_dir, :foreman_proxy_settings_path
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -16,7 +16,8 @@ module ForemanMaintain
       @backup_dir = find_dir_path(
         @options.fetch(:backup_dir, '/var/lib/foreman-maintain')
       )
-      @foreman_proxy_cert_path = @options.fetch(:foreman_proxy_cert_path, '/etc/foreman')
+      @foreman_proxy_settings_path = @options.fetch(:foreman_proxy_settings_path,
+                                                    '/etc/foreman-proxy/settings.yml')
     end
 
     private

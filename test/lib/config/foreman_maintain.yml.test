@@ -16,5 +16,5 @@
 # Mention file path to store data
 :storage_file: 'test/lib/config/data_test.yml'
 
-# Mention path where foreman-proxy certificates stored on filesystem
-# :foreman_proxy_cert_path: '/etc/foreman'
+# Mention path where foreman-proxy settings stored on filesystem
+# :foreman_proxy_settings_path: '/etc/foreman-proxy/settings.yml'
