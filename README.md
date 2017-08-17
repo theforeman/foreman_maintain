@@ -346,3 +346,7 @@ foreman-maintain debug [save|upload|tail]
 foreman-maintain console
 foreman-maintain config
 ```
+
+## License
+
+This project is licensed under the GPLv3+
