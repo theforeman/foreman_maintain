@@ -2,8 +2,8 @@ require 'fileutils'
 module ForemanMaintain
   class Config
     attr_accessor :pre_setup_log_messages,
-                  :config_file, :definitions_dirs, :log_level, :log_dir, :storage_file,
-                  :backup_dir, :foreman_proxy_cert_path
+                  :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
+                  :storage_file, :backup_dir, :foreman_proxy_cert_path
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -24,6 +24,7 @@ module ForemanMaintain
     def load_log_configs
       @log_level = @options.fetch(:log_level, ::Logger::DEBUG)
       @log_dir = find_dir_path(@options.fetch(:log_dir, 'log'))
+      @log_file_size = @options.fetch(:log_file_size, 10_000)
     end
 
     def load_config

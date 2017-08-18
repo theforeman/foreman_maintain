@@ -5,6 +5,9 @@
 # Logger levels: mention one of debug, info, warning, error, fatal
 # :log_level: 'error'
 
+# Mention log file size in KB. Default set to 10000KB.
+# :log_file_size: 10000
+
 # Mention definitions directories. Default
 # :definitions_dirs:
 
