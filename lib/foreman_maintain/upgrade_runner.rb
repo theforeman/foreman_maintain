@@ -67,6 +67,9 @@ module ForemanMaintain
           run_phase(phase)
         end
       end
+      unless quit?
+        finish_upgrade
+      end
     end
 
     def run_rollback
@@ -76,13 +79,25 @@ module ForemanMaintain
       end
     end
 
+    def finish_upgrade
+      @finished = true
+      @reporter.hline
+      @reporter.puts <<-MESSAGE.strip_heredoc
+        Upgrade finished.
+      MESSAGE
+    end
+
     def storage
       ForemanMaintain.storage("upgrade_#{version}")
     end
 
     # serializes the state of the run to storage
     def save
-      storage[:serialized] = to_hash
+      if @finished
+        storage.delete(:serialized)
+      else
+        storage[:serialized] = to_hash
+      end
       storage.save
     end
 
@@ -109,7 +124,7 @@ module ForemanMaintain
         @reporter.before_scenario_starts(scenario)
         @reporter.puts <<-MESSAGE.strip_heredoc
           Skipping #{skipped_phase} phase as it was already run before.
-          To enforce to run the phase, use `upgrade advanced run --phase #{phase}`
+          To enforce to run the phase, use `upgrade run --phase #{phase}`
         MESSAGE
         @reporter.after_scenario_finishes(scenario)
       end

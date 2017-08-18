@@ -23,7 +23,7 @@ class Support
     end
 
     %w[before_scenario_starts before_execution_starts on_execution_update
-       after_scenario_finishes].each do |method|
+       after_scenario_finishes hline].each do |method|
       define_method(method) do |*args|
         log_method(method, args)
       end

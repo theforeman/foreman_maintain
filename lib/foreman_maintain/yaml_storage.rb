@@ -2,7 +2,7 @@ module ForemanMaintain
   class YamlStorage
     extend Forwardable
     attr_reader :sub_key, :data
-    def_delegators :data, :[], :[]=
+    def_delegators :data, :[], :[]=, :delete
 
     def initialize(sub_key, data = {})
       @sub_key = sub_key
