@@ -1,4 +1,4 @@
-# Foreman Maintenance
+# Foreman Maintenance [![Build Status](https://travis-ci.org/theforeman/foreman_maintain.svg?branch=master)](https://travis-ci.org/theforeman/foreman_maintain)
 
 `foreman_maintain` aims to provide various features that helps keeping the
 Foreman/Satellite up and running. It supports multiple versions and subparts
@@ -54,27 +54,27 @@ of the system:
   * **pre-upgrade check** - this phase performs the checks to ensure that the system is
     in ready state before the upgrade. The system should still be operational
     at the current version, while this phase runs.
-  
+
   * **pre-migrations** - these steps perform changes on the system before
     the actual upgrade stars. An example is disabling access to the system from
     external sources, a.k.a. maintenance mode or disabling sync plans during the run.
-   
+
     After this phase ends, the system is still running the old version, and it's possible
     to revert the changes by running the post-migrations steps.
-  
-  * **migrations** - this phase performs the actual migrations, starting with 
+
+  * **migrations** - this phase performs the actual migrations, starting with
     configuring new repositories, updated the packages and running the installer.
-    
+
     At the end of this phase, the system should be fully migrated to the new version.
     However, the system is not fully operational yet, as the post-migrations steps
     need to revert the pre-migrations steps.
-    
+
   * **post-migrations** - these steps revert the changes made in pre-migrations phase,
     turning the system into fully-operational again.
-    
+
   * **post-upgrade checks** - this steps should perform sanity check of the system
     to ensure the system is valid and ready to be used again.
-    
+
 
 The state of the upgrade is kept between runs, allowing to re-run the `upgrade run`
 in case of failure. The tool should start at the appropriate point. For example,
