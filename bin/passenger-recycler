@@ -3,12 +3,12 @@
 # Trivial Passenger memory monitor and recycler. See the configuration file
 # /etc/passenger-recycler.yaml for options. Execute via SCL.
 #
-require "yaml"
+require 'yaml'
 
-$conf = {}
-CONFIG = '/etc/passenger-recycler.yaml'
-$conf = YAML.load_file(CONFIG) if File.readable?(CONFIG)
-exit 0 unless $conf[:ENABLED]
+CONFIG = {}.freeze
+CONFIG_FILE = '/etc/passenger-recycler.yaml'.freeze
+CONFIG = YAML.load_file(CONFIG_FILE) if File.readable?(CONFIG_FILE)
+exit 0 unless CONFIG[:ENABLED]
 
 def running?(pid)
   return Process.getpgid(pid) != -1
@@ -16,12 +16,28 @@ rescue Errno::ESRCH
   return false
 end
 
-def debug msg
-  puts(msg) if $conf[:DEBUG]
+def debug(msg)
+  puts(msg) if CONFIG[:DEBUG]
 end
 
-def verbose msg
-  puts(msg) if $conf[:VERBOSE]
+def verbose(msg)
+  puts(msg) if CONFIG[:VERBOSE]
+end
+
+def kill(pid)
+  if running?(pid) && CONFIG[:KILL_BUSY]
+    verbose "Process #{pid} is still running, sending SIGKILL"
+    Process.kill 'KILL', pid
+    sleep 5
+  end
+end
+
+def process_status?(pid)
+  if running?(pid)
+    verbose "Process #{pid} still terminating, moving on..."
+  else
+    verbose "Process successfully #{pid} terminated"
+  end
 end
 
 require 'phusion_passenger'
@@ -31,38 +47,35 @@ require 'phusion_passenger/admin_tools/memory_stats'
 PhusionPassenger.locate_directories
 stats = PhusionPassenger::AdminTools::MemoryStats.new
 unless stats.platform_provides_private_dirty_rss_information?
-  puts "Please run as root or platform unsupported"
+  puts 'Please run as root or platform unsupported'
   exit 1
 end
 killed = 0
 stats.passenger_processes.each do |p|
   pid = p.pid.to_i
   debug "Checking #{pid} with RSS of #{p.private_dirty_rss}"
-  if p.private_dirty_rss > $conf[:MAX_PRIV_RSS_MEMORY]
-    started = `ps -p#{pid} -o start=`.strip rescue '?'
-    status_ps = `ps -p#{pid} -u`
-    status_all = `passenger-status 2>/dev/null`
-    status_backtraces = `passenger-status --show=backtraces 2>/dev/null`
-    verbose "Terminating #{pid} (started #{started}) with private dirty RSS size of #{p.private_dirty_rss} MB"
-    Process.kill "SIGUSR1", pid
-    sleep $conf[:GRACEFUL_SHUTDOWN_SLEEP]
-    if running?(pid) && $conf[:KILL_BUSY]
-      verbose "Process #{pid} is still running, sending SIGKILL"
-      Process.kill "KILL", pid
-      sleep 5
-    end
-    if running?(pid)
-      verbose "Process #{pid} still terminating, moving on..."
-    else
-      verbose "Process successfully #{pid} terminated"
-    end
-    if $conf[:SEND_STATUS]
-      verbose status_ps
-      verbose status_all
-      verbose status_backtraces
-    end
-    killed += 1
-    exit(1) if killed >= $conf[:MAX_TERMINATION]
+  next unless p.private_dirty_rss > CONFIG[:MAX_PRIV_RSS_MEMORY]
+  started = begin
+              `ps -p#{pid} -o start=`.strip
+            rescue StandardError => e
+              verbose "Error: #{e.message} \nReturning '?'"
+              '?'
+            end
+  status_ps = `ps -p#{pid} -u`
+  status_all = `passenger-status 2> /dev/null`
+  status_backtraces = `passenger-status --show=backtraces 2>/dev/null`
+  verbose "Terminating #{pid} (started #{started}) with private dirty RSS" \
+          " size of #{p.private_dirty_rss} MB"
+  Process.kill 'SIGUSR1', pid
+  sleep CONFIG[:GRACEFUL_SHUTDOWN_SLEEP]
+  kill(pid)
+  process_status?(pid)
+  if CONFIG[:SEND_STATUS]
+    verbose status_ps
+    verbose status_all
+    verbose status_backtraces
   end
+  killed += 1
+  exit(1) if killed >= CONFIG[:MAX_TERMINATION]
 end
 exit 0
