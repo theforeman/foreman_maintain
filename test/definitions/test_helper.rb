@@ -78,7 +78,7 @@ module DefinitionsTestHelper
   # assume_feature_absent), assert the scenario with given filter is considered
   # absent
   def refute_scenario(filter)
-    scenario = find_scenarios(:tags => [:pre_upgrade_check, :satellite_6_2]).first
+    scenario = find_scenarios(filter).first
     refute scenario, "Expected the scenario #{filter} to be absent"
   end
 end
