@@ -33,15 +33,10 @@ class Features::Downstream < ForemanMaintain::Feature
 
   def rh_repos(sat_version)
     sat_version = version(sat_version)
-    ["rhel-#{rh_version.major}-server-rpms",
-     "rhel-#{rh_version.major}-rhscl-#{rh_version.major}-rpms",
-     "rhel-#{rh_version.major}-server-satellite-#{sat_version.major}.#{sat_version.minor}-rpms"]
-  end
-
-  def rh_version
-    return @rh_version if defined? @rh_version
-    release_package = execute!('rpm -qf /etc/redhat-release')
-    @rh_version = rpm_version(release_package, 'RELEASE')
+    rh_version_major = execute!('facter operatingsystemmajrelease')
+    ["rhel-#{rh_version_major}-server-rpms",
+     "rhel-server-rhscl-#{rh_version_major}-rpms",
+     "rhel-#{rh_version_major}-server-satellite-#{sat_version.major}.#{sat_version.minor}-rpms"]
   end
 
   def version_from_source
