@@ -1,0 +1,3 @@
+# Configuration file /etc/cron.d/passenger-recycler to run passenger-recycler
+# every 5 minutes.
+*/5 * * * * root /usr/bin/scl enable tfm -- ruby /usr/bin/passenger-recycler
