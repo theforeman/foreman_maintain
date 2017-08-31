@@ -1,4 +1,4 @@
-# Foreman Maintenance [![Build Status](https://travis-ci.org/theforeman/foreman_maintain.svg?branch=master)](https://travis-ci.org/theforeman/foreman_maintain)
+# Foreman Maintenance [![Build Status](https://travis-ci.org/theforeman/foreman_maintain.svg?branch=master)](https://travis-ci.org/theforeman/foreman_maintain) <a href="https://codeclimate.com/github/theforeman/foreman_maintain"><img src="https://codeclimate.com/github/theforeman/foreman_maintain/badges/gpa.svg" /></a>
 
 `foreman_maintain` aims to provide various features that helps keeping the
 Foreman/Satellite up and running. It supports multiple versions and subparts
