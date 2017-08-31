@@ -2,7 +2,7 @@ module Procedures::MaintenanceMode
   class Enable < ForemanMaintain::Procedure
     metadata do
       for_feature :foreman
-      description 'turn on maintenance mode'
+      description 'Turn on maintenance mode'
       tags :pre_migrations
     end
 

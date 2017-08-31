@@ -3,7 +3,7 @@ class Checks::ServiceIsStopped < ForemanMaintain::Check
     for_feature(:present_service)
     label :service_is_stopped
     tags :default
-    description 'service not running check'
+    description 'Service not running check'
     preparation_steps { Procedures::Setup.new }
     after :present_service_is_running
   end

@@ -32,7 +32,7 @@ module ForemanMaintain
     it 'runs pre_upgrade_checks first' do
       upgrade_runner.run
       reporter.log.first.must_equal(['before_scenario_starts',
-                                     'present_service pre_upgrade_checks scenario'])
+                                     :present_upgrade_pre_upgrade_checks])
     end
 
     it 'asks for confirmation before getting into pre_migrations from pre upgrade checks' do
@@ -77,14 +77,14 @@ module ForemanMaintain
     it 'does not run the pre_upgrade_checks again when already in pre_migrations phase' do
       upgrade_runner.send(:phase=, :pre_migrations)
       upgrade_runner.run
-      reporter.log.wont_include ['before_execution_starts', 'present service run check']
-      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PreMigration']
+      reporter.log.wont_include ['before_execution_starts', :present_service_is_running]
+      reporter.log.must_include ['before_execution_starts', :upgrade_pre_migration]
     end
 
     it 'runs migrations if pre_migrations succeed' do
       reporter.input << 'y'
       upgrade_runner_with_whitelist.run
-      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::Migration']
+      reporter.log.must_include ['before_execution_starts', :upgrade_migration]
     end
 
     it 'runs post_migrations and post_upgrade checks if pre_migrations fail' do
@@ -92,16 +92,16 @@ module ForemanMaintain
       TestHelper.migrations_fail_at = :pre_migrations
       upgrade_runner_with_whitelist.run
       upgrade_runner_with_whitelist.phase.must_equal :pre_upgrade_checks
-      reporter.log.wont_include ['before_execution_starts', 'Procedures::Upgrade::Migration']
-      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostMigration']
-      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostUpgradeCheck']
+      reporter.log.wont_include ['before_execution_starts', :upgrade_migration]
+      reporter.log.must_include ['before_execution_starts', :upgrade_post_migration]
+      reporter.log.must_include ['before_execution_starts', :upgrade_post_upgrade_check]
       upgrade_runner_with_whitelist.exit_code.must_equal 1
     end
 
     it 'runs post_migrations if migrations succeed' do
       reporter.input << 'y'
       upgrade_runner_with_whitelist.run
-      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostMigration']
+      reporter.log.must_include ['before_execution_starts', :upgrade_post_migration]
     end
 
     it 'fails if migrations fail' do
@@ -115,7 +115,7 @@ module ForemanMaintain
     it 'runs post_upgrade_checks if post_migrations succeed' do
       reporter.input << 'y'
       upgrade_runner_with_whitelist.run
-      reporter.log.must_include ['before_execution_starts', 'Procedures::Upgrade::PostUpgradeCheck']
+      reporter.log.must_include ['before_execution_starts', :upgrade_post_upgrade_check]
     end
 
     it 'fails if post_migrations fail' do

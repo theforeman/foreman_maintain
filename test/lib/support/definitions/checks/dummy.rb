@@ -2,7 +2,7 @@ module Checks::Dummy
   class Success < ForemanMaintain::Check
     metadata do
       label :dummy_check_success
-      description 'check that ends up with success'
+      description 'Check that ends up with success'
     end
 
     def run; end
@@ -11,7 +11,7 @@ module Checks::Dummy
   class Fail < ForemanMaintain::Check
     metadata do
       label :dummy_check_fail
-      description 'check that ends up with fail'
+      description 'Check that ends up with fail'
     end
 
     def run
@@ -22,7 +22,7 @@ module Checks::Dummy
   class Fail2 < ForemanMaintain::Check
     metadata do
       label :dummy_check_fail2
-      description 'check that ends up with fail'
+      description 'Check that ends up with fail'
     end
 
     def run
@@ -33,7 +33,7 @@ module Checks::Dummy
   class Warn < ForemanMaintain::Check
     metadata do
       label :dummy_check_warn
-      description 'check that ends up with warning'
+      description 'Check that ends up with warning'
     end
 
     def run

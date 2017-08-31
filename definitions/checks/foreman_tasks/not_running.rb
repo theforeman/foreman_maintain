@@ -2,7 +2,7 @@ module Checks::ForemanTasks
   class NotRunning < ForemanMaintain::Check
     metadata do
       for_feature :foreman_tasks
-      description 'check for running tasks'
+      description 'Check for running tasks'
       tags :pre_upgrade
       after :foreman_tasks_not_paused
       before :check_old_foreman_tasks

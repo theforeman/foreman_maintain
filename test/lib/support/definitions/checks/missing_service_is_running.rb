@@ -3,7 +3,7 @@ class Checks::MissingServiceIsRunning < ForemanMaintain::Check
     # simulate a check defined for service that is not present on the system
     for_feature(:missing_service)
     tags :default
-    description 'missing service is running check'
+    description 'Missing service is running check'
   end
 
   def run

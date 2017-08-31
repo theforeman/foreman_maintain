@@ -1,6 +1,6 @@
 class Procedures::Setup < ForemanMaintain::Procedure
   metadata do
-    description 'setup'
+    description 'Setup'
   end
 
   def run

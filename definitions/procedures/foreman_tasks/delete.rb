@@ -2,7 +2,7 @@ module Procedures::ForemanTasks
   class Delete < ForemanMaintain::Procedure
     metadata do
       param :state, 'In what state should the task be deleted'
-      description 'delete tasks'
+      description 'Delete tasks'
     end
 
     def run

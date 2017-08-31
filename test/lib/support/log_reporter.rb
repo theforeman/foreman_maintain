@@ -66,9 +66,9 @@ class Support
       args.map do |arg|
         case arg
         when ForemanMaintain::Scenario, ForemanMaintain::Executable
-          arg.description
+          arg.label
         when ForemanMaintain::Runner::Execution
-          arg.name
+          arg.step.label
         else
           arg
         end
