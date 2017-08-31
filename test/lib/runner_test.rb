@@ -17,22 +17,22 @@ module ForemanMaintain
     it 'performs all steps in the scenario' do
       reporter.planned_next_steps_answers = %w[y n]
       runner.run
-      assert_equal([['before_scenario_starts', 'present_service pre_upgrade_checks scenario'],
-                    ['before_execution_starts', 'present service run check'],
-                    ['after_execution_finishes', 'present service run check'],
-                    ['on_next_steps', 'start the present service'],
-                    ['before_execution_starts', 'start the present service'],
-                    ['after_execution_finishes', 'start the present service'],
+      assert_equal([['before_scenario_starts', :present_upgrade_pre_upgrade_checks],
+                    ['before_execution_starts', :present_service_is_running],
+                    ['after_execution_finishes', :present_service_is_running],
+                    ['on_next_steps', :present_service_start],
+                    ['before_execution_starts', :present_service_start],
+                    ['after_execution_finishes', :present_service_start],
                     ['puts', 'Rerunning the check after fix procedure'],
-                    ['before_execution_starts', 'present service run check'],
-                    ['after_execution_finishes', 'present service run check'],
-                    ['on_next_steps', 'start the present service'],
-                    ['before_execution_starts', 'service not running check'],
-                    ['after_execution_finishes', 'service not running check'],
-                    ['on_next_steps', 'stop the running service'],
-                    ['before_execution_starts', 'restart present service'],
-                    ['after_execution_finishes', 'restart present service'],
-                    ['after_scenario_finishes', 'present_service pre_upgrade_checks scenario']],
+                    ['before_execution_starts', :present_service_is_running],
+                    ['after_execution_finishes', :present_service_is_running],
+                    ['on_next_steps', :present_service_start],
+                    ['before_execution_starts', :service_is_stopped],
+                    ['after_execution_finishes', :service_is_stopped],
+                    ['on_next_steps', :stop_service],
+                    ['before_execution_starts', :present_service_restart],
+                    ['after_execution_finishes', :present_service_restart],
+                    ['after_scenario_finishes', :present_upgrade_pre_upgrade_checks]],
                    reporter.log,
                    'unexpected order of execution')
     end
@@ -41,28 +41,28 @@ module ForemanMaintain
       reporter = Support::LogReporter.new(:assumeyes => true)
       runner = Runner.new(reporter, scenario, :assumeyes => true)
       runner.run
-      assert_equal([['before_scenario_starts', 'present_service pre_upgrade_checks scenario'],
-                    ['before_execution_starts', 'present service run check'],
-                    ['after_execution_finishes', 'present service run check'],
-                    ['on_next_steps', 'start the present service'],
-                    ['before_execution_starts', 'start the present service'],
-                    ['after_execution_finishes', 'start the present service'],
+      assert_equal([['before_scenario_starts', :present_upgrade_pre_upgrade_checks],
+                    ['before_execution_starts', :present_service_is_running],
+                    ['after_execution_finishes', :present_service_is_running],
+                    ['on_next_steps', :present_service_start],
+                    ['before_execution_starts', :present_service_start],
+                    ['after_execution_finishes', :present_service_start],
                     ['puts', 'Rerunning the check after fix procedure'],
-                    ['before_execution_starts', 'present service run check'],
-                    ['after_execution_finishes', 'present service run check'],
+                    ['before_execution_starts', :present_service_is_running],
+                    ['after_execution_finishes', :present_service_is_running],
                     ['puts', 'Check still failing after attempt to fix. Skipping'],
-                    ['before_execution_starts', 'service not running check'],
-                    ['after_execution_finishes', 'service not running check'],
-                    ['on_next_steps', 'stop the running service'],
-                    ['before_execution_starts', 'stop the running service'],
-                    ['after_execution_finishes', 'stop the running service'],
+                    ['before_execution_starts', :service_is_stopped],
+                    ['after_execution_finishes', :service_is_stopped],
+                    ['on_next_steps', :stop_service],
+                    ['before_execution_starts', :stop_service],
+                    ['after_execution_finishes', :stop_service],
                     ['puts', 'Rerunning the check after fix procedure'],
-                    ['before_execution_starts', 'service not running check'],
-                    ['after_execution_finishes', 'service not running check'],
+                    ['before_execution_starts', :service_is_stopped],
+                    ['after_execution_finishes', :service_is_stopped],
                     ['puts', 'Check still failing after attempt to fix. Skipping'],
-                    ['before_execution_starts', 'restart present service'],
-                    ['after_execution_finishes', 'restart present service'],
-                    ['after_scenario_finishes', 'present_service pre_upgrade_checks scenario']],
+                    ['before_execution_starts', :present_service_restart],
+                    ['after_execution_finishes', :present_service_restart],
+                    ['after_scenario_finishes', :present_upgrade_pre_upgrade_checks]],
                    reporter.log,
                    'unexpected order of execution')
     end
@@ -71,12 +71,11 @@ module ForemanMaintain
       Procedures::Setup.any_instance.stubs(:setup_already? => false)
       reporter.planned_next_steps_answers = %w[y n]
       runner.run
-      # rubocop:disable Style/WordArray
       assert_equal(
-        [['before_scenario_starts', 'preparation steps required to run the next scenarios'],
-         ['before_execution_starts', 'setup'],
-         ['after_execution_finishes', 'setup'],
-         ['after_scenario_finishes', 'preparation steps required to run the next scenarios']],
+        [['before_scenario_starts', :foreman_maintain_scenario_preparation_scenario],
+         ['before_execution_starts', :setup],
+         ['after_execution_finishes', :setup],
+         ['after_scenario_finishes', :foreman_maintain_scenario_preparation_scenario]],
         reporter.log.first(4),
         'unexpected order of execution'
       )
@@ -117,9 +116,9 @@ module ForemanMaintain
         new_runner.run
         scenario.steps.map { |x| x.execution.status }.must_equal([:success, :fail])
         reporter.executions.must_equal [['Procedures::RunOnce', :success],
-                                        ['check that ends up with fail', :fail]]
+                                        ['Check that ends up with fail', :fail]]
         new_reporter.executions.must_equal [['Procedures::RunOnce', :already_run],
-                                            ['check that ends up with fail', :fail]]
+                                            ['Check that ends up with fail', :fail]]
       end
 
       it 'runs the step marked as run_once if already run but called with --force' do
@@ -131,9 +130,9 @@ module ForemanMaintain
         new_runner.run
         scenario.steps.map { |x| x.execution.status }.must_equal([:success, :fail])
         reporter.executions.must_equal [['Procedures::RunOnce', :success],
-                                        ['check that ends up with fail', :fail]]
+                                        ['Check that ends up with fail', :fail]]
         new_reporter.executions.must_equal [['Procedures::RunOnce', :success],
-                                            ['check that ends up with fail', :fail]]
+                                            ['Check that ends up with fail', :fail]]
       end
     end
 
@@ -150,10 +149,10 @@ module ForemanMaintain
         runner = Runner.new(reporter, [fail_fast_scenario])
         runner.run
         assert_equal([
-                       ['before_scenario_starts', 'Scenarios::Dummy::FailFast'],
-                       ['before_execution_starts', 'check that ends up with fail'],
-                       ['after_execution_finishes', 'check that ends up with fail'],
-                       ['after_scenario_finishes', 'Scenarios::Dummy::FailFast']
+                       ['before_scenario_starts', :dummy_fail_fast],
+                       ['before_execution_starts', :dummy_check_fail],
+                       ['after_execution_finishes', :dummy_check_fail],
+                       ['after_scenario_finishes', :dummy_fail_fast]
                      ], reporter.log, 'unexpected execution')
       end
 
@@ -161,12 +160,12 @@ module ForemanMaintain
         runner = Runner.new(reporter, [fail_slow_scenario])
         runner.run
         assert_equal([
-                       ['before_scenario_starts', 'Scenarios::Dummy::FailSlow'],
-                       ['before_execution_starts', 'check that ends up with fail'],
-                       ['after_execution_finishes', 'check that ends up with fail'],
-                       ['before_execution_starts', 'check that ends up with success'],
-                       ['after_execution_finishes', 'check that ends up with success'],
-                       ['after_scenario_finishes', 'Scenarios::Dummy::FailSlow']
+                       ['before_scenario_starts', :dummy_fail_slow],
+                       ['before_execution_starts', :dummy_check_fail],
+                       ['after_execution_finishes', :dummy_check_fail],
+                       ['before_execution_starts', :dummy_check_success],
+                       ['after_execution_finishes', :dummy_check_success],
+                       ['after_scenario_finishes', :dummy_fail_slow]
                      ], reporter.log, 'unexpected execution')
       end
     end

@@ -1,6 +1,6 @@
 class Procedures::HammerSetup < ForemanMaintain::Procedure
   metadata do
-    description 'setup hammer'
+    description 'Setup hammer'
   end
 
   def run

@@ -47,10 +47,10 @@ module ForemanMaintain
       assert_equal <<-STR.strip_heredoc, captured_out
         Running Scenarios::Dummy::Fail
         ================================================================================
-        check that ends up with fail:                                         [FAIL]
+        Check that ends up with fail:                                         [FAIL]
         this check is always causing failure
         --------------------------------------------------------------------------------
-        check that ends up with success:                                      [OK]
+        Check that ends up with success:                                      [OK]
         --------------------------------------------------------------------------------
       STR
     end
@@ -60,14 +60,14 @@ module ForemanMaintain
       start_step = Procedures::PresentServiceStart.new
       restart_step = Procedures::PresentServiceRestart.new
       reporter.on_next_steps([start_step])
-      assert_equal decision_question('start the present service'), captured_out(false).strip
+      assert_equal decision_question('Start the present service'), captured_out(false).strip
 
       will_press('2')
       assert_equal restart_step, reporter.on_next_steps([start_step, restart_step])
       assert_equal <<-STR.strip_heredoc.strip, captured_out(false).strip
         There are multiple steps to proceed:
-        1) start the present service
-        2) restart present service
+        1) Start the present service
+        2) Restart present service
         Select step to continue, [n(next), q(quit)]
       STR
 
@@ -79,13 +79,13 @@ module ForemanMaintain
       run_scenario(fail_multiple_scenario)
       reporter.after_scenario_finishes(fail_multiple_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-      check that ends up with fail:                                         [FAIL]
+      Check that ends up with fail:                                         [FAIL]
       this check is always causing failure
       --------------------------------------------------------------------------------
-      check that ends up with fail:                                         [FAIL]
+      Check that ends up with fail:                                         [FAIL]
       this check is always causing failure
       --------------------------------------------------------------------------------
-      check that ends up with success:                                      [OK]
+      Check that ends up with success:                                      [OK]
       --------------------------------------------------------------------------------
       Scenario [Scenarios::Dummy::FailMultiple] failed.
 
@@ -104,10 +104,10 @@ module ForemanMaintain
       run_scenario(warn_scenario)
       reporter.after_scenario_finishes(warn_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-        check that ends up with warning:                                      [WARNING]
+        Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
-        check that ends up with success:                                      [OK]
+        Check that ends up with success:                                      [OK]
         --------------------------------------------------------------------------------
         Scenario [Scenarios::Dummy::Warn] failed.
 
@@ -124,13 +124,13 @@ module ForemanMaintain
       run_scenario(warn_and_fail_scenario)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-        check that ends up with warning:                                      [WARNING]
+        Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
-        check that ends up with fail:                                         [FAIL]
+        Check that ends up with fail:                                         [FAIL]
         this check is always causing failure
         --------------------------------------------------------------------------------
-        check that ends up with success:                                      [OK]
+        Check that ends up with success:                                      [OK]
         --------------------------------------------------------------------------------
         Scenario [Scenarios::Dummy::WarnAndFail] failed.
 
@@ -155,13 +155,13 @@ module ForemanMaintain
       run_scenario(warn_and_fail_scenario, :whitelisted => true)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-        check that ends up with warning:                                      [WARNING]
+        Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
-        check that ends up with fail:                                         [FAIL]
+        Check that ends up with fail:                                         [FAIL]
         this check is always causing failure
         --------------------------------------------------------------------------------
-        check that ends up with success:                                      [OK]
+        Check that ends up with success:                                      [OK]
         --------------------------------------------------------------------------------
       MESSAGE
     end
@@ -174,7 +174,7 @@ module ForemanMaintain
       it 'answers yes when assumeyes is active' do
         start_step = Procedures::PresentServiceStart.new
         reporter.on_next_steps([start_step])
-        assert_match 'start the present service', captured_out(false).strip
+        assert_match 'Start the present service', captured_out(false).strip
         assert_match 'assuming yes', captured_out(false).strip
       end
 
@@ -184,8 +184,8 @@ module ForemanMaintain
         assert_equal start_step, reporter.on_next_steps([start_step, restart_step])
         assert_equal <<-STR.strip_heredoc.strip, captured_out(false).strip
         There are multiple steps to proceed:
-        1) start the present service
-        2) restart present service
+        1) Start the present service
+        2) Restart present service
         (assuming first option)
         STR
       end
@@ -197,7 +197,7 @@ module ForemanMaintain
 
         will_press('n')
         assert_equal :no, reporter.on_next_steps([restart_step])
-        assert_equal decision_question('restart present service'), captured_out(false).strip
+        assert_equal decision_question('Restart present service'), captured_out(false).strip
       end
     end
 

@@ -2,7 +2,7 @@ module Procedures::ForemanTasks
   class Resume < ForemanMaintain::Procedure
     metadata do
       for_feature :foreman_tasks
-      description 'resume paused tasks'
+      description 'Resume paused tasks'
     end
 
     def run

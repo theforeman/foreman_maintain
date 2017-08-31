@@ -3,7 +3,7 @@ module Procedures::ForemanTasks
   class UiInvestigate < ForemanMaintain::Procedure
     metadata do
       for_feature :foreman_tasks
-      description 'investigate the tasks via UI'
+      description 'Investigate the tasks via UI'
       param :search_query
     end
 

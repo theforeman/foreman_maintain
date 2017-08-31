@@ -3,7 +3,7 @@ class Procedures::PresentServiceRestart < ForemanMaintain::Procedure
     for_feature(:present_service)
     label :present_service_restart
     tags :restart
-    description 'restart present service'
+    description 'Restart present service'
   end
 
   def run

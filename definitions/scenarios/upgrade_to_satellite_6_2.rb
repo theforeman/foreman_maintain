@@ -13,7 +13,7 @@ module Scenarios::Satellite_6_2
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'checks before upgrading to Satellite 6.2'
+      description 'Checks before upgrading to Satellite 6.2'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -26,7 +26,7 @@ module Scenarios::Satellite_6_2
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'procedures before migrating to Satellite 6.2'
+      description 'Procedures before migrating to Satellite 6.2'
       tags :pre_migrations
     end
 
@@ -37,7 +37,7 @@ module Scenarios::Satellite_6_2
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'migration scripts to Satellite 6.2'
+      description 'Migration scripts to Satellite 6.2'
       tags :migrations
     end
 
@@ -50,7 +50,7 @@ module Scenarios::Satellite_6_2
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'procedures after migrating to Satellite 6.2'
+      description 'Procedures after migrating to Satellite 6.2'
       tags :post_migrations
     end
 
@@ -61,7 +61,7 @@ module Scenarios::Satellite_6_2
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'checks after upgrading to Satellite 6.2'
+      description 'Checks after upgrading to Satellite 6.2'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end

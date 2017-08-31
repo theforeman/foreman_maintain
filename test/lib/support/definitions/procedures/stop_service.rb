@@ -2,7 +2,7 @@ class Procedures::StopService < ForemanMaintain::Procedure
   metadata do
     for_feature(:present_service)
     tags :pre_migrations
-    description 'stop the running service'
+    description 'Stop the running service'
   end
 
   def run
