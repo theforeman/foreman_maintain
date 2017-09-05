@@ -36,6 +36,7 @@ module ForemanMaintain
       it 'lists the defined checks' do
         assert_cmd <<-OUTPUT.strip_heredoc
           [dummy-check-fail] check that ends up with fail
+          [dummy-check-fail2] check that ends up with fail
           [dummy-check-success] check that ends up with success
           [dummy-check-warn] check that ends up with warning
           [external-service-is-accessible] external_service_is_accessible         [pre-upgrade-check]

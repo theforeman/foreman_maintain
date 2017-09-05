@@ -277,24 +277,25 @@ module ForemanMaintain
         recommend = []
         steps_with_error = scenario.steps_with_error(:whitelisted => false)
         unless steps_with_error.empty?
-          message << <<-MESSAGE.strip_heredoc
+          message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_error, "\n", 2))
           The following steps ended up in failing state:
 
-          #{format_steps(steps_with_error, "\n", 2)}
+          %s
           MESSAGE
-          recommend << <<-MESSAGE.strip_heredoc
+          whitelist_labels = steps_with_error.map(&:label_dashed).join(',')
+          recommend << format(<<-MESSAGE.strip_heredoc, whitelist_labels)
           Resolve the failed steps and rerun
           the command. In case the failures are false positives,
-          use --whitelist="#{steps_with_error.map(&:label_dashed).join(',')}"
+          use --whitelist="%s"
           MESSAGE
         end
 
         steps_with_warning = scenario.steps_with_warning(:whitelisted => false)
         unless steps_with_warning.empty?
-          message << <<-MESSAGE.strip_heredoc
+          message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_warning, "\n", 2))
           The following steps ended up in warning state:
 
-          #{format_steps(steps_with_warning, "\n", 2)}
+          %s
           MESSAGE
 
           recommend << <<-MESSAGE.strip_heredoc

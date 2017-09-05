@@ -28,6 +28,10 @@ module ForemanMaintain
       Scenarios::Dummy::Fail.new
     end
 
+    let(:fail_multiple_scenario) do
+      Scenarios::Dummy::FailMultiple.new
+    end
+
     let(:warn_and_fail_scenario) do
       Scenarios::Dummy::WarnAndFail.new
     end
@@ -72,23 +76,27 @@ module ForemanMaintain
     end
 
     it 'informs the user about failures of the last scenario' do
-      run_scenario(fail_scenario)
-      reporter.after_scenario_finishes(fail_scenario)
+      run_scenario(fail_multiple_scenario)
+      reporter.after_scenario_finishes(fail_multiple_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      check that ends up with fail:                                         [FAIL]
+      this check is always causing failure
+      --------------------------------------------------------------------------------
       check that ends up with fail:                                         [FAIL]
       this check is always causing failure
       --------------------------------------------------------------------------------
       check that ends up with success:                                      [OK]
       --------------------------------------------------------------------------------
-      Scenario [Scenarios::Dummy::Fail] failed.
+      Scenario [Scenarios::Dummy::FailMultiple] failed.
 
       The following steps ended up in failing state:
 
         [dummy-check-fail]
+        [dummy-check-fail2]
 
       Resolve the failed steps and rerun
       the command. In case the failures are false positives,
-      use --whitelist=\"dummy-check-fail\"
+      use --whitelist=\"dummy-check-fail,dummy-check-fail2\"
       MESSAGE
     end
 
