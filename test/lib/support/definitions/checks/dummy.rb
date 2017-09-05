@@ -19,6 +19,17 @@ module Checks::Dummy
     end
   end
 
+  class Fail2 < ForemanMaintain::Check
+    metadata do
+      label :dummy_check_fail2
+      description 'check that ends up with fail'
+    end
+
+    def run
+      fail! 'this check is always causing failure'
+    end
+  end
+
   class Warn < ForemanMaintain::Check
     metadata do
       label :dummy_check_warn

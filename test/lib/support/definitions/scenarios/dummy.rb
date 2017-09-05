@@ -24,6 +24,12 @@ module Scenarios::Dummy
     end
   end
 
+  class FailMultiple < ForemanMaintain::Scenario
+    def compose
+      add_steps([Checks::Dummy::Fail, Checks::Dummy::Fail2, Checks::Dummy::Success])
+    end
+  end
+
   class WarnAndFail < ForemanMaintain::Scenario
     def compose
       add_steps([Checks::Dummy::Warn, Checks::Dummy::Fail, Checks::Dummy::Success])
