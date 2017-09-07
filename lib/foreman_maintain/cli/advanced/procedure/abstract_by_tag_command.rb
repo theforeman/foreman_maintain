@@ -28,7 +28,7 @@ module ForemanMaintain
           tag = underscorize(invocation_path.split.last).to_sym
           scenario = ForemanMaintain::Scenario.new
           ForemanMaintain.available_procedures(:tags => tag).sort_by(&:label).each do |procedure|
-            scenario.add_step(procedure.new(params_for_procedure(procedure)))
+            scenario.add_step(procedure.new(get_params_for(procedure)))
           end
           run_scenario(scenario)
         end
