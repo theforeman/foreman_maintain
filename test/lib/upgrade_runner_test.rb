@@ -63,6 +63,23 @@ module ForemanMaintain
         must_equal(original_scenario.steps.map { |step| step.execution.status })
     end
 
+    it 'remembers the current target version' do
+      TestHelper.migrations_fail_at = :migrations
+      reporter.input << 'y'
+      upgrade_runner_with_whitelist.storage.data.clear
+      upgrade_runner_with_whitelist.run
+      upgrade_runner_with_whitelist.save
+      UpgradeRunner.current_target_version.must_equal '1.15'
+      UpgradeRunner.available_targets.must_equal(['1.15'])
+    end
+
+    it 'does not remember the current target version when failed on pre_upgrade_checks ===' do
+      TestHelper.migrations_fail_at = :pre_upgrade_checks
+      upgrade_runner_with_whitelist.run
+      upgrade_runner_with_whitelist.save
+      UpgradeRunner.current_target_version.must_be_nil
+    end
+
     it 'cleans the state when the upgrade finished successfully' do
       reporter.input << 'y'
       upgrade_runner_with_whitelist.storage.data.clear
@@ -72,6 +89,7 @@ module ForemanMaintain
       new_upgrade_runner = UpgradeRunner.new('1.15', reporter)
       new_upgrade_runner.load
       new_upgrade_runner.phase.must_equal :pre_upgrade_checks
+      UpgradeRunner.current_target_version.must_be_nil
     end
 
     it 'does not run the pre_upgrade_checks again when already in pre_migrations phase' do

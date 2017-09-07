@@ -6,7 +6,19 @@ module ForemanMaintain
                :required => false
       end
 
+      def current_target_version
+        current_target_version = ForemanMaintain::UpgradeRunner.current_target_version
+        if current_target_version && target_version && target_version != current_target_version
+          raise Error::UsageError,
+                "Can't set target version #{target_version}, "\
+                "#{current_target_version} already in progress"
+        end
+        @target_version = current_target_version if current_target_version
+        return true if current_target_version
+      end
+
       def validate_target_version!
+        return if current_target_version
         unless UpgradeRunner.available_targets.include?(target_version)
           message_start = if target_version
                             "Can't upgrade to #{target_version}"

@@ -13,6 +13,8 @@ module ForemanMaintain
       include Concerns::Finders
 
       def available_targets
+        # when some upgrade is in progress, we don't allow upgrade to different version
+        return [current_target_version] if current_target_version
         versions_to_tags.inject([]) do |available_targets, (version, tag)|
           if !find_scenarios(:tags => [tag]).empty?
             available_targets << version
@@ -37,6 +39,18 @@ module ForemanMaintain
       def clear_register
         versions_to_tags.lear
       end
+
+      def current_target_version
+        ForemanMaintain.storage[:upgrade_target_version]
+      end
+
+      def current_target_version=(value)
+        ForemanMaintain.storage.update_and_save(:upgrade_target_version => value)
+      end
+
+      def clear_current_target_version
+        ForemanMaintain.storage.update_and_save(:upgrade_target_version => nil)
+      end
     end
 
     attr_reader :version, :tag, :phase
@@ -59,6 +73,7 @@ module ForemanMaintain
     end
 
     def run
+      self.class.current_target_version = @version
       PHASES.each do |phase|
         return run_rollback if quit?
         if skip?(phase)
@@ -69,6 +84,14 @@ module ForemanMaintain
       end
       unless quit?
         finish_upgrade
+      end
+    ensure
+      update_current_target_version
+    end
+
+    def update_current_target_version
+      if phase == :pre_upgrade_checks || @finished
+        UpgradeRunner.clear_current_target_version
       end
     end
 
@@ -124,7 +147,7 @@ module ForemanMaintain
         @reporter.before_scenario_starts(scenario)
         @reporter.puts <<-MESSAGE.strip_heredoc
           Skipping #{skipped_phase} phase as it was already run before.
-          To enforce to run the phase, use `upgrade run --phase #{phase}`
+          To enforce to run the phase, use `upgrade run --phase #{skipped_phase}`
         MESSAGE
         @reporter.after_scenario_finishes(scenario)
       end
