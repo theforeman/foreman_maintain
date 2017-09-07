@@ -13,7 +13,7 @@ module ForemanMaintain
             procedure.label.to_s
           end
 
-          subcommand(dashize(tag), "Run procedures tagged ##{tag} #{procedures}", klass)
+          subcommand(dashize(tag), "Run procedures tagged ##{tag}: #{procedures.join(', ')}", klass)
         end
 
         def execute
