@@ -13,6 +13,11 @@ module ForemanMaintain
       self.class.save_sub_key(sub_key, data)
     end
 
+    def update_and_save(attributes)
+      @data.merge!(attributes)
+      save
+    end
+
     class << self
       def load_file
         if File.exist?(storage_file_path)

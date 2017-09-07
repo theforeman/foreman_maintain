@@ -8,6 +8,7 @@ module ForemanMaintain
     include CliAssertions
     before do
       ForemanMaintain.detector.refresh
+      UpgradeRunner.clear_current_target_version
     end
     let :command do
       %w[upgrade]
@@ -62,6 +63,20 @@ module ForemanMaintain
       it 'runs the full upgrade for version' do
         UpgradeRunner.any_instance.expects(:run)
         run_cmd(['--target-version=1.15'])
+      end
+
+      it 'remembers the current target version' do
+        assert_cmd <<-OUTPUT.strip_heredoc
+          --target-version not specified
+          Possible target versions are:
+          1.15
+        OUTPUT
+        UpgradeRunner.current_target_version = '1.15'
+        UpgradeRunner.any_instance.expects(:run)
+        run_cmd
+        assert_cmd(<<-OUTPUT.strip_heredoc, ['--target-version', '1.16'])
+          Can't set target version 1.16, 1.15 already in progress
+        OUTPUT
       end
 
       it 'with --phase it runs only a specific phase of the upgrade' do

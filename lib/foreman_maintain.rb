@@ -108,7 +108,7 @@ module ForemanMaintain
       config.pre_setup_log_messages.clear
     end
 
-    def storage(label)
+    def storage(label = :default)
       ForemanMaintain::YamlStorage.load(label)
     rescue => e
       logger.error "Invalid Storage label i.e #{label}. Error - #{e.message}"
