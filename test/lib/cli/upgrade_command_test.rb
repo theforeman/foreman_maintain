@@ -53,6 +53,12 @@ module ForemanMaintain
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         run_cmd(['--target-version=1.15'])
       end
+
+      it 'should raise UsageError and exit with code 1' do
+        Cli::MainCommand.any_instance.expects(:exit!)
+
+        run_cmd([])
+      end
     end
 
     describe 'run' do
@@ -66,14 +72,20 @@ module ForemanMaintain
       end
 
       it 'remembers the current target version' do
+        Cli::MainCommand.any_instance.expects(:exit!)
+
         assert_cmd <<-OUTPUT.strip_heredoc
           --target-version not specified
           Possible target versions are:
           1.15
         OUTPUT
+
         UpgradeRunner.current_target_version = '1.15'
         UpgradeRunner.any_instance.expects(:run)
+        Cli::MainCommand.any_instance.expects(:exit!)
+
         run_cmd
+
         assert_cmd(<<-OUTPUT.strip_heredoc, ['--target-version', '1.16'])
           Can't set target version 1.16, 1.15 already in progress
         OUTPUT

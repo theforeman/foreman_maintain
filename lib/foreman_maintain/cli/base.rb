@@ -5,6 +5,8 @@ module ForemanMaintain
     class Base < Clamp::Command
       include Concerns::Finders
 
+      attr_reader :runner
+
       def self.dashize(string)
         string.to_s.tr('_', '-')
       end
@@ -38,10 +40,12 @@ module ForemanMaintain
       end
 
       def run_scenario(scenarios)
-        ForemanMaintain::Runner.new(reporter, scenarios,
-                                    :assumeyes => assumeyes?,
-                                    :whitelist => whitelist || [],
-                                    :force => force?).run
+        @runner ||=
+          ForemanMaintain::Runner.new(reporter, scenarios,
+                                      :assumeyes => assumeyes?,
+                                      :whitelist => whitelist || [],
+                                      :force => force?)
+        runner.run
       end
 
       def available_checks

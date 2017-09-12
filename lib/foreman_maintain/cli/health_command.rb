@@ -30,6 +30,7 @@ module ForemanMaintain
           else
             run_scenario(scenario)
           end
+          exit runner.exit_code
         end
 
         def filter

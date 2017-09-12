@@ -1,4 +1,3 @@
-require 'checks/dummy'
 module Scenarios::Dummy
   class Success < ForemanMaintain::Scenario
     def compose

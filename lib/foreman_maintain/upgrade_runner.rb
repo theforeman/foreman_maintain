@@ -21,7 +21,7 @@ module ForemanMaintain
           else
             available_targets
           end
-        end
+        end.sort
       end
 
       def versions_to_tags

@@ -71,6 +71,7 @@ module ForemanMaintain
               [ARG] ...                     subcommand arguments
 
           Subcommands:
+              fallacious                    Run procedures tagged #fallacious: dummy_procedure_fail
               migrations                    Run procedures tagged #migrations: upgrade_migration
               post-migrations               Run procedures tagged #post_migrations: upgrade_post_migration
               pre-migrations                Run procedures tagged #pre_migrations: stop_service, upgrade_pre_migration
@@ -101,6 +102,7 @@ module ForemanMaintain
           Subcommands:
               delete-articles-one-year-old  Delete all articles created 1 year ago
               delete-articles-with-zero-comments Delete all articles with zero comments
+              dummy-procedure-fail          Procedure that ends up with fail
               present-service-restart       Restart present service
               present-service-start         Start the present service
               run-once                      Procedures::RunOnce
@@ -113,6 +115,34 @@ module ForemanMaintain
           Options:
               -h, --help                    print help
         OUTPUT
+      end
+    end
+
+    describe 'run procedure' do
+      let :command do
+        %w[advanced procedure run dummy-procedure-fail]
+      end
+
+      it 'exits with 1 if failed' do
+        Scenario.any_instance.expects(:failed?).returns(true)
+        Runner.any_instance.expects(:execute_scenario_steps)
+        Runner.any_instance.expects(:exit_code).returns(1)
+
+        run_cmd
+      end
+    end
+
+    describe 'run procedure by-tag' do
+      let :command do
+        %w[advanced procedure by-tag fallacious]
+      end
+
+      it 'exits with 1 if failed' do
+        Scenario.any_instance.expects(:failed?).returns(true)
+        Runner.any_instance.expects(:execute_scenario_steps)
+        Runner.any_instance.expects(:exit_code).returns(1)
+
+        run_cmd
       end
     end
   end

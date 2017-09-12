@@ -26,7 +26,8 @@ module ForemanMaintain
         private
 
         def option_sym(option)
-          option.switches.first[2..-1].to_sym
+          option = option.switches.first[2..-1].to_s
+          option.to_sym unless option.empty?
         end
 
         def metadata_option?(option)
