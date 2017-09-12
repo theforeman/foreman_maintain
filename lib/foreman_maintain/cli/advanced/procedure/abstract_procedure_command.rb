@@ -10,6 +10,7 @@ module ForemanMaintain
           scenario = ForemanMaintain::Scenario.new
           scenario.add_step(procedure.new(get_params_for(procedure)))
           run_scenario(scenario)
+          exit runner.exit_code
         end
       end
     end

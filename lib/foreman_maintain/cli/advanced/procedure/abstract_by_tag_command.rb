@@ -25,12 +25,21 @@ module ForemanMaintain
         end
 
         def execute
+          run_scenario(scenario(invocation_path))
+          exit runner.exit_code
+        end
+
+        private
+
+        def scenario(invocation_path)
           tag = underscorize(invocation_path.split.last).to_sym
           scenario = ForemanMaintain::Scenario.new
+
           ForemanMaintain.available_procedures(:tags => tag).sort_by(&:label).each do |procedure|
             scenario.add_step(procedure.new(get_params_for(procedure)))
           end
-          run_scenario(scenario)
+
+          scenario
         end
       end
     end

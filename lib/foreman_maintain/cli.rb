@@ -19,18 +19,41 @@ module ForemanMaintain
         logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")
         begin
           super
-          exit_code = 0
+          @exit_code = 0
+        rescue Error::UsageError => e
+          process_usage_error(e)
         rescue StandardError => e
-          if e.is_a?(Clamp::HelpWanted) || e.is_a?(ArgumentError) || e.is_a?(Clamp::UsageError)
-            raise e
-          end
-          puts e.message
-          logger.error(e)
-          exit_code = 1
+          process_standard_error(e)
         end
-        return exit_code
+
+        return @exit_code
       ensure
+        log_exit_code_info(@exit_code)
+      end
+
+      private
+
+      def log_exit_code_info(exit_code)
         logger.info("foreman-maintain command finished with #{exit_code}")
+      end
+
+      def process_standard_error(error)
+        if error.is_a?(Clamp::HelpWanted) ||
+           error.is_a?(ArgumentError) ||
+           error.is_a?(Clamp::UsageError)
+          raise error
+        end
+
+        puts error.message
+        logger.error(error)
+
+        @exit_code = 1
+      end
+
+      def process_usage_error(error)
+        log_exit_code_info(1)
+        puts error.message
+        exit!
       end
     end
   end

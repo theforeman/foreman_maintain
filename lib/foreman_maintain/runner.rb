@@ -36,17 +36,16 @@ module ForemanMaintain
     def run_scenario(scenario, confirm = true)
       return if scenario.steps.empty?
       raise 'The runner is already in quit state' if quit?
+
       if confirm
         confirm_scenario(scenario)
         return if quit?
       end
-      scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
-      return if quit? # the before scenarios caused the stop of the execution
-      @reporter.before_scenario_starts(scenario)
-      run_steps(scenario, scenario.steps)
-      @reporter.after_scenario_finishes(scenario)
+
+      execute_scenario_steps(scenario)
     ensure
       @last_scenario = scenario unless scenario.steps.empty?
+      @exit_code = 1 if scenario.failed?
     end
 
     def whitelisted_step?(step)
@@ -83,6 +82,14 @@ module ForemanMaintain
     end
 
     private
+
+    def execute_scenario_steps(scenario)
+      scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
+      return if quit? # the before scenarios caused the stop of the execution
+      @reporter.before_scenario_starts(scenario)
+      run_steps(scenario, scenario.steps)
+      @reporter.after_scenario_finishes(scenario)
+    end
 
     def run_steps(scenario, steps)
       @steps_to_run = ForemanMaintain::DependencyGraph.sort(steps)

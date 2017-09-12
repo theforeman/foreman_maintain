@@ -14,6 +14,22 @@ module ForemanMaintain
       Runner.new(reporter, scenario)
     end
 
+    let :success_scenario do
+      Scenarios::Dummy::Success.new
+    end
+
+    let :warn_scenario do
+      Scenarios::Dummy::Warn.new
+    end
+
+    let :failed_scenario do
+      Scenarios::Dummy::Fail.new
+    end
+
+    let :warn_and_fail_scenario do
+      Scenarios::Dummy::WarnAndFail.new
+    end
+
     it 'performs all steps in the scenario' do
       reporter.planned_next_steps_answers = %w[y n]
       runner.run
@@ -81,19 +97,7 @@ module ForemanMaintain
       )
     end
 
-    describe 'scnario confirmation in before_scenario_starts' do
-      let(:success_scenario) do
-        Scenarios::Dummy::Success.new
-      end
-
-      let(:warn_scenario) do
-        Scenarios::Dummy::Warn.new
-      end
-
-      let(:warn_and_fail_scenario) do
-        Scenarios::Dummy::WarnAndFail.new
-      end
-
+    describe 'scenario confirmation in before_scenario_starts' do
       it 'does not continue when the reporter does not confirm the scenario' do
         runner = Runner.new(reporter, [warn_scenario, success_scenario])
         runner.run
@@ -167,6 +171,26 @@ module ForemanMaintain
                        ['after_execution_finishes', :dummy_check_success],
                        ['after_scenario_finishes', :dummy_fail_slow]
                      ], reporter.log, 'unexpected execution')
+      end
+    end
+
+    describe '#exit_code' do
+      it 'sets to 1 if scenario failed' do
+        runner = Runner.new(reporter, [failed_scenario])
+        runner.run
+        assert_equal 1, runner.exit_code
+      end
+
+      it 'is default(0) if scenario passed' do
+        runner = Runner.new(reporter, [success_scenario])
+        runner.run
+        assert_equal 0, runner.exit_code
+      end
+
+      it 'is 1 if scenario has warnings' do
+        runner = Runner.new(reporter, [warn_scenario])
+        runner.run
+        assert_equal 1, runner.exit_code
       end
     end
   end
