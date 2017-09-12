@@ -253,7 +253,7 @@ module ForemanMaintain
       end
 
       def runtime_message
-        description + (params.empty? ? '' : " (#{params})")
+        description
       end
 
       def tags
