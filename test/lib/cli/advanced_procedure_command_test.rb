@@ -101,11 +101,11 @@ module ForemanMaintain
           Subcommands:
               delete-articles-one-year-old  Delete all articles created 1 year ago
               delete-articles-with-zero-comments Delete all articles with zero comments
-              present-service-restart       restart present service
-              present-service-start         start the present service
+              present-service-restart       Restart present service
+              present-service-start         Start the present service
               run-once                      Procedures::RunOnce
-              setup                         setup
-              stop-service                  stop the running service
+              setup                         Setup
+              stop-service                  Stop the running service
               upgrade-migration             Procedures::Upgrade::Migration
               upgrade-post-migration        Procedures::Upgrade::PostMigration
               upgrade-pre-migration         Procedures::Upgrade::PreMigration
