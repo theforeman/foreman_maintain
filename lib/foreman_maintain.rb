@@ -6,6 +6,7 @@ require 'forwardable'
 require 'json'
 require 'logger'
 require 'yaml'
+require 'timeout'
 
 module ForemanMaintain
   require 'foreman_maintain/core_ext'
