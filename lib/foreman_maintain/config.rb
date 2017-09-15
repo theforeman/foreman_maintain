@@ -35,7 +35,7 @@ module ForemanMaintain
           "Config file #{config_file} not found, using default configuration"
         {}
       end
-    rescue => e
+    rescue StandardError => e
       raise "Couldn't load configuration file. Error: #{e.message}"
     end
 
@@ -51,7 +51,7 @@ module ForemanMaintain
       dir_path = File.expand_path(dir_path_str)
       begin
         FileUtils.mkdir_p(dir_path, :mode => 0o750) unless File.exist?(dir_path)
-      rescue => e
+      rescue StandardError => e
         $stderr.puts "No permissions to create dir #{dir_path_str}"
         $stderr.puts e.message.inspect
       end

@@ -97,7 +97,7 @@ module ForemanMaintain
 
       def capture_errors
         yield
-      rescue => e
+      rescue StandardError => e
         @status = :fail
         @output << e.message
         logger.error(e)

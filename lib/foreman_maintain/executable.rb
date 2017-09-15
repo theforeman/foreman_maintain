@@ -8,8 +8,6 @@ module ForemanMaintain
                    :assumeyes?, :whitelisted?,
                    :execution, :puts, :print, :with_spinner, :ask, :storage
 
-    attr_accessor :associated_feature
-
     def initialize(options = {})
       @options = options.inject({}) { |h, (k, v)| h.update(k.to_s => v) }
       @param_values = {}
@@ -33,7 +31,7 @@ module ForemanMaintain
     # processes the params from provided options
     def setup_params
       @options.validate_options!(params.values.map(&:name).map(&:to_s))
-      params.values.each do |param|
+      params.each_value do |param|
         set_param_variable(param.name, param.process(@options[param.name.to_s]))
       end
     end
