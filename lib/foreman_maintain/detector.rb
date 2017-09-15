@@ -67,7 +67,7 @@ module ForemanMaintain
       return if @all_features_scanned
       @available_features = []
       @features_by_label = {}
-      autodetect_features.keys.each do |label|
+      autodetect_features.each_key do |label|
         detect_feature(label)
       end
       @all_features_scanned = true

@@ -5,7 +5,7 @@ module ForemanMaintain
         class FileSystem
           include ForemanMaintain::Concerns::SystemHelpers
 
-          attr_accessor :dir, :unit, :read_speed, :name
+          attr_accessor :dir, :name
 
           def initialize(dir, name = '')
             @dir = dir

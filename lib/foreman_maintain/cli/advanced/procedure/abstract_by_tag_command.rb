@@ -4,7 +4,7 @@ module ForemanMaintain
       class AbstractByTagCommand < AbstractProcedureCommand
         def self.tag_params_to_options(tag)
           params = params_for_tag(tag)
-          params.values.each do |param|
+          params.each_value do |param|
             mapping = param[:procedures]
             instance = param[:instance]
             param_to_option(instance, :description => instance.description + " #{mapping}")
@@ -14,7 +14,7 @@ module ForemanMaintain
         def self.params_for_tag(tag)
           params = {}
           ForemanMaintain.available_procedures(:tags => tag).each do |procedure|
-            procedure.params.values.each do |param|
+            procedure.params.each_value do |param|
               unless params.key?(param.name)
                 params[param.name] = { :instance => param, :procedures => [] }
               end

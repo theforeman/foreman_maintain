@@ -17,7 +17,7 @@ module ForemanMaintain
         def get_params_for(definition)
           all_params = options_to_params
           params = {}
-          definition.params.values.each do |param|
+          definition.params.each_value do |param|
             params[param.name] = all_params[param.name]
           end
           params
@@ -37,7 +37,7 @@ module ForemanMaintain
 
       module ParamsToOptions
         def params_to_options(params)
-          params.values.each do |param|
+          params.each_value do |param|
             param_to_option(param)
           end
         end

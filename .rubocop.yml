@@ -68,3 +68,6 @@ Style/InverseMethods:
 
 Style/FormatStringToken:
   EnforcedStyle: template
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false

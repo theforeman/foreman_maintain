@@ -5,7 +5,7 @@ module ForemanMaintain
         class BlockDevice
           include ForemanMaintain::Concerns::SystemHelpers
 
-          attr_accessor :dir, :unit, :read_speed, :name
+          attr_accessor :dir, :name
 
           def initialize(dir, name = Disk::Device.new('/var').name)
             @dir = dir

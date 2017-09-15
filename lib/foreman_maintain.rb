@@ -110,7 +110,7 @@ module ForemanMaintain
 
     def storage(label = :default)
       ForemanMaintain::YamlStorage.load(label)
-    rescue => e
+    rescue StandardError => e
       logger.error "Invalid Storage label i.e #{label}. Error - #{e.message}"
     end
   end

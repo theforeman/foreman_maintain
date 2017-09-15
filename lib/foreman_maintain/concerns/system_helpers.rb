@@ -111,7 +111,7 @@ module ForemanMaintain
 
       def json_parse(json_string)
         JSON.parse(json_string)
-      rescue
+      rescue StandardError
         nil
       end
     end
