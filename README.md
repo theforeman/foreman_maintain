@@ -85,7 +85,7 @@ state of the system.
 
 #### Satellite notes
 
-To use custom organzation/activation key for configuring repositories during
+To use custom organization/activation key for configuring repositories during
 upgrade, set the following environment variables
 
 ```
@@ -116,7 +116,7 @@ The definitions for this components are present in `definitions` folder.
 ### Features
 
 Before `foreman_maintain` starts, it takes the set of `features` definition
-and determines their pesence by running their `confine` blocks against
+and determines their presence by running their `confine` blocks against
 the system.
 
 The `confine` block can run an external command to check if the feature
@@ -154,7 +154,7 @@ scenarios) from version-specific nuances.
 Checks define assertions to determine status of the system.
 
 ```ruby
-class Checks::ForemanIsRuning < ForemanMaintain::Check
+class Checks::ForemanIsRunning < ForemanMaintain::Check
   metadata do
     for_feature :foreman
     description 'check foreman service is running'
