@@ -1,6 +1,9 @@
 class Features::ForemanProxy < ForemanMaintain::Feature
   metadata do
     label :foreman_proxy
+    confine do
+      find_package('foreman-proxy')
+    end
   end
 
   attr_reader :dhcpd_conf_file, :cert_path
@@ -36,7 +39,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     array_output = curl_resp.split(/\r\n/)
     result_array = array_output.last.split(/\n/)
     curl_http_status = result_array.delete_at(result_array.length - 1).strip.to_i
-    curl_http_resp = json_parse(result_array.join(''))
+    curl_http_resp = parse_json(result_array.join(''))
     ForemanMaintain::Utils::CurlResponse.new(
       curl_http_resp,
       curl_http_status,

@@ -3,12 +3,16 @@ class Checks::DiskSpeedMinimal < ForemanMaintain::Check
     label :disk_io
     description 'Check for recommended disk speed of pulp, mongodb, pgsql dir.'
     tags :pre_upgrade
+
     preparation_steps { Procedures::Packages::Install.new(:packages => %w[hdparm fio]) }
+
+    confine do
+      feature(:katello)
+    end
   end
 
   EXPECTED_IO = 80
-  DEFAULT_UNIT   = 'MB/sec'.freeze
-  DEFAULT_DIRS   = ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'].freeze
+  DEFAULT_UNIT = 'MB/sec'.freeze
 
   def run
     with_spinner(description) do |spinner|
@@ -20,14 +24,14 @@ class Checks::DiskSpeedMinimal < ForemanMaintain::Check
   end
 
   def check_only_single_device?
-    DEFAULT_DIRS.map do |dir|
+    feature(:katello).data_dirs.map do |dir|
       ForemanMaintain::Utils::Disk::Device.new(dir).name
     end.uniq.length <= 1
   end
 
   def dirs_to_check
-    return DEFAULT_DIRS.first(1) if check_only_single_device?
-    DEFAULT_DIRS
+    return feature(:katello).data_dirs.first(1) if check_only_single_device?
+    feature(:katello).data_dirs
   end
 
   private

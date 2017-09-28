@@ -15,6 +15,7 @@ describe Checks::DiskSpeedMinimal do
 
   it 'executes successfully for disk with minimal speed' do
     check_disk_io.stubs(:check_only_single_device?).returns(true)
+    assume_feature_present(:katello)
 
     io_obj = MiniTest::Mock.new
     io_obj.expect(:read_speed, 90)
@@ -33,6 +34,7 @@ describe Checks::DiskSpeedMinimal do
     err_msg = 'Slow disk'
 
     check_disk_io.stubs(:check_only_single_device?).returns(true)
+    assume_feature_present(:katello)
 
     io_obj = MiniTest::Mock.new
     2.times { io_obj.expect(:read_speed, slow_speed) }
