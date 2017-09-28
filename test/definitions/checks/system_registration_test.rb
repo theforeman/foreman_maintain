@@ -11,52 +11,63 @@ describe Checks::SystemRegistration do
 
   context 'when RH subscription manager conf exists' do
     let(:rhsm_hostname_cmd) { "grep '\\bhostname\\b' < /etc/rhsm/rhsm.conf" }
+
     before do
       subject.stubs(:file_exists?).returns(true)
     end
 
-    it 'run method executes successfully' do
-      subject.expects(:run)
-      subject.run
-    end
+    context 'smart-proxy' do
+      before do
+        assume_feature_present(:foreman_server, :present? => false)
+        assume_feature_present(:foreman_proxy, :present? => true)
+      end
 
-    it 'raises a warning if system is self registerd' do
-      subject.stubs(:system_is_self_registerd?).returns(true)
+      context 'raise warning' do
+        let(:msg) { '[Server] expected to raise warning' }
 
-      exception = assert_raises(ForemanMaintain::Error::Warn) { subject.run }
-      assert_equal('System is self registered', exception.message)
-    end
+        it 'system is self registered' do
+          subject.stubs(:rhsm_hostname_eql_hostname?).returns(true)
+          result = run_step(subject)
 
-    it 'no warning raised if system is not self registered' do
-      subject.stubs(:system_is_self_registerd?).returns(false)
+          assert result.warning?, msg
+        end
 
-      result = run_step(subject)
-      refute result.warning?
-    end
+        it 'hostname is sat.example.com & rhsm.conf contains hostname=sat.example.com' do
+          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_no_space.conf')
+          subject.stubs(:hostname).returns('sat.example.com')
+          result = run_step(subject)
 
-    it 'should match hostname(sat.example.com) when rhsm.conf says hostname = sat.example.com' do
-      subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm.conf')
-      subject.stubs(:hostname).returns('sat.example.com')
-      assert subject.system_is_self_registerd?
-    end
+          assert result.warning?, msg
+        end
 
-    it 'should not match hostname(sat.example.com) \
-          when rhsm.conf says hostname = another-sat.example.com' do
-      subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_mismatch.conf')
-      subject.stubs(:hostname).returns('sat.example.com')
-      refute subject.system_is_self_registerd?
-    end
+        it 'hostname is sat.example.com & rhsm.conf contains hostname = sat.example.com' do
+          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm.conf')
+          subject.stubs(:hostname).returns('sat.example.com')
+          result = run_step(subject)
 
-    it 'should match hostname(sat.example.com) when rhsm.conf says hostname=sat.example.com' do
-      subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_no_space.conf')
-      subject.stubs(:hostname).returns('sat.example.com')
-      assert subject.system_is_self_registerd?
-    end
+          assert result.warning?, msg
+        end
+      end
 
-    it 'should not match commented hostname' do
-      subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/bad_rhsm.conf')
-      subject.stubs(:hostname).returns('foreman.example.com')
-      refute subject.system_is_self_registerd?
+      context 'do not raise warning' do
+        let(:msg) { '[Server] expected NOT to raise warning' }
+
+        it 'hostname is sat.example.com & rhsm.conf contains hostname = another-sat.example.com' do
+          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_mismatch.conf')
+          subject.stubs(:hostname).returns('sat.example.com')
+          result = run_step(subject)
+
+          refute result.warning?, msg
+        end
+
+        it 'hostname commented' do
+          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/bad_rhsm.conf')
+          subject.stubs(:hostname).returns('foreman.example.com')
+          result = run_step(subject)
+
+          refute result.warning?, msg
+        end
+      end
     end
   end
 

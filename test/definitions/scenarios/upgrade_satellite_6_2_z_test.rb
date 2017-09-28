@@ -50,7 +50,9 @@ module Scenarios
     end
 
     it 'composes the pre upgrade checks for migration from satellite 6.2.0 to 6.2.z' do
-      assert(scenario.steps.find { |step| step.is_a? Checks::DiskSpeedMinimal })
+      assert(
+        scenario.steps.find { |step| step.is_a? Checks::ForemanTasks::Invalid::CheckPendingState }
+      )
     end
   end
 end

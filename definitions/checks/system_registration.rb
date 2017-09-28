@@ -5,20 +5,16 @@ class Checks::SystemRegistration < ForemanMaintain::Check
     tags :default
 
     confine do
-      file_exists?('/etc/rhsm/rhsm.conf')
+      file_exists?('/etc/rhsm/rhsm.conf') &&
+        !feature(:foreman_server) &&
+        feature(:foreman_proxy)
     end
   end
 
   def run
-    if system_is_self_registerd?
+    if rhsm_hostname_eql_hostname?
       warn! 'System is self registered'
-    else
-      puts 'System is not self registered'
     end
-  end
-
-  def system_is_self_registerd?
-    rhsm_hostname.casecmp(hostname).zero?
   end
 
   def rhsm_hostname
@@ -27,5 +23,9 @@ class Checks::SystemRegistration < ForemanMaintain::Check
 
   def rhsm_conf_file
     '/etc/rhsm/rhsm.conf'
+  end
+
+  def rhsm_hostname_eql_hostname?
+    @result ||= rhsm_hostname.casecmp(hostname).zero?
   end
 end
