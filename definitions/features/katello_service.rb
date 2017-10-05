@@ -10,16 +10,15 @@ class Features::KatelloService < ForemanMaintain::Feature
     services = find_services_for_only_filter(running_services, options)
     if services.empty?
       spinner.update 'No katello service running'
-      yield
+      yield if block_given?
     else
       begin
         filters = "--only #{services.join(',')}"
         spinner.update 'Stopping katello running services..'
         execute!("katello-service stop #{filters}")
-        yield
+        yield if block_given?
       ensure
-        spinner.update 'Starting katello services..'
-        execute("katello-service start #{filters}")
+        start_stopped_services_using_filters(spinner, filters) if block_given?
       end
     end
   end
@@ -77,6 +76,11 @@ class Features::KatelloService < ForemanMaintain::Feature
       filters += "--exclude #{options[:exclude].join(',')}" unless options[:exclude].empty?
     end
     filters
+  end
+
+  def start_stopped_services_using_filters(spinner, filters)
+    spinner.update 'Starting katello services..'
+    execute("katello-service start #{filters}")
   end
 
   def find_services_for_only_filter(curr_services, options)
