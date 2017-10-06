@@ -66,7 +66,12 @@ module ForemanMaintain
       subcommand 'run', 'Run full upgrade to a specified version' do
         target_version_option
         interactive_option
-        option '--phase', 'phase', 'run only a specific phase', :required => false
+        option '--phase', 'phase', 'run only a specific phase', :required => false do |phase|
+          unless UpgradeRunner::PHASES.include?(phase.to_sym)
+            raise Error::UsageError, "Unknown phase #{phase}"
+          end
+          phase
+        end
 
         def execute
           if phase

@@ -95,6 +95,13 @@ module ForemanMaintain
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
         run_cmd(['--phase=pre_migrations', '--target-version=1.15'])
       end
+
+      it 'raises an exception for invalid phase' do
+        Cli::MainCommand.any_instance.expects(:exit!)
+        assert_cmd(<<-OUTPUT.strip_heredoc, ['--phase=foo_bar', '--target-version', '1.16'])
+          Unknown phase foo_bar
+        OUTPUT
+      end
     end
   end
 end
