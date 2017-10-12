@@ -30,6 +30,11 @@ module ForemanMaintain
       Scenarios::Dummy::WarnAndFail.new
     end
 
+    it 'scenario should have access to attribute assumeyes' do
+      success_scenario.assumeyes = true
+      assert success_scenario.assumeyes?
+    end
+
     it 'performs all steps in the scenario' do
       reporter.planned_next_steps_answers = %w[y n]
       runner.run

@@ -20,6 +20,11 @@ module ForemanMaintain
                         :whitelist => %w[present-service-is-running service-is-stopped])
     end
 
+    it 'sets assumeyes from options' do
+      upgrade_runner = UpgradeRunner.new('1.15', reporter, :assumeyes => true)
+      assert(upgrade_runner.assumeyes?)
+    end
+
     it 'lists versions available for upgrading, based on available scenarios' do
       UpgradeRunner.available_targets.must_equal ['1.15']
     end

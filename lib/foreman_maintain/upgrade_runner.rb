@@ -58,6 +58,7 @@ module ForemanMaintain
     def initialize(version, reporter, options = {})
       super(reporter, [], options)
       @tag = self.class.versions_to_tags[version]
+      @assumeyes = options.fetch(:assumeyes, false)
       raise "Unknown version #{version}" unless tag
       @version = version
       @scenario_cache = {}
@@ -132,6 +133,7 @@ module ForemanMaintain
 
     def run_phase(phase)
       with_non_empty_scenario(phase) do |scenario|
+        scenario.assumeyes = assumeyes?
         confirm_scenario(scenario)
         return if quit?
         self.phase = phase
