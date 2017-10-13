@@ -98,6 +98,8 @@ module ForemanMaintain
       end
 
       def self.interactive_option
+        delete_duplicate_assumeyes_if_any
+
         option ['-y', '--assumeyes'], :flag,
                'Automatically answer yes for all questions'
 
@@ -109,6 +111,10 @@ module ForemanMaintain
 
         option ['-f', '--force'], :flag,
                'Force steps that would be skipped as they were already run'
+      end
+
+      def self.delete_duplicate_assumeyes_if_any
+        declared_options.delete_if { |opt| opt.handles?('--assumeyes') }
       end
     end
   end
