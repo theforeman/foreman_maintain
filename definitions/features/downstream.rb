@@ -34,9 +34,17 @@ class Features::Downstream < ForemanMaintain::Feature
   def rh_repos(sat_version)
     sat_version = version(sat_version)
     rh_version_major = execute!('facter operatingsystemmajrelease')
+
+    sat_repo_id = "rhel-#{rh_version_major}-server-satellite-#{sat_version.major}"\
+                  ".#{sat_version.minor}-rpms"
+    # Override to use Beta repositories for 6.3 until GA
+    if sat_version.to_s == '6.3'
+      sat_repo_id = "rhel-server-#{rh_version_major}-satellite-6-beta-rpms"
+    end
+
     ["rhel-#{rh_version_major}-server-rpms",
      "rhel-server-rhscl-#{rh_version_major}-rpms",
-     "rhel-#{rh_version_major}-server-satellite-#{sat_version.major}.#{sat_version.minor}-rpms"]
+     sat_repo_id]
   end
 
   def version_from_source
