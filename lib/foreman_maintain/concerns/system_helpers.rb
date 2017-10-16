@@ -136,6 +136,11 @@ module ForemanMaintain
       def version(value)
         Version.new(value)
       end
+
+      def command_exists?(cmd_name)
+        dir_path = execute("command -v #{cmd_name}")
+        !dir_path.strip.empty?
+      end
     end
   end
 end
