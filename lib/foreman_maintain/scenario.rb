@@ -7,6 +7,7 @@ module ForemanMaintain
     extend Concerns::Finders
 
     attr_reader :steps
+    attr_accessor :assumeyes
 
     class FilteredScenario < Scenario
       metadata do
@@ -116,6 +117,10 @@ module ForemanMaintain
       else
         steps
       end
+    end
+
+    def assumeyes?
+      @assumeyes
     end
 
     def passed?

@@ -44,7 +44,7 @@ module Scenarios::Satellite_6_3
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => '6.3'))
-      add_step(Procedures::Packages::Update.new(:assumeyes => false))
+      add_step(Procedures::Packages::Update.new(:assumeyes => assumeyes?))
       add_step(Procedures::Installer::Upgrade.new)
     end
   end

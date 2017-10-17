@@ -43,7 +43,7 @@ module Scenarios::Satellite_6_2_z
     end
 
     def compose
-      add_step(Procedures::Packages::Update.new(:assumeyes => false))
+      add_step(Procedures::Packages::Update.new(:assumeyes => assumeyes?))
       add_step(Procedures::Installer::Upgrade.new)
     end
   end
