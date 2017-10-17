@@ -13,7 +13,7 @@ describe Procedures::ForemanTasks::Resume do
     assert result.success?, 'the procedure was expected to succeed'
     assert_equal <<-MSG.strip_heredoc.strip, result.reporter.output.strip
       Go to https://example.com/foreman_tasks/tasks?search=state+%3D+paused
-      press ENTER after the paused tasks are resolved.
+      press ENTER after the tasks are resolved.
     MSG
   end
 end
