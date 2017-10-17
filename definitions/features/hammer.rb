@@ -49,7 +49,7 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def exec_hammer_cmd(cmd, required_json = false)
     response = ForemanMaintain::Utils::Hammer.instance.run_command(cmd)
-    json_str = json_parse(response) if required_json
+    json_str = parse_json(response) if required_json
     json_str ? json_str : response
   end
 end
