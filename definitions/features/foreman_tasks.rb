@@ -1,5 +1,7 @@
 class Features::ForemanTasks < ForemanMaintain::Feature
   MIN_AGE = 30
+  TIMEOUT_FOR_TASKS_STATUS = 300
+  RETRY_INTERVAL_FOR_TASKS_STATE = 10
 
   SAFE_TO_DELETE = %w[
     Actions::Katello::Host::GenerateApplicability
@@ -7,6 +9,11 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     Actions::Katello::Host::Hypervisors
     Actions::Katello::Host::HypervisorsUpdate
     Actions::Foreman::Host::ImportFacts
+    Actions::Candlepin::ListenOnCandlepinEvents
+    Actions::Katello::EventQueue::Monitor
+  ].freeze
+
+  EXCLUDE_ACTIONS_FOR_RUNNING_TASKS = %w[
     Actions::Candlepin::ListenOnCandlepinEvents
     Actions::Katello::EventQueue::Monitor
   ].freeze
@@ -33,10 +40,14 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def running_tasks_count
-    # feature(:foreman_database).query(<<-SQL).first['count'].to_i
-    #  SELECT count(*) AS count FROM foreman_tasks_tasks WHERE state in ('running', 'paused')
-    # SQL
-    0
+    actions_to_exclude = quotize(EXCLUDE_ACTIONS_FOR_RUNNING_TASKS)
+    sql = <<-SQL
+      SELECT count(*) AS count
+        FROM foreman_tasks_tasks
+        WHERE state IN ('running') AND
+        label NOT IN (#{actions_to_exclude})
+    SQL
+    feature(:foreman_database).query(sql).first['count'].to_i
   end
 
   def paused_tasks_count(ignored_tasks = [])
@@ -86,7 +97,41 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     hammer('task resume')
   end
 
+  def fetch_tasks_status(state, spinner)
+    Timeout.timeout(TIMEOUT_FOR_TASKS_STATUS) do
+      check_task_count(state, spinner)
+    end
+  rescue Timeout::Error => e
+    logger.error e.message
+    puts "\nTimeout: #{e.message}. Try again."
+  end
+
   private
+
+  def check_task_count(state, spinner)
+    loop do
+      spinner.update "Try checking status of #{state} task(s)"
+      task_count = call_tasks_count_by_state(state)
+      break if task_count == 0
+      puts "\nThere are #{task_count} #{state} tasks."
+      spinner.update "Waiting #{RETRY_INTERVAL_FOR_TASKS_STATE} seconds before retry."
+      sleep RETRY_INTERVAL_FOR_TASKS_STATE
+    end
+  rescue StandardError => e
+    logger.error e.message
+  end
+
+  def call_tasks_count_by_state(state)
+    case state
+    when 'running'
+      running_tasks_count
+    when 'paused'
+      paused_tasks_count
+    else
+      logger.error "No count method defined for state #{state}."
+      raise "Unsupported for state #{state}."
+    end
+  end
 
   def parent_backup_dir
     File.expand_path(ForemanMaintain.config.backup_dir)
