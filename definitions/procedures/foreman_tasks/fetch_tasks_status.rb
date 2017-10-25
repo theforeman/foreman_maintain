@@ -3,7 +3,7 @@ module Procedures::ForemanTasks
     metadata do
       for_feature :foreman_tasks
       description 'Fetch tasks status and wait till they finish'
-      param :state, :required => true
+      param :state, "Specify state of tasks. Either 'running' or 'paused'", :required => true
     end
 
     def run
