@@ -72,7 +72,7 @@ module ForemanMaintain
       raise Error::Warn, message
     end
 
-    # rubocop:disable Style/AccessorMethodName
+    # rubocop:disable Naming/AccessorMethodName
     def set_fail(message)
       execution.status = :fail
       execution.output << message

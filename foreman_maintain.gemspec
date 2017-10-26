@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'foreman_maintain/version'
 
@@ -26,7 +25,7 @@ the Foreman/Satellite up and running."
   s.add_dependency 'highline'
 
   s.add_development_dependency 'bundler', '~> 1.3'
-  s.add_development_dependency 'rake', '< 11.0.0' # rake >= 11.0.0 drops support for ruby 1.8.7
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
+  s.add_development_dependency 'rake', '< 11.0.0' # rake >= 11.0.0 drops support for ruby 1.8.7
 end

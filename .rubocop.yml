@@ -11,7 +11,7 @@ Style/IfUnlessModifier:
   Enabled: false
 
 # Features can contain version numbers
-Style/ClassAndModuleCamelCase:
+Naming/ClassAndModuleCamelCase:
   Exclude:
     - '**/definitions/**/*'
     - 'test/support/additional_definitions/**/*'
@@ -47,7 +47,7 @@ Metrics/ClassLength:
 Style/EachWithObject:
   Enabled: false
 
-Style/DotPosition:
+Layout/DotPosition:
   EnforcedStyle: trailing
 
 Security/YAMLLoad:
@@ -70,4 +70,9 @@ Style/FormatStringToken:
   EnforcedStyle: template
 
 Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+# Enable check once issue is resolved:
+# https://github.com/bbatsov/rubocop/issues/4940
+Lint/UnneededRequireStatement:
   Enabled: false
