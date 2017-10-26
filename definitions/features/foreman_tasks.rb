@@ -180,6 +180,6 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def valid(state)
-    [:old, :planning, :pending].include?(state)
+    %w[old planning pending].include?(state.to_s)
   end
 end
