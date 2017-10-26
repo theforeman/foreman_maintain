@@ -52,8 +52,8 @@ module ForemanMaintain
       begin
         FileUtils.mkdir_p(dir_path, :mode => 0o750) unless File.exist?(dir_path)
       rescue StandardError => e
-        $stderr.puts "No permissions to create dir #{dir_path_str}"
-        $stderr.puts e.message.inspect
+        warn "No permissions to create dir #{dir_path_str}"
+        warn e.message.inspect
       end
       dir_path
     end
