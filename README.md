@@ -227,7 +227,7 @@ class Procedures::InstallPackage < ForemanMaintain::Procedure
   end
 
   def run
-    install_packages(@packages)
+    packages_action(:install, @packages)
   end
 
   # if false, the step will be considered as done: it will not be executed

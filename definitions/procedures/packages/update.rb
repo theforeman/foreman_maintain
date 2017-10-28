@@ -6,7 +6,9 @@ module Procedures::Packages
     end
 
     def run
-      packages_action(:update, @packages, :assumeyes => @assumeyes.nil? ? assumeyes? : @assumeyes)
+      assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
+      clean_all_packages(:assumeyes => assumeyes_val)
+      packages_action(:update, @packages, :assumeyes => assumeyes_val)
     end
 
     def necessary?

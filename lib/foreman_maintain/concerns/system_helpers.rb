@@ -76,13 +76,6 @@ module ForemanMaintain
         execute('hostname -f')
       end
 
-      def install_packages(packages, options = {})
-        options.validate_options!(:assumeyes)
-        yum_options = []
-        yum_options << '-y' if options[:assumeyes]
-        execute!("yum #{yum_options.join(' ')} install #{packages.join(' ')}", :interactive => true)
-      end
-
       def server?
         find_package('foreman')
       end
@@ -101,6 +94,15 @@ module ForemanMaintain
         yum_options << '-y' if options[:assumeyes]
         execute!("yum #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
                  :interactive => true)
+      end
+
+      def clean_all_packages(options = {})
+        options.validate_options!(:assumeyes)
+        yum_options = []
+        yum_options << '-y' if options[:assumeyes]
+        execute!("yum #{yum_options.join(' ')} clean all", :interactive => true)
+        execute!('rm -rf /var/cache/yum')
+        execute!('rm -rf /var/cache/dnf')
       end
 
       def package_version(name)
