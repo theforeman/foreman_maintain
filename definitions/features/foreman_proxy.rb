@@ -26,12 +26,16 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def find_http_error_msg(array_output, curl_http_status)
-    http_line = ''
-    array_output.each do |str|
-      next unless str.include?('HTTP')
-      http_line = str
+    if curl_http_status == 0
+      'No valid HTTP response (Connection failed)'
+    else
+      http_line = ''
+      array_output.each do |str|
+        next unless str.include?('HTTP')
+        http_line = str
+      end
+      http_line.split(curl_http_status.to_s).last.strip
     end
-    http_line.split(curl_http_status.to_s).last.strip
   end
 
   def run_dhcp_curl
