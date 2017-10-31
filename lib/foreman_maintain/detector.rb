@@ -24,6 +24,7 @@ module ForemanMaintain
       @all_features_scanned = false
       @available_checks = nil
       @available_scenarios = nil
+      @scenarios ||= Scenario.all_sub_classes.select(&:autodetect?)
     end
 
     def available_features(filter_conditions = nil)
@@ -57,8 +58,7 @@ module ForemanMaintain
     def available_scenarios(filter_conditions = nil)
       unless @available_scenarios
         ensure_features_detected
-        @available_scenarios = Scenario.all_sub_classes.select(&:autodetect?).
-                               select(&:present?).map(&:new)
+        @available_scenarios = @scenarios.select(&:present?).map(&:new)
       end
       filter(@available_scenarios, filter_conditions)
     end
@@ -71,6 +71,10 @@ module ForemanMaintain
         detect_feature(label)
       end
       @all_features_scanned = true
+    end
+
+    def all_scenarios(filter_conditions = nil)
+      filter(@scenarios.map(&:new), filter_conditions)
     end
 
     private
