@@ -67,7 +67,7 @@ module ForemanMaintain
     def scenario(phase)
       return @scenario_cache[phase] if @scenario_cache.key?(phase)
       condition = { :tags => [tag, phase] }
-      matching_scenarios = find_scenarios(condition)
+      matching_scenarios = find_all_scenarios(condition)
       raise "Too many scenarios match #{condition.inspect}" if matching_scenarios.size > 1
       @scenario_cache[phase] = matching_scenarios.first
     end

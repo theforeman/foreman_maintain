@@ -158,7 +158,7 @@ module ForemanMaintain
     end
 
     def self.new_from_hash(hash)
-      scenarios = find_scenarios(:label => hash[:label])
+      scenarios = find_all_scenarios(:label => hash[:label])
       unless scenarios.size == 1
         raise "Could not find scenario #{hash[:label]}, found #{scenarios.size} scenarios"
       end
