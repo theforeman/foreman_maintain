@@ -16,6 +16,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   EXCLUDE_ACTIONS_FOR_RUNNING_TASKS = %w[
     Actions::Candlepin::ListenOnCandlepinEvents
     Actions::Katello::EventQueue::Monitor
+    Actions::Insights::EmailPoller
   ].freeze
 
   metadata do
