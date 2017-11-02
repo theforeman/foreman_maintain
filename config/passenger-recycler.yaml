@@ -21,7 +21,7 @@
 :KILL_BUSY: true
 
 # Amount of seconds to wait for graceful shutdown (SIGTERM) until a process
-# kill (SIGKILL) is sent. Must be lower than 5 minutes (300 seconds). This
+# kill (SIGKILL) is sent. Must be lower than 15 minutes (900 seconds). This
 # gives Passenger some extra time for respawning application before another
 # process is terminated.
 :GRACEFUL_SHUTDOWN_SLEEP: 90
