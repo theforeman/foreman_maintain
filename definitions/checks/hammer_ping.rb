@@ -5,6 +5,10 @@ class Checks::HammerPing < ForemanMaintain::Check
     for_feature :hammer
     description 'Check whether all services are running using hammer ping'
     tags :default
+
+    confine do
+      feature(:katello)
+    end
   end
 
   def run
