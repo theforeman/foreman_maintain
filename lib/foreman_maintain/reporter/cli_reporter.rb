@@ -117,7 +117,7 @@ module ForemanMaintain
         # add space at the end as otherwise highline would add new line there :/
         message = "#{message} " unless message =~ /\s\Z/
         answer = @hl.ask(message) { |q| q.echo = false if options[:password] }
-        answer.to_s.chomp.downcase if answer
+        answer.to_s.chomp if answer
       end
 
       def new_line_if_needed
@@ -195,6 +195,7 @@ module ForemanMaintain
 
       def filter_decision(answer)
         decision = nil
+        answer   = answer.downcase
         DECISION_MAPPER.each do |options, decision_label|
           decision = decision_label if options.include?(answer)
         end
