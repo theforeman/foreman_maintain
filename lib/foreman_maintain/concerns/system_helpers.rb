@@ -138,6 +138,10 @@ module ForemanMaintain
       def version(value)
         Version.new(value)
       end
+
+      def format_shell_args(options = {})
+        options.map { |shell_optn, val| " #{shell_optn} '#{shellescape(val)}'" }.join
+      end
     end
   end
 end

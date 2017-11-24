@@ -16,6 +16,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/scenario_metadata'
   require 'foreman_maintain/concerns/system_helpers'
   require 'foreman_maintain/concerns/hammer'
+  require 'foreman_maintain/concerns/base_database'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'

@@ -92,6 +92,7 @@ module ForemanMaintain
       end
 
       def hide_strings(string)
+        return unless string
         @hidden_patterns.reduce(string) do |result, hidden_pattern|
           result.gsub(hidden_pattern, '[FILTERED]')
         end
