@@ -4,6 +4,10 @@ module Procedures::SyncPlans
       for_feature :sync_plans
       description 'disable active sync plans'
       tags :pre_migrations
+
+      confine do
+        feature(:katello)
+      end
     end
 
     def run

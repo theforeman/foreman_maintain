@@ -5,6 +5,10 @@ module Procedures::SyncPlans
       description 're-enable sync plans'
       tags :post_migrations
       before :disk_io
+
+      confine do
+        feature(:katello)
+      end
     end
 
     def run
