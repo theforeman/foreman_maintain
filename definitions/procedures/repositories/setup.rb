@@ -5,7 +5,9 @@ module Procedures::Repositories
       confine do
         feature(:downstream) || feature(:upstream)
       end
-      param :version, :required => true
+      param :version,
+            'Version for which repositories needs to be setup',
+            :required => true
       run_once
     end
 
