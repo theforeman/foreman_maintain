@@ -1,7 +1,12 @@
 module Procedures::ForemanTasks
   class Delete < ForemanMaintain::Procedure
+    ALLOWED_STATES_VALUES = %w[old planning pending].freeze
+
     metadata do
-      param :state, 'In what state should the task be deleted'
+      param :state,
+            'In what state should the task be deleted.'\
+            " Possible values are #{ALLOWED_STATES_VALUES.join(', ')}",
+            :required => true, :allowed_values => ALLOWED_STATES_VALUES
       description 'Delete tasks'
     end
 
@@ -11,7 +16,6 @@ module Procedures::ForemanTasks
 
         if count_tasks_before > 0
           spinner.update "Backup #{@state} tasks"
-
           feature(:foreman_tasks).backup_tasks(@state) do |backup_progress|
             spinner.update backup_progress
           end
@@ -19,11 +23,10 @@ module Procedures::ForemanTasks
           spinner.update "Deleting #{@state} tasks [running]"
           count_tasks_later = feature(:foreman_tasks).delete(@state)
           spinner.update "Deleting #{@state} tasks [DONE]"
+          spinner.update(
+            "Deleted #{@state} stopped and paused tasks: #{count_tasks_before - count_tasks_later}"
+          )
         end
-
-        spinner.update(
-          "Deleted #{@state} stopped and paused tasks: #{count_tasks_before - count_tasks_later}"
-        )
       end
     end
 
