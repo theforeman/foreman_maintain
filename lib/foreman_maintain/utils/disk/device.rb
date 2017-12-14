@@ -26,6 +26,10 @@ module ForemanMaintain
              Expected disk speed: #{expected_io} #{default_unit}."
         end
 
+        def performance
+          "#{read_speed} #{unit}"
+        end
+
         private
 
         def init_io_device
@@ -46,11 +50,11 @@ module ForemanMaintain
         end
 
         def default_unit
-          Checks::DiskSpeedMinimal::DEFAULT_UNIT
+          Checks::Disk::Performance::DEFAULT_UNIT
         end
 
         def expected_io
-          Checks::DiskSpeedMinimal::EXPECTED_IO
+          Checks::Disk::Performance::EXPECTED_IO
         end
       end
     end
