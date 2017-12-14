@@ -3,13 +3,14 @@ module ForemanMaintain
     attr_reader :name, :description, :options
 
     def initialize(name, description, options, &block)
-      options.validate_options!(:description, :required, :flag, :array)
+      options.validate_options!(:description, :required, :flag, :array, :allowed_values)
       @name = name
       @description = description || options[:description] || ''
       @options = options
       @required = @options.fetch(:required, false)
       @flag = @options.fetch(:flag, false)
       @block = block
+      @allowed_values = @options.fetch(:allowed_values, [])
       @array = @options.fetch(:array, false)
     end
 
@@ -34,6 +35,7 @@ module ForemanMaintain
       elsif flag?
         value = value ? true : false
       end
+      validate_with_allowed_values(value)
       value
     end
     # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
@@ -44,6 +46,22 @@ module ForemanMaintain
       else
         value.to_s.split(',').map(&:strip)
       end
+    end
+
+    def validate_with_allowed_values(value)
+      return if @allowed_values.empty?
+      within_allowed = case value
+                       when Array
+                         (value - @allowed_values).empty?
+                       when Symbol, String
+                         @allowed_values.include?(value.to_s)
+                       else
+                         raise NotImplementedError
+                       end
+      return if within_allowed
+      error_msg = "'#{value}' not allowed for #{name} param."
+      raise ForemanMaintain::Error::UsageError,
+            "#{error_msg} Possible values are #{@allowed_values.join(', ')}"
     end
   end
 end
