@@ -35,7 +35,9 @@ class Features::Foreman_1_7_x < ForemanMaintain::Feature
 
   def del_custom_iptables_chain(name)
     return unless execute?("iptables -L #{name}") # the chain is already gone
-    execute!("iptables -D INPUT -j #{name}")
+    if execute?("iptables -L INPUT | tail -n +3 | grep '^#{name} '")
+      execute!("iptables -D INPUT -j #{name}")
+    end
     execute!("iptables -F #{name}")
     execute!("iptables -X #{name}")
   end
