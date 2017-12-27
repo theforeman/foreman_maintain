@@ -2,6 +2,7 @@ require 'test_helper'
 
 module ForemanMaintain
   describe Utils::Disk::Device do
+    include UnitTestHelper
     let(:default_dir) { '/var' }
     let(:device_name) { '/dev/root' }
 

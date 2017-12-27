@@ -2,6 +2,7 @@ require 'test_helper'
 
 module ForemanMaintain
   describe Utils::Disk::IO::FileSystem do
+    include UnitTestHelper
     let(:default_dir) { '/var' }
 
     it 'should initialze with dir and name' do

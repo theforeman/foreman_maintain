@@ -28,6 +28,7 @@ module ForemanMaintain
           ready? && default_config_file
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
       def setup_from_answers(username = nil, password = nil)
         save_config(:foreman => { :username => username, :password => password })

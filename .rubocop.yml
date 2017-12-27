@@ -66,8 +66,10 @@ Style/SymbolArray:
 Style/InverseMethods:
   Enabled: false
 
+# disabled for reason: It has many false positives including this (bbatsov/rubocop#5223)
 Style/FormatStringToken:
   EnforcedStyle: template
+  Enabled: false
 
 Naming/HeredocDelimiterNaming:
   Enabled: false

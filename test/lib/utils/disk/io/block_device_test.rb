@@ -2,6 +2,7 @@ require 'test_helper'
 
 module ForemanMaintain
   describe Utils::Disk::IO::BlockDevice do
+    include UnitTestHelper
     let(:default_dir) { '/var' }
     let(:device_name) { '/dev/root' }
     let(:stdout) { 'Timing buffered disk reads: 1024 MB in  3.00 seconds = 99.99 MB/sec' }

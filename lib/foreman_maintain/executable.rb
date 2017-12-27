@@ -82,6 +82,7 @@ module ForemanMaintain
       execution.status = :warning
       execution.output << message
     end
+    # rubocop:enable Naming/AccessorMethodName
 
     # public method to be overriden
     def run

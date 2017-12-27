@@ -122,6 +122,7 @@ module ForemanMaintain
       end
       present_feature
     end
+    # rubocop:enable Metrics/AbcSize
 
     def autodetect_features
       @autodetect_features ||= Feature.sub_classes.reduce({}) do |hash, feature_class|

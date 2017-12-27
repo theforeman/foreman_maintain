@@ -224,6 +224,7 @@ module ForemanMaintain
       ensure
         clear_line
       end
+      # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
       # loop over the block until it returns some non-false value
       def until_valid_decision
@@ -269,6 +270,7 @@ module ForemanMaintain
 
       private
 
+      # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def scenario_failure_message(scenario)
         return if scenario.passed?
         message = []
@@ -306,6 +308,7 @@ module ForemanMaintain
         end
         puts((message + recommend).join("\n"))
       end
+      # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
       def format_steps(steps, join_with = ', ', indent = 0)
         steps.map { |s| "#{' ' * indent}[#{s.label_dashed}]" }.join(join_with)

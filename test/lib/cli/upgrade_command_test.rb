@@ -2,8 +2,8 @@ require 'test_helper'
 
 require 'foreman_maintain/cli'
 
-include CliAssertions
 module ForemanMaintain
+  include CliAssertions
   describe Cli::UpgradeCommand do
     include CliAssertions
     before do

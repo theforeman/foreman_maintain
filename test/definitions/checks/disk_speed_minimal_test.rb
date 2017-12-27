@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe Checks::DiskSpeedMinimal do
   include DefinitionsTestHelper
-
+  include UnitTestHelper
   let(:check_disk_io) { described_class.new }
 
   it 'should confine existence of hdparm and fio' do

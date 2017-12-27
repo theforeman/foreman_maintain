@@ -32,7 +32,7 @@ module ForemanMaintain
       end
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity
     def run_scenario(scenario, confirm = true)
       return if scenario.steps.empty?
       raise 'The runner is already in quit state' if quit?
@@ -47,6 +47,7 @@ module ForemanMaintain
       @last_scenario = scenario unless scenario.steps.empty?
       @exit_code = 1 if scenario.failed?
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def whitelisted_step?(step)
       @whitelist.include?(step.label_dashed.to_s)
@@ -121,6 +122,7 @@ module ForemanMaintain
       end
     end
 
+    # rubocop:disable  Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
     def ask_about_offered_steps(step)
       if assumeyes? && rerun_check?(step)
         @reporter.puts 'Check still failing after attempt to fix. Skipping'
@@ -141,6 +143,7 @@ module ForemanMaintain
         end
       end
     end
+    # rubocop:enable  Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     def rerun_check?(step)
       @last_decision_step == step
