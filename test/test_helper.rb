@@ -64,5 +64,3 @@ module UnitTestHelper
     end
   end
 end
-
-include UnitTestHelper

@@ -105,6 +105,7 @@ module ForemanMaintain
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
     # loop over the block until it returns some non-false value
     def until_valid_decision

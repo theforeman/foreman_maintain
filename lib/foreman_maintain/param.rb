@@ -36,6 +36,7 @@ module ForemanMaintain
       end
       value
     end
+    # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
     def process_array(value)
       if value.is_a?(Array)
