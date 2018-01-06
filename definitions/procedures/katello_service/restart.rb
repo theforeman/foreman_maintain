@@ -16,8 +16,8 @@ module Procedures::KatelloService
 
     def runtime_message
       msg = 'katello-service restart'
-      msg += "--only #{@only.join(',')}" unless @only.empty?
-      msg += "--exclude #{@exclude.join(',')}" unless @exclude.empty?
+      msg += " --only #{@only.join(',')}" unless @only.empty?
+      msg += " --exclude #{@exclude.join(',')}" unless @exclude.empty?
       msg
     end
   end

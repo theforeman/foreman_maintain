@@ -13,7 +13,7 @@ class Features::KatelloService < ForemanMaintain::Feature
       yield if block_given?
     else
       begin
-        filters = "--only #{services.join(',')}"
+        filters = construct_filters(services)
         spinner.update 'Stopping katello running services..'
         execute!("katello-service stop #{filters}")
         yield if block_given?
@@ -28,7 +28,7 @@ class Features::KatelloService < ForemanMaintain::Feature
     if services.empty?
       spinner.update 'No katello service to start'
     else
-      filters = "--only #{services.join(',')}"
+      filters = construct_filters(services)
       spinner.update 'Starting katello services..'
       execute!("katello-service start #{filters}")
     end
@@ -36,7 +36,7 @@ class Features::KatelloService < ForemanMaintain::Feature
 
   def restart(options = {})
     if options[:only] || options[:exclude]
-      filters = construct_filters_for_restart(options)
+      filters = construct_filters(options[:only], options[:exclude])
       execute!("katello-service restart #{filters}")
     else
       execute!('katello-service restart')
@@ -59,6 +59,10 @@ class Features::KatelloService < ForemanMaintain::Feature
     logger.error e.message
   end
 
+  def service_list
+    @service_list ||= katello_service_names.map { |s| s.gsub('.service', '') }
+  end
+
   private
 
   def apply_sleep_before_retry(spinner, result)
@@ -67,13 +71,18 @@ class Features::KatelloService < ForemanMaintain::Feature
     sleep PING_RETRY_INTERVAL
   end
 
-  def construct_filters_for_restart(options)
+  def construct_filters(only_services, exclude_services = [])
     filters = ''
-    if options[:only]
-      filters += "--only #{options[:only].join(',')}" unless options[:only].empty?
+    unless only_services.empty?
+      if feature(:downstream) && feature(:downstream).current_minor_version <= '6.1'
+        exclude_services.concat(service_list - only_services)
+        exclude_services.uniq!
+      else
+        filters += "--only #{only_services.join(',')}"
+      end
     end
-    if options[:exclude]
-      filters += "--exclude #{options[:exclude].join(',')}" unless options[:exclude].empty?
+    unless exclude_services.empty?
+      filters += "--exclude #{exclude_services.join(',')}"
     end
     filters
   end
@@ -98,8 +107,11 @@ class Features::KatelloService < ForemanMaintain::Feature
     find_services_by_state(" -w 'dead'")
   end
 
+  def katello_service_names
+    @katello_service_names ||= execute("katello-service list|awk '{print $1}'").split(/\n/)
+  end
+
   def find_services_by_state(state)
-    katello_service_names = execute("katello-service list|awk '{print $1}'").split(/\n/)
     services_by_state = execute("systemctl --all |grep #{state}|awk '{print $1}'").split(/\n/)
     (katello_service_names & services_by_state).map { |s| s.gsub('.service', '') }
   end
