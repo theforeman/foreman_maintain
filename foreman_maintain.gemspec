@@ -19,7 +19,7 @@ the Foreman/Satellite up and running."
     'README.md'
   ]
   s.require_paths = ['lib']
-  s.executables = ['foreman-maintain']
+  s.executables = ['foreman-maintain', 'passenger-recycler']
 
   s.add_dependency 'clamp'
   s.add_dependency 'highline'
