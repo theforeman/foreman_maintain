@@ -1,21 +1,24 @@
 class Features::ForemanDatabase < ForemanMaintain::Feature
+  FOREMAN_DB_CONFIG = '/etc/foreman/database.yml'.freeze
+
+  include ForemanMaintain::Concerns::BaseDatabase
+
   metadata do
     label :foreman_database
 
     confine do
-      File.exist?('/etc/foreman/database.yml')
+      file_exists?(FOREMAN_DB_CONFIG)
     end
   end
 
-  def query(sql)
-    parse_csv(query_csv(sql))
+  def configuration
+    @configuration || load_configuration
   end
 
-  def query_csv(sql)
-    psql(%{COPY (#{sql}) TO STDOUT WITH CSV HEADER})
-  end
+  private
 
-  def psql(query)
-    execute("su postgres -c 'cd ~; psql -d foreman'", :stdin => query)
+  def load_configuration
+    config = YAML.load(File.read(FOREMAN_DB_CONFIG))
+    @configuration = config['production']
   end
 end
