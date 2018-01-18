@@ -6,7 +6,7 @@ require 'shellwords'
 module ForemanMaintain
   module Concerns
     module SystemHelpers
-      include Logger
+      include SystemExecutable
       include Concerns::Finders
 
       def self.included(klass)
@@ -49,38 +49,6 @@ module ForemanMaintain
           (execute('rpm -q foreman') =~ /sat.noarch/)
       end
 
-      def execute?(command, options = {})
-        execute(command, options)
-        $CHILD_STATUS.success?
-      end
-
-      def execute!(command, options = {})
-        command_runner = Utils::CommandRunner.new(logger, command, options)
-        execution.puts '' if command_runner.interactive? && respond_to?(:execution)
-        command_runner.run
-        if command_runner.success?
-          command_runner.output
-        else
-          raise command_runner.execution_error
-        end
-      end
-
-      def execute(command, options = {})
-        command_runner = Utils::CommandRunner.new(logger, command, options)
-        execution.puts '' if command_runner.interactive? && respond_to?(:execution)
-        command_runner.run
-        command_runner.output
-      end
-
-      def execute_with_status(command, options = {})
-        result_msg = execute(command, options)
-        [$CHILD_STATUS.to_i, result_msg]
-      end
-
-      def file_exists?(filename)
-        File.exist?(filename)
-      end
-
       def find_package(name)
         result = execute(%(rpm -q '#{name}'))
         if $CHILD_STATUS.success?
@@ -88,16 +56,12 @@ module ForemanMaintain
         end
       end
 
-      def hostname
-        execute('hostname -f')
-      end
-
       def server?
         find_package('foreman')
       end
 
-      def smart_proxy?
-        !server? && find_package('foreman-proxy')
+      def version(value)
+        Version.new(value)
       end
 
       def packages_action(action, packages, options = {})
@@ -117,9 +81,29 @@ module ForemanMaintain
         execute!('yum clean all') if find_package('yum')
       end
 
+      def distros
+        @distros ||= if redhat?
+                       Utils::Distros::RedHat.new
+                     elsif debian?
+                       Utils::Distros::Debian.new
+                     elsif fedora?
+                       Utils::Distros::Fedora.new
+                     end
+      end
+
+      def dpkg_version(name, queryformat = 'Version')
+        dpkg_version = execute(%(dpkg-query --showformat='${#{queryformat}}' --show #{name}))
+        if $CHILD_STATUS.success?
+          version(dpkg_version)
+        end
+      end
+
       def package_version(name)
-        # space for extension to support non-rpm distributions
-        rpm_version(name)
+        if redhat?
+          rpm_version(name)
+        elsif debian?
+          dpkg_version(name)
+        end
       end
 
       def parse_csv(data)
@@ -136,8 +120,8 @@ module ForemanMaintain
         nil
       end
 
-      def rpm_version(name)
-        rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{VERSION}"))
+      def rpm_version(name, queryformat = 'VERSION')
+        rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{#{queryformat}}"))
         if $CHILD_STATUS.success?
           version(rpm_version)
         end
@@ -147,8 +131,53 @@ module ForemanMaintain
         Shellwords.escape(string)
       end
 
-      def version(value)
-        Version.new(value)
+      def debian?
+        @debian ||= eval_name.include?('debian')
+      end
+
+      def redhat?
+        @redhat ||= eval_name.include?('redhat')
+      end
+
+      def fedora?
+        @fedora ||= eval_name.include?('fedora')
+      end
+
+      def others?
+        !debian? || !redhat? || !fedora?
+      end
+
+      def eval_name
+        @name ||=
+          if uname == 'linux'
+            if lsb_release_present?
+              extract_from_lsb_release
+            else
+              extract_from_release_info
+            end
+          else
+            [uname]
+          end
+      end
+
+      def extract_from_lsb_release
+        execute(%(lsb_release -i | cut -d: -f2 | sed s/'^\t'//)).to_s.downcase.split(' ')
+      end
+
+      def extract_from_release_info
+        execute(
+          %(ls -d /etc/[A-Za-z]*[_-][rv]e[lr]* | \
+              grep -v "lsb" | cut -d'/' -f3 | \
+              cut -d'-' -f1 | cut -d'_' -f1)
+        ).to_s.downcase.split(/\n/)
+      end
+
+      def lsb_release_present?
+        file_exists?('/etc/lsb-release') && file_exists?('/etc/lsb-release.d')
+      end
+
+      def uname
+        @uname ||= execute(%(uname | tr "[:upper:]" "[:lower:]"))
       end
 
       def format_shell_args(options = {})

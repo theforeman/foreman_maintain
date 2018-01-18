@@ -1,4 +1,5 @@
 require 'foreman_maintain/utils/command_runner'
+require 'foreman_maintain/utils/distros'
 require 'foreman_maintain/utils/disk'
 require 'foreman_maintain/utils/bash'
 require 'foreman_maintain/utils/hash_tools'
