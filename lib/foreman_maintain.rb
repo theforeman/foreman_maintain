@@ -14,6 +14,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/finders'
   require 'foreman_maintain/concerns/metadata'
   require 'foreman_maintain/concerns/scenario_metadata'
+  require 'foreman_maintain/concerns/system_executable'
   require 'foreman_maintain/concerns/system_helpers'
   require 'foreman_maintain/concerns/hammer'
   require 'foreman_maintain/top_level_modules'
@@ -64,10 +65,6 @@ module ForemanMaintain
         file_paths = File.expand_path(File.join(definitions_dir, '**', '*.rb'))
         Dir.glob(file_paths).each { |f| require f }
       end
-    end
-
-    def cache
-      ObjectCache.instance
     end
 
     def detector

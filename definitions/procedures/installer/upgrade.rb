@@ -1,7 +1,7 @@
 module Procedures::Installer
   class Upgrade < ForemanMaintain::Procedure
     def run
-      execute!("#{installer_command} --upgrade", :interactive => true)
+      execute!("#{installer_command}#{upgrade_option}", :interactive => true)
     end
 
     private
@@ -14,6 +14,10 @@ module Procedures::Installer
       else
         'foreman-installer'
       end
+    end
+
+    def upgrade_option
+      ' --upgrade' if feature(:katello)
     end
   end
 end

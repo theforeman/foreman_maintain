@@ -8,7 +8,7 @@ class Features::Downstream < ForemanMaintain::Feature
   end
 
   def current_version
-    @current_version ||= rpm_version('satellite') || version_from_source
+    @current_version ||= package_version('satellite') || version_from_source
   end
 
   def current_minor_version
