@@ -209,7 +209,7 @@ module ForemanMaintain
         response = reporter.ask_decision(<<-MESSAGE.strip_heredoc.strip)
             The pre-upgrade checks indicate that the system is ready for upgrade.
             It's recommended to perform a backup at this stage.
-            Confirm to continue with the the modification part of the upgrade
+            Confirm to continue with the modification part of the upgrade
         MESSAGE
         if [:no, :quit].include?(response)
           ask_to_quit
