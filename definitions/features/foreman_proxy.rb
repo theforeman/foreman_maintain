@@ -20,7 +20,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   private
 
   def dhcp_curl_cmd
-    "curl -w '\n%{http_code}' -slient -ks --cert #{cert_path}/client_cert.pem \
+    "curl -w '\n%{http_code}' --silent -ks --cert #{cert_path}/client_cert.pem \
       --key #{cert_path}/client_key.pem \
       --cacert #{cert_path}/proxy_ca.pem https://$(hostname):9090/dhcp"
   end

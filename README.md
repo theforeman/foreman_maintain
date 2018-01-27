@@ -18,7 +18,7 @@ Subcommands:
 
     upgrade                       Upgrade related commands
       list-versions                 List versions this system is upgradable to
-      check --target-version TARGET_VERSION   Run pre-upgrade checks for upgradeing to specified version
+      check --target-version TARGET_VERSION   Run pre-upgrade checks for upgrading to specified version
       run --target-version TARGET_VERSION     Run the full upgrade
           [--phase=phase TARGET_VERSION]      Run just a specific phase of the upgrade
 ```
@@ -56,7 +56,7 @@ of the system:
     at the current version, while this phase runs.
 
   * **pre-migrations** - these steps perform changes on the system before
-    the actual upgrade stars. An example is disabling access to the system from
+    the actual upgrade starts. An example is disabling access to the system from
     external sources, a.k.a. maintenance mode or disabling sync plans during the run.
 
     After this phase ends, the system is still running the old version, and it's possible
