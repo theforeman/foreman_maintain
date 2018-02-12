@@ -23,6 +23,7 @@ module ForemanMaintain
             health                        Health related commands
             upgrade                       Upgrade related commands
             advanced                      Advanced tools for server maintenance
+            service                       Control applicable services
 
         Options:
             -h, --help                    print help

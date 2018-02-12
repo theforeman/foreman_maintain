@@ -7,6 +7,14 @@ class Features::Downstream < ForemanMaintain::Feature
     end
   end
 
+  def less_than_version?(version)
+    Gem::Version.new(current_version) < Gem::Version.new(version)
+  end
+
+  def at_least_version?(version)
+    Gem::Version.new(current_version) >= Gem::Version.new(version)
+  end
+
   def current_version
     @current_version ||= rpm_version('satellite') || version_from_source
   end

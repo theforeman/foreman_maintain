@@ -34,17 +34,17 @@ module ForemanMaintain
       end
 
       def reporter
-        @reporter ||= ForemanMaintain::Reporter::CLIReporter.new(STDOUT,
-                                                                 STDIN,
-                                                                 :assumeyes => assumeyes?)
+        @reporter ||= Reporter::CLIReporter.new(STDOUT,
+                                                STDIN,
+                                                :assumeyes => option_wrapper('assumeyes?'))
       end
 
       def run_scenario(scenarios)
         @runner ||=
           ForemanMaintain::Runner.new(reporter, scenarios,
-                                      :assumeyes => assumeyes?,
-                                      :whitelist => whitelist || [],
-                                      :force => force?)
+                                      :assumeyes => option_wrapper('assumeyes?'),
+                                      :whitelist => option_wrapper('whitelist') || [],
+                                      :force => option_wrapper('force?'))
         runner.run
       end
 
@@ -113,8 +113,17 @@ module ForemanMaintain
                'Force steps that would be skipped as they were already run'
       end
 
+      def self.service_options
+        option '--exclude', 'EXCLUDE', 'A comma-separated list of services to skip'
+        option '--only', 'ONLY', 'A comma-separated list of services to include'
+      end
+
       def self.delete_duplicate_assumeyes_if_any
         declared_options.delete_if { |opt| opt.handles?('--assumeyes') }
+      end
+
+      def option_wrapper(option)
+        respond_to?(option.to_sym) ? send(option) : false
       end
     end
   end

@@ -7,6 +7,13 @@ module ForemanMaintain
           server?
         end
       end
+
+      def services
+        {
+          'postgresql'               => 5,
+          'httpd'                    => 30
+        }
+      end
     end
   end
 end

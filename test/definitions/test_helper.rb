@@ -53,6 +53,16 @@ module DefinitionsTestHelper
     mock_spinner
   end
 
+  def stub_systemctl_calls(services, action)
+    services.each do |service|
+      Features::Service.
+        any_instance.
+        stubs(:perform_action_on_service).
+        with(action, service).
+        returns(true)
+    end
+  end
+
   def version(version_str)
     ForemanMaintain::Concerns::SystemHelpers::Version.new(version_str)
   end

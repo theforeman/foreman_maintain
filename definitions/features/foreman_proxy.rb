@@ -17,6 +17,13 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     dhcp_req_pass? && !syntax_error_exists?
   end
 
+  def services
+    {
+      'foreman-proxy'            => 20,
+      'smart_proxy_dynflow_core' => 20
+    }
+  end
+
   private
 
   def dhcp_curl_cmd

@@ -13,4 +13,4 @@
 :storage_file: 'test/lib/config/data_test.yml'
 
 # Mention directory to store foreman-tasks backup data
-:backup_dir: '/lib/foreman-maintain/test'
+:backup_dir: '/tmp/'
