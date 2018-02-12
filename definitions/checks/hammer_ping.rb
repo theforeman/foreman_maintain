@@ -13,8 +13,10 @@ class Checks::HammerPing < ForemanMaintain::Check
 
   def run
     result = feature(:hammer).hammer_ping_cmd
+    restart_procedure = Procedures::Service::Restart.new(:only => result[:data],
+                                                         :wait_for_hammer_ping => true)
     assert(result[:success],
            result[:message],
-           :next_steps => Procedures::KatelloService::Restart.new(:only => result[:data]))
+           :next_steps => restart_procedure)
   end
 end

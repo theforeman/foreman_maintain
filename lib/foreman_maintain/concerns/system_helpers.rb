@@ -26,6 +26,19 @@ module ForemanMaintain
         end
       end
 
+      def systemd_installed?
+        File.exist?('/usr/bin/systemctl')
+      end
+
+      def service_exists?(service)
+        if systemd_installed?
+          systemd = execute("systemctl is-enabled #{service} 2>&1 | tail -1").strip
+          systemd == 'enabled' || systemd == 'disabled'
+        else
+          File.exist?("/etc/init.d/#{service}")
+        end
+      end
+
       def check_min_version(name, minimal_version)
         current_version = package_version(name)
         if current_version

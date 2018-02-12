@@ -34,7 +34,7 @@ module Scenarios::Satellite_6_3
 
     def compose
       add_steps(find_procedures(:pre_migrations))
-      add_step(Procedures::KatelloService::Stop.new)
+      add_step(Procedures::Service::Stop.new)
     end
   end
 
@@ -58,7 +58,7 @@ module Scenarios::Satellite_6_3
     end
 
     def compose
-      add_step(Procedures::KatelloService::Start.new)
+      add_step(Procedures::Service::Start.new)
       add_steps(find_procedures(:post_migrations))
     end
   end
