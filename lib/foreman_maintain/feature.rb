@@ -29,5 +29,10 @@ module ForemanMaintain
     def additional_features
       []
     end
+
+    # list of config files the feature uses
+    def config_files
+      []
+    end
   end
 end

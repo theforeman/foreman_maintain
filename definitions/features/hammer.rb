@@ -6,6 +6,7 @@ class Features::Hammer < ForemanMaintain::Feature
   metadata do
     label :hammer
     confine do
+      # FIXME: How does this run on proxy?
       find_package('rubygem-hammer_cli') || find_package('tfm-rubygem-hammer_cli')
     end
   end
@@ -64,7 +65,6 @@ class Features::Hammer < ForemanMaintain::Feature
   end
 
   def server_uri
-    # FIXME: How does this run on proxy?
     "https://#{hostname}/"
   end
 
@@ -90,7 +90,6 @@ class Features::Hammer < ForemanMaintain::Feature
 
   private
 
-  # rubocop:disable Metrics/AbcSize
   def on_invalid_host(custom_config)
     hammer_host = URI.parse(configuration[:foreman][:host]).host if configuration[:foreman][:host]
     if hammer_host != hostname

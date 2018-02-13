@@ -108,6 +108,10 @@ module ForemanMaintain
       filter_whitelisted(executed_steps.find_all(&:fail?), options)
     end
 
+    def steps_with_abort(options = {})
+      filter_whitelisted(executed_steps.find_all(&:aborted?), options)
+    end
+
     def steps_with_warning(options = {})
       filter_whitelisted(executed_steps.find_all(&:warning?), options)
     end
@@ -124,7 +128,9 @@ module ForemanMaintain
     end
 
     def passed?
-      (steps_with_error(:whitelisted => false) + steps_with_warning(:whitelisted => false)).empty?
+      (steps_with_abort(:whitelisted => false) +
+        steps_with_error(:whitelisted => false) +
+        steps_with_warning(:whitelisted => false)).empty?
     end
 
     def failed?
@@ -149,8 +155,10 @@ module ForemanMaintain
       add_steps([step]) unless step.nil?
     end
 
-    def add_step_with_context(definition)
-      add_step(definition.send(:new, context.params_for(definition))) if definition.present?
+    def add_step_with_context(definition, extra_params = {})
+      if definition.present?
+        add_step(definition.send(:new, context.params_for(definition).merge(extra_params)))
+      end
     end
 
     def add_steps_with_context(*definitions)

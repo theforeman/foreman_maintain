@@ -2,7 +2,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'pry'
+# rubocop:disable  Security/Eval
+if File.exist? "#{__FILE__}.local"
+  eval(File.read("#{__FILE__}.local"), nil, "#{__FILE__}.local")
+end
+# rubocop:enable  Security/Eval
 
 if RUBY_VERSION <= '1.8.7'
   gem 'json'

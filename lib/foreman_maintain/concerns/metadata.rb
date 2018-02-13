@@ -203,7 +203,9 @@ module ForemanMaintain
         def preparation_steps(recursion_depth = 0, trace = [])
           raise "Too many dependent steps #{trace}" if recursion_depth > MAX_PREPARATION_STEPS_DEPTH
           return @preparation_steps if defined?(@preparation_steps)
-          preparation_steps = metadata[:preparation_steps_blocks].map(&:call)
+          preparation_steps = metadata[:preparation_steps_blocks].map do |block|
+            instance_exec(&block)
+          end.compact
           preparation_steps.each { |step| raise ArgumentError unless step.is_a?(Executable) }
           all_preparation_steps = []
           preparation_steps.each do |step|

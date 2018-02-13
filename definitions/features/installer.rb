@@ -50,7 +50,10 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def config_files
-    Dir.glob(File.join(config_directory, '**/*'))
+    Dir.glob(File.join(config_directory, '**/*')) +
+      [
+        '/usr/local/bin/validate_postgresql_connection.sh'
+      ]
   end
 
   def last_scenario

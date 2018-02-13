@@ -48,13 +48,15 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   def load_configuration
     raw_config = File.read(CANDLEPIN_DB_CONFIG)
     full_config = Hash[raw_config.scan(/(^[^#\n][^=]*)=(.*)/)]
-    uri = %r{://(([^/:]*):?([^/]*))/(.*)}.match(full_config['jpa.config.hibernate.connection.url'])
+    uri_regexp = %r{://(([^/:]*):?([^/]*))/([^?]*)\??(ssl=([^&]*))?}
+    uri = uri_regexp.match(full_config['jpa.config.hibernate.connection.url'])
     @configuration = {
       'username' => full_config['jpa.config.hibernate.connection.username'],
       'password' => full_config['jpa.config.hibernate.connection.password'],
       'database' => uri[4],
       'host' => uri[2],
       'port' => uri[3] || '5432',
+      'ssl' => (uri[6] == 'true'),
       'driver_class' => full_config['jpa.config.hibernate.connection.driver_class'],
       'url' => full_config['jpa.config.hibernate.connection.url']
     }

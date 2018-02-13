@@ -4,8 +4,8 @@ module ForemanMaintain
     extend Concerns::Finders
     attr_reader :options
     def_delegators :execution,
-                   :success?, :skipped?, :fail?, :warning?, :output,
-                   :assumeyes?, :whitelisted?,
+                   :success?, :skipped?, :fail?, :aborted?, :warning?, :output,
+                   :assumeyes?, :whitelisted?, :ask_decision,
                    :execution, :puts, :print, :with_spinner, :ask, :storage
 
     def initialize(options = {})
@@ -72,15 +72,34 @@ module ForemanMaintain
       raise Error::Warn, message
     end
 
+    def skip(message = '')
+      raise Error::Skip, message
+    end
+
+    def abort!(message = '')
+      raise Error::Abort, message
+    end
+
     # rubocop:disable Naming/AccessorMethodName
     def set_fail(message)
-      execution.status = :fail
-      execution.output << message
+      set_status(:fail, message)
     end
 
     def set_warn(message)
-      execution.status = :warning
-      execution.output << message
+      set_status(:warning, message)
+    end
+
+    def set_skip(message)
+      set_status(:skipped, message)
+    end
+
+    def set_abort(message)
+      set_status(:abort, message)
+    end
+
+    def set_status(status, message)
+      execution.status = status
+      execution.output << message if message && !message.empty?
     end
     # rubocop:enable Naming/AccessorMethodName
 
@@ -119,6 +138,10 @@ module ForemanMaintain
       unless skipped?
         run
       end
+    rescue Error::Skip => e
+      set_skip(e.message)
+    rescue Error::Abort => e
+      set_abort(e.message)
     end
 
     # method defined both on object and class to ensure we work always with object

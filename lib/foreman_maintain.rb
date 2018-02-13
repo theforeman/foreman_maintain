@@ -73,12 +73,12 @@ module ForemanMaintain
       ObjectCache.instance
     end
 
-    def reporter
-      @reporter ||= ForemanMaintain::Reporter::CLIReporter.new
-    end
-
     def detector
       @detector ||= Detector.new
+    end
+
+    def reporter
+      @reporter ||= ForemanMaintain::Reporter::CLIReporter.new
     end
 
     def available_features(*args)

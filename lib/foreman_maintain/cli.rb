@@ -4,6 +4,7 @@ require 'foreman_maintain/cli/base'
 require 'foreman_maintain/cli/transform_clamp_options'
 require 'foreman_maintain/cli/health_command'
 require 'foreman_maintain/cli/upgrade_command'
+require 'foreman_maintain/cli/backup_command'
 require 'foreman_maintain/cli/advanced_command'
 require 'foreman_maintain/cli/service_command'
 
@@ -14,6 +15,7 @@ module ForemanMaintain
 
       subcommand 'health', 'Health related commands', HealthCommand
       subcommand 'upgrade', 'Upgrade related commands', UpgradeCommand
+      subcommand 'backup', 'Backup server', BackupCommand
       subcommand 'advanced', 'Advanced tools for server maintenance', AdvancedCommand
       subcommand 'service', 'Control applicable services', ServiceCommand
 

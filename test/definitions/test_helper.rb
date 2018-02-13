@@ -21,9 +21,8 @@ module DefinitionsTestHelper
   end
 
   def assume_feature_absent(feature_label)
-    feature_class(feature_label) do |feature_class|
-      feature_class.stubs(:present? => false)
-    end
+    feature_class = self.feature_class(feature_label)
+    feature_class.stubs(:present? => false)
   end
 
   def log_reporter
