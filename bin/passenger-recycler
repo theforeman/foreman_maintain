@@ -41,10 +41,10 @@ def process_status?(pid)
 end
 
 require 'phusion_passenger'
+PhusionPassenger.locate_directories
 require 'phusion_passenger/platform_info'
 require 'phusion_passenger/platform_info/ruby'
 require 'phusion_passenger/admin_tools/memory_stats'
-PhusionPassenger.locate_directories
 stats = PhusionPassenger::AdminTools::MemoryStats.new
 unless stats.platform_provides_private_dirty_rss_information?
   puts 'Please run as root or platform unsupported'
