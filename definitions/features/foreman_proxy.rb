@@ -34,16 +34,17 @@ class Features::ForemanProxy < ForemanMaintain::Feature
         next unless str.include?('HTTP')
         http_line = str
       end
+      return http_line if http_line.empty?
       http_line.split(curl_http_status.to_s).last.strip
     end
   end
 
   def run_dhcp_curl
     curl_resp = execute(dhcp_curl_cmd)
-    array_output = curl_resp.split(/\r\n/)
-    result_array = array_output.last.split(/\n/)
-    curl_http_status = result_array.delete_at(result_array.length - 1).strip.to_i
-    curl_http_resp = parse_json(result_array.join(''))
+    array_output = curl_resp.split(/\r?\n/)
+    status_str = array_output.last
+    curl_http_status = (status_str ? status_str.strip : status_str).to_i
+    curl_http_resp = parse_json(array_output[0])
     ForemanMaintain::Utils::CurlResponse.new(
       curl_http_resp,
       curl_http_status,
@@ -55,7 +56,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     dhcp_curl_resp = run_dhcp_curl
     success = true
     if dhcp_curl_resp.http_code.eql?(200)
-      if dhcp_curl_resp.result.empty?
+      if dhcp_curl_resp.result.to_s.empty?
         success = false
         puts "Verify DHCP Settings. Response: #{dhcp_curl_resp.result.inspect}"
       end
