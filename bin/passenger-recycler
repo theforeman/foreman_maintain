@@ -55,18 +55,18 @@ stats.passenger_processes.each do |p|
               verbose "Error: #{e.message} \nReturning '?'"
               '?'
             end
-  if not p.private_dirty_rss.nil?
+  if ! p.private_dirty_rss.nil?
     get_pid_mem_kb = p.private_dirty_rss
     get_pid_mem_mb = p.private_dirty_rss_in_mb
     debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
-    verbose_message = "Terminating #{pid} (started #{started}) with private" +
-        " dirty RSS size of #{get_pid_mem_mb} MB"
+    verbose_message = "Terminating #{pid} (started #{started}) with private" \
+                      " dirty RSS size of #{get_pid_mem_mb} MB"
   else
     get_pid_mem_kb = p.rss
     get_pid_mem_mb = p.rss_in_mb
     debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
-    verbose_message = "Terminating #{pid} (started #{started}) RSS size of" +
-        " #{get_pid_mem_mb} MB"
+    verbose_message = "Terminating #{pid} (started #{started}) RSS size of" \
+                      " #{get_pid_mem_mb} MB"
   end
   debug debug_message
   next unless get_pid_mem_kb > CONFIG[:MAX_PRIV_RSS_MEMORY]
