@@ -47,27 +47,32 @@ require 'phusion_passenger/platform_info/ruby'
 require 'phusion_passenger/admin_tools/memory_stats'
 stats = PhusionPassenger::AdminTools::MemoryStats.new
 killed = 0
+
+def get_process_start(pid)
+  `ps -p#{pid} -o start=`.strip
+rescue StandardError => e
+  verbose "Error: #{e.message} \nReturning '?'"
+  '?'
+end
+
+def get_rss_info(process)
+  if !process.private_dirty_rss.nil?
+    get_pid_mem_kb = process.private_dirty_rss
+    get_pid_mem_mb = process.private_dirty_rss_in_mb
+  else
+    get_pid_mem_kb = process.rss
+    get_pid_mem_mb = process.rss_in_mb
+  end
+  [get_pid_mem_kb, get_pid_mem_mb]
+end
+
 stats.passenger_processes.each do |p|
   pid = p.pid.to_i
-  started = begin
-              `ps -p#{pid} -o start=`.strip
-            rescue StandardError => e
-              verbose "Error: #{e.message} \nReturning '?'"
-              '?'
-            end
-  if ! p.private_dirty_rss.nil?
-    get_pid_mem_kb = p.private_dirty_rss
-    get_pid_mem_mb = p.private_dirty_rss_in_mb
-    debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
-    verbose_message = "Terminating #{pid} (started #{started}) with private" \
-                      " dirty RSS size of #{get_pid_mem_mb} MB"
-  else
-    get_pid_mem_kb = p.rss
-    get_pid_mem_mb = p.rss_in_mb
-    debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
-    verbose_message = "Terminating #{pid} (started #{started}) RSS size of" \
-                      " #{get_pid_mem_mb} MB"
-  end
+  started = get_process_start(pid)
+  get_pid_mem_kb, get_pid_mem_mb = get_rss_info(p)
+  debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
+  verbose_message = "Terminating #{pid} (started #{started}) with private" \
+                    " RSS size of #{get_pid_mem_mb} MB"
   debug debug_message
   next unless get_pid_mem_kb > CONFIG[:MAX_PRIV_RSS_MEMORY]
   status_ps = `ps -p#{pid} -u`
