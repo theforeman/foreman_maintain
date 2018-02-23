@@ -17,14 +17,16 @@ module Procedures::SyncPlans
     private
 
     def disable_all_enabled_sync_plans
-      feature(:sync_plans).load_from_storage(storage)
+      default_storage = ForemanMaintain.storage(:default)
+      feature(:sync_plans).load_from_storage(default_storage)
       with_spinner('disabling sync plans') do |spinner|
         ids = feature(:sync_plans).ids_by_status(true)
         feature(:sync_plans).make_disable(ids)
         spinner.update "Total #{ids.length} sync plans are now disabled."
       end
     ensure
-      feature(:sync_plans).save_to_storage(storage)
+      feature(:sync_plans).save_to_storage(default_storage)
+      default_storage.save
     end
   end
 end
