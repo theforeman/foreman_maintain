@@ -23,6 +23,7 @@ class Features::Downstream < ForemanMaintain::Feature
       execute!(%(subscription-manager register #{org_options}\
                   --activationkey #{shellescape(activation_key)} --force))
     else
+      execute!(%(subscription-manager refresh))
       execute!(%(subscription-manager repos --disable '*'))
       enable_options = rh_repos(version).map { |r| "--enable=#{r}" }.join(' ')
       execute!(%(subscription-manager repos #{enable_options}))
