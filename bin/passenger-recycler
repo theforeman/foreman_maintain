@@ -56,13 +56,8 @@ rescue StandardError => e
 end
 
 def get_rss_info(process)
-  if !process.private_dirty_rss.nil?
-    get_pid_mem_kb = process.private_dirty_rss
-    get_pid_mem_mb = process.private_dirty_rss_in_mb
-  else
-    get_pid_mem_kb = process.rss
-    get_pid_mem_mb = process.rss_in_mb
-  end
+  get_pid_mem_kb = process.private_dirty_rss || process.rss
+  get_pid_mem_mb = sprintf("%.0f", get_pid_mem_kb / 1024)
   [get_pid_mem_kb, get_pid_mem_mb]
 end
 
