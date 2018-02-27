@@ -111,6 +111,7 @@ module ForemanMaintain
               upgrade-migration             Procedures::Upgrade::Migration
               upgrade-post-migration        Procedures::Upgrade::PostMigration
               upgrade-pre-migration         Procedures::Upgrade::PreMigration
+              with-param                    Procedures::WithParam
 
           Options:
               -h, --help                    print help
