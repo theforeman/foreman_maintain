@@ -20,6 +20,7 @@ module ForemanMaintain
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'
+  require 'foreman_maintain/context'
   require 'foreman_maintain/detector'
   require 'foreman_maintain/dependency_graph'
   require 'foreman_maintain/param'

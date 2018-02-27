@@ -6,7 +6,7 @@ module ForemanMaintain
     include Concerns::Finders
     extend Concerns::Finders
 
-    attr_reader :steps
+    attr_reader :steps, :context
 
     class FilteredScenario < Scenario
       metadata do
@@ -79,13 +79,18 @@ module ForemanMaintain
       end
     end
 
-    def initialize
+    def initialize(context_data = {})
       @steps = []
+      @context = Context.new(context_data)
+      set_context_mapping
       compose
     end
 
     # Override to compose steps for the scenario
     def compose; end
+
+    # Override to map context for the scenario
+    def set_context_mapping; end
 
     def preparation_steps
       # we first take the preparation steps defined for the scenario + collect
@@ -141,7 +146,15 @@ module ForemanMaintain
     end
 
     def add_step(step)
-      add_steps([step])
+      add_steps([step]) unless step.nil?
+    end
+
+    def add_step_with_context(definition)
+      add_step(definition.send(:new, context.params_for(definition))) if definition.present?
+    end
+
+    def add_steps_with_context(*definitions)
+      definitions.flatten.each { |definition| add_step_with_context(definition) }
     end
 
     def self.inspect
