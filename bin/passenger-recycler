@@ -41,31 +41,39 @@ def process_status?(pid)
 end
 
 require 'phusion_passenger'
+PhusionPassenger.locate_directories
 require 'phusion_passenger/platform_info'
 require 'phusion_passenger/platform_info/ruby'
 require 'phusion_passenger/admin_tools/memory_stats'
-PhusionPassenger.locate_directories
 stats = PhusionPassenger::AdminTools::MemoryStats.new
-unless stats.platform_provides_private_dirty_rss_information?
-  puts 'Please run as root or platform unsupported'
-  exit 1
-end
 killed = 0
+
+def get_process_start(pid)
+  `ps -p#{pid} -o start=`.strip
+rescue StandardError => e
+  verbose "Error: #{e.message} \nReturning '?'"
+  '?'
+end
+
+def get_rss_info(process)
+  get_pid_mem_kb = process.private_dirty_rss || process.rss
+  get_pid_mem_mb = format('%.0f', get_pid_mem_kb / 1024)
+  [get_pid_mem_kb, get_pid_mem_mb]
+end
+
 stats.passenger_processes.each do |p|
   pid = p.pid.to_i
-  debug "Checking #{pid} with RSS of #{p.private_dirty_rss}"
-  next unless p.private_dirty_rss > CONFIG[:MAX_PRIV_RSS_MEMORY]
-  started = begin
-              `ps -p#{pid} -o start=`.strip
-            rescue StandardError => e
-              verbose "Error: #{e.message} \nReturning '?'"
-              '?'
-            end
+  started = get_process_start(pid)
+  get_pid_mem_kb, get_pid_mem_mb = get_rss_info(p)
+  debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
+  verbose_message = "Terminating #{pid} (started #{started}) with private" \
+                    " RSS size of #{get_pid_mem_mb} MB"
+  debug debug_message
+  next unless get_pid_mem_kb > CONFIG[:MAX_PRIV_RSS_MEMORY]
   status_ps = `ps -p#{pid} -u`
   status_all = `passenger-status 2> /dev/null`
   status_backtraces = `passenger-status --show=backtraces 2>/dev/null`
-  verbose "Terminating #{pid} (started #{started}) with private dirty RSS" \
-          " size of #{p.private_dirty_rss} MB"
+  verbose verbose_message
   Process.kill 'SIGUSR1', pid
   sleep CONFIG[:GRACEFUL_SHUTDOWN_SLEEP]
   kill(pid)
