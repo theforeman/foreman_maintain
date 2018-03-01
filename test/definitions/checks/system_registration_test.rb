@@ -16,57 +16,50 @@ describe Checks::SystemRegistration do
       subject.stubs(:file_exists?).returns(true)
     end
 
-    context 'smart-proxy' do
-      before do
-        assume_feature_present(:foreman_server, :present? => false)
-        assume_feature_present(:foreman_proxy, :present? => true)
+    context 'raise error' do
+      let(:msg) { '[Server] expected to raise error' }
+
+      it 'system is self registered' do
+        subject.stubs(:rhsm_hostname_eql_hostname?).returns(true)
+        result = run_step(subject)
+
+        assert result.fail?, msg
       end
 
-      context 'raise warning' do
-        let(:msg) { '[Server] expected to raise warning' }
+      it 'hostname is sat.example.com & rhsm.conf contains hostname=sat.example.com' do
+        subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_no_space.conf')
+        subject.stubs(:hostname).returns('sat.example.com')
+        result = run_step(subject)
 
-        it 'system is self registered' do
-          subject.stubs(:rhsm_hostname_eql_hostname?).returns(true)
-          result = run_step(subject)
-
-          assert result.warning?, msg
-        end
-
-        it 'hostname is sat.example.com & rhsm.conf contains hostname=sat.example.com' do
-          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_no_space.conf')
-          subject.stubs(:hostname).returns('sat.example.com')
-          result = run_step(subject)
-
-          assert result.warning?, msg
-        end
-
-        it 'hostname is sat.example.com & rhsm.conf contains hostname = sat.example.com' do
-          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm.conf')
-          subject.stubs(:hostname).returns('sat.example.com')
-          result = run_step(subject)
-
-          assert result.warning?, msg
-        end
+        assert result.fail?, msg
       end
 
-      context 'do not raise warning' do
-        let(:msg) { '[Server] expected NOT to raise warning' }
+      it 'hostname is sat.example.com & rhsm.conf contains hostname = sat.example.com' do
+        subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm.conf')
+        subject.stubs(:hostname).returns('sat.example.com')
+        result = run_step(subject)
 
-        it 'hostname is sat.example.com & rhsm.conf contains hostname = another-sat.example.com' do
-          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_mismatch.conf')
-          subject.stubs(:hostname).returns('sat.example.com')
-          result = run_step(subject)
+        assert result.fail?, msg
+      end
+    end
 
-          refute result.warning?, msg
-        end
+    context 'do not raise error' do
+      let(:msg) { '[Server] expected NOT to raise error' }
 
-        it 'hostname commented' do
-          subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/bad_rhsm.conf')
-          subject.stubs(:hostname).returns('foreman.example.com')
-          result = run_step(subject)
+      it 'hostname is sat.example.com & rhsm.conf contains hostname = another-sat.example.com' do
+        subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_mismatch.conf')
+        subject.stubs(:hostname).returns('sat.example.com')
+        result = run_step(subject)
 
-          refute result.warning?, msg
-        end
+        refute result.fail?, msg
+      end
+
+      it 'hostname commented' do
+        subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/bad_rhsm.conf')
+        subject.stubs(:hostname).returns('foreman.example.com')
+        result = run_step(subject)
+
+        refute result.fail?, msg
       end
     end
   end
