@@ -22,6 +22,7 @@ module ForemanMaintain
         Subcommands:
             health                        Health related commands
             upgrade                       Upgrade related commands
+            report                        Generate reports
             advanced                      Advanced tools for server maintenance
 
         Options:
