@@ -57,7 +57,7 @@ end
 
 def get_rss_info(process)
   get_pid_mem_kb = process.private_dirty_rss || process.rss
-  get_pid_mem_mb = sprintf("%.0f", get_pid_mem_kb / 1024)
+  get_pid_mem_mb = format('%.0f', get_pid_mem_kb / 1024)
   [get_pid_mem_kb, get_pid_mem_mb]
 end
 
