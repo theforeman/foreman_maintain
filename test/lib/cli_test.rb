@@ -26,6 +26,7 @@ module ForemanMaintain
             backup                        Backup server
             restore                       Restore a backup
             advanced                      Advanced tools for server maintenance
+            report                        Generate reports
 
         Options:
             -h, --help                    print help

@@ -28,7 +28,7 @@ module ForemanMaintain
 
       def runtime_message
         if @filter_label
-          "#{kind_list} with label [#{dashize(@filter_label)}]"
+          "#{kind_list} with label [#{@filter_label.dashize}]"
         else
           "#{kinds_list} with tags #{tag_string(@filter_tags)}"
         end
@@ -45,11 +45,7 @@ module ForemanMaintain
       end
 
       def tag_string(tags)
-        tags.map { |tag| dashize("[#{tag}]") }.join(' ')
-      end
-
-      def dashize(string)
-        string.to_s.tr('_', '-')
+        tags.map { |tag| "[#{tag}]".dashize }.join(' ')
       end
 
       def checks(filter)

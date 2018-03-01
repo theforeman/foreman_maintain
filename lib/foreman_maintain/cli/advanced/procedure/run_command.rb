@@ -9,7 +9,7 @@ module ForemanMaintain
             params_to_options(procedure.params)
             interactive_option
           end
-          subcommand(dashize(procedure.label), procedure.description, klass)
+          subcommand(procedure.label.dashize, procedure.description, klass)
         end
       end
     end

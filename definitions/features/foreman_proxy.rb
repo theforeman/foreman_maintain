@@ -21,7 +21,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def dhcpd_conf_exist?
-    file_exists?(dhcpd_config_file)
+    file_exist?(dhcpd_config_file)
   end
 
   def services
@@ -209,6 +209,6 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def lookup_into(file_paths)
-    file_paths.find { |file_path| file_exists?(file_path) }
+    file_paths.find { |file_path| file_exist?(file_path) }
   end
 end

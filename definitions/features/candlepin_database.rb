@@ -7,7 +7,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
     label :candlepin_database
 
     confine do
-      file_exists?(CANDLEPIN_DB_CONFIG)
+      file_exist?(CANDLEPIN_DB_CONFIG)
     end
   end
 

@@ -32,7 +32,7 @@ module ForemanMaintain
         private
 
         def scenario(invocation_path)
-          tag = underscorize(invocation_path.split.last).to_sym
+          tag = invocation_path.split.last.underscorize.to_sym
           scenario = ForemanMaintain::Scenario.new
 
           ForemanMaintain.allowed_available_procedures(

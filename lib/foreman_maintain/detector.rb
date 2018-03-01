@@ -48,6 +48,14 @@ module ForemanMaintain
       filter(@available_procedures, filter_conditions)
     end
 
+    def available_reports(filter_conditions = nil)
+      unless @available_reports
+        ensure_features_detected
+        @available_reports = find_present_classes(Report)
+      end
+      filter(@available_reports, filter_conditions)
+    end
+
     def find_present_classes(object_base_class)
       object_base_class.all_sub_classes.reduce([]) do |array, object_class|
         array << object_class if object_class.autodetect? && object_class.present?
