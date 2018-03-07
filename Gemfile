@@ -9,7 +9,7 @@ if RUBY_VERSION <= '1.8.7'
 end
 
 if RUBY_VERSION >= '2.0'
-  gem 'rubocop'
+  gem 'rubocop', '0.50.0'
 else
   gem 'clamp', '~> 0.6.2'
   gem 'highline', '~> 1.6.21'
