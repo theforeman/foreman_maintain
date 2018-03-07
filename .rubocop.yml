@@ -74,7 +74,8 @@ Style/FormatStringToken:
 Naming/HeredocDelimiterNaming:
   Enabled: false
 
-# Enable check once issue is resolved:
-# https://github.com/bbatsov/rubocop/issues/4940
-Lint/UnneededRequireStatement:
+Style/RedundantReturn:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
   Enabled: false

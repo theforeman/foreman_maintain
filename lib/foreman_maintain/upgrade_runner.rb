@@ -175,7 +175,7 @@ module ForemanMaintain
         The upgrade failed and system was restored to pre-upgrade state.
       MESSAGE
     end
-    # rubocop:enable Metrics/AbcSize, Lint/NonLocalExitFromIterator
+    # rubocop:enable Metrics/AbcSize
 
     def with_non_empty_scenario(phase)
       next_scenario = scenario(phase)
