@@ -27,12 +27,20 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
 
   def execute_cpdb_validate_cmd
     main_cmd = cpdb_validate_cmd
-    unless main_cmd.empty?
-      main_cmd += format_shell_args(
-        '-u' => configuration['username'], '-p' => configuration[%(password)]
-      )
-      execute!(main_cmd, :hidden_patterns => [configuration['password']])
-    end
+    return [true, nil] if main_cmd.empty?
+    main_cmd += format_shell_args(
+      '-u' => configuration['username'], '-p' => configuration[%(password)]
+    )
+    execute_with_status(main_cmd, :hidden_patterns => [configuration['password']])
+  end
+
+  def env_content_ids_with_null_content
+    sql = <<-SQL
+      SELECT ec.id
+      FROM cp_env_content ec
+      LEFT JOIN cp_content c ON ec.contentid = c.id WHERE c.id IS NULL
+    SQL
+    query(sql).map { |r| r['id'] }
   end
 
   private
@@ -40,15 +48,15 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   def load_configuration
     raw_config = File.read(CANDLEPIN_DB_CONFIG)
     full_config = Hash[raw_config.scan(/(^[^#\n][^=]*)=(.*)/)]
-    uri = %r{://(([^/:]*):?([^/]*))/(.*)}.match(full_config['org.quartz.dataSource.myDS.URL'])
+    uri = %r{://(([^/:]*):?([^/]*))/(.*)}.match(full_config['jpa.config.hibernate.connection.url'])
     @configuration = {
-      'username' => full_config['org.quartz.dataSource.myDS.user'],
-      'password' => full_config['org.quartz.dataSource.myDS.password'],
+      'username' => full_config['jpa.config.hibernate.connection.username'],
+      'password' => full_config['jpa.config.hibernate.connection.password'],
       'database' => uri[4],
       'host' => uri[2],
       'port' => uri[3] || '5432',
-      'driver' => full_config['org.quartz.dataSource.myDS.driver'],
-      'url' => full_config['org.quartz.dataSource.myDS.URL']
+      'driver_class' => full_config['jpa.config.hibernate.connection.driver_class'],
+      'url' => full_config['jpa.config.hibernate.connection.url']
     }
   end
 

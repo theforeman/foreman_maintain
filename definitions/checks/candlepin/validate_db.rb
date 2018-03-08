@@ -10,7 +10,15 @@ module Checks::Candlepin
     end
 
     def run
-      feature(:candlepin_database).execute_cpdb_validate_cmd
+      result, result_msg = feature(:candlepin_database).execute_cpdb_validate_cmd
+      next_steps = []
+      if feature(:downstream) && feature(:downstream).current_minor_version == '6.2'
+        next_steps.concat(
+          [Procedures::Candlepin::DeleteOrphanedRecordsFromEnvContent.new,
+           Procedures::KnowledgeBaseArticle.new(:doc => 'fix_cpdb_validate_failure')]
+        )
+      end
+      assert(result == 0, result_msg, :next_steps => next_steps)
     end
   end
 end

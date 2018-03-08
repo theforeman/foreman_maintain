@@ -3,7 +3,8 @@ module ForemanMaintain
   class Config
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
-                  :storage_file, :backup_dir, :foreman_proxy_cert_path
+                  :storage_file, :backup_dir, :foreman_proxy_cert_path,
+                  :db_backup_dir
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -12,10 +13,7 @@ module ForemanMaintain
       @definitions_dirs = @options.fetch(:definitions_dirs,
                                          [File.join(source_path, 'definitions')])
       load_log_configs
-      @storage_file = @options.fetch(:storage_file, 'data.yml')
-      @backup_dir = find_dir_path(
-        @options.fetch(:backup_dir, '/var/lib/foreman-maintain')
-      )
+      load_backup_dir_paths
       @foreman_proxy_cert_path = @options.fetch(:foreman_proxy_cert_path, '/etc/foreman')
     end
 
@@ -25,6 +23,16 @@ module ForemanMaintain
       @log_level = @options.fetch(:log_level, ::Logger::DEBUG)
       @log_dir = find_dir_path(@options.fetch(:log_dir, 'log'))
       @log_file_size = @options.fetch(:log_file_size, 10_000)
+    end
+
+    def load_backup_dir_paths
+      @storage_file = @options.fetch(:storage_file, 'data.yml')
+      @backup_dir = find_dir_path(
+        @options.fetch(:backup_dir, '/var/lib/foreman-maintain')
+      )
+      @db_backup_dir = find_dir_path(
+        @options.fetch(:db_backup_dir, '/var/lib/foreman-maintain/db-backups')
+      )
     end
 
     def load_config
