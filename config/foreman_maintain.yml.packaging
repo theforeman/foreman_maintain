@@ -20,3 +20,5 @@
 # Mention path where foreman-proxy certificates stored on filesystem
 # :foreman_proxy_cert_path: '/etc/foreman'
 
+# Mention directory path to store candlepin db backups
+# :db_backup_dir: '/var/lib/foreman-maintain/db-backups'
