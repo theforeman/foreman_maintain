@@ -4,12 +4,14 @@ module ForemanMaintain
   module Cli
     module Procedure
       class ByTagCommand < Base
-        available_tags(ForemanMaintain.available_procedures(nil)).each do |tag|
+        available_tags(ForemanMaintain.allowed_available_procedures(nil)).each do |tag|
           klass = Class.new(AbstractByTagCommand) do
             tag_params_to_options(tag)
             interactive_option
           end
-          procedures = ForemanMaintain.available_procedures(:tags => tag).map do |procedure|
+          procedures = ForemanMaintain.allowed_available_procedures(
+            :tags => tag
+          ).map do |procedure|
             procedure.label.to_s
           end
 

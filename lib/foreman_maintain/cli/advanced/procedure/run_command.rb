@@ -4,7 +4,7 @@ module ForemanMaintain
   module Cli
     module Procedure
       class RunCommand < Base
-        ForemanMaintain.available_procedures(nil).each do |procedure|
+        ForemanMaintain.allowed_available_procedures(nil).each do |procedure|
           klass = Class.new(AbstractProcedureCommand) do
             params_to_options(procedure.params)
             interactive_option
