@@ -92,6 +92,11 @@ module ForemanMaintain
       detector.available_procedures(*args)
     end
 
+    def allowed_available_procedures(*args)
+      procedures = detector.available_procedures(*args)
+      procedures.select(&:advanced_run?)
+    end
+
     def init_logger
       # Note - If timestamp added to filename then number of log files i.e second
       # argument to Logger.new will not work as expected

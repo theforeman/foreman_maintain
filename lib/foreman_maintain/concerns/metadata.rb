@@ -96,6 +96,10 @@ module ForemanMaintain
           @data[:run_once] = true
         end
 
+        def advanced_run(advanced_run)
+          @data[:advanced_run] = advanced_run
+        end
+
         def self.eval_dsl(metadata, &block)
           new(metadata).tap do |dsl|
             dsl.instance_eval(&block)
@@ -174,13 +178,18 @@ module ForemanMaintain
           metadata[:run_once]
         end
 
+        def advanced_run?
+          metadata[:advanced_run]
+        end
+
         def initialize_metadata
           { :tags => [],
             :confine_blocks => [],
             :params => {},
             :preparation_steps_blocks => [],
             :before => [],
-            :after => [] }.tap do |metadata|
+            :after => [],
+            :advanced_run => true }.tap do |metadata|
             if superclass.respond_to?(:metadata)
               metadata[:label] = superclass.metadata[:label]
             end
@@ -270,6 +279,10 @@ module ForemanMaintain
 
       def preparation_steps(*args)
         self.class.preparation_steps(*args)
+      end
+
+      def advanced_run?
+        self.class.advanced_run?
       end
     end
   end

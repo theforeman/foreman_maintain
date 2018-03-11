@@ -13,7 +13,7 @@ module ForemanMaintain
 
         def self.params_for_tag(tag)
           params = {}
-          ForemanMaintain.available_procedures(:tags => tag).each do |procedure|
+          ForemanMaintain.allowed_available_procedures(:tags => tag).each do |procedure|
             procedure.params.each_value do |param|
               unless params.key?(param.name)
                 params[param.name] = { :instance => param, :procedures => [] }
@@ -35,7 +35,9 @@ module ForemanMaintain
           tag = underscorize(invocation_path.split.last).to_sym
           scenario = ForemanMaintain::Scenario.new
 
-          ForemanMaintain.available_procedures(:tags => tag).sort_by(&:label).each do |procedure|
+          ForemanMaintain.allowed_available_procedures(
+            :tags => tag
+          ).sort_by(&:label).each do |procedure|
             scenario.add_step(procedure.new(get_params_for(procedure)))
           end
 
