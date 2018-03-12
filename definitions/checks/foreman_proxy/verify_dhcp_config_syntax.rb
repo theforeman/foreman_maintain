@@ -5,7 +5,7 @@ module Checks::ForemanProxy
       description 'Check for verifying syntax for ISP DHCP configurations'
       tags :default
       confine do
-        file_exists?('/etc/dhcp/dhcpd.conf')
+        file_exist?('/etc/dhcp/dhcpd.conf')
       end
     end
 

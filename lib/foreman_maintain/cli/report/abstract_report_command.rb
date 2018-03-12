@@ -1,16 +1,13 @@
 module ForemanMaintain
   module Cli
     module Procedure
-      class AbstractProcedureCommand < Base
-        include ForemanMaintain::Cli::TransformClampOptions
-
+      class AbstractReportCommand < Base
         def execute
           label = invocation_path.split.last.underscorize
           procedure = procedure(label.to_sym)
           scenario = ForemanMaintain::Scenario.new
-          scenario.add_step(procedure.new(get_params_for(procedure)))
+          scenario.add_step(procedure.new)
           run_scenario(scenario)
-          exit runner.exit_code
         end
       end
     end

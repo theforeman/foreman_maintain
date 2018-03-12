@@ -61,7 +61,7 @@ module ForemanMaintain
         command_runner.output
       end
 
-      def file_exists?(filename)
+      def file_exist?(filename)
         File.exist?(filename)
       end
 

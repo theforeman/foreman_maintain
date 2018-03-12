@@ -55,7 +55,7 @@ module ForemanMaintain
         end
 
         def option_switches(param)
-          ['--' + dashize(param.name.to_s)]
+          ['--' + param.name.to_s.dashize]
         end
 
         def option_type(param)
