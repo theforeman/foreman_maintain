@@ -151,17 +151,15 @@ module ForemanMaintain
       MESSAGE
     end
 
-    it 'ignores whitelisted warnings and failures of the last scenario' do
+    it 'skips whitelisted warnings and failures of the last scenario' do
       run_scenario(warn_and_fail_scenario, :whitelisted => true)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-        Check that ends up with warning:                                      [WARNING]
-        this check is always causing warnings
+        Check that ends up with warning:                                      [SKIPPED]
         --------------------------------------------------------------------------------
-        Check that ends up with fail:                                         [FAIL]
-        this check is always causing failure
+        Check that ends up with fail:                                         [SKIPPED]
         --------------------------------------------------------------------------------
-        Check that ends up with success:                                      [OK]
+        Check that ends up with success:                                      [SKIPPED]
         --------------------------------------------------------------------------------
       MESSAGE
     end
