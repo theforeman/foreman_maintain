@@ -104,7 +104,7 @@ module ForemanMaintain
                'Automatically answer yes for all questions'
 
         option(['-w', '--whitelist'], 'whitelist',
-               'Comma-separated list of labels of steps to be ignored') do |whitelist|
+               'Comma-separated list of labels of steps to be skipped') do |whitelist|
           raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
           whitelist.split(',').map(&:strip)
         end

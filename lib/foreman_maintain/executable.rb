@@ -116,7 +116,9 @@ module ForemanMaintain
     # internal method called by executor
     def __run__(execution)
       setup_execution_state(execution)
-      run
+      unless skipped?
+        run
+      end
     end
 
     # method defined both on object and class to ensure we work always with object

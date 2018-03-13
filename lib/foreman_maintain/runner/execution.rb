@@ -66,16 +66,20 @@ module ForemanMaintain
 
       def run
         @reporter.before_execution_starts(self)
+
         if skip?
           @status = :already_run
           return
         end
-        @status = :running
+
+        @status = whitelisted? ? :skipped : :running
+
         with_metadata_calculation do
           capture_errors do
             step.__run__(self)
           end
         end
+
         # change the state only when not modified
         @status = :success if @status == :running
       ensure
