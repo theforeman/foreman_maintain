@@ -30,6 +30,17 @@ class Features::Downstream < ForemanMaintain::Feature
     end
   end
 
+  def absent_repos(version)
+    execute!(%(subscription-manager refresh))
+    all_repos = execute!(
+      %('LANG=en_US.utf-8 subscription-manager repos --list | ') \
+        %("awk -F':' '/Repo ID/{gsub(/ /, \"\", $2); print $2}'")
+    ).split("\n")
+    repos_required = rh_repos(version)
+    repos_found = repos_required & all_repos
+    repos_required - repos_found
+  end
+
   private
 
   def rh_repos(sat_version)
