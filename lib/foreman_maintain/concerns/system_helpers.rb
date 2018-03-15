@@ -142,6 +142,12 @@ module ForemanMaintain
       def format_shell_args(options = {})
         options.map { |shell_optn, val| " #{shell_optn} '#{shellescape(val)}'" }.join
       end
+
+      def find_symlinks(dir_path)
+        cmd = "find '#{dir_path}' -maxdepth 1 -type l"
+        result = execute(cmd).strip
+        result.split(/\n/)
+      end
     end
   end
 end
