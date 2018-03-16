@@ -1,19 +1,21 @@
-module Procedures::Repositories
-  class Validate < ForemanMaintain::Procedure
+module Checks::Repositories
+  class Validate < ForemanMaintain::Check
     metadata do
-      description 'Validate repositories'
+      description 'Validate availability of repositories'
 
       confine do
-        feature(:downstream) || feature(:upstream)
+        feature(:downstream)
       end
 
       param :version,
             'Version for which repositories needs to be validated',
             :required => true
+
+      manual_detection
     end
 
     def run
-      with_spinner("Validating repositories for #{@version}") do
+      with_spinner("Validating availability of repositories for #{@version}") do
         absent_repos = feature(:downstream).absent_repos(@version)
         unless absent_repos.empty?
           fail!(

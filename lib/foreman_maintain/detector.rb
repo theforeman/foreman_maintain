@@ -50,7 +50,7 @@ module ForemanMaintain
 
     def find_present_classes(object_base_class)
       object_base_class.all_sub_classes.reduce([]) do |array, object_class|
-        array << object_class if object_class.present?
+        array << object_class if object_class.autodetect? && object_class.present?
         array
       end
     end

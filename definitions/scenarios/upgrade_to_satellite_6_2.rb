@@ -21,6 +21,7 @@ module Scenarios::Satellite_6_2
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
+      add_step(Checks::Repositories::Validate.new(:version => '6.2'))
     end
   end
 
@@ -43,7 +44,6 @@ module Scenarios::Satellite_6_2
     end
 
     def compose
-      add_step(Procedures::Repositories::Validate.new(:version => '6.2'))
       add_step(Procedures::Repositories::Setup.new(:version => '6.2'))
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step(Procedures::Installer::Upgrade.new)
