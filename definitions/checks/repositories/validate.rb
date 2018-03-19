@@ -15,8 +15,13 @@ module Checks::Repositories
     end
 
     def run
-      with_spinner("Validating availability of repositories for #{@version}") do
+      with_spinner("Validating availability of repositories for #{@version}") do |spinner|
         absent_repos = feature(:downstream).absent_repos(@version)
+        unless absent_repos.empty?
+          spinner.update('Some repositories missing, calling `subscription-manager refresh`')
+          feature(:downstream).rhsm_refresh
+          absent_repos = feature(:downstream).absent_repos(@version)
+        end
         unless absent_repos.empty?
           fail!(
             "Following repositories are not available on your system: #{absent_repos.join(', ')}"

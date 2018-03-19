@@ -23,7 +23,6 @@ class Features::Downstream < ForemanMaintain::Feature
       execute!(%(subscription-manager register #{org_options}\
                   --activationkey #{shellescape(activation_key)} --force))
     else
-      execute!(%(subscription-manager refresh))
       execute!(%(subscription-manager repos --disable '*'))
       enable_options = rh_repos(version).map { |r| "--enable=#{r}" }.join(' ')
       execute!(%(subscription-manager repos #{enable_options}))
@@ -31,13 +30,16 @@ class Features::Downstream < ForemanMaintain::Feature
   end
 
   def absent_repos(version)
-    execute!(%(subscription-manager refresh))
     all_repo_lines = execute!(%(LANG=en_US.utf-8 subscription-manager repos --list | ) +
                               %(grep '^Repo ID:')).split("\n")
     all_repos = all_repo_lines.map { |line| line.split(/\s+/).last }
     repos_required = rh_repos(version)
     repos_found = repos_required & all_repos
     repos_required - repos_found
+  end
+
+  def rhsm_refresh
+    execute!(%(subscription-manager refresh))
   end
 
   private
