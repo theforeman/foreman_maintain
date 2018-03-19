@@ -1,0 +1,198 @@
+# Format:
+# <classname>: false - don't include this class
+# <classname>: true - include and use the defaults
+# <classname>:
+#   <param>: <value> - include and override the default(s)
+#
+# See params.pp in each class for what options are available
+
+--- 
+  capsule: 
+    parent_fqdn: sat-6112-rhel7.example.com
+    certs_tar: 
+    pulp: false
+    pulp_master: true
+    pulp_admin_password: FWTyhrQSdoMFhMYWPD3rTb9kBvWpUNpb
+    pulp_oauth_effective_user: admin
+    pulp_oauth_key: katello
+    pulp_oauth_secret: 
+    foreman_proxy_port: 9090
+    foreman_proxy_http: true
+    foreman_proxy_http_port: 8000
+    puppet: true
+    puppetca: true
+    puppet_ca_proxy: ""
+    reverse_proxy: false
+    reverse_proxy_port: "8443"
+    tftp: false
+    tftp_syslinux_root: 
+    tftp_syslinux_files: 
+    tftp_root: /var/lib/tftpboot/
+    tftp_dirs: 
+      - /var/lib/tftpboot//pxelinux.cfg
+      - /var/lib/tftpboot//boot
+    tftp_servername: 
+    bmc: false
+    bmc_default_provider: ipmitool
+    dhcp: false
+    dhcp_listen_on: https
+    dhcp_option_domain: 
+      - example.com
+    dhcp_managed: true
+    dhcp_interface: eth0
+    dhcp_gateway: "192.168.100.1"
+    dhcp_range: false
+    dhcp_nameservers: default
+    dhcp_vendor: isc
+    dhcp_config: /etc/dhcp/dhcpd.conf
+    dhcp_leases: /var/lib/dhcpd/dhcpd.leases
+    dhcp_key_name: ""
+    dhcp_key_secret: ""
+    dns: false
+    dns_managed: true
+    dns_provider: nsupdate
+    dns_zone: example.com
+    dns_reverse: "100.168.192.in-addr.arpa"
+    dns_interface: eth0
+    dns_server: "127.0.0.1"
+    dns_ttl: "86400"
+    dns_tsig_keytab: /etc/foreman-proxy/dns.keytab
+    dns_tsig_principal: "foremanproxy/sat-6112-rhel7.example.com@EXAMPLE.COM"
+    dns_forwarders: []
+    virsh_network: default
+    realm: false
+    realm_provider: freeipa
+    realm_keytab: /etc/foreman-proxy/freeipa.keytab
+    realm_principal: "realm-proxy@EXAMPLE.COM"
+    freeipa_remove_dns: true
+    register_in_foreman: true
+    foreman_oauth_effective_user: admin
+    foreman_oauth_key: "8MkSvbuwFkREKUhjzkdcNcz4dvkQWWUR"
+    foreman_oauth_secret: mPFqsDrRwDzQGLbpQN8HofZHGvWdJnvp
+    rhsm_url: /rhsm
+    templates: false
+    qpid_router: true
+    qpid_router_hub_addr: "0.0.0.0"
+    qpid_router_hub_port: "5646"
+    qpid_router_agent_addr: "0.0.0.0"
+    qpid_router_agent_port: "5647"
+    qpid_router_broker_addr: sat-6112-rhel7.example.com
+    qpid_router_broker_port: "5671"
+  certs: 
+    log_dir: /var/log/certs
+    node_fqdn: sat-6112-rhel7.example.com
+    generate: true
+    regenerate: false
+    regenerate_ca: false
+    deploy: true
+    ca_common_name: sat-6112-rhel7.example.com
+    country: US
+    state: "North Carolina"
+    city: Raleigh
+    org: Katello
+    org_unit: SomeOrgUnit
+    expiration: "7300"
+    ca_expiration: "36500"
+    server_cert: 
+    server_key: 
+    server_cert_req: 
+    server_ca_cert: 
+    pki_dir: /etc/pki/katello
+    ssl_build_dir: /root/ssl-build
+    password_file_dir: "certs::params::password_file_dir"
+    user: root
+    group: foreman
+    default_ca_name: katello-default-ca
+    server_ca_name: katello-server-ca
+  foreman: 
+    foreman_url: "https://sat-6112-rhel7.example.com"
+    unattended: true
+    authentication: true
+    passenger: true
+    passenger_scl: 
+    passenger_ruby: /usr/bin/ruby193-ruby
+    passenger_ruby_package: ruby193-rubygem-passenger-native
+    use_vhost: true
+    servername: sat-6112-rhel7.example.com
+    ssl: true
+    custom_repo: true
+    repo: stable
+    configure_epel_repo: false
+    configure_scl_repo: false
+    configure_brightbox_repo: false
+    selinux: 
+    gpgcheck: true
+    version: present
+    db_manage: true
+    db_type: postgresql
+    db_adapter: 
+    db_host: 
+    db_port: 
+    db_database: 
+    db_username: foreman
+    db_password: JsSqQVyLFNgCPw4wPdwgcLNTjbnE34C7
+    db_sslmode: 
+    app_root: /usr/share/foreman
+    user: foreman
+    group: foreman
+    user_groups: 
+      - puppet
+    environment: production
+    puppet_home: /var/lib/puppet
+    locations_enabled: true
+    organizations_enabled: true
+    passenger_interface: ""
+    server_ssl_ca: /etc/pki/katello/certs/katello-default-ca.crt
+    server_ssl_chain: /etc/pki/katello/certs/katello-default-ca.crt
+    server_ssl_cert: /etc/pki/katello/certs/katello-apache.crt
+    server_ssl_key: /etc/pki/katello/private/katello-apache.key
+    oauth_active: true
+    oauth_map_users: false
+    oauth_consumer_key: "8MkSvbuwFkREKUhjzkdcNcz4dvkQWWUR"
+    oauth_consumer_secret: mPFqsDrRwDzQGLbpQN8HofZHGvWdJnvp
+    passenger_prestart: true
+    passenger_min_instances: "1"
+    passenger_start_timeout: "600"
+    admin_username: admin
+    admin_password: changeme
+    admin_first_name: 
+    admin_last_name: 
+    admin_email: 
+    initial_organization: "Default Organization"
+    initial_location: "Default Location"
+    ipa_authentication: false
+    http_keytab: /etc/httpd/conf/http.keytab
+    pam_service: foreman
+    configure_ipa_repo: false
+    ipa_manage_sssd: true
+    websockets_encrypt: true
+    websockets_ssl_key: /etc/pki/katello/private/katello-apache.key
+    websockets_ssl_cert: /etc/pki/katello/certs/katello-apache.crt
+  "foreman::plugin::bootdisk": {}
+  "foreman::plugin::chef": false
+  "foreman::plugin::default_hostgroup": false
+  "foreman::plugin::discovery": false
+  "foreman::plugin::hooks": {}
+  "foreman::plugin::puppetdb": false
+  "foreman::plugin::setup": false
+  "foreman::plugin::tasks": {}
+  "foreman::plugin::templates": false
+  katello: 
+    user: foreman
+    group: foreman
+    user_groups: foreman
+    oauth_key: katello
+    oauth_secret: Z2zufDiBhYMTRwPkM8vc5za4PbMKX5e5
+    post_sync_token: XXCJCnaGUiUnVVgJLpP3GokRtzWzphQx
+    log_dir: /var/log/foreman/plugins
+    config_dir: /etc/foreman/plugins
+    use_passenger: "katello::params::use_passenger"
+    proxy_url: 
+    proxy_port: 
+    proxy_username: 
+    proxy_password: 
+    cdn_ssl_version: 
+    package_names: 
+      - katello
+      - ruby193-rubygem-katello
+  "katello::plugin::gutterball": {}

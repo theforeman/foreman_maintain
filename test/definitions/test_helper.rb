@@ -81,6 +81,10 @@ module DefinitionsTestHelper
     scenario = find_scenarios(filter).first
     refute scenario, "Expected the scenario #{filter} to be absent"
   end
+
+  def installer_config_dir(dirs)
+    Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
+  end
 end
 
 TEST_DIR = File.dirname(__FILE__)
