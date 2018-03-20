@@ -7,11 +7,6 @@ describe Features::Installer do
   let(:data_dir) { File.join(File.dirname(__FILE__), '../../data') }
   let(:installer_inst) { Features::Installer.any_instance }
 
-  def mock_installer_package(package)
-    installer_inst.stubs(:find_package).returns(nil)
-    installer_inst.stubs(:find_package).with { |args| args == package }.returns(package)
-  end
-
   context 'installer with scenarios' do
     before do
       installer_config_dir(["#{data_dir}/installer/simple_config"])

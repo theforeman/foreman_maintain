@@ -41,7 +41,7 @@ class Features::SyncPlans < ForemanMaintain::Feature
   def update_records(ids, enabled)
     updated_record_ids = []
     ids.each do |sp_id|
-      result = hammer("sync-plan update --id #{sp_id} --enabled #{enabled}")
+      result = feature(:hammer).run("sync-plan update --id #{sp_id} --enabled #{enabled}")
       if result.include?('Sync plan updated')
         updated_record_ids << sp_id
       else

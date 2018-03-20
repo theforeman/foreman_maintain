@@ -32,6 +32,7 @@ module DefinitionsTestHelper
 
   def reset_reporter
     @log_reporter = Support::LogReporter.new
+    ForemanMaintain.stubs(:reporter).returns(@log_reporter)
   end
 
   def run_step(step)
@@ -92,8 +93,19 @@ module DefinitionsTestHelper
     refute scenario, "Expected the scenario #{filter} to be absent"
   end
 
+  def hammer_config_dirs(dirs)
+    Features::Hammer.any_instance.stubs(:config_directories).returns(dirs)
+  end
+
   def installer_config_dir(dirs)
     Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
+  end
+
+  def mock_installer_package(package)
+    Features::Installer.any_instance.stubs(:find_package).returns(nil)
+    Features::Installer.any_instance.stubs(:find_package).with do |args|
+      args == package
+    end.returns(package)
   end
 end
 

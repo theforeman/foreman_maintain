@@ -7,6 +7,8 @@ module ForemanMaintain
     end
     require 'foreman_maintain/reporter/cli_reporter'
 
+    attr_writer :assumeyes
+
     DECISION_MAPPER = {
       %w[y yes] => :yes,
       %w[n next no] => :no,
