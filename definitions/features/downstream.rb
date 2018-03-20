@@ -30,7 +30,7 @@ class Features::Downstream < ForemanMaintain::Feature
   end
 
   def absent_repos(version)
-    all_repo_lines = execute!(%(LANG=en_US.utf-8 subscription-manager repos --list | ) +
+    all_repo_lines = execute(%(LANG=en_US.utf-8 subscription-manager repos --list | ) +
                               %(grep '^Repo ID:')).split("\n")
     all_repos = all_repo_lines.map { |line| line.split(/\s+/).last }
     repos_required = rh_repos(version)
