@@ -1,7 +1,7 @@
 module Procedures::Installer
   class Upgrade < ForemanMaintain::Procedure
     def run
-      execute!("#{installer_command} --upgrade", :interactive => true)
+      execute!("LANG=en_US.utf-8 #{installer_command} --upgrade", :interactive => true)
     end
 
     private
