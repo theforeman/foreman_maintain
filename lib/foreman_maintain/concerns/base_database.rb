@@ -14,12 +14,15 @@ module ForemanMaintain
       end
 
       def psql(query, config = configuration)
-        execute("PGPASSWORD='#{config[%(password)]}' #{psql_db_connection_str(config)}",
-                :stdin => query)
+        if ping(config)
+          execute(psql_command(config), :stdin => query)
+        else
+          raise_service_error
+        end
       end
 
       def ping(config = configuration)
-        psql('SELECT 1 as ping', config)
+        execute?(psql_command(config), :stdin => 'SELECT 1 as ping')
       end
 
       def backup_file_path(config = configuration)
@@ -67,9 +70,14 @@ module ForemanMaintain
 
       private
 
-      def psql_db_connection_str(config)
+      def psql_command(config)
+        "PGPASSWORD='#{config[%(password)]}' "\
         "psql -d #{config['database']} -h #{config['host'] || 'localhost'} "\
         " -p #{config['port'] || '5432'} -U #{config['username']}"
+      end
+
+      def raise_service_error
+        raise Error::Fail, 'Please check whether database service is up & running state.'
       end
     end
   end
