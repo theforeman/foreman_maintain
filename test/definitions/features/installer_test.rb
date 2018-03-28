@@ -39,6 +39,44 @@ describe Features::Installer do
     it 'returns the last scenario answers as a hash' do
       subject.answers['foreman']['admin_password'].must_equal('inspasswd')
     end
+
+    it 'has --upgrade' do
+      subject.can_upgrade?.must_equal true
+    end
+
+    context '#upgrade' do
+      it '#upgrade runs the installer with correct params' do
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 foreman-installer --upgrade', :interactive => true).
+          returns(true)
+        subject.upgrade(:interactive => true)
+      end
+
+      it '#upgrade runs the installer with correct params in downstream' do
+        assume_feature_present(:downstream)
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 satellite-installer --upgrade', :interactive => true).
+          returns(true)
+        subject.upgrade(:interactive => true)
+      end
+    end
+
+    context '#run' do
+      it 'runs the installer with correct params' do
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 foreman-installer --password=changeme', :interactive => true).
+          returns(true)
+        subject.run('--password=changeme', :interactive => true)
+      end
+
+      it 'runs the installer with correct params in downstream' do
+        assume_feature_present(:downstream)
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 satellite-installer --password=changeme', :interactive => true).
+          returns(true)
+        subject.run('--password=changeme', :interactive => true)
+      end
+    end
   end
 
   context 'legacy katello installer without scenarios (6.1)' do
@@ -69,6 +107,28 @@ describe Features::Installer do
     it 'returns the answers as a hash' do
       subject.answers['foreman']['admin_password'].must_equal('changeme')
     end
+
+    it 'has --upgrade' do
+      subject.can_upgrade?.must_equal true
+    end
+
+    context '#upgrade' do
+      it 'runs the installer with correct params' do
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 katello-installer --upgrade', :interactive => true).
+          returns(true)
+        subject.upgrade(:interactive => true)
+      end
+    end
+
+    context '#run' do
+      it 'runs the installer with correct params' do
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 katello-installer --password=changeme', :interactive => true).
+          returns(true)
+        subject.run('--password=changeme', :interactive => true)
+      end
+    end
   end
 
   context 'legacy capsule installer without scenarios (6.1)' do
@@ -92,6 +152,28 @@ describe Features::Installer do
 
     it 'returns the answers as a hash' do
       subject.answers['certs']['deploy'].must_equal(true)
+    end
+
+    it 'does not have --upgrade' do
+      subject.can_upgrade?.must_equal false
+    end
+
+    context '#upgrade' do
+      it 'runs the installer with correct params' do
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 capsule-installer', :interactive => true).
+          returns(true)
+        subject.upgrade(:interactive => true)
+      end
+    end
+
+    context '#run' do
+      it 'runs the installer with correct params' do
+        installer_inst.expects(:'execute!').
+          with('LANG=en_US.utf-8 capsule-installer --certs=true', :interactive => true).
+          returns(true)
+        subject.run('--certs=true', :interactive => true)
+      end
     end
   end
 end

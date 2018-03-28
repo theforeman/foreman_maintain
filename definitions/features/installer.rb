@@ -13,9 +13,9 @@ class Features::Installer < ForemanMaintain::Feature
     @installer_type = if find_package('foreman-installer')
                         :scenarios
                       elsif find_package('katello-installer')
-                        :katello
+                        :legacy_katello
                       elsif find_package('capsule-installer')
-                        :capsule
+                        :legacy_capsule
                       end
   end
 
@@ -23,9 +23,9 @@ class Features::Installer < ForemanMaintain::Feature
     case @installer_type
     when :scenarios
       last_scenario_answers
-    when :katello
+    when :legacy_katello
       load_answers(File.join(config_directory, 'katello-installer.yaml'))
-    when :capsule
+    when :legacy_capsule
       load_answers(File.join(config_directory, 'capsule-installer.yaml'))
     end
   end
@@ -38,11 +38,15 @@ class Features::Installer < ForemanMaintain::Feature
     case @installer_type
     when :scenarios
       '/etc/foreman-installer'
-    when :katello
+    when :legacy_katello
       '/etc/katello-installer'
-    when :capsule
+    when :legacy_capsule
       '/etc/capsule-installer'
     end
+  end
+
+  def can_upgrade?
+    @installer_type == :scenarios || @installer_type == :legacy_katello
   end
 
   def config_files
@@ -52,6 +56,30 @@ class Features::Installer < ForemanMaintain::Feature
   def last_scenario
     return nil unless with_scenarios?
     File.basename(last_scenario_config).split('.')[0]
+  end
+
+  def installer_command
+    case @installer_type
+    when :scenarios
+      if feature(:downstream)
+        'satellite-installer'
+      else
+        'foreman-installer'
+      end
+    when :legacy_katello
+      'katello-installer'
+    when :legacy_capsule
+      'capsule-installer'
+    end
+  end
+
+  def run(arguments = '', exec_options = {})
+    execute!("LANG=en_US.utf-8 #{installer_command} #{arguments}".strip, exec_options)
+  end
+
+  def upgrade(exec_options = {})
+    arguments = '--upgrade' if can_upgrade?
+    run(arguments, exec_options)
   end
 
   private
