@@ -1,0 +1,10 @@
+:name: Foreman
+:description: Default installation of Foreman
+:enabled: true
+:log_dir: /var/log/foreman-installer
+:store_dir: ''
+:log_name: foreman.log
+:log_level: :debug
+:no_prefix: false
+:mapping: {}
+:answer_file: test/data/installer/simple_config/scenarios.d/foreman-answers.yaml

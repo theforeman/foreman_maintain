@@ -1,0 +1,14 @@
+---
+  :log_dir: /var/log/capsule-installer
+  :log_name: capsule-installer.log
+  :log_level: :debug
+  :no_prefix: true
+  :answer_file: "test/data/installer/capsule-installer/answers.capsule-installer.yaml"
+  :installer_dir: /usr/share/capsule-installer
+  :default_values_dir: "/etc/capsule-installer"
+  :modules_dir: /usr/share/katello-installer/modules
+  :hook_dirs: ["/usr/share/katello-installer/hooks"]
+  :colors: true
+  :order:
+    - certs
+    - capsule
