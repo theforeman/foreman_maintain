@@ -9,6 +9,7 @@ module Scenarios
         feature.any_instance.stubs(:current_version => version('6.4.0'))
       end
       assume_feature_present(:foreman_tasks)
+      stub_foreman_proxy_config
     end
 
     let :scenario do

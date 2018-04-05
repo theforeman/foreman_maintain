@@ -6,12 +6,11 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     end
   end
 
-  attr_reader :dhcpd_conf_file, :cert_path
+  FOREMAN_PROXY_SETTINGS_PATHS = ['/etc/foreman-proxy/settings.yml',
+                                  '/usr/local/etc/foreman-proxy/settings.yml'].freeze
 
-  def initialize
-    @dhcpd_conf_file = '/etc/dhcp/dhcpd.conf'
-    @cert_path = ForemanMaintain.config.foreman_proxy_cert_path
-  end
+  FOREMAN_PROXY_DHCP_YML_PATHS = ['/etc/foreman-proxy/settings.d/dhcp.yml',
+                                  '/usr/local/etc/foreman-proxy/settings.d/dhcp.yml'].freeze
 
   def valid_dhcp_configs?
     dhcp_req_pass? && !syntax_error_exists?
@@ -19,6 +18,10 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
   def with_content?
     !!feature(:pulp)
+  end
+
+  def dhcpd_conf_exist?
+    file_exists?(dhcpd_config_file)
   end
 
   def services
@@ -37,21 +40,28 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     !!feature(:foreman_server)
   end
 
-  def config_files(for_features = ['all'])
-    configs = [
+  def default_config_files
+    [
       '/etc/foreman-proxy',
       '/usr/share/foreman-proxy/.ssh',
       '/var/lib/foreman-proxy/ssh',
       '/etc/smart_proxy_dynflow_core/settings.yml',
-      '/etc/sudoers.d/foreman-proxy'
+      '/etc/sudoers.d/foreman-proxy',
+      settings_file
     ]
+  end
+
+  def config_files(for_features = ['all'])
+    configs = default_config_files
     backup_features = backup_features(for_features)
 
     configs.push(certs_tar) if certs_tar
 
     configs.push('/var/lib/tftpboot') if backup_features.include?('tftp')
     configs += ['/var/named/', '/etc/named*'] if backup_features.include?('dns')
-    configs += ['/var/lib/dhcpd', '/etc/dhcp'] if backup_features.include?('dhcp')
+    if backup_features.include?('dhcp')
+      configs += ['/var/lib/dhcpd', File.dirname(dhcpd_config_file)]
+    end
     configs.push('/usr/share/xml/scap') if backup_features.include?('openscap')
     configs
   end
@@ -71,6 +81,18 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     feature(:installer).answers[content_module]['certs_tar'] if content_module
   end
 
+  def settings_file
+    @settings_file ||= lookup_into(FOREMAN_PROXY_SETTINGS_PATHS)
+  end
+
+  def proxy_settings
+    @proxy_settings ||= load_proxy_settings
+  end
+
+  def dhcpd_config_file
+    @dhcpd_config_file ||= lookup_dhcpd_config_file
+  end
+
   private
 
   def backup_features(for_features)
@@ -82,9 +104,14 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def curl_cmd
-    "curl -w '\n%{http_code}' --silent -ks --cert #{cert_path}/client_cert.pem \
-      --key #{cert_path}/client_key.pem \
-      --cacert #{cert_path}/proxy_ca.pem https://$(hostname):9090"
+    ssl_cert = proxy_settings[:foreman_ssl_cert] || proxy_settings[:ssl_certificate]
+    ssl_key = proxy_settings[:foreman_ssl_key] || proxy_settings[:ssl_private_key]
+    ssl_ca = proxy_settings[:foreman_ssl_ca] || proxy_settings[:ssl_ca_file]
+
+    cmd = "curl -w '\n%{http_code}' -s "
+    cmd += format_shell_args('--cert' => ssl_cert, '--key' => ssl_key, '--cacert' => ssl_ca)
+    cmd += " https://$(hostname):#{proxy_settings[:https_port]}"
+    cmd
   end
 
   def dhcp_curl_cmd
@@ -136,13 +163,52 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def syntax_error_exists?
-    cmd = "dhcpd -t -cf #{dhcpd_conf_file}"
+    cmd = "dhcpd -t -cf #{dhcpd_config_file}"
     output = execute(cmd)
     is_error = output.include?('Configuration file errors encountered')
     if is_error
-      puts "\nFound syntax error in file #{dhcpd_conf_file}:"
+      puts "\nFound syntax error in file #{dhcpd_config_file}:"
       puts output
     end
     is_error
+  end
+
+  def load_proxy_settings
+    if settings_file
+      @proxy_settings = yaml_load(settings_file)
+    else
+      raise "Couldn't find settings file at #{FOREMAN_PROXY_SETTINGS_PATHS.join(', ')}"
+    end
+  end
+
+  def lookup_dhcpd_config_file
+    dhcpd_config_file = lookup_using_dhcp_yml
+    raise "Couldn't find DHCP Configuration file" if dhcpd_config_file.nil?
+    dhcpd_config_file
+  end
+
+  def lookup_using_dhcp_yml
+    dhcp_yml_path = lookup_into(FOREMAN_PROXY_DHCP_YML_PATHS)
+    raise "Couldn't find dhcp.yml file under foreman-proxy" unless dhcp_yml_path
+
+    configs_from_dhcp_yml = yaml_load(dhcp_yml_path)
+    if configs_from_dhcp_yml.key?(:dhcp_config)
+      return configs_from_dhcp_yml[:dhcp_config]
+    elsif configs_from_dhcp_yml.key?(:use_provider)
+      settings_d_dir = File.dirname(dhcp_yml_path)
+      dhcp_provider_fpath = File.join(settings_d_dir, "#{configs_from_dhcp_yml[:use_provider]}.yml")
+      dhcp_provider_configs = yaml_load(dhcp_provider_fpath)
+      return dhcp_provider_configs[:config] if dhcp_provider_configs.key?(:config)
+    else
+      raise "Couldn't find DHCP Configurations in #{dhcp_yml_path}"
+    end
+  end
+
+  def yaml_load(path)
+    YAML.load_file(path) || {}
+  end
+
+  def lookup_into(file_paths)
+    file_paths.find { |file_path| file_exists?(file_path) }
   end
 end

@@ -100,6 +100,18 @@ module DefinitionsTestHelper
     Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
   end
 
+  def stub_foreman_proxy_config
+    settings_file = '/etc/foreman-proxy/settings.yml'
+    Features::ForemanProxy.any_instance.stubs(
+      :lookup_dhcpd_config_file => '/etc/dhcp/dhcpd.conf',
+      :lookup_into => settings_file,
+      :settings_file => settings_file,
+      :load_proxy_settings => {},
+      :dhcpd_conf_exist? => true,
+      :features => ['dhcp']
+    )
+  end
+
   def mock_installer_package(package)
     Features::Installer.any_instance.stubs(:find_package).returns(nil)
     Features::Installer.any_instance.stubs(:find_package).with do |args|
