@@ -6,7 +6,7 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
 
   def run
     result = feature(:hammer).setup_admin_access
-    logger.info 'Hammer was configured seccessfully.' if result
+    logger.info 'Hammer was configured successfully.' if result
   end
 
   def necessary?
