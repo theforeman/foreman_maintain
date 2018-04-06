@@ -7,8 +7,6 @@ module ForemanMaintain
     end
     require 'foreman_maintain/reporter/cli_reporter'
 
-    attr_writer :assumeyes
-
     DECISION_MAPPER = {
       %w[y yes] => :yes,
       %w[n next no] => :no,
@@ -58,6 +56,10 @@ module ForemanMaintain
       until_valid_decision do
         filter_decision(ask("#{message}, [y(yes), n(no), q(quit)]"))
       end
+    end
+
+    def assumeyes=(assume)
+      @assumeyes = !!assume
     end
 
     private

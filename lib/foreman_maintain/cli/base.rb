@@ -104,7 +104,7 @@ module ForemanMaintain
 
         option ['-y', '--assumeyes'], :flag,
                'Automatically answer yes for all questions' do |assume|
-          ForemanMaintain.reporter.assumeyes(assume)
+          ForemanMaintain.reporter.assumeyes = assume
         end
 
         option(['-w', '--whitelist'], 'whitelist',
