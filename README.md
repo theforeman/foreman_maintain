@@ -21,6 +21,20 @@ Subcommands:
       check --target-version TARGET_VERSION   Run pre-upgrade checks for upgrading to specified version
       run --target-version TARGET_VERSION     Run the full upgrade
           [--phase=phase TARGET_VERSION]      Run just a specific phase of the upgrade
+
+    advanced                      Advanced tools for server maintenance
+      procedure                     Run maintain procedures manually
+        run                           Run maintain procedures manually
+        by-tag                        Run maintain procedures in bulks
+
+    service                       Control applicable services
+      start                         Start applicable services
+      stop                          Stop applicable services
+      restart                       Restart applicable services
+      status                        Get statuses of applicable services
+      list                          List applicable services
+      enable                        Enable applicable services
+      disable                       Disable applicable services
 ```
 
 ### Upgrades
@@ -301,6 +315,26 @@ We expect the credentials for the hammer commands to to be stored inside the ham
   :username: 'admin'
   :password: 'changeme'
 ```
+
+## Metadata
+
+A set of data that describes and gives information about any definition.
+
+You can describe a definition using following methods available in metadata:
+
+  * **label** - specify an unique name per definition
+  * **tags** -  comma separated labels attached for the purpose of creating
+    groups of definitions
+  * **description** - specify short description about definition
+  * **param** - declare parameters for a definition using this method
+  * **for_feature** - specify feature name for a definition. It implicitly confines the presence
+    of that feature.
+  * **preparation_steps** - takes block using which you can perform additional steps
+    before executing actual definition
+  * **confine** - takes block as argument to restrict execution of it
+  * **advanced_run** - takes a boolean value for procedure definition & will restrict
+    execution of procedure from `advanced procedure run` sub-command
+  * **before**, **after** - methods used to define order for particular check. Specify label of other check.
 
 ## Implementation components
 
