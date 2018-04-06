@@ -4,6 +4,7 @@ module Procedures::ForemanTasks
       for_feature :foreman_tasks
       description 'Fetch tasks status and wait till they finish'
       param :state, "Specify state of tasks. Either 'running' or 'paused'", :required => true
+      advanced_run false
     end
 
     def run
