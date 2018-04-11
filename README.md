@@ -283,24 +283,28 @@ end
 ### Hammer
 
 In some cases, it's useful to be able to use the hammer as part of check/fix procedures.
+It is as simple as:
+
+```ruby
+def run
+  feature(:hammer).run('task resume')
+end
+```
+
+Before executing the command the feature checks if it has valid hammer configuration to run the command.
+Foreman maintain always use the 'admin' account to run the commands. The password is taken either form
+the Hammer config or installer answer files or asked from the user interactively (in this order).
+The valid credentials are stored and reused next time if still valid.
+
+Usually we want to do the user interaction at the beginning of our scenario.
 The easiest way to achieve this is to include `ForemanMaintain::Concerns::Hammer` module:
 
 ```ruby
 include ForemanMaintain::Concerns::Hammer
-
-def run
-  hammer('task resume')
-end
 ```
 
-We expect the credentials for the hammer commands to to be stored inside the hammer settings:
-
-```
-# ~/.hammer/cli.modules.d/foreman.yml
-:foreman:
-  :username: 'admin'
-  :password: 'changeme'
-```
+which adds `Procedures::HammerSetup` as a preparation step to your metadata. We are adding this
+to all procedures and checks automatically.
 
 ## Implementation components
 
