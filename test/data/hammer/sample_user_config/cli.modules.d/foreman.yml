@@ -1,0 +1,4 @@
+:foreman:
+    :enable_module: true
+    :username: 'user'
+    :password: 'password'

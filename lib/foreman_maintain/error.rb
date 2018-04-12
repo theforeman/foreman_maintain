@@ -39,4 +39,7 @@ module ForemanMaintain
     class UsageError < StandardError
     end
   end
+
+  class HammerConfigurationError < StandardError
+  end
 end

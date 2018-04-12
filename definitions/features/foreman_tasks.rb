@@ -95,7 +95,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def resume_task_using_hammer
-    hammer('task resume')
+    feature(:hammer).run('task resume')
   end
 
   def fetch_tasks_status(state, spinner)

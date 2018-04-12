@@ -1,0 +1,4 @@
+:foreman:
+    :enable_module: true
+    :host: 'https://example.com/'
+    :username: 'admin'

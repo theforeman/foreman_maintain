@@ -1,6 +1,7 @@
 module ForemanMaintain
   class Feature
     include Concerns::Logger
+    include Concerns::Reporter
     include Concerns::SystemHelpers
     include Concerns::Metadata
     include Concerns::Finders

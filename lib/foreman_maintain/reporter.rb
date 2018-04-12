@@ -58,6 +58,10 @@ module ForemanMaintain
       end
     end
 
+    def assumeyes=(assume)
+      @assumeyes = !!assume
+    end
+
     private
 
     def single_step_decision(step)

@@ -34,9 +34,7 @@ module ForemanMaintain
       end
 
       def reporter
-        @reporter ||= Reporter::CLIReporter.new(STDOUT,
-                                                STDIN,
-                                                :assumeyes => option_wrapper('assumeyes?'))
+        @reporter ||= ForemanMaintain.reporter
       end
 
       def run_scenario(scenarios)
@@ -101,7 +99,9 @@ module ForemanMaintain
         delete_duplicate_assumeyes_if_any
 
         option ['-y', '--assumeyes'], :flag,
-               'Automatically answer yes for all questions'
+               'Automatically answer yes for all questions' do |assume|
+          ForemanMaintain.reporter.assumeyes = assume
+        end
 
         option(['-w', '--whitelist'], 'whitelist',
                'Comma-separated list of labels of steps to be skipped') do |whitelist|

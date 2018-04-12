@@ -11,6 +11,7 @@ require 'timeout'
 module ForemanMaintain
   require 'foreman_maintain/core_ext'
   require 'foreman_maintain/concerns/logger'
+  require 'foreman_maintain/concerns/reporter'
   require 'foreman_maintain/concerns/finders'
   require 'foreman_maintain/concerns/metadata'
   require 'foreman_maintain/concerns/scenario_metadata'
@@ -70,6 +71,10 @@ module ForemanMaintain
 
     def cache
       ObjectCache.instance
+    end
+
+    def reporter
+      @reporter ||= ForemanMaintain::Reporter::CLIReporter.new
     end
 
     def detector
