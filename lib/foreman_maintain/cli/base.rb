@@ -33,10 +33,6 @@ module ForemanMaintain
         puts "#{desc} #{tags}".strip
       end
 
-      def parse(arguments)
-        super
-      end
-
       def reporter
         @reporter ||= ForemanMaintain.reporter
       end
