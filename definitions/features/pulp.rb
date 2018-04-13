@@ -10,6 +10,7 @@ class Features::Pulp < ForemanMaintain::Feature
   def services
     {
       'mongod'                   => 5,
+      'rh-mongodb34-mongod'      => 5,
       'squid'                    => 10,
       'pulp_workers'             => 20,
       'pulp_celerybeat'          => 20,
