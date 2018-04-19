@@ -66,12 +66,21 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def perform_action_on_service(action, service)
-    command = "systemctl #{action} #{service}"
+    command = service_command(action, service)
     if action == 'status'
       status = execute(command)
       puts "\n\n#{status}\n\n"
     else
       execute!(command)
+    end
+  end
+
+  def service_command(action, service)
+    if File.exist?('/usr/sbin/service-wait') &&
+       !%w[enable disable].include?(action)
+      "service-wait #{service} #{action}"
+    else
+      "systemctl #{action} #{service}"
     end
   end
 
