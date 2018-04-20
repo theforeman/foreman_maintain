@@ -22,6 +22,7 @@ module ForemanMaintain
           end
 
           def validate!
+            present!
             validate_attr!(:operator)
             validate_attr!(:number)
             validate_attr!(:metric)
@@ -37,12 +38,16 @@ module ForemanMaintain
 
           private
 
+          def present!
+            raise ArgumentError, 'value not specified' if size.blank?
+          end
+
           def validate_attr!(name)
             raise ArgumentError, "Invalid #{name}: #{send(name)}" unless send("valid_#{name}?")
           end
 
           def disintegrate_size(size)
-            size.gsub(/[[:space:]]/, '').downcase.scan(/\d+|\D+/)
+            size.gsub(/[[:space:]]/, '').downcase.scan(/\d+|\D+/) if size
           end
 
           def valid_metric?

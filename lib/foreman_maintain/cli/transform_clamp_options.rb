@@ -26,7 +26,7 @@ module ForemanMaintain
         private
 
         def option_sym(option)
-          option = underscorize(option.switches.first[2..-1].to_s)
+          option = option.switches.first[2..-1].underscorize
           option.to_sym unless option.empty?
         end
 
