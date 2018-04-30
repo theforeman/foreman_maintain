@@ -12,7 +12,7 @@ module Procedures::Backup
       puts "Creating backup folder #{@backup_dir}"
 
       unless @preserve_dir
-        FileUtils.mkdir @backup_dir
+        FileUtils.mkdir_p @backup_dir
         FileUtils.chmod_R 0o770, @backup_dir
       end
 
