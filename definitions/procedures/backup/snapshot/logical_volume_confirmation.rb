@@ -11,10 +11,11 @@ module Procedures::Backup
       def run
         backup_lv = get_lv_info(@backup_dir)
 
-        dbs = { :mongo => 'Mongo' }
-        dbs[:pulp] = 'Pulp' unless @skip_pulp
-        dbs[:candlepin_database] = 'Candlepin' if feature(:candlepin_database).local?
-        dbs[:foreman_database] = 'Foreman' if feature(:foreman_database).local?
+        dbs = {}
+        dbs[:pulp] = 'Pulp' if feature(:pulp) && !@skip_pulp
+        dbs[:mongo] = 'Mongo' if db_local?(:mongo)
+        dbs[:candlepin_database] = 'Candlepin' if db_local?(:candlepin_database)
+        dbs[:foreman_database] = 'Foreman' if db_local?(:foreman_database)
 
         shared_lv = dbs.inject([]) do |list, (db_label, db_name)|
           db_lv = get_lv_info(feature(db_label).data_dir)
@@ -25,6 +26,10 @@ module Procedures::Backup
       end
 
       private
+
+      def db_local?(db)
+        feature(:instance).database_local?(db)
+      end
 
       def confirm(shared_lv)
         answer = ask_decision('*** WARNING: The chosen backup location is mounted on the same' \

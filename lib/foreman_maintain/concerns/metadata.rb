@@ -205,7 +205,7 @@ module ForemanMaintain
           return @preparation_steps if defined?(@preparation_steps)
           preparation_steps = metadata[:preparation_steps_blocks].map do |block|
             instance_exec(&block)
-          end.compact.flatten
+          end.flatten.compact
           preparation_steps.each { |step| raise ArgumentError unless step.is_a?(Executable) }
           all_preparation_steps = []
           preparation_steps.each do |step|
