@@ -6,7 +6,11 @@ module Procedures::Backup
         description 'Create and mount snapshot of Mongo DB'
         tags :backup
         for_feature :mongo
-        preparation_steps { Checks::Mongo::DBUp.new unless feature(:mongo).local? }
+        preparation_steps do
+          unless feature(:mongo).local?
+            [Checks::Mongo::DBUp.new, Checks::Mongo::ToolsInstalled.new]
+          end
+        end
         MountBase.common_params(self)
         param :backup_dir, 'Directory where to backup to'
       end

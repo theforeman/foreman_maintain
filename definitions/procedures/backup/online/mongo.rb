@@ -5,7 +5,9 @@ module Procedures::Backup
         description 'Backup Mongo online'
         tags :backup
         for_feature :mongo
-        preparation_steps { Checks::Mongo::DBUp.new }
+        preparation_steps do
+          [Checks::Mongo::DBUp.new, Checks::Mongo::ToolsInstalled.new]
+        end
         param :backup_dir, 'Directory where to backup to', :required => true
       end
 

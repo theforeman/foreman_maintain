@@ -5,7 +5,11 @@ module Procedures::Backup
         description 'Backup mongo offline'
         tags :backup
         for_feature :mongo
-        preparation_steps { Checks::Mongo::DBUp.new unless feature(:mongo).local? }
+        preparation_steps do
+          unless feature(:mongo).local?
+            [Checks::Mongo::DBUp.new, Checks::Mongo::ToolsInstalled.new]
+          end
+        end
         param :backup_dir, 'Directory where to backup to', :required => true
         param :tar_volume_size, 'Size of tar volume (indicates splitting)'
         param :mount_dir, 'Snapshot mount directory'
