@@ -108,7 +108,11 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def services
-    { 'foreman-tasks' => 30 }
+    if check_min_version('foreman', '1.17')
+      { 'dynflowd' => 30 }
+    else
+      { 'foreman-tasks' => 30 }
+    end
   end
 
   private

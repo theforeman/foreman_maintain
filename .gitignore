@@ -11,3 +11,6 @@ test/definitions/config/foreman-maintain-hammer-default.yml
 data.yml
 .ruby-version
 .ruby-gemset
+*~
+*.swp
+*.swo
