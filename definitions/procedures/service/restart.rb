@@ -28,11 +28,11 @@ module Procedures::Service
             break
           elsif retry_count < (RETRIES_FOR_SERVICES_RESTART - 1)
             apply_sleep_before_retry(spinner, result)
+          else
+            raise 'Hammer ping failed!'
           end
         end
       end
-    rescue StandardError => e
-      logger.error e.message
     end
 
     def retry_message(retry_count)
