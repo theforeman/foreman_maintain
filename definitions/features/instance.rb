@@ -36,4 +36,8 @@ class Features::Instance < ForemanMaintain::Feature
   def postgresql_local?
     database_local?(:candlepin_database) || database_local?(:foreman_database)
   end
+
+  def foreman_proxy_with_content?
+    feature(:foreman_proxy) && feature(:foreman_proxy).with_content? && !feature(:katello)
+  end
 end

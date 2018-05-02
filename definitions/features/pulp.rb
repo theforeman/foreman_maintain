@@ -29,7 +29,8 @@ class Features::Pulp < ForemanMaintain::Feature
       '/etc/qpid-dispatch',
       '/etc/crane.conf',
       '/etc/default/pulp_workers',
-      '/var/lib/qpidd'
+      '/var/lib/qpidd',
+      '/etc/qpid-dispatch'
     ]
   end
 

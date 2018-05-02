@@ -85,6 +85,24 @@ class Features::Installer < ForemanMaintain::Feature
     run(arguments, exec_options)
   end
 
+  def scenario_name
+    if feature(:instance).foreman_proxy_with_content?
+      if execute?('rpm -q satellite-capsule')
+        'capsule'
+      else
+        'foreman-proxy-content'
+      end
+    elsif feature(:katello)
+      if feature(:downstream)
+        'satellite'
+      else
+        'katello'
+      end
+    else
+      'foreman'
+    end
+  end
+
   private
 
   def load_answers(config_file)

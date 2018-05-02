@@ -10,7 +10,7 @@ module Checks::Backup
 
     def run
       assert(File.directory?(@backup_dir), "Backup directory (#{@backup_dir}) does not exit.")
-      if local_psql_database?
+      if feature(:instance).postgresql_local?
         result = system("runuser - postgres -c 'test -w #{@backup_dir}'")
         assert(result, "Postgres user needs write access to the backup directory \n" \
           "Please allow the postgres user write access to #{@backup_dir}" \

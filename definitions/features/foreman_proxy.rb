@@ -17,6 +17,10 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     dhcp_req_pass? && !syntax_error_exists?
   end
 
+  def with_content?
+    !!feature(:pulp)
+  end
+
   def services
     {
       'foreman-proxy'            => 20,

@@ -29,7 +29,6 @@ module ForemanMaintain
       end
 
       module ClassMethods
-        # rubocop:disable  Metrics/MethodLength
         def common_backup_options
           # TODO: BACKUP_DIR in f-m config - should be default?
           parameter 'BACKUP_DIR', 'Path to backup dir',
@@ -145,8 +144,6 @@ module ForemanMaintain
                        :snapshot_block_size => snapshot_block_size)
       end
     end
-
-    # rubocop:disable Metrics/LineLength
     class BackupCommand < Base
       subcommand 'online', 'Keep services online during backup', OnlineBackupCommand
       subcommand 'offline', 'Shut down services to preserve consistent backup', OfflineBackupCommand

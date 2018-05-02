@@ -52,13 +52,34 @@ module ForemanMaintain
         execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']])
       end
 
+      def restore_dump(file, localdb, config = configuration)
+        if localdb
+          dump_cmd = "runuser - postgres -c 'pg_restore -C -d postgres #{file}'"
+          execute!(dump_cmd)
+        else
+          # TODO: figure out how to completely ignore errors. Currently this
+          # sometimes exits with 1 even though errors are ignored by pg_restore
+          dump_cmd = base_command(config, 'pg_restore') +
+                     ' --no-privileges --clean --disable-triggers -n public ' \
+                     "-d #{config['database']} #{file}"
+          execute!(dump_cmd, :hidden_patterns => [config['password']],
+                             :valid_exit_statuses => [0, 1])
+        end
+      end
+
+      def restore_pg_globals(pg_globals, config = configuration)
+        execute!(base_command(config, 'psql') + " -f #{pg_globals} postgres 2>/dev/null",
+                 :hidden_patterns => [config['password']])
+      end
+
       def backup_local(backup_file, extra_tar_options = {})
         dir = extra_tar_options.fetch(:data_dir, data_dir)
         FileUtils.cd(dir) do
           tar_options = {
             :archive => backup_file,
             :command => 'create',
-            :transform => 's,^,var/lib/pgsql/data/,S'
+            :transform => 's,^,var/lib/pgsql/data/,S',
+            :files => '*'
           }.merge(extra_tar_options)
           feature(:tar).run(tar_options)
         end
@@ -110,6 +131,10 @@ module ForemanMaintain
 
       def find_base_directory(directory)
         find_dir_containing_file(directory, 'postgresql.conf')
+      end
+
+      def dropdb(config = configuration)
+        execute!("runuser - postgres -c 'dropdb #{config['database']}'")
       end
 
       private

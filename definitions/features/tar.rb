@@ -14,7 +14,11 @@ class Features::Tar < ForemanMaintain::Feature
   # @option options [String] :volume_size size of tar volume
   #                           (will try to split the archive when set)
   # @option options [String] :files (*) files to operate on
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # @option options [String] :directory change to directory DIR
+  # @option options [Boolean] :multi_volume create/list/extract multi-volume archive
+  # @option options [Boolean] :overwrite overwrite existing files when extracting
+  # @option options [Boolean] :gzip filter the archive through gzip
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def run(options = {})
     volume_size = options.fetch(:volume_size, nil)
     validate_volume_size(volume_size) unless volume_size.nil?
@@ -30,6 +34,9 @@ class Features::Tar < ForemanMaintain::Feature
       tar_command << "--new-volume-script=#{split_tar_script}"
     end
 
+    tar_command << '--overwrite' if options[:overwrite]
+    tar_command << '--gzip' if options[:gzip]
+
     exclude = options.fetch(:exclude, [])
     exclude.each do |ex|
       tar_command << "--exclude=#{ex}"
@@ -41,12 +48,17 @@ class Features::Tar < ForemanMaintain::Feature
     trans = options.fetch(:transform, nil)
     tar_command << "--transform '#{trans}'" if trans
 
-    tar_command << '-S'
-    tar_command << options.fetch(:files, '*')
+    tar_command << '-M' if options[:multi_volume]
+    tar_command << "--directory=#{options[:directory]}" if options[:directory]
+
+    if options[:files]
+      tar_command << '-S'
+      tar_command << options.fetch(:files, '*')
+    end
 
     execute!(tar_command.join(' '))
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def validate_volume_size(size)
     if size.nil? || size !~ /^\d+[bBcGKkMPTw]?$/

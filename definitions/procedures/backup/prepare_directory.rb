@@ -16,7 +16,7 @@ module Procedures::Backup
         FileUtils.chmod_R 0o770, @backup_dir
       end
 
-      if local_psql_database? && !@preserve_dir
+      if feature(:instance).postgresql_local? && !@preserve_dir
         FileUtils.chown_R(nil, 'postgres', @backup_dir)
       end
 
