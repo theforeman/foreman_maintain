@@ -58,7 +58,9 @@ module ForemanMaintain
     def available_scenarios(filter_conditions = nil)
       unless @available_scenarios
         ensure_features_detected
-        @available_scenarios = @scenarios.select(&:present?).map(&:new)
+        @available_scenarios = @scenarios.select do |scenario|
+          scenario.present? && scenario.autodetect?
+        end.map(&:new)
       end
       filter(@available_scenarios, filter_conditions)
     end
@@ -104,7 +106,6 @@ module ForemanMaintain
       ret
     end
 
-    # rubocop:disable Metrics/AbcSize
     def detect_feature(label)
       return @features_by_label[label] if @features_by_label.key?(label)
       return unless autodetect_features.key?(label)
@@ -122,7 +123,6 @@ module ForemanMaintain
       end
       present_feature
     end
-    # rubocop:enable Metrics/AbcSize
 
     def autodetect_features
       @autodetect_features ||= Feature.sub_classes.reduce({}) do |hash, feature_class|

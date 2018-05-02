@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'csv'
+require 'find'
 require 'shellwords'
 
 module ForemanMaintain
@@ -51,8 +52,8 @@ module ForemanMaintain
           (execute('rpm -q foreman') =~ /sat.noarch/)
       end
 
-      def execute?(command, input = nil)
-        execute(command, :stdin => input)
+      def execute?(command, options = {})
+        execute(command, options)
         $CHILD_STATUS.success?
       end
 
@@ -165,6 +166,35 @@ module ForemanMaintain
         cmd = "find '#{dir_path}' -maxdepth 1 -type l"
         result = execute(cmd).strip
         result.split(/\n/)
+      end
+
+      def directory_empty?(dir)
+        Dir.entries(dir).size <= 2
+      end
+
+      def get_lv_info(dir)
+        execute("findmnt -n --target #{dir} -o SOURCE,FSTYPE").split
+      end
+
+      def create_lv_snapshot(name, block_size, path)
+        execute!("lvcreate -n#{name} -L#{block_size} -s #{path}")
+      end
+
+      def get_lv_path(lv_name)
+        execute("lvs --noheadings -o lv_path -S lv_name=#{lv_name}").strip
+      end
+
+      def local_psql_database?
+        (feature(:foreman_database) && feature(:foreman_database).local?) ||
+          (feature(:candlepin_database) && feature(:candlepin_database).local?)
+      end
+
+      def find_dir_containing_file(directory, target)
+        result = nil
+        Find.find(directory) do |path|
+          result = File.dirname(path) if File.basename(path) == target
+        end
+        result
       end
     end
   end

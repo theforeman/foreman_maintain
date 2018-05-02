@@ -20,5 +20,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   def load_configuration
     config = YAML.load(File.read(FOREMAN_DB_CONFIG))
     @configuration = config['production']
+    @configuration['host'] ||= 'localhost'
+    @configuration
   end
 end

@@ -89,7 +89,7 @@ module ForemanMaintain
       decision
     end
 
-    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength
     def ask_to_select(message, steps)
       if assumeyes?
         puts('(assuming first option)')
@@ -109,7 +109,7 @@ module ForemanMaintain
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+    # rubocop:enable Metrics/MethodLength
 
     # loop over the block until it returns some non-false value
     def until_valid_decision

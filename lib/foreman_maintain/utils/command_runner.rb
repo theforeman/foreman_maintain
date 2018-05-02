@@ -55,7 +55,6 @@ module ForemanMaintain
 
       private
 
-      # rubocop:disable Metrics/AbcSize
       def run_interactively
         # use tmp files to capture output and exit status of the command when
         # running interactively
@@ -75,7 +74,6 @@ module ForemanMaintain
         log_file.close
         exit_file.close
       end
-      # rubocop:enable Metrics/AbcSize
 
       def run_non_interactively
         IO.popen(full_command, 'r+') do |f|

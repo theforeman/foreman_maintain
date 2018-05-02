@@ -4,7 +4,7 @@ module ForemanMaintain
     class Execution
       include Concerns::Logger
       extend Forwardable
-      def_delegators :reporter, :with_spinner, :puts, :print, :ask, :assumeyes?
+      def_delegators :reporter, :with_spinner, :puts, :print, :ask, :assumeyes?, :ask_decision
 
       # Step performed as part of the execution
       attr_reader :step
@@ -45,6 +45,10 @@ module ForemanMaintain
 
       def fail?
         @status == :fail
+      end
+
+      def aborted?
+        @status == :abort
       end
 
       def skipped?

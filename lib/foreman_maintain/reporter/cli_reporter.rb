@@ -4,6 +4,7 @@ require 'highline'
 module ForemanMaintain
   class Reporter
     class CLIReporter < Reporter
+      include Concerns::Logger
       # Simple spinner able to keep updating current line
       class Spinner
         def initialize(reporter, interval = 0.1)
@@ -81,11 +82,13 @@ module ForemanMaintain
       end
 
       def before_scenario_starts(scenario)
+        logger.info("=== Scenario '#{scenario.description || scenario.class}' started ===")
         puts "Running #{scenario.description || scenario.class}"
         hline('=')
       end
 
       def before_execution_starts(execution)
+        logger.info("--- Execution step '#{execution.name}' started ---")
         puts(execution_info(execution, ''))
       end
 
@@ -141,19 +144,16 @@ module ForemanMaintain
       def after_execution_finishes(execution)
         puts_status(execution.status)
         puts(execution.output) unless execution.output.empty?
-        if execution.status == :already_run
-          puts(<<-MESSAGE.strip_heredoc)
-            The step was skipped as it was already run and it is marked
-            as run_once. Use --force to enforce the execution.
-          MESSAGE
-        end
+        puts(already_run_msg) if execution.status == :already_run
         hline
         new_line_if_needed
+        logger.info("--- Execution step '#{execution.name}' finished ---")
       end
 
       def after_scenario_finishes(scenario)
         scenario_failure_message(scenario)
         puts "\n"
+        logger.info("=== Scenario '#{scenario.description || scenario.class}' finished ===")
       end
 
       def clear_line
@@ -181,13 +181,13 @@ module ForemanMaintain
         ask_to_select('Select step to continue', steps, &:runtime_message)
       end
 
-      def ask_decision(message)
+      def ask_decision(message, options = 'y(yes), n(no), q(quit)')
         if assumeyes?
           print("#{message} (assuming yes)")
           return :yes
         end
         until_valid_decision do
-          filter_decision(ask("#{message}, [y(yes), n(no), q(quit)]"))
+          filter_decision(ask("#{message}, [#{options}]"))
         end
       ensure
         clear_line
@@ -202,7 +202,7 @@ module ForemanMaintain
         decision
       end
 
-      # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+      # rubocop:disable Metrics/MethodLength
       def ask_to_select(message, steps)
         if assumeyes?
           puts('(assuming first option)')
@@ -224,7 +224,7 @@ module ForemanMaintain
       ensure
         clear_line
       end
-      # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+      # rubocop:enable Metrics/MethodLength
 
       # loop over the block until it returns some non-false value
       def until_valid_decision
@@ -252,6 +252,7 @@ module ForemanMaintain
       def status_label(status)
         mapping = { :success => { :label => '[OK]', :color => :green },
                     :fail => { :label => '[FAIL]', :color => :red },
+                    :abort => { :label => '[ABORTED]', :color => :red },
                     :running => { :label => '[RUNNING]', :color => :blue },
                     :skipped => { :label => '[SKIPPED]', :color => :yellow },
                     :already_run => { :label => '[ALREADY RUN]', :color => :yellow },
@@ -278,6 +279,16 @@ module ForemanMaintain
           Scenario [#{scenario.description}] failed.
         MESSAGE
         recommend = []
+
+        steps_with_abort = scenario.steps_with_abort(:whitelisted => false)
+        unless steps_with_abort.empty?
+          message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_abort, "\n", 2))
+          The processing was aborted by user during the following steps:
+
+          %s
+          MESSAGE
+        end
+
         steps_with_error = scenario.steps_with_error(:whitelisted => false)
         unless steps_with_error.empty?
           message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_error, "\n", 2))
@@ -312,6 +323,11 @@ module ForemanMaintain
 
       def format_steps(steps, join_with = ', ', indent = 0)
         steps.map { |s| "#{' ' * indent}[#{s.label_dashed}]" }.join(join_with)
+      end
+
+      def already_run_msg
+        'The step was skipped as it was already run and it is marked' \
+        ' as run_once. Use --force to enforce the execution.'
       end
     end
   end

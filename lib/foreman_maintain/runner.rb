@@ -1,15 +1,17 @@
 module ForemanMaintain
   # Class responsible for running the scenario
   class Runner
+    include Concerns::Logger
     attr_reader :reporter, :exit_code
 
     require 'foreman_maintain/runner/execution'
     require 'foreman_maintain/runner/stored_execution'
     def initialize(reporter, scenarios, options = {})
-      options.validate_options!(:assumeyes, :whitelist, :force)
+      options.validate_options!(:assumeyes, :whitelist, :force, :rescue_scenario)
       @assumeyes = options.fetch(:assumeyes, false)
       @whitelist = options.fetch(:whitelist, [])
       @force = options.fetch(:force, false)
+      @rescue_scenario = options.fetch(:rescue_scenario, nil)
       @reporter = reporter
       @scenarios = Array(scenarios)
       @quit = false
@@ -28,11 +30,15 @@ module ForemanMaintain
     def run
       @scenarios.each do |scenario|
         run_scenario(scenario)
-        break if @quit
+        next unless @quit
+        if @rescue_scenario
+          logger.debug('=== Rescue scenario found. Executing ===')
+          execute_scenario_steps(@rescue_scenario, true)
+        end
+        break
       end
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def run_scenario(scenario, confirm = true)
       return if scenario.steps.empty?
       raise 'The runner is already in quit state' if quit?
@@ -47,7 +53,6 @@ module ForemanMaintain
       @last_scenario = scenario unless scenario.steps.empty?
       @exit_code = 1 if scenario.failed?
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
 
     def whitelisted_step?(step)
       @whitelist.include?(step.label_dashed.to_s)
@@ -55,7 +60,8 @@ module ForemanMaintain
 
     def confirm_scenario(scenario)
       return unless @last_scenario
-      decision = if @last_scenario.steps_with_error(:whitelisted => false).any?
+      decision = if @last_scenario.steps_with_error(:whitelisted => false).any? ||
+                    @last_scenario.steps_with_abort(:whitelisted => false).any?
                    :quit
                  elsif @last_scenario.steps_with_warning(:whitelisted => false).any?
                    reporter.ask_decision("Continue with [#{scenario.description}]")
@@ -84,9 +90,10 @@ module ForemanMaintain
 
     private
 
-    def execute_scenario_steps(scenario)
+    def execute_scenario_steps(scenario, force = false)
       scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
-      return if quit? # the before scenarios caused the stop of the execution
+      confirm_scenario(scenario)
+      return if !force && quit? # the before scenarios caused the stop of the execution
       @reporter.before_scenario_starts(scenario)
       run_steps(scenario, scenario.steps)
       @reporter.after_scenario_finishes(scenario)
@@ -94,9 +101,9 @@ module ForemanMaintain
 
     def run_steps(scenario, steps)
       @steps_to_run = ForemanMaintain::DependencyGraph.sort(steps)
-      while !@quit && !@steps_to_run.empty?
+      while (scenario.run_strategy == :fail_slow || !@quit) && !@steps_to_run.empty?
         execution = run_step(@steps_to_run.shift)
-        post_step_decisions(scenario, execution)
+        post_step_decisions(scenario, execution) unless execution.success?
       end
     end
 
@@ -114,15 +121,19 @@ module ForemanMaintain
 
     def post_step_decisions(scenario, execution)
       step = execution.step
-      next_steps_decision = ask_about_offered_steps(step)
-      if next_steps_decision != :yes &&
-         execution.fail? && !execution.whitelisted? &&
-         scenario.run_strategy == :fail_fast
+      if execution.aborted?
         ask_to_quit
+      else
+        next_steps_decision = ask_about_offered_steps(step)
+        if next_steps_decision != :yes &&
+           execution.fail? && !execution.whitelisted? &&
+           scenario.run_strategy == :fail_fast
+          ask_to_quit
+        end
       end
     end
 
-    # rubocop:disable  Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:disable  Metrics/MethodLength
     def ask_about_offered_steps(step)
       if assumeyes? && rerun_check?(step)
         @reporter.puts 'Check still failing after attempt to fix. Skipping'
@@ -143,7 +154,7 @@ module ForemanMaintain
         end
       end
     end
-    # rubocop:enable  Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:enable  Metrics/MethodLength
 
     def rerun_check?(step)
       @last_decision_step == step

@@ -3,7 +3,7 @@ module ForemanMaintain
     attr_reader :name, :description, :options
 
     def initialize(name, description, options, &block)
-      options.validate_options!(:description, :required, :flag, :array, :allowed_values)
+      options.validate_options!(:description, :required, :flag, :array, :allowed_values, :default)
       @name = name
       @description = description || options[:description] || ''
       @options = options
@@ -12,6 +12,7 @@ module ForemanMaintain
       @block = block
       @allowed_values = @options.fetch(:allowed_values, [])
       @array = @options.fetch(:array, false)
+      @default = @options.fetch(:default, nil)
     end
 
     def flag?
@@ -26,8 +27,9 @@ module ForemanMaintain
       @array
     end
 
-    # rubocop:disable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
     def process(value)
+      # default values imply we can not pass nil if there is non-nil default
+      value = @default if value.nil?
       value = process_array(value) if array?
       value = @block.call(value) if @block
       if value.nil? && required?
@@ -38,7 +40,6 @@ module ForemanMaintain
       validate_with_allowed_values(value)
       value
     end
-    # rubocop:enable Metrics/PerceivedComplexity,Metrics/CyclomaticComplexity
 
     def process_array(value)
       if value.is_a?(Array)

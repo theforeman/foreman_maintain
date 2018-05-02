@@ -37,12 +37,13 @@ module ForemanMaintain
         @reporter ||= ForemanMaintain.reporter
       end
 
-      def run_scenario(scenarios)
+      def run_scenario(scenarios, rescue_scenario = nil)
         @runner ||=
           ForemanMaintain::Runner.new(reporter, scenarios,
                                       :assumeyes => option_wrapper('assumeyes?'),
                                       :whitelist => option_wrapper('whitelist') || [],
-                                      :force => option_wrapper('force?'))
+                                      :force => option_wrapper('force?'),
+                                      :rescue_scenario => rescue_scenario)
         runner.run
       end
 

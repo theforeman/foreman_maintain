@@ -6,6 +6,12 @@ module ForemanMaintain
     class Warn < StandardError
     end
 
+    class Skip < StandardError
+    end
+
+    class Abort < StandardError
+    end
+
     class MultipleBeforeDetected < StandardError
       def initialize(step_labels)
         @step_labels = step_labels
@@ -37,6 +43,9 @@ module ForemanMaintain
 
     # Error caused by incorrect usage, usually connected to passed CLI options
     class UsageError < StandardError
+    end
+
+    class Validation < StandardError
     end
   end
 
