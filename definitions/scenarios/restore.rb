@@ -6,9 +6,10 @@ module ForemanMaintain::Scenarios
       description 'Restore backup'
       param :backup_dir, 'Path to backup directory'
       param :incremental_backup, 'Is the backup incremental?'
+      manual_detection
     end
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
@@ -44,7 +45,7 @@ module ForemanMaintain::Scenarios
                              Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def set_context_mapping
       context.map(:backup_dir,

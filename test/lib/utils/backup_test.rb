@@ -1,4 +1,6 @@
 require 'test_helper'
+require File.expand_path('../../../lib/foreman_maintain/utils/backup.rb',
+                         File.dirname(__FILE__))
 
 module ForemanMaintain
   describe Utils::Backup do
