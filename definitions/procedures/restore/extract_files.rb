@@ -19,7 +19,6 @@ module Procedures::Restore
           spinner.update('Extracting mongo data')
           extract_mongo_data(backup)
         end
-
         if backup.file_map[:pgsql_data][:present]
           spinner.update('Extracting pgsql data')
           extract_pgsql_data(backup)

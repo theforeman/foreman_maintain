@@ -16,12 +16,7 @@ module Procedures::Restore
 
     def run
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
-
-      if backup.file_map[:pg_globals][:present]
-        restore_global_objects(backup.file_map[:pg_globals][:path])
-      else
-        skip 'No postgresql global objects file to restore'
-      end
+      restore_global_objects(backup.file_map[:pg_globals][:path])
     end
 
     def restore_global_objects(pg_global_file)

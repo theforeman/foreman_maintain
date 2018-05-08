@@ -10,6 +10,8 @@ module ForemanMaintain::Scenarios
 
     # rubocop:disable Metrics/MethodLength
     def compose
+      backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
+
       add_steps(find_checks(:root_user))
       if feature(:downstream) && feature(:downstream).less_than_version?('6.3')
         msg = 'ERROR: Restore subcommand is supported by Satellite 6.3+. ' \
@@ -23,13 +25,22 @@ module ForemanMaintain::Scenarios
                              Procedures::Selinux::SetFileSecurity,
                              Procedures::Restore::Configs,
                              Procedures::Restore::InstallerReset,
-                             Procedures::Service::Stop,
-                             Procedures::Restore::ExtractFiles,
-                             Procedures::Restore::DropDatabases,
-                             Procedures::Restore::PgGlobalObjects,
-                             Procedures::Restore::PostgresDumps,
-                             Procedures::Restore::MongoDump,
-                             Procedures::Pulp::Migrate,
+                             Procedures::Service::Stop)
+      add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
+      add_steps_with_context(Procedures::Restore::DropDatabases)
+      if backup.file_map[:pg_globals][:present]
+        add_steps_with_context(Procedures::Restore::PgGlobalObjects)
+      end
+      if backup.file_map[:candlepin_dump][:present]
+        add_steps_with_context(Procedures::Restore::CandlepinDump)
+      end
+      if backup.file_map[:foreman_dump][:present]
+        add_steps_with_context(Procedures::Restore::ForemanDump)
+      end
+      if backup.file_map[:mongo_dump][:present]
+        add_steps_with_context(Procedures::Restore::MongoDump)
+      end
+      add_steps_with_context(Procedures::Pulp::Migrate,
                              Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
@@ -42,7 +53,8 @@ module ForemanMaintain::Scenarios
                   Procedures::Restore::Configs => :backup_dir,
                   Procedures::Restore::DropDatabases => :backup_dir,
                   Procedures::Restore::PgGlobalObjects => :backup_dir,
-                  Procedures::Restore::PostgresDumps => :backup_dir,
+                  Procedures::Restore::CandlepinDump => :backup_dir,
+                  Procedures::Restore::ForemanDump => :backup_dir,
                   Procedures::Restore::ExtractFiles => :backup_dir,
                   Procedures::Restore::MongoDump => :backup_dir)
 

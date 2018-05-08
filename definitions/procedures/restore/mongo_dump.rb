@@ -6,7 +6,9 @@ module Procedures::Restore
       param :backup_dir,
             'Path to backup directory',
             :required => true
-
+      preparation_steps do
+        [Checks::Mongo::DBUp.new, Checks::Mongo::ToolsInstalled.new]
+      end
       confine do
         feature(:mongo) && feature(:pulp)
       end
@@ -14,14 +16,10 @@ module Procedures::Restore
 
     def run
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
-      if backup.file_map[:mongo_dump][:present]
-        with_spinner('Restoring mongo dump') do |spinner|
-          feature(:service).handle_services(spinner, 'start', :only => feature(:mongo).services.keys)
-          drop_and_restore_mongo(backup, spinner)
-          feature(:service).handle_services(spinner, 'stop', :only => feature(:mongo).services.keys)
-        end
-      else
-        skip 'No mongo_dump folder found.'
+      with_spinner('Restoring mongo dump') do |spinner|
+        feature(:service).handle_services(spinner, 'start', :only => feature(:mongo).services.keys)
+        drop_and_restore_mongo(backup, spinner)
+        feature(:service).handle_services(spinner, 'stop', :only => feature(:mongo).services.keys)
       end
     end
 

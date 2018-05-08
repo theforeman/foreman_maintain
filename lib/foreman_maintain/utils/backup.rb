@@ -195,6 +195,12 @@ module ForemanMaintain
         File.exist?(File.join(@backup_dir, 'pulp_data.part0002'))
       end
 
+      def tar_backups_exist?
+        file_map[:mongo_data][:present] ||
+          file_map[:pulp_data][:present] ||
+          file_map[:pgsql_data][:present]
+      end
+
       private
 
       def tarball_file_list(tarball)
