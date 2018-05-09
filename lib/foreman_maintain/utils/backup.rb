@@ -201,6 +201,11 @@ module ForemanMaintain
           file_map[:pgsql_data][:present]
       end
 
+      def sql_dump_files_exist?
+        file_map[:foreman_dump][:present] ||
+          file_map[:candlepin_dump][:present]
+      end
+
       private
 
       def tarball_file_list(tarball)

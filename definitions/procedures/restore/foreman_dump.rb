@@ -5,7 +5,7 @@ module Procedures::Restore
       param :backup_dir,
             'Path to backup directory',
             :required => true
-      preparation_steps { Checks::Foreman::DBUp.new unless feature(:foreman_database).local? }
+      preparation_steps { Checks::Foreman::DBUp.new }
       confine do
         feature(:foreman_database)
       end
@@ -15,9 +15,7 @@ module Procedures::Restore
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
 
       with_spinner('Restoring foreman postgresql dump') do |spinner|
-        feature(:service).handle_services(spinner, 'start', :only => ['postgresql'])
         restore_foreman_dump(backup, spinner)
-        feature(:service).handle_services(spinner, 'stop', :only => ['postgresql'])
       end
     end
 

@@ -5,7 +5,7 @@ module Procedures::Restore
       param :backup_dir,
             'Path to backup directory',
             :required => true
-      preparation_steps { Checks::Candlepin::DBUp.new unless feature(:candlepin_database).local? }
+      preparation_steps { Checks::Candlepin::DBUp.new }
       confine do
         feature(:candlepin_database)
       end
@@ -15,9 +15,7 @@ module Procedures::Restore
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
 
       with_spinner('Restoring candlepin postgresql dump') do |spinner|
-        feature(:service).handle_services(spinner, 'start', :only => ['postgresql'])
         restore_candlepin_dump(backup, spinner)
-        feature(:service).handle_services(spinner, 'stop', :only => ['postgresql'])
       end
     end
 

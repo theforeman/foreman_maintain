@@ -32,11 +32,17 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:pg_globals][:present]
         add_steps_with_context(Procedures::Restore::PgGlobalObjects)
       end
+      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
+        feature(:service).handle_services(spinner, 'start', :only => ['postgresql'])
+      end
       if backup.file_map[:candlepin_dump][:present]
         add_steps_with_context(Procedures::Restore::CandlepinDump)
       end
       if backup.file_map[:foreman_dump][:present]
         add_steps_with_context(Procedures::Restore::ForemanDump)
+      end
+      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
+        feature(:service).handle_services(spinner, 'stop', :only => ['postgresql'])
       end
       if backup.file_map[:mongo_dump][:present]
         add_steps_with_context(Procedures::Restore::MongoDump)

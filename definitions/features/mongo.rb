@@ -72,9 +72,9 @@ class Features::Mongo < ForemanMaintain::Feature
              :hidden_patterns => [config['password']].compact)
   end
 
-  def restore(file, config = configuration)
-    execute!(base_command(core.restore_command, config, file),
-             :hidden_patterns => [config['password']].compact)
+  def restore(dir, config = configuration)
+    cmd = base_command(core.restore_command, config, File.join(dir, config['name']))
+    execute!(cmd, :hidden_patterns => [config['password']].compact)
   end
 
   def dropdb(config = configuration)
