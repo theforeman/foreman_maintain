@@ -17,13 +17,13 @@ module Procedures::Restore
     def run
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
       with_spinner('Restoring mongo dump') do |spinner|
-        handle_mongo_service('start')
+        handle_mongo_service('start', spinner)
         drop_and_restore_mongo(backup, spinner)
-        handle_mongo_service('stop')
+        handle_mongo_service('stop', spinner)
       end
     end
 
-    def handle_mongo_service(action)
+    def handle_mongo_service(action, spinner)
       if feature(:instance).database_local?(:mongo)
         feature(:service).handle_services(spinner, action,
                                           :only => feature(:mongo).services.keys)
