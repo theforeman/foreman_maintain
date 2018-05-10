@@ -9,4 +9,5 @@ CONFIG_FILE = '/etc/foreman-maintain/foreman_maintain.yml'.freeze
 ForemanMaintain.setup
 
 require 'foreman_maintain/cli'
-ForemanMaintain::Cli::MainCommand.run
+exit_code = ForemanMaintain::Cli::MainCommand.run
+exit(exit_code || 0)
