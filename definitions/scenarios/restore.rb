@@ -24,11 +24,11 @@ module ForemanMaintain::Scenarios
                              Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
       add_steps_with_context(Procedures::Restore::DropDatabases)
+      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
+        add_step(Procedures::Service::Start.new(:only => ['postgresql']))
+      end
       if backup.file_map[:pg_globals][:present]
         add_steps_with_context(Procedures::Restore::PgGlobalObjects)
-      end
-      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
-        feature(:service).handle_services(spinner, 'start', :only => ['postgresql'])
       end
       if backup.file_map[:candlepin_dump][:present]
         add_steps_with_context(Procedures::Restore::CandlepinDump)
@@ -37,12 +37,12 @@ module ForemanMaintain::Scenarios
         add_steps_with_context(Procedures::Restore::ForemanDump)
       end
       if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
-        feature(:service).handle_services(spinner, 'stop', :only => ['postgresql'])
+        add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
       if backup.file_map[:mongo_dump][:present]
         add_steps_with_context(Procedures::Restore::MongoDump)
       end
-      add_steps_with_context(Procedures::Pulp::Migrate,
+     add_steps_with_context(Procedures::Pulp::Migrate,
                              Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
