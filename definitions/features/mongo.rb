@@ -73,7 +73,7 @@ class Features::Mongo < ForemanMaintain::Feature
   end
 
   def restore(dir, config = configuration)
-    cmd = base_command(core.restore_command, config, 
+    cmd = base_command(core.restore_command, config,
                        "-d #{config['name']} #{File.join(dir, config['name'])}")
     execute!(cmd, :hidden_patterns => [config['password']].compact)
   end

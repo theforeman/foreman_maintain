@@ -42,7 +42,7 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:mongo_dump][:present]
         add_steps_with_context(Procedures::Restore::MongoDump)
       end
-     add_steps_with_context(Procedures::Pulp::Migrate,
+      add_steps_with_context(Procedures::Pulp::Migrate,
                              Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
