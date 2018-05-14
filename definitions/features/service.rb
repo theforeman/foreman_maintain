@@ -66,6 +66,42 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def perform_action_on_service(action, service)
+    if service == 'postgresql'
+      if feature(:instance).postgresql_local?
+        perform_action_on_local_service(action, service)
+      end
+      if feature(:instance).database_remote?(:candlepin_database)
+        remote_db_message('Candlepin', :candlepin_database, action)
+      end
+      if feature(:instance).database_remote?(:foreman_database)
+        remote_db_message('Foreman', :foreman_database, action)
+      end
+    elsif service =~ /^.*mongod$/ && feature(:instance).database_remote?(:mongo)
+      remote_db_message('Pulp', :mongo, action)
+    else
+      perform_action_on_local_service(action, service)
+    end
+  end
+
+  def remote_db_message(app, db, action)
+    ping = !!feature(db).ping
+    message = if %w[enable disable].include?(action)
+                " - #{app} DB is remote. Can not #{action} the service."
+              else
+                'the service is on remote host. The DB is ' + (ping ? 'UP.' : 'DOWN.')
+              end
+    if action == 'status'
+      puts "\nFor #{app} DB #{message}\n"
+    else
+      print " - #{message}"
+    end
+    logger.info(message)
+    if action == 'start' && !ping
+      raise ForemanMaintain::Error::Fail, "The remote #{app} databse is down."
+    end
+  end
+
+  def perform_action_on_local_service(action, service)
     command = service_command(action, service)
     if action == 'status'
       status = execute(command)

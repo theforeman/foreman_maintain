@@ -29,6 +29,10 @@ class Features::Instance < ForemanMaintain::Feature
     end
   end
 
+  def database_remote?(feature)
+    !!feature(feature) && !feature(feature).local?
+  end
+
   def database_local?(feature)
     !!feature(feature) && feature(feature).local?
   end

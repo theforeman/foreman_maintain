@@ -76,4 +76,35 @@ describe Features::Instance do
       end
     end
   end
+
+  describe '.database_remote?' do
+    %w[candlepin_database foreman_database mongo].each do |feature|
+      describe feature do
+        it "is false when the #{feature} is present and local" do
+          assume_feature_present(feature.to_sym) do |db|
+            db.any_instance.stubs(:local?).returns(true)
+            if feature == 'mongo'
+              db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
+            end
+          end
+          subject.database_remote?(feature.to_sym).must_equal(false)
+        end
+
+        it "is false when the #{feature} is not present" do
+          assume_feature_absent(feature.to_sym)
+          subject.database_remote?(feature.to_sym).must_equal(false)
+        end
+
+        it "is true when the #{feature} is present and remote" do
+          assume_feature_present(feature.to_sym) do |db|
+            db.any_instance.stubs(:local?).returns(false)
+            if feature == 'mongo'
+              db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
+            end
+          end
+          subject.database_remote?(feature.to_sym).must_equal(true)
+        end
+      end
+    end
+  end
 end
