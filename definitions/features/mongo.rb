@@ -31,16 +31,31 @@ class Features::Mongo < ForemanMaintain::Feature
     @configuration = load_db_config(config_file)
   end
 
+  # guess mongo version from installed packages
+  # safe method to run mongo commands prior we know
+  # what version uses the target DB
+  def available_core
+    return @core unless @core.nil? # return correct mongo ver if known
+    if @available_core.nil?
+      @available_core = ForemanMaintain::Utils::MongoCoreInstalled.new
+    end
+    @available_core
+  end
+
   def core
     if @core.nil?
-      version = server_version
-      @core = if version =~ /^3\.4/
-                logger.debug("Mongo #{version} detected, using commands from rh-mongodb34 SCL")
-                ForemanMaintain::Utils::MongoCore34.new
-              else
-                logger.debug("Mongo #{version} detected, using default commands")
-                ForemanMaintain::Utils::MongoCore.new
-              end
+      begin
+        version = server_version
+        @core = if version =~ /^3\.4/
+                  load_mongo_core_34(version)
+                else
+                  load_mongo_core_default(version)
+                end
+      rescue ForemanMaintain::Error::ExecutionError
+        # server version detection failed
+        logger.debug('Mongo version detection failed, choosing from installed versions')
+        @core = @available_core
+      end
     end
     @core
   end
@@ -78,14 +93,15 @@ class Features::Mongo < ForemanMaintain::Feature
   end
 
   def ping(config = configuration)
-    execute?(mongo_command("--eval 'ping:1'"),
+    execute?(mongo_command("--eval 'ping:1'", config),
              :hidden_patterns => [config['password']].compact)
   end
 
   def server_version(config = configuration)
     # do not use any core methods as we need this prior the core is created
-    version = execute(base_command('mongo', config, "--eval 'db.version()' #{config['name']}"),
-                      :hidden_patterns => [config['password']].compact)
+    mongo_cmd = base_command(available_core.client_command, config,
+                             "--eval 'db.version()' #{config['name']}")
+    version = execute!(mongo_cmd, :hidden_patterns => [config['password']].compact)
     version.split("\n").last
   end
 
@@ -109,6 +125,22 @@ class Features::Mongo < ForemanMaintain::Feature
   end
 
   private
+
+  def load_mongo_core_default(version)
+    unless find_package('mongodb')
+      raise ForemanMaintain::Error::Fail, 'Mongo client was not found'
+    end
+    logger.debug("Mongo #{version} detected, using default commands")
+    ForemanMaintain::Utils::MongoCore.new
+  end
+
+  def load_mongo_core_34(version)
+    unless find_package('rh-mongodb34-mongodb')
+      raise ForemanMaintain::Error::Fail, 'Mongo client ver. 3.4 was not found'
+    end
+    logger.debug("Mongo #{version} detected, using commands from rh-mongodb34 SCL")
+    ForemanMaintain::Utils::MongoCore34.new
+  end
 
   def norm_value(value)
     value = value.strip

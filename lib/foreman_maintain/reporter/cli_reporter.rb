@@ -88,7 +88,8 @@ module ForemanMaintain
       end
 
       def before_execution_starts(execution)
-        logger.info("--- Execution step '#{execution.name}' started ---")
+        label = execution.step.label.to_s.tr('_', '-')
+        logger.info("--- Execution step '#{execution.name}' [#{label}] started ---")
         puts(execution_info(execution, ''))
       end
 
