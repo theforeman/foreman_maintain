@@ -4,7 +4,8 @@ module ForemanMaintain
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
                   :storage_file, :backup_dir, :foreman_proxy_cert_path,
-                  :db_backup_dir, :completion_cache_file, :disable_commands
+                  :db_backup_dir, :completion_cache_file, :disable_commands,
+                  :enable_cron_stop, :maintenance_file
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -14,6 +15,7 @@ module ForemanMaintain
                                          [File.join(source_path, 'definitions')])
       load_log_configs
       load_backup_dir_paths
+      load_cron_option
       @foreman_proxy_cert_path = @options.fetch(:foreman_proxy_cert_path, '/etc/foreman')
       @completion_cache_file = File.expand_path(
         @options.fetch(:completion_cache_file, '~/.cache/foreman_maintain_completion.yml')
@@ -37,6 +39,12 @@ module ForemanMaintain
       @db_backup_dir = find_dir_path(
         @options.fetch(:db_backup_dir, '/var/lib/foreman-maintain/db-backups')
       )
+      @maintenance_file = '/var/lib/foreman-maintain/maintenance_file.lock'
+    end
+
+    def load_cron_option
+      opt_val = @options.fetch(:enable_cron_stop, false)
+      @enable_cron_stop = boolean?(opt_val) ? opt_val : false
     end
 
     def load_config
@@ -68,6 +76,10 @@ module ForemanMaintain
         warn e.message.inspect
       end
       dir_path
+    end
+
+    def boolean?(value)
+      [true, false].include? value
     end
   end
 end
