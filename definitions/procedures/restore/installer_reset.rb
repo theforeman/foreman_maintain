@@ -20,9 +20,9 @@ module Procedures::Restore
 
     def installer_cmd
       installer = "yes | #{feature(:installer).installer_command} "
-      installer << "--scenario #{feature(:installer).scenario_name} -v --reset"
+      installer << '-v --reset '
       if feature(:instance).foreman_proxy_with_content?
-        installer << ' --foreman-proxy-register-in-foreman false'
+        installer << '--foreman-proxy-register-in-foreman false '
       end
 
       # We always disable system checks to avoid unnecessary errors. The installer should have
@@ -31,7 +31,7 @@ module Procedures::Restore
       if feature(:foreman_proxy) &&
          feature(:foreman_proxy).with_content? &&
          check_min_version('katello-installer-base', '3.2.0')
-        installer << ' --disable-system-checks'
+        installer << '--disable-system-checks '
       end
       installer
     end
