@@ -133,8 +133,13 @@ module ForemanMaintain
         find_dir_containing_file(directory, 'postgresql.conf')
       end
 
-      def dropdb(config = configuration)
-        execute!("runuser - postgres -c 'dropdb #{config['database']}'")
+      def dropdb
+        delete_statement = psql(<<-SQL)
+          select string_agg('drop table if exists \"' || tablename || '\" cascade;', '')
+          from pg_tables
+          where schemaname = 'public';
+        SQL
+        psql(delete_statement)
       end
 
       private

@@ -9,7 +9,7 @@ module ForemanMaintain::Scenarios
       manual_detection
     end
 
-    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
@@ -23,10 +23,29 @@ module ForemanMaintain::Scenarios
                              Procedures::Restore::InstallerReset,
                              Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
-      add_steps_with_context(Procedures::Restore::DropDatabases)
+      drop_dbs(backup)
       if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
         add_step(Procedures::Service::Start.new(:only => ['postgresql']))
       end
+      restore_sql_dumps(backup)
+      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
+        add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
+      end
+      restore_mongo_dump(backup)
+      add_steps_with_context(Procedures::Pulp::Migrate,
+                             Procedures::Service::Start,
+                             Procedures::Service::DaemonReload)
+    end
+    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+
+    def drop_dbs(backup)
+      if backup.file_map[:candlepin_dump][:present] ||
+         backup.file_map[:foreman_dump][:present]
+        add_steps_with_context(Procedures::Restore::DropDatabases)
+      end
+    end
+
+    def restore_sql_dumps(backup)
       if backup.file_map[:pg_globals][:present]
         add_steps_with_context(Procedures::Restore::PgGlobalObjects)
       end
@@ -36,17 +55,13 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:foreman_dump][:present]
         add_steps_with_context(Procedures::Restore::ForemanDump)
       end
-      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
-        add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
-      end
+    end
+
+    def restore_mongo_dump(backup)
       if backup.file_map[:mongo_dump][:present]
         add_steps_with_context(Procedures::Restore::MongoDump)
       end
-      add_steps_with_context(Procedures::Pulp::Migrate,
-                             Procedures::Service::Start,
-                             Procedures::Service::DaemonReload)
     end
-    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def supported_version_check
       if feature(:downstream) && feature(:downstream).less_than_version?('6.3')
