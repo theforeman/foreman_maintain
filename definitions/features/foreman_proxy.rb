@@ -40,7 +40,8 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   def config_files(for_features = ['all'])
     configs = [
       '/etc/foreman-proxy',
-      '/usr/share/foreman-proxy/.ssh/',
+      '/usr/share/foreman-proxy/.ssh',
+      '/var/lib/foreman-proxy/ssh',
       '/etc/smart_proxy_dynflow_core/settings.yml',
       '/etc/sudoers.d/foreman-proxy'
     ]
