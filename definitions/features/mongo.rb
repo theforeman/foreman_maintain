@@ -87,6 +87,12 @@ class Features::Mongo < ForemanMaintain::Feature
              :hidden_patterns => [config['password']].compact)
   end
 
+  def restore(dir, config = configuration)
+    cmd = base_command(core.restore_command, config,
+                       "-d #{config['name']} #{File.join(dir, config['name'])}")
+    execute!(cmd, :hidden_patterns => [config['password']].compact)
+  end
+
   def dropdb(config = configuration)
     execute!(mongo_command("--eval 'db.dropDatabase()'", config),
              :hidden_patterns => [config['password']].compact)
@@ -114,7 +120,8 @@ class Features::Mongo < ForemanMaintain::Feature
         :archive => backup_file,
         :command => 'create',
         :exclude => ['mongod.lock'],
-        :transform => 's,^,var/lib/mongodb/,S'
+        :transform => 's,^,var/lib/mongodb/,S',
+        :files => '*'
       }.merge(extra_tar_options)
       feature(:tar).run(tar_options)
     end

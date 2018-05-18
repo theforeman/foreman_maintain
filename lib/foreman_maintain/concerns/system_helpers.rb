@@ -7,6 +7,7 @@ module ForemanMaintain
   module Concerns
     module SystemHelpers
       include Logger
+      include Concerns::Finders
 
       def self.included(klass)
         klass.extend(self)
@@ -182,11 +183,6 @@ module ForemanMaintain
 
       def get_lv_path(lv_name)
         execute("lvs --noheadings -o lv_path -S lv_name=#{lv_name}").strip
-      end
-
-      def local_psql_database?
-        (feature(:foreman_database) && feature(:foreman_database).local?) ||
-          (feature(:candlepin_database) && feature(:candlepin_database).local?)
       end
 
       def find_dir_containing_file(directory, target)

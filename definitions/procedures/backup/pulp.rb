@@ -33,7 +33,8 @@ module Procedures::Backup
         :exclude => ['var/lib/pulp/katello-export'],
         :listed_incremental => File.join(@backup_dir, '.pulp.snar'),
         :transform => 's,^,var/lib/pulp/,S',
-        :volume_size => @tar_volume_size
+        :volume_size => @tar_volume_size,
+        :files => '*'
       )
     end
 

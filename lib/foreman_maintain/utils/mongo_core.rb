@@ -15,6 +15,10 @@ module ForemanMaintain::Utils
     def dump_command
       'mongodump'
     end
+
+    def restore_command
+      'mongorestore'
+    end
   end
 
   class MongoCore34 < MongoCore
@@ -32,6 +36,10 @@ module ForemanMaintain::Utils
 
     def dump_command
       'scl enable rh-mongodb34 -- mongodump'
+    end
+
+    def restore_command
+      'scl enable rh-mongodb34 -- mongorestore'
     end
   end
 

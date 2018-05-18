@@ -7,7 +7,6 @@ class Features::Katello < ForemanMaintain::Feature
     end
   end
 
-  # TODO: refactor to new features?
   def data_dirs
     @dirs ||= ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql']
   end
