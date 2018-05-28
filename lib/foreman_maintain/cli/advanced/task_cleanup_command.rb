@@ -1,8 +1,6 @@
 module ForemanMaintain
   module Cli
     class TaskCleanupCommand < Base
-      include Concerns::SystemHelpers
-
       DEFAULT_RAKE_COMMAND = 'foreman-rake'.freeze
 
       option %w(-B --batch-size), 'BATCH_SIZE', 'Process tasks in batches of BATCH_SIZE, 1000 by default' do |s|
@@ -20,45 +18,14 @@ module ForemanMaintain
       option %w(-G --generate), :flag, 'Only generate the resulting command, do not run it'
 
       def execute
-        command = generate_rake.shelljoin
+        f = feature(:foreman_tasks)
+        raise ForemanMaintain::Error::Fail, 'foreman_tasks feature missing' if f.nil?
+        args = [rake_command, batch_size, states, after, search, backup?, noop?, verbose?]
         if generate?
-          reporter.puts command
+          reporter.puts f.generate_task_cleanup_command(*args)
         else
-          raise 'Task cleanup can be executed only on the foreman server' unless server?
-          execute! command
+          f.task_cleanup(*args)
         end
-      end
-
-      private
-
-      def generate_rake
-        [
-          rake_command.shellsplit,
-          'foreman_tasks:cleanup',
-          format_key_value('BATCH_SIZE', batch_size),
-          # Somewhat counterintuitively, passing empty string into the rake
-          #   causes it to match tasks in all states
-          format_key_value('STATES', states == %w(all) ? [] : states),
-          format_key_value('AFTER', after),
-          format_key_value('TASK_SEARCH', search),
-          format_key_value('TASK_BACKUP', backup?),
-          format_key_value('NOOP', noop?),
-          format_key_value('VERBOSE', verbose?)
-        ].flatten.compact
-      end
-
-      def format_key_value(key, value)
-        out_value = case value
-                    when true
-                      1
-                    when false
-                      0
-                    when Array
-                      value.join(',')
-                    else
-                      value
-                    end
-        "#{key}=#{out_value}" if out_value
       end
     end
   end

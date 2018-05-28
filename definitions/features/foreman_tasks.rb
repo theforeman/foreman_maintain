@@ -121,6 +121,28 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     check_min_version('foreman', '1.17') ? 'dynflowd' : 'foreman-tasks'
   end
 
+  def task_cleanup(*args)
+    command = generate_task_cleanup_command(*args)
+    raise 'Task cleanup can be executed only on the foreman server' unless server?
+    execute! command
+  end
+
+  def generate_task_cleanup_command(rake_command, batch_size, states, after, search, backup, noop, verbose)
+    [
+      rake_command.shellsplit,
+      'foreman_tasks:cleanup',
+      format_key_value('BATCH_SIZE', batch_size),
+      # Somewhat counterintuitively, passing empty string into the rake
+      #   causes it to match tasks in all states
+      format_key_value('STATES', states == %w(all) ? [] : states),
+      format_key_value('AFTER', after),
+      format_key_value('TASK_SEARCH', search),
+      format_key_value('TASK_BACKUP', backup),
+      format_key_value('NOOP', noop),
+      format_key_value('VERBOSE', verbose)
+    ].flatten.compact.shelljoin
+  end
+
   private
 
   def check_task_count(state, spinner)
@@ -204,5 +226,19 @@ class Features::ForemanTasks < ForemanMaintain::Feature
 
   def valid(state)
     %w[old planning pending paused].include?(state.to_s)
+  end
+
+  def format_key_value(key, value)
+    out_value = case value
+                when true
+                  1
+                when false
+                  0
+                when Array
+                  value.join(',')
+                else
+                  value
+                end
+    "#{key}=#{out_value}" if out_value
   end
 end
