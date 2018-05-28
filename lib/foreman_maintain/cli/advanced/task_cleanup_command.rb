@@ -35,19 +35,19 @@ module ForemanMaintain
         [
           rake_command.shellsplit,
           'foreman_tasks:cleanup',
-          format_kv('BATCH_SIZE', batch_size),
+          format_key_value('BATCH_SIZE', batch_size),
           # Somewhat counterintuitively, passing empty string into the rake
           #   causes it to match tasks in all states
-          format_kv('STATES', states == %w(all) ? [] : states),
-          format_kv('AFTER', after),
-          format_kv('TASK_SEARCH', search),
-          format_kv('TASK_BACKUP', backup?),
-          format_kv('NOOP', noop?),
-          format_kv('VERBOSE', verbose?)
+          format_key_value('STATES', states == %w(all) ? [] : states),
+          format_key_value('AFTER', after),
+          format_key_value('TASK_SEARCH', search),
+          format_key_value('TASK_BACKUP', backup?),
+          format_key_value('NOOP', noop?),
+          format_key_value('VERBOSE', verbose?)
         ].flatten.compact
       end
 
-      def format_kv(key, value)
+      def format_key_value(key, value)
         out_value = case value
                     when true
                       1
