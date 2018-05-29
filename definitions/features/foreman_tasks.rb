@@ -127,14 +127,16 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     execute! command
   end
 
-  def generate_task_cleanup_command(rake_command, batch_size, states, after, search, backup, noop, verbose)
+  # rubocop:disable Metrics/ParameterLists
+  def generate_task_cleanup_command(rake_command, batch_size, states, after,
+                                    search, backup, noop, verbose)
     [
       rake_command.shellsplit,
       'foreman_tasks:cleanup',
       format_key_value('BATCH_SIZE', batch_size),
       # Somewhat counterintuitively, passing empty string into the rake
       #   causes it to match tasks in all states
-      format_key_value('STATES', states == %w(all) ? [] : states),
+      format_key_value('STATES', states == %w[all] ? [] : states),
       format_key_value('AFTER', after),
       format_key_value('TASK_SEARCH', search),
       format_key_value('TASK_BACKUP', backup),
@@ -142,6 +144,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
       format_key_value('VERBOSE', verbose)
     ].flatten.compact.shelljoin
   end
+  # rubocop:enable Metrics/ParameterLists
 
   private
 
