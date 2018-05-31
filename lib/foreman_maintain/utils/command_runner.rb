@@ -27,7 +27,7 @@ module ForemanMaintain
         if @interactive
           run_interactively
         else
-          run_non_interactively &block
+          run_non_interactively(&block)
         end
         logger.debug("output of the command:\n #{hide_strings(output)}") if logger
       end

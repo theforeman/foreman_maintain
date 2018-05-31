@@ -1,22 +1,22 @@
 module Procedures::ForemanTasks
   class Cleanup < ForemanMaintain::Procedure
-    PERMITTED_STATES = %w(all pending scheduled planning planned running paused stopped)
+    PERMITTED_STATES = %w[all pending scheduled planning planned running paused stopped].freeze
     metadata do
       for_feature :foreman_tasks
       description 'Perform task cleanup'
       preparation_steps { Checks::Foreman::DBUp.new }
 
       param :states,
-            'Operate on tasks in STATES' +
+            'Operate on tasks in STATES' \
              "\nAvailable states: " + PERMITTED_STATES.join(', '),
             :array => true, :allowed_values => PERMITTED_STATES
       param :batch_size,
-             'Process tasks in batches of BATCH_SIZE, 1000 by default' do |s|
+            'Process tasks in batches of BATCH_SIZE, 1000 by default' do |s|
         Integer(s) unless s.nil?
       end
       param :after,
-             'Operate on tasks older than AFTER. Expected format is a number ' \
-             "followed by the time unit (s,h,m,y), such as '10d' for 10 days"
+            'Operate on tasks older than AFTER. Expected format is a number ' \
+            "followed by the time unit (s,h,m,y), such as '10d' for 10 days"
       param :backup, 'Backup deleted tasks', :flag => true
       param :noop, 'Do a dry run, print what would be done', :flag => true
       param :search, 'Use QUERY in scoped search format to match tasks to delete'
