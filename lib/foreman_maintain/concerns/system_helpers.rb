@@ -53,15 +53,15 @@ module ForemanMaintain
         execute?("command -v #{command_name}")
       end
 
-      def execute_runner(command, options = {})
+      def execute_runner(command, options = {}, &block)
         command_runner = Utils::CommandRunner.new(logger, command, options)
         execution.puts '' if command_runner.interactive? && respond_to?(:execution)
-        command_runner.run
+        command_runner.run &block
         command_runner
       end
 
-      def execute!(command, options = {})
-        command_runner = execute_runner(command, options)
+      def execute!(command, options = {}, &block)
+        command_runner = execute_runner(command, options, &block)
         if command_runner.success?
           command_runner.output
         else
@@ -69,8 +69,8 @@ module ForemanMaintain
         end
       end
 
-      def execute(command, options = {})
-        execute_runner(command, options).output
+      def execute(command, options = {}, &block)
+        execute_runner(command, options, &block).output
       end
 
       def execute_with_status(command, options = {})

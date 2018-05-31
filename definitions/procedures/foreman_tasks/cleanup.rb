@@ -31,8 +31,10 @@ module Procedures::ForemanTasks
       if @generate
         puts f.generate_task_cleanup_command(*args)
       else
-        with_spinner('Performing task cleanup') do |spinner|
+        message = 'Performing task cleanup'
+        with_spinner(message) do |spinner|
           f.task_cleanup(*args) { |update| spinner.update update }
+          spinner.update(message)
         end
       end
     end
