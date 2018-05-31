@@ -4,6 +4,7 @@ module Procedures::ForemanTasks
     metadata do
       for_feature :foreman_tasks
       description 'Perform task cleanup'
+      preparation_steps { Checks::Foreman::DBUp.new }
 
       param :states,
             'Operate on tasks in STATES' +
