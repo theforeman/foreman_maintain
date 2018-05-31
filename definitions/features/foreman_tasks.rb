@@ -122,8 +122,9 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def task_cleanup(*args)
-    command = generate_task_cleanup_command(*args)
     raise 'Task cleanup can be executed only on the foreman server' unless server?
+    command = generate_task_cleanup_command(*args)
+
     execute! command
   end
 
