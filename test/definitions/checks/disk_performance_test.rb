@@ -5,8 +5,7 @@ describe Checks::Disk::Performance do
   include UnitTestHelper
   let(:check_disk_performance) { described_class.new }
 
-  it 'should confine existence of hdparm and fio' do
-    described_class.stubs(:execute?).with('which hdparm').returns(true)
+  it 'should confine existence of fio' do
     described_class.stubs(:execute?).with('which fio').returns(true)
     check_disk_performance.expects(:run)
 
