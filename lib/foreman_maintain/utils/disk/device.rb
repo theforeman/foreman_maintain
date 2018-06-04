@@ -17,7 +17,8 @@ module ForemanMaintain
         def initialize(dir)
           @dir = dir
           @name = find_device
-          @io_device = init_io_device
+          logger.info "#{dir} is externally mounted" if externally_mounted?
+          @io_device = IODevice.new(dir)
         end
 
         def slow_disk_error_msg
@@ -31,14 +32,6 @@ module ForemanMaintain
         end
 
         private
-
-        def init_io_device
-          if externally_mounted?
-            IO::FileSystem
-          else
-            IO::BlockDevice
-          end.new(dir, name)
-        end
 
         def externally_mounted?
           device_type = execute("stat -f -c %T #{dir}")

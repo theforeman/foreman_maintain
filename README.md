@@ -257,11 +257,11 @@ end
 class Checks::DiskIO < ForemanMaintain::Check
   metadata do
     description 'check foreman service is running'
-    preparation_steps { Procedures::InstallPackage.new(:packages => %w[hdparm]) }
+    preparation_steps { Procedures::InstallPackage.new(:packages => %w[fio]) }
   end
 
   def run
-    execute!('hdparam ...')
+    execute!('fio ...')
   end
 end
 ```
