@@ -11,7 +11,12 @@ module Procedures::RemoteExecution
 
     def run
       with_spinner("Removing existing #{@dirpath} directory") do |_spinner|
-        execute!("rm -rf #{@dirpath}")
+        if Dir.pwd.strip.eql?(@dirpath)
+          fail! "Failed: You are trying to delete the current directory '#{@dirpath}' "\
+                'which is not possible'
+        else
+          execute!("rm -rf #{@dirpath}")
+        end
       end
     end
   end
