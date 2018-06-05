@@ -2,6 +2,9 @@ module Checks::Repositories
   class Validate < ForemanMaintain::Check
     metadata do
       description 'Validate availability of repositories'
+      preparation_steps do
+        Procedures::Packages::Install.new(:packages => [ForemanMaintain::Utils::Facter.package])
+      end
 
       confine do
         feature(:downstream)
