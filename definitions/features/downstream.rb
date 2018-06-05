@@ -54,7 +54,7 @@ class Features::Downstream < ForemanMaintain::Feature
 
   def rh_repos(sat_version)
     sat_version = version(sat_version)
-    rh_version_major = execute!('facter operatingsystemmajrelease')
+    rh_version_major = ForemanMaintain::Utils::Facter.os_major_release
     sat_version_full = "#{sat_version.major}.#{sat_version.minor}"
 
     sat_repo_id = "rhel-#{rh_version_major}-server-satellite-#{sat_version_full}-rpms"
