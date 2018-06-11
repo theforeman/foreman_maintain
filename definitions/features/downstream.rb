@@ -55,22 +55,39 @@ class Features::Downstream < ForemanMaintain::Feature
   def rh_repos(sat_version)
     sat_version = version(sat_version)
     rh_version_major = ForemanMaintain::Utils::Facter.os_major_release
-    sat_version_full = "#{sat_version.major}.#{sat_version.minor}"
 
+    rh_repos = main_rh_repos(rh_version_major)
+
+    rh_repos.concat(sat_and_tools_repos(rh_version_major, sat_version))
+
+    rh_repos << 'rhel-7-server-ansible-2-rpms' if sat_version.to_s == '6.4'
+
+    if current_minor_version == '6.3' && sat_version.to_s != '6.4' && (
+      feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
+      rh_repos << "rhel-#{rh_version_major}-server-satellite-tools-6.3-puppet4-rpms"
+    end
+
+    rh_repos
+  end
+
+  def sat_and_tools_repos(rh_version_major, sat_version)
+    sat_version_full = "#{sat_version.major}.#{sat_version.minor}"
     sat_repo_id = "rhel-#{rh_version_major}-server-satellite-#{sat_version_full}-rpms"
     sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-#{sat_version_full}-rpms"
-    # Override to use Beta repositories for 6.4 until GA
+
+    # Override to use Beta repositories for sat version until GA
     if sat_version.to_s == '6.4'
       sat_repo_id = "rhel-server-#{rh_version_major}-satellite-6-beta-rpms"
       sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
     end
 
-    rh_repos = ["rhel-#{rh_version_major}-server-rpms",
-                "rhel-server-rhscl-#{rh_version_major}-rpms",
-                "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms",
-                sat_tools_repo_id, sat_repo_id]
-    rh_repos << 'rhel-7-server-ansible-2-rpms' if sat_version.to_s == '6.4'
-    rh_repos
+    [sat_repo_id, sat_tools_repo_id]
+  end
+
+  def main_rh_repos(rh_version_major)
+    ["rhel-#{rh_version_major}-server-rpms",
+     "rhel-server-rhscl-#{rh_version_major}-rpms",
+     "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"]
   end
 
   def version_from_source
