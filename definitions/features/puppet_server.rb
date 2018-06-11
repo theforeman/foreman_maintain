@@ -6,11 +6,15 @@ class Features::PuppetServer < ForemanMaintain::Feature
     # is a part of httpd and relies on httpd service to restart, therefore
     # not requiring a separate service to restart
     confine do
-      find_package('puppetserver')
+      find_package('puppetserver') || find_package('puppet')
     end
   end
 
   def services
-    { 'puppetserver' => 30 }
+    find_package('puppetserver') ? { 'puppetserver' => 30 } : {}
+  end
+
+  def puppet_version
+    version(execute!('puppet --version'))
   end
 end
