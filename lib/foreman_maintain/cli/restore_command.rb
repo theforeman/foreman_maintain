@@ -3,10 +3,10 @@ module ForemanMaintain
     class RestoreCommand < Base
       interactive_option
       parameter 'BACKUP_DIR', 'Path to backup directory to restore',
-                :attribute_name => :backup_dir
+                :attribute_name => :backup_dir, :completion => { :directory => {} }
 
       option ['-i', '--incremental'], :flag, 'Restore an incremental backup',
-             :attribute_name => :incremental
+             :attribute_name => :incremental, :completion => { :directory => {} }
 
       def execute
         scenario = Scenarios::Restore.new(

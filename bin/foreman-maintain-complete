@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require 'English'
+project_root = File.expand_path('../..', __FILE__)
+$LOAD_PATH.unshift(File.join(project_root, 'lib'))
+CONFIG_FILE = '/etc/foreman-maintain/foreman_maintain.yaml'.freeze
+system('which foreman_maintain > /dev/null 2>&1')
+found = $CHILD_STATUS.success?
+FOREMAN_MAINTAIN = found ? 'foreman-maintain' : File.join(project_root, 'bin/foreman-maintain')
+
+require 'yaml'
+require 'foreman_maintain/utils/bash'
+
+# rubocop:disable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
+def cache_file(config_file)
+  config = YAML.load(File.open(config_file))
+  config[:completion_cache]
+rescue
+end
+# rubocop:enable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
+
+config_file = if File.exist?(CONFIG_FILE)
+                CONFIG_FILE
+              else
+                File.join(project_root, 'config/foreman_maintain.yml')
+              end
+completion_cache_file = cache_file(config_file) || '~/.cache/foreman_maintain_completion.yaml'
+completion_cache_file = File.expand_path(completion_cache_file)
+
+# build the cache if it does not exist
+`#{FOREMAN_MAINTAIN} advanced prebuild-bash-completion` unless File.exist?(completion_cache_file)
+
+dict = ForemanMaintain::Utils::Bash::Completion.load_description(completion_cache_file)
+
+comp_line = ENV['COMP_LINE']
+comp_args = comp_line.split(' ', 2).last
+
+result = ForemanMaintain::Utils::Bash::Completion.new(dict).complete(comp_args)
+
+puts result.join("\n")

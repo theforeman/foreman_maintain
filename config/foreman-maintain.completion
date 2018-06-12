@@ -1,0 +1,5 @@
+#
+# Foreman Maintain bash completion script
+#
+
+complete -C foreman-maintain-complete foreman-maintain
