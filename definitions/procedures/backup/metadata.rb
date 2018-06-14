@@ -11,11 +11,11 @@ module Procedures::Backup
     def run
       with_spinner('Collecting metadata') do |spinner|
         metadata = {}
-        metadata['os_version'] = release_info(spinner)
-        metadata['plugin_list'] = plugin_list(spinner) || []
-        metadata['proxy_features'] = proxy_feature_list(spinner) || []
-        metadata['rpms'] = rpms(spinner)
-        metadata['incremental'] = @incremental_dir || false
+        metadata[':os_version'] = release_info(spinner)
+        metadata[':plugin_list'] = plugin_list(spinner) || []
+        metadata[':proxy_features'] = proxy_feature_list(spinner) || []
+        metadata[':rpms'] = rpms(spinner)
+        metadata[':incremental'] = @incremental_dir || false
         save_metadata(metadata, spinner)
       end
     end
