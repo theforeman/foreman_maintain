@@ -387,34 +387,38 @@ foreman-maintain config
 
 ## Bash completion
 
+The completion offers suggestion of possible command-line subcommands and their options
+as usual. It can also suggest values for options and params where file
+or directory path is expected.
+
 Bash completion is automatically installed by RPM. To use it for development setup 
 `cp ./config/foreman-maintain.completion /etc/bash_completion.d/foreman-maintain` 
 and load it to the current shell `source /etc/bash_completion.d/foreman-maintain`.
+Make sure the `$PWD/bin` is in `PATH` or there is full path to `foreman-maintain-complete`
+executable specified in `/etc/bash_completion.d/foreman-maintain`.
 
 Bash completion for foreman-maintain needs pre-built cache that holds description of 
 all subcommands and its parameters. The cache is located by default in 
 `~/.cache/foreman_maintain_completion.yml`. The location can be changed in foreman-maintain's
-config file. The cache is pre-built automatiacally during RPM install, can be built manually
-with `foreman-maintain advanced prebuild-bash-completion` or is built automatically when
-completion is used and the cache is missing (this may cause slight delay).
-
-The completion offers suggestion of possible command-line subcommands and their options
-as usual. It can also suggest values for options and params where it should be file
-or directory path.
+config file. The cache can be built manually with 
+`foreman-maintain advanced prebuild-bash-completion` or is built automatically when
+completion is used and the cache is missing (this may cause slight delay). The cache expires 
+after installer scenario answer file changed (it indicates that the features on the instance
+may have changed which has impact on foreman-maintain CLI options and subcommands).
 
 ####  Available value types
 
 Completion of values is dependent on CLI option and prameter settings, e.g.:
 
 ```ruby
-  parameter 'BACKUP_DIR', 'Path to backup dir', :completion => { :directory => {} }
+  parameter 'BACKUP_DIR', 'Path to backup dir', :completion => { :type => :directory }
 ```
 
 Possible options for the `:completion` attribute are:
- - `{}` option has no value, default for flags
- - `{ :value => {} }` option has value of unknown type, no suggestions for the value, default
- - `{ :directory => {} }` value is directory, suggestions follow directory structure
- - `{ :file => { :filter => '\.txt$' } }` value is file, suggestions follow directory structure, 
+ - `{ :type => :flag }` option has no value, default for flags
+ - `{ :type => :value }` option has value of unknown type, no suggestions for the value, default
+ - `{ :type => :directory }` value is directory, suggestions follow directory structure
+ - `{ :type => :file, :filter => '\.txt$' }` value is file, suggestions follow directory structure, 
  	optional `:filter` is regexp to filter the results.
  
 

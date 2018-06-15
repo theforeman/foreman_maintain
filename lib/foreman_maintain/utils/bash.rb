@@ -24,12 +24,9 @@ module ForemanMaintain
         end
 
         def self.load_description(path)
-          begin
-            description = YAML.load(File.open(path))
-          rescue Errno::ENOENT
-            description = {}
-          end
-          description
+          YAML.load(File.open(path))
+        rescue Errno::ENOENT
+          {}
         end
 
         private
@@ -39,62 +36,49 @@ module ForemanMaintain
             (finish_option_or_subcommand(dict, incomplete) + finish_params(dict, incomplete))
         end
 
-        def finish_params(dict, incomplete)
-          if dict.key?(:params)
-            if dict[:params].first.key?(:directory)
-              directories(incomplete)
-            elsif dict[:params].first.key?(:file)
-              files(incomplete, dict[:params].first[:file])
-            else
-              []
-            end
-          else
-            []
-          end
-        end
-
         def finish_option_or_subcommand(dict, incomplete)
-          dict.keys.select { |k| k.is_a?(String) && k =~ /^#{incomplete}/ }
-        end
-
-        def finish_option_value(dict, incomplete)
-          if dict.key?(:directory)
-            directories(incomplete)
-          elsif dict.key?(:file)
-            files(incomplete, dict[:file])
-          end
+          dict.keys.select { |k| k.is_a?(String) && k =~ /^#{incomplete}/ }.map { |k| k + ' ' }
         end
 
         def next_word(dict)
           next_option_value(dict) || (next_option_or_subcommand(dict) + next_param(dict))
         end
 
-        def next_param(dict)
-          if dict.key?(:params)
-            if dict[:params].first.key?(:directory)
-              directories
-            elsif dict[:params].first.key?(:file)
-              files('', dict[:params].first[:file])
-            elsif dict[:params].first.key?(:value)
+        def next_option_or_subcommand(dict)
+          dict.keys.select { |k| k.is_a?(String) }.map { |k| k + ' ' }
+        end
+
+        def complete_value(value_description, partial, is_param)
+          case value_description[:type]
+          when :value
+            if !partial.empty?
+              []
+            elsif is_param
               ['--->', 'Add parameter']
+            else
+              ['--->', 'Add option <value>']
             end
-          else
-            []
+          when :directory
+            directories(partial)
+          when :file
+            files(partial, value_description)
           end
         end
 
-        def next_option_or_subcommand(dict)
-          dict.keys.select { |k| k.is_a?(String) }
+        def finish_params(dict, incomplete)
+          dict.key?(:params) ? complete_value(dict[:params].first, incomplete, true) : []
+        end
+
+        def finish_option_value(dict, incomplete)
+          complete_value(dict, incomplete, false)
+        end
+
+        def next_param(dict)
+          dict.key?(:params) ? complete_value(dict[:params].first, '', true) : []
         end
 
         def next_option_value(dict)
-          if dict.key?(:value)
-            ['--->', 'Add option <value>']
-          elsif dict.key?(:directory)
-            directories
-          elsif dict.key?(:file)
-            files('', dict[:file])
-          end
+          complete_value(dict, '', false) if dict.key?(:type)
         end
 
         def traverse_tree(dict, path)
@@ -124,11 +108,11 @@ module ForemanMaintain
         end
 
         def parse_option(dict, path)
-          if dict[path.first].empty? # flag
+          if dict[path.first][:type] == :flag # flag
             traverse_tree(dict, path[1..-1])
           elsif path.length >= 2 # option with value
             traverse_tree(dict, path[2..-1])
-          else
+          else # option with value missing
             [dict[path.first], path[1..-1]]
           end
         end
@@ -136,7 +120,7 @@ module ForemanMaintain
         def directories(partial = '')
           dirs = []
           dirs += Dir.glob("#{partial}*").select { |f| File.directory?(f) }
-          dirs += dirs.map { |d| d + '/' } if dirs.length == 1
+          dirs = dirs.map { |d| d + '/' } if dirs.length == 1
           dirs
         end
 
@@ -146,7 +130,7 @@ module ForemanMaintain
           file_names += Dir.glob("#{partial}*").select do |f|
             File.directory?(f) || f =~ /#{filter}/
           end
-          file_names.map { |f| File.directory?(f) ? f + '/' : f }
+          file_names.map { |f| File.directory?(f) ? f + '/' : f + ' ' }
         end
       end
     end

@@ -6,24 +6,24 @@ module ForemanMaintain
     describe '#complete' do
       let(:command_map) do
         {
-          'upgrade' => {},
+          'upgrade' => { :type => :flag },
           'backup' => {
             'online' => {
-              '-y' => {},
-              '--help' => {},
-              '--verify' => { :enum => %w[y n] }, # TODO
-              '--features' => { :multienum => %w[tftp dns all] }, # TODO
-              '--ids' => { :list => {} }, # TODO
-              '--log' => { :file => { :filter => '.*\.log$' } },
-              '--pool' => { :directory => {} },
-              '-t' => { :value => {} },
-              :params => [{ :directory => {} }, { :value => {} }, { :file => {} }]
+              '-y' => { :type => :flag },
+              '--help' => { :type => :flag },
+              '--verify' => { :type => :enum, :values => %w[y n] }, # TODO
+              '--features' => { :type => :multienum, :values => %w[tftp dns all] }, # TODO
+              '--ids' => { :type => :list }, # TODO
+              '--log' => { :type => :file, :filter => '.*\.log$' },
+              '--pool' => { :type => :directory },
+              '-t' => { :type => :value },
+              :params => [{ :type => :directory }, { :type => :value }, { :type => :file }]
             },
-            '--help' => {},
-            '--debug' => {}
+            '--help' => { :type => :flag },
+            '--debug' => { :type => :flag }
           },
-          '--help' => {},
-          '-h' => {}
+          '--help' => { :type => :flag },
+          '-h' => { :type => :flag }
         }
       end
 
@@ -32,23 +32,23 @@ module ForemanMaintain
       end
 
       it 'returns options when no input given' do
-        result = subject.complete('')
-        result.must_equal ['upgrade', 'backup', '--help', '-h']
+        result = subject.complete('').sort
+        result.must_equal ['upgrade ', 'backup ', '--help ', '-h '].sort
       end
 
       it 'returns filtered options when partial input is given' do
-        result = subject.complete('-')
-        result.must_equal ['--help', '-h']
+        result = subject.complete('-').sort
+        result.must_equal ['--help ', '-h '].sort
       end
 
       it 'returns filtered options when partial input is given' do
         result = subject.complete('backup')
-        result.must_equal ['backup']
+        result.must_equal ['backup ']
       end
 
       it 'returns options when subcommand is given' do
-        result = subject.complete('backup ')
-        result.must_equal ['online', '--help', '--debug']
+        result = subject.complete('backup ').sort
+        result.must_equal ['online ', '--help ', '--debug '].sort
       end
 
       it 'returns no options when subcommand is wrong' do
@@ -69,19 +69,19 @@ module ForemanMaintain
       # multiple options in one subcommand
       it 'allows mutiple options of the same subcommand' do
         result = subject.complete('backup online -y --he')
-        result.must_equal ['--help']
+        result.must_equal ['--help ']
       end
 
       # multiple options with values in one subcommand
       it 'allows mutiple options with values of the same subcommand' do
         result = subject.complete('backup online -t value --he')
-        result.must_equal ['--help']
+        result.must_equal ['--help ']
       end
 
       # subcommand after options
       it 'allows subcommand after options' do
         result = subject.complete('backup --debug onlin')
-        result.must_equal ['online']
+        result.must_equal ['online ']
       end
 
       describe 'file and dir completion' do
@@ -99,8 +99,8 @@ module ForemanMaintain
         # value at the cli end (backup dir)
         it 'offers parameters of dictionary type' do
           result = subject.complete('backup online ')
-          result.must_include '-y'
-          result.must_include '--help'
+          result.must_include '-y '
+          result.must_include '--help '
           result.must_include 'dir_a'
           result.must_include 'dir_b'
         end
@@ -132,7 +132,7 @@ module ForemanMaintain
 
         it 'offers options of a file type with completion for unfinished values - file' do
           result = subject.complete('backup online --log dir_a/alpha/')
-          result.must_equal ['dir_a/alpha/a.log', 'dir_a/alpha/b.log']
+          result.must_equal ['dir_a/alpha/a.log ', 'dir_a/alpha/b.log ']
         end
 
         it 'offers options of a file type with completion' do
@@ -142,7 +142,7 @@ module ForemanMaintain
 
         it 'offers parameters of dictionary type with completion, adding slash on single option' do
           result = subject.complete('backup online dir_a/a')
-          result.must_equal ['dir_a/alpha', 'dir_a/alpha/']
+          result.must_equal ['dir_a/alpha/']
         end
 
         it 'supports multiple parameters' do

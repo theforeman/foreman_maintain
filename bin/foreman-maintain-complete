@@ -31,6 +31,13 @@ completion_cache_file = File.expand_path(completion_cache_file)
 
 dict = ForemanMaintain::Utils::Bash::Completion.load_description(completion_cache_file)
 
+# regenerate and reload cache if it expired
+sha1sum = `sha1sum #{dict[:expire][:file]}`
+if sha1sum.strip != dict[:expire][:sha1sum].strip
+  `#{FOREMAN_MAINTAIN} advanced prebuild-bash-completion`
+  dict = ForemanMaintain::Utils::Bash::Completion.load_description(completion_cache_file)
+end
+
 comp_line = ENV['COMP_LINE']
 comp_args = comp_line.split(' ', 2).last
 

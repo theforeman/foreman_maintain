@@ -33,7 +33,7 @@ module ForemanMaintain
         def common_backup_options
           # TODO: BACKUP_DIR in f-m config - should be default?
           parameter 'BACKUP_DIR', 'Path to backup dir',
-                    :completion => { :directory => {} },
+                    :completion => { :type => :directory },
                     :attribute_name => :backup_root_dir do |dir|
             File.expand_path(dir)
           end
@@ -46,7 +46,7 @@ module ForemanMaintain
           end
           option ['-i', '--incremental'], 'PREVIOUS_BACKUP_DIR',
                  'Backup changes since previous backup',
-                 :completion => { :file => {} } do |dir|
+                 :completion => { :type => :file } do |dir|
             unless File.directory?(dir)
               raise ArgumentError, "Previous backup directory does not exist: #{dir}"
             end

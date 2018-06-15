@@ -20,13 +20,21 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def answers
+    load_answers(configuration)
+  end
+
+  def configuration
+    YAML.load_file(config_file)
+  end
+
+  def config_file
     case @installer_type
     when :scenarios
-      last_scenario_answers
+      last_scenario_config
     when :legacy_katello
-      load_answers(File.join(config_directory, 'katello-installer.yaml'))
+      File.join(config_directory, 'katello-installer.yaml')
     when :legacy_capsule
-      load_answers(File.join(config_directory, 'capsule-installer.yaml'))
+      File.join(config_directory, 'capsule-installer.yaml')
     end
   end
 
@@ -87,17 +95,8 @@ class Features::Installer < ForemanMaintain::Feature
 
   private
 
-  def load_answers(config_file)
-    config = YAML.load_file(config_file)
+  def load_answers(config)
     YAML.load_file(config[:answer_file])
-  end
-
-  def scenario_answers(scenario)
-    load_answers(File.join(config_directory, "scenarios.d/#{scenario}.yaml"))
-  end
-
-  def last_scenario_answers
-    scenario_answers(last_scenario)
   end
 
   def last_scenario_config

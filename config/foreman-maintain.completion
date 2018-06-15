@@ -2,4 +2,4 @@
 # Foreman Maintain bash completion script
 #
 
-complete -C foreman-maintain-complete foreman-maintain
+complete -C foreman-maintain-complete -o nospace foreman-maintain

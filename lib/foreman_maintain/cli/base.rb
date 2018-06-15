@@ -91,8 +91,8 @@ module ForemanMaintain
       def self.option(switches, type, description, opts = {}, &block)
         multivalued = opts.delete(:multivalued)
         completion_type = opts.delete(:completion)
-        completion_type = {} if completion_type.nil? && type == :flag
-        completion_type ||= { :value => {} }
+        completion_type = { :type => :flag } if completion_type.nil? && type == :flag
+        completion_type ||= { :type => :value }
         [switches].flatten(1).each { |s| completion_types[s] = completion_type }
         description += ' (comma-separated list)' if multivalued
         super(switches, type, description, opts) do |value|
@@ -105,7 +105,7 @@ module ForemanMaintain
       def self.parameter(name, description, opts = {}, &block)
         unless [:subcommand_name, :subcommand_arguments].include?(opts[:attribute_name])
           completion_type = opts.delete(:completion)
-          completion_type ||= { :value => {} }
+          completion_type ||= { :type => :value }
           completion_types[:params] << completion_type
         end
         super(name, description, opts, &block)
