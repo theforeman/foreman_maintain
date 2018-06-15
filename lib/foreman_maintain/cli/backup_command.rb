@@ -46,7 +46,7 @@ module ForemanMaintain
           end
           option ['-i', '--incremental'], 'PREVIOUS_BACKUP_DIR',
                  'Backup changes since previous backup',
-                 :completion => { :type => :file } do |dir|
+                 :completion => { :type => :directory } do |dir|
             unless File.directory?(dir)
               raise ArgumentError, "Previous backup directory does not exist: #{dir}"
             end

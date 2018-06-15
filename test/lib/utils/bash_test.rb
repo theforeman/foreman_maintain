@@ -52,7 +52,12 @@ module ForemanMaintain
       end
 
       it 'returns no options when subcommand is wrong' do
-        result = subject.complete('advanced -h')
+        result = subject.complete('unknown -h')
+        result.must_equal []
+      end
+
+      it 'returns no options when there are no other params allowed' do
+        result = subject.complete('backup online /tmp some /tmp extra')
         result.must_equal []
       end
 

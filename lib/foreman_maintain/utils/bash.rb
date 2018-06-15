@@ -16,11 +16,8 @@ module ForemanMaintain
 
           return [] unless path.empty? # lost during traversing
 
-          if @complete_line
-            next_word(dict)
-          else
-            finish_word(dict, full_path.last)
-          end
+          partial = @complete_line ? '' : full_path.last
+          finish_word(dict, partial)
         end
 
         def self.load_description(path)
@@ -33,19 +30,11 @@ module ForemanMaintain
 
         def finish_word(dict, incomplete)
           finish_option_value(dict, incomplete) ||
-            (finish_option_or_subcommand(dict, incomplete) + finish_params(dict, incomplete))
+            (finish_option_or_subcommand(dict, incomplete) + finish_param(dict, incomplete))
         end
 
         def finish_option_or_subcommand(dict, incomplete)
           dict.keys.select { |k| k.is_a?(String) && k =~ /^#{incomplete}/ }.map { |k| k + ' ' }
-        end
-
-        def next_word(dict)
-          next_option_value(dict) || (next_option_or_subcommand(dict) + next_param(dict))
-        end
-
-        def next_option_or_subcommand(dict)
-          dict.keys.select { |k| k.is_a?(String) }.map { |k| k + ' ' }
         end
 
         def complete_value(value_description, partial, is_param)
@@ -65,20 +54,16 @@ module ForemanMaintain
           end
         end
 
-        def finish_params(dict, incomplete)
-          dict.key?(:params) ? complete_value(dict[:params].first, incomplete, true) : []
+        def finish_param(dict, incomplete)
+          if dict[:params] && !dict[:params].empty?
+            complete_value(dict[:params].first, incomplete, true)
+          else
+            []
+          end
         end
 
         def finish_option_value(dict, incomplete)
-          complete_value(dict, incomplete, false)
-        end
-
-        def next_param(dict)
-          dict.key?(:params) ? complete_value(dict[:params].first, '', true) : []
-        end
-
-        def next_option_value(dict)
-          complete_value(dict, '', false) if dict.key?(:type)
+          complete_value(dict, incomplete, false) if dict.key?(:type)
         end
 
         def traverse_tree(dict, path)

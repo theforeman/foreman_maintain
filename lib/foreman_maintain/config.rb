@@ -16,7 +16,7 @@ module ForemanMaintain
       load_backup_dir_paths
       @foreman_proxy_cert_path = @options.fetch(:foreman_proxy_cert_path, '/etc/foreman')
       @completion_cache = File.expand_path(
-        @options.fetch(:completion_cache, '~/.cache/foreman_maintain_completion.yaml')
+        @options.fetch(:completion_cache, '~/.cache/foreman_maintain_completion.yml')
       )
     end
 
