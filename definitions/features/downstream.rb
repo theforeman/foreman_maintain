@@ -62,13 +62,13 @@ class Features::Downstream < ForemanMaintain::Feature
     # Override to use Beta repositories for 6.4 until GA
     if sat_version.to_s == '6.4'
       sat_repo_id = "rhel-server-#{rh_version_major}-satellite-6-beta-rpms"
+      sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
     end
 
     rh_repos = ["rhel-#{rh_version_major}-server-rpms",
                 "rhel-server-rhscl-#{rh_version_major}-rpms",
                 "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms",
-                sat_tools_repo_id,
-                sat_repo_id]
+                sat_tools_repo_id, sat_repo_id]
     rh_repos << 'rhel-7-server-ansible-2-rpms' if sat_version.to_s == '6.4'
     rh_repos
   end
