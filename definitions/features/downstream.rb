@@ -1,10 +1,21 @@
 class Features::Downstream < ForemanMaintain::Feature
+  MIN_MEM = 7_900_000
+  DISPLAY_MEM = 8
+
   metadata do
     label :downstream
 
     confine do
       downstream_installation?
     end
+  end
+
+  def min_mem
+    MIN_MEM
+  end
+
+  def display_mem
+    DISPLAY_MEM
   end
 
   def less_than_version?(version)

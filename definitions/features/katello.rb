@@ -1,10 +1,21 @@
 class Features::Katello < ForemanMaintain::Feature
+  MIN_MEM = 7_900_000
+  DISPLAY_MEM = 8
+
   metadata do
     label :katello
 
     confine do
       find_package('katello')
     end
+  end
+
+  def min_mem
+    MIN_MEM
+  end
+
+  def display_mem
+    DISPLAY_MEM
   end
 
   def data_dirs
