@@ -10,22 +10,21 @@ class Checks::SystemRegistration < ForemanMaintain::Check
   end
 
   def run
-    if rhsm_hostname_eql_hostname?
-      if feature(:downstream)
-        notification_message = <<-MESSAGE
-  Satellite is self registered
+    assert(
+      !rhsm_hostname_eql_hostname?,
+      notification_message,
+      :next_steps => [
+        Procedures::KnowledgeBaseArticle.new(:doc => 'migrate_self_registered_satellite_63')
+      ]
+    )
+  end
 
-  Self registered satellite won't be supported as of Satellite version 6.3. Please follow following documentation to resolve.
-
-  https://access.redhat.com/documentation/en-us/red_hat_satellite/6.3/html/installation_guide/preparing_your_environment_for_installation#system_requirements
-
-  https://access.redhat.com/documentation/en-us/red_hat_satellite/6.3/html/upgrading_and_updating_red_hat_satellite/upgrading_red_hat_satellite#migrating_a_self_registered_satellite
+  def notification_message
+    <<-MESSAGE.strip_heredoc
+      Satellite is self registered.
+      Self registered satellite are not supported as of Satellite version 6.3.
+      Please follow steps to migrate.
     MESSAGE
-        fail!(notification_message)
-      else
-        fail! 'System is self registered'
-      end
-    end
   end
 
   def rhsm_hostname
@@ -37,6 +36,6 @@ class Checks::SystemRegistration < ForemanMaintain::Check
   end
 
   def rhsm_hostname_eql_hostname?
-    @result ||= rhsm_hostname.casecmp(hostname).zero?
+    rhsm_hostname.casecmp(hostname).zero?
   end
 end
