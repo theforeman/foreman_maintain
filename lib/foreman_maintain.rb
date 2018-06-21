@@ -60,7 +60,7 @@ module ForemanMaintain
     def update_path
       paths = ['/sbin']
       existing_paths = ENV['PATH'].split(':')
-      paths = paths - existing_paths
+      paths -= existing_paths
       if paths.any?
         paths = paths.join(':').chomp(':')
         ENV['PATH'] = "#{ENV['PATH']}:#{paths}"
