@@ -21,7 +21,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
 
   def check_option_using_cpdb_help(option_name, parent_cmd = '')
     parent_cmd = '/usr/share/candlepin/cpdb' if parent_cmd.empty?
-    help_cmd = "#{parent_cmd} --help |  grep -c '\\-\\-#{option_name} '"
+    help_cmd = "#{parent_cmd} --help |  grep -c '\\-\\-#{option_name}'"
     execute?(help_cmd)
   end
 
@@ -31,6 +31,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
     main_cmd += format_shell_args(
       '-u' => configuration['username'], '-p' => configuration[%(password)]
     )
+    main_cmd += format_shell_args(extend_with_db_options)
     execute_with_status(main_cmd, :hidden_patterns => [configuration['password']])
   end
 
@@ -45,21 +46,50 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def load_configuration
     raw_config = File.read(CANDLEPIN_DB_CONFIG)
     full_config = Hash[raw_config.scan(/(^[^#\n][^=]*)=(.*)/)]
     uri_regexp = %r{://(([^/:]*):?([^/]*))/([^?]*)\??(ssl=([^&]*))?}
-    uri = uri_regexp.match(full_config['jpa.config.hibernate.connection.url'])
+    url = full_config['jpa.config.hibernate.connection.url']
+    uri = uri_regexp.match(url)
     @configuration = {
       'username' => full_config['jpa.config.hibernate.connection.username'],
       'password' => full_config['jpa.config.hibernate.connection.password'],
       'database' => uri[4],
       'host' => uri[2],
       'port' => uri[3] || '5432',
-      'ssl' => (uri[6] == 'true'),
+      'ssl' => (fetch_extra_param(url, 'ssl') == 'true'),
+      'sslfactory' => fetch_extra_param(url, 'sslfactory'),
       'driver_class' => full_config['jpa.config.hibernate.connection.driver_class'],
-      'url' => full_config['jpa.config.hibernate.connection.url']
+      'url' => url
     }
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def extend_with_db_options
+    db_options = { '-d' => construct_database_string }
+    if check_option_using_cpdb_help('dbhost')
+      db_options['--dbhost'] = configuration['host']
+      db_options['--dbport'] = configuration['port']
+    end
+    db_options
+  end
+
+  def construct_database_string
+    db_str = configuration['database']
+    extra_opts = []
+    extra_opts << "ssl=#{configuration['ssl']}" if configuration['ssl']
+    extra_opts << "sslfactory=#{configuration['sslfactory']}" if configuration['sslfactory']
+    db_str += "?#{extra_opts.join('&')}" unless extra_opts.empty?
+    db_str
+  end
+
+  def fetch_extra_param(url, key_name)
+    query_string = url.split('?')[1]
+    return nil unless query_string
+    output = /#{key_name}=([^&]*)?/.match(query_string)
+    output[1] if output
   end
 
   def cpdb_validate_cmd
