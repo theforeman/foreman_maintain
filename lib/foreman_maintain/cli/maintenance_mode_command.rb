@@ -23,14 +23,17 @@ module ForemanMaintain
         def execute
           scenario = Scenarios::MaintenanceModeStatus.new
           run_scenario(scenario)
-          file_check_procedure = fetch_procedure(
-            scenario, Procedures::MaintenanceFile::Check
-          )
-          if file_check_procedure.exit_code_to_override
-            exit file_check_procedure.exit_code_to_override
-          else
-            exit runner.exit_code
-          end
+          exit runner.exit_code
+        end
+      end
+
+      subcommand 'is-enabled', 'Get maintenance-mode status code' do
+        def execute
+          scenario = Scenarios::IsMaintenanceMode.new
+          run_scenario(scenario)
+          procedure_used = fetch_procedure(scenario, Procedures::MaintenanceMode::IsEnabled)
+          puts procedure_used.status_code
+          exit runner.exit_code
         end
 
         def fetch_procedure(scenario, procedure_class_name)

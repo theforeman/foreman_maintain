@@ -2,7 +2,7 @@ module Procedures::Iptables
   class RemoveChain < ForemanMaintain::Procedure
     metadata do
       label :iptables_remove_chain
-      for_feature :maintenance_mode
+      for_feature :iptables
       description 'Remove chain from iptables'
       tags :post_migrations
       advanced_run false
@@ -10,7 +10,7 @@ module Procedures::Iptables
     end
 
     def run
-      feature(:maintenance_mode).perform_action(:iptables, 'remove_chain')
+      feature(:iptables).perform_action('remove_chain')
     end
   end
 end

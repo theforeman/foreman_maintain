@@ -28,4 +28,4 @@
 
 # Mention true/false.
 # Value true will to enable cron service stop/restart on maintenance-mode start/stop
-# :enable_cron_stop: false
+# :manage_crond: true

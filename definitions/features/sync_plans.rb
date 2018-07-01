@@ -36,6 +36,14 @@ class Features::SyncPlans < ForemanMaintain::Feature
     storage[:sync_plans] = @data
   end
 
+  def maintenance_mode?
+    default_storage = ForemanMaintain.storage(:default)
+    load_from_storage(default_storage)
+    return nil if both_empty?
+    return 0 if @data[:enabled] && key_empty?(:disabled)
+    1
+  end
+
   private
 
   def update_records(ids, enabled)
@@ -63,7 +71,16 @@ class Features::SyncPlans < ForemanMaintain::Feature
       @data[:disabled] -= new_ids
       @data[:enabled] = new_ids
     else
+      @data[:disabled] = [] unless @data[:disabled]
       @data[:disabled].concat(new_ids)
     end
+  end
+
+  def both_empty?
+    key_empty?(:disabled) && key_empty?(:enabled)
+  end
+
+  def key_empty?(key_name)
+    (@data[key_name].nil? || @data[key_name] && @data[key_name].empty?)
   end
 end

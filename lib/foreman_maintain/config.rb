@@ -5,7 +5,7 @@ module ForemanMaintain
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
                   :storage_file, :backup_dir, :foreman_proxy_cert_path,
                   :db_backup_dir, :completion_cache_file, :disable_commands,
-                  :enable_cron_stop, :maintenance_file
+                  :manage_crond, :maintenance_file
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -43,8 +43,8 @@ module ForemanMaintain
     end
 
     def load_cron_option
-      opt_val = @options.fetch(:enable_cron_stop, false)
-      @enable_cron_stop = boolean?(opt_val) ? opt_val : false
+      opt_val = @options.fetch(:manage_crond, true)
+      @manage_crond = boolean?(opt_val) ? opt_val : false
     end
 
     def load_config

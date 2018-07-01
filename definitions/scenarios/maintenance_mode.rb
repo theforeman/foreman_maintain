@@ -9,8 +9,12 @@ module ForemanMaintain::Scenarios
 
     def compose
       add_step(Procedures::Iptables::AddChain.new)
-      add_step(Procedures::Cron::Stop.new)
-      add_step(Procedures::MaintenanceFile::Create.new)
+      add_step(Procedures::SyncPlans::Disable.new)
+      puts feature(:cron).inspect
+      if feature(:cron)
+        cron_service = feature(:cron).services.key(5)
+        add_step(Procedures::Service::Stop.new(:only => cron_service))
+      end
     end
   end
 
@@ -24,8 +28,11 @@ module ForemanMaintain::Scenarios
 
     def compose
       add_step(Procedures::Iptables::RemoveChain.new)
-      add_step(Procedures::Cron::Start.new)
-      add_step(Procedures::MaintenanceFile::Remove.new)
+      add_step(Procedures::SyncPlans::Enable.new)
+      if feature(:cron)
+        cron_service = feature(:cron).services.key(5)
+        add_step(Procedures::Service::Start.new(:only => cron_service))
+      end
     end
   end
 
@@ -38,7 +45,20 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_step(Procedures::MaintenanceFile::Check.new)
+      add_step(Procedures::MaintenanceMode::Check.new)
+    end
+  end
+
+  class IsMaintenanceMode < ForemanMaintain::Scenario
+    metadata do
+      description 'Show only status code of maintenance-mode'
+      tags :is_maintenance_mode_enabled
+      label :is_maintenance_mode_enabled
+      manual_detection
+    end
+
+    def compose
+      add_step(Procedures::MaintenanceMode::IsEnabled.new)
     end
   end
 end

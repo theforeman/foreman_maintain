@@ -23,7 +23,7 @@ module ForemanMaintain
             start                         Start maintenance-mode
             stop                          Stop maintenance-mode
             status                        Get maintenance-mode status
-
+            is-enabled                    Get maintenance-mode status code
         Options:
             -h, --help                    print help
       OUTPUT

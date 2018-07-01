@@ -2,7 +2,7 @@ module Procedures::Iptables
   class AddChain < ForemanMaintain::Procedure
     metadata do
       label :iptables_add_chain
-      for_feature :maintenance_mode
+      for_feature :iptables
       description 'Add chain to iptables'
       tags :pre_migrations
       advanced_run false
@@ -10,7 +10,7 @@ module Procedures::Iptables
     end
 
     def run
-      feature(:maintenance_mode).perform_action(:iptables, 'add_chain')
+      feature(:iptables).perform_action('add_chain')
     end
   end
 end
