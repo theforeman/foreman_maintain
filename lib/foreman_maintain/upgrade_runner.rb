@@ -37,7 +37,7 @@ module ForemanMaintain
       end
 
       def clear_register
-        versions_to_tags.lear
+        versions_to_tags.clear
       end
 
       def current_target_version
