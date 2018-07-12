@@ -1,5 +1,6 @@
 module Procedures::SyncPlans
   class Enable < ForemanMaintain::Procedure
+    include ForemanMaintain::Concerns::Hammer
     metadata do
       for_feature :sync_plans
       description 're-enable sync plans'
