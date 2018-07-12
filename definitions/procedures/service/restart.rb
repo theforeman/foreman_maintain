@@ -2,6 +2,7 @@ require 'procedures/service/base'
 
 module Procedures::Service
   class Restart < Base
+    include ForemanMaintain::Concerns::Hammer
     metadata do
       description 'Restart applicable services'
       Base.common_params(self)

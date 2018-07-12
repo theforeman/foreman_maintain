@@ -1,5 +1,6 @@
 module Procedures::SyncPlans
   class Disable < ForemanMaintain::Procedure
+    include ForemanMaintain::Concerns::Hammer
     metadata do
       for_feature :sync_plans
       description 'disable active sync plans'

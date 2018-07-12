@@ -1,5 +1,6 @@
 module Procedures::ForemanTasks
   class Resume < ForemanMaintain::Procedure
+    include ForemanMaintain::Concerns::Hammer
     metadata do
       for_feature :foreman_tasks
       description 'Resume paused tasks'
