@@ -35,7 +35,12 @@ class Features::Service < ForemanMaintain::Feature
 
   def existing_services
     service_list = get_services_from_features(available_features)
-    service_list.select { |service| service_exists?(service) }
+    service_list.select { |service| service_remote?(service) || service_exists?(service) }
+  end
+
+  def service_remote?(service)
+    (service == 'postgresql' && !feature(:instance).postgresql_local?) ||
+      (service == 'mongod' && feature(:instance).database_remote?(:mongo))
   end
 
   def filtered_services(options)
