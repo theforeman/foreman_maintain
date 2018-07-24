@@ -19,7 +19,7 @@ module ForemanMaintain
 
       def incremental_backup?
         backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
-        backup.metadata.fetch(:incremental, false)
+        backup.incremental?
       end
     end
   end

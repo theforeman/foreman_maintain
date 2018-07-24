@@ -206,6 +206,10 @@ module ForemanMaintain
           file_map[:candlepin_dump][:present]
       end
 
+      def incremental?
+        !!metadata.fetch('incremental', false)
+      end
+
       private
 
       def tarball_file_list(tarball)
