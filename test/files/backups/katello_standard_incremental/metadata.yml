@@ -1,0 +1,17 @@
+---
+os_version: CentOS Linux release 7.4.1708 (Core)
+plugin_list:
+- bastion-6.1.9
+- foreman-tasks-0.12.1
+- foreman_docker-4.0.0
+- katello-3.7.0
+proxy_features:
+- logs
+- pulp
+- puppet
+- puppetca
+- templates
+- tftp
+rpms:
+- python-billiard-3.3.0.20-2.el7.x86_64
+incremental: /tmp/katello-backup-2018-07-24-12-56-39

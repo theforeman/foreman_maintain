@@ -8,6 +8,9 @@ module ForemanMaintain
     let(:katello_standard) do
       File.expand_path('../../files/backups/katello_standard', File.dirname(__FILE__))
     end
+    let(:katello_standard_incremental) do
+      File.expand_path('../../files/backups/katello_standard_incremental', File.dirname(__FILE__))
+    end
     let(:katello_online) do
       File.expand_path('../../files/backups/katello_online', File.dirname(__FILE__))
     end
@@ -156,6 +159,11 @@ module ForemanMaintain
     it 'does not validate backup without config_files.tar.gz' do
       no_configs_backup = subject.new(no_configs)
       assert !no_configs_backup.valid_backup?
+    end
+
+    it 'recognizes incremental backup' do
+      incremental_backup = subject.new(katello_standard_incremental)
+      assert incremental_backup.incremental?
     end
   end
 end
