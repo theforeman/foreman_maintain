@@ -19,7 +19,7 @@ module Checks
 
       def next_steps
         if feature(:mongo).local?
-          [Procedures::Service::Start.new(:only => 'mongod')]
+          [Procedures::Service::Start.new(:only => feature(:mongo).services.keys)]
         else
           [] # there is nothing we can do for remote db
         end
