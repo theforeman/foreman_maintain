@@ -21,7 +21,7 @@ module Scenarios::Satellite_6_4
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
-      add_steps(find_checks(:puppet_upgrade_guide))
+      add_step(Checks::Puppet::ProvideUpgradeGuide.new)
       add_step(Checks::Repositories::Validate.new(:version => '6.4'))
     end
   end
