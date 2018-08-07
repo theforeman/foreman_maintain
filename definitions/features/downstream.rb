@@ -74,20 +74,21 @@ class Features::Downstream < ForemanMaintain::Feature
     sat_version_full = "#{sat_version.major}.#{sat_version.minor}"
     sat_repo_id = "rhel-#{rh_version_major}-server-satellite-#{sat_version_full}-rpms"
     sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-#{sat_version_full}-rpms"
+    sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"
 
     # Override to use Beta repositories for sat version until GA
     if sat_version.to_s == '6.4'
       sat_repo_id = "rhel-server-#{rh_version_major}-satellite-6-beta-rpms"
       sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
+      sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms"
     end
 
-    [sat_repo_id, sat_tools_repo_id]
+    [sat_repo_id, sat_tools_repo_id, sat_maintenance_repo_id]
   end
 
   def main_rh_repos(rh_version_major)
     ["rhel-#{rh_version_major}-server-rpms",
-     "rhel-server-rhscl-#{rh_version_major}-rpms",
-     "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"]
+     "rhel-server-rhscl-#{rh_version_major}-rpms"]
   end
 
   def version_from_source
