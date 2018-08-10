@@ -136,7 +136,7 @@ module ForemanMaintain
         end
 
         it 'offers options of a file type with completion for unfinished values - file' do
-          result = subject.complete('backup online --log dir_a/alpha/')
+          result = subject.complete('backup online --log dir_a/alpha/').sort
           result.must_equal ['dir_a/alpha/a.log ', 'dir_a/alpha/b.log ']
         end
 

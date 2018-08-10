@@ -38,8 +38,8 @@ if sha1sum.strip != dict[:expire][:sha1sum].strip
   dict = ForemanMaintain::Utils::Bash::Completion.load_description(completion_cache_file)
 end
 
-comp_line = ENV['COMP_LINE']
-comp_args = comp_line.split(' ', 2).last
+comp_line = ENV['COMP_LINE'] || ''
+comp_args = comp_line.split(' ', 2).last || ''
 
 result = ForemanMaintain::Utils::Bash::Completion.new(dict).complete(comp_args)
 
