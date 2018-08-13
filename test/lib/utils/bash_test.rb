@@ -159,13 +159,7 @@ module ForemanMaintain
           result = subject.complete('backup online dir_a/a xxx')
           result.must_equal []
         end
-
-        # params of file type
       end
-
-      # TODO: options with enum
-      # TODO options with multienum
-      # TODO options with list
     end
   end
 end

@@ -24,4 +24,4 @@
 # :db_backup_dir: '/var/lib/foreman-maintain/db-backups'
 
 # Location of cache for bash completion
-:completion_cache: '~/.cache/foreman_maintain_completion.yml'
+:completion_cache_file: '~/.cache/foreman_maintain_completion.yml'
