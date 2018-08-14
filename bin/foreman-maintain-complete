@@ -13,7 +13,7 @@ require 'foreman_maintain/utils/bash'
 # rubocop:disable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
 def cache_file(config_file)
   config = YAML.load(File.open(config_file))
-  config[:completion_cache]
+  config[:completion_cache_file]
 rescue
 end
 # rubocop:enable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
