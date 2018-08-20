@@ -67,14 +67,48 @@ module ForemanMaintain
         collection.inject([]) { |array, item| array.concat(item.tags).uniq }.sort_by(&:to_s)
       end
 
+      def self.completion_map
+        completion = {}
+        # collect options
+        recognised_options.each do |opt|
+          opt.switches.each do |switch|
+            completion[switch] = completion_types.fetch(switch, {})
+          end
+        end
+        # collect subcommands recursively
+        recognised_subcommands.each do |cmd|
+          completion[cmd.names.first] = cmd.subcommand_class.completion_map
+        end
+        # collect params
+        completion[:params] = completion_types[:params] unless completion_types[:params].empty?
+        completion
+      end
+
+      def self.completion_types
+        @completion_types ||= { :params => [] }
+      end
+
       def self.option(switches, type, description, opts = {}, &block)
         multivalued = opts.delete(:multivalued)
+        completion_type = opts.delete(:completion)
+        completion_type = { :type => :flag } if completion_type.nil? && type == :flag
+        completion_type ||= { :type => :value }
+        [switches].flatten(1).each { |s| completion_types[s] = completion_type }
         description += ' (comma-separated list)' if multivalued
         super(switches, type, description, opts) do |value|
           value = CSVParser.new.parse(value) if multivalued
           value = instance_exec(value, &block) if block
           value
         end
+      end
+
+      def self.parameter(name, description, opts = {}, &block)
+        unless [:subcommand_name, :subcommand_arguments].include?(opts[:attribute_name])
+          completion_type = opts.delete(:completion)
+          completion_type ||= { :type => :value }
+          completion_types[:params] << completion_type
+        end
+        super(name, description, opts, &block)
       end
 
       def self.label_option

@@ -13,13 +13,14 @@ Gem::Specification.new do |s|
   s.description = "Provides various features that helps keeping \
 the Foreman/Satellite up and running."
 
-  s.files = Dir['{bin,lib,definitions}/**/*'] + Dir['config/foreman_maintain.yml.*']
+  s.files = Dir['{bin,lib,definitions}/**/*'] + Dir['config/*']
   s.extra_rdoc_files = [
     'LICENSE',
     'README.md'
   ]
   s.require_paths = ['lib']
-  s.executables = ['foreman-maintain', 'passenger-recycler', 'foreman-maintain-rotate-tar']
+  s.executables = ['foreman-maintain', 'passenger-recycler',
+                   'foreman-maintain-complete', 'foreman-maintain-rotate-tar']
 
   s.add_dependency 'clamp'
   s.add_dependency 'highline'
