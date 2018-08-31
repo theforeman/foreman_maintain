@@ -60,7 +60,7 @@ class Features::Downstream < ForemanMaintain::Feature
 
     rh_repos.concat(sat_and_tools_repos(rh_version_major, sat_version))
 
-    rh_repos << 'rhel-7-server-ansible-2-rpms' if sat_version.to_s == '6.4'
+    rh_repos << 'rhel-7-server-ansible-2.6-rpms' if sat_version.to_s == '6.4'
 
     if current_minor_version == '6.3' && sat_version.to_s != '6.4' && (
       feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
