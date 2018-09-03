@@ -116,13 +116,9 @@ module ForemanMaintain
                  :interactive => true)
       end
 
-      def clean_all_packages(options = {})
-        options.validate_options!(:assumeyes)
-        yum_options = []
-        yum_options << '-y' if options[:assumeyes]
-        execute!("yum #{yum_options.join(' ')} clean all", :interactive => true)
-        execute!('rm -rf /var/cache/yum')
-        execute!('rm -rf /var/cache/dnf')
+      def clean_all_packages
+        execute!('dnf clean all') if find_package('dnf')
+        execute!('yum clean all') if find_package('yum')
       end
 
       def package_version(name)
