@@ -10,10 +10,13 @@ class Features::Pulp < ForemanMaintain::Feature
   def services
     {
       'squid'                    => 10,
+      'qpidd'                    => 10,
+      'qdrouterd'                => 10,
       'pulp_workers'             => 20,
       'pulp_celerybeat'          => 20,
       'pulp_resource_manager'    => 20,
-      'pulp_streamer'            => 20
+      'pulp_streamer'            => 20,
+      'httpd'                    => 30
     }
   end
 

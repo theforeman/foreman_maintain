@@ -17,10 +17,7 @@ class Features::Katello < ForemanMaintain::Feature
 
   def services
     {
-      'qpidd'                    => 10,
-      'qdrouterd'                => 10,
-      'goferd'                   => 30,
-      'elasticsearch'            => 30
+      'elasticsearch' => 30
     }
   end
 
