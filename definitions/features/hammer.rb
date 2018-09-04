@@ -11,14 +11,6 @@ class Features::Hammer < ForemanMaintain::Feature
     end
   end
 
-  SERVICES_MAPPING = {
-    'candlepin_auth' => %w[postgresql tomcat],
-    'candlepin' => %w[postgresql tomcat],
-    'pulp_auth' => %w[pulp_resource_manager pulp_workers pulp_celerybeat],
-    'pulp' => %w[pulp_resource_manager pulp_workers pulp_celerybeat],
-    'foreman_tasks' => %w[foreman-tasks]
-  }.freeze
-
   def initialize
     @configuration = { :foreman => {} }
     @config_files = []
@@ -145,10 +137,25 @@ class Features::Hammer < ForemanMaintain::Feature
     resources_failed
   end
 
+  def related_services(resource)
+    case resource
+    when 'candlepin_auth'
+      %w[postgresql tomcat]
+    when 'candlepin'
+      %w[postgresql tomcat]
+    when 'pulp_auth'
+      %w[pulp_resource_manager pulp_workers pulp_celerybeat]
+    when 'pulp'
+      %w[pulp_resource_manager pulp_workers pulp_celerybeat]
+    when 'foreman_tasks'
+      [feature(:foreman_tasks).service_name]
+    end
+  end
+
   def map_resources_with_services(resources)
     service_names = []
     resources.each do |resource|
-      service_names.concat(SERVICES_MAPPING[resource])
+      service_names.concat(related_services(resource))
     end
     service_names
   end
