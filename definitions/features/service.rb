@@ -39,11 +39,6 @@ class Features::Service < ForemanMaintain::Feature
     action_word_modified(action) + 'ed'
   end
 
-  def find_service_status(service)
-    command = service_command('status', service)
-    execute?(command)
-  end
-
   private
 
   def use_system_service(action, options, spinner)

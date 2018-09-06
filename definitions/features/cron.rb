@@ -10,6 +10,22 @@ class Features::Cron < ForemanMaintain::Feature
 
   def services
     # TODO: For debian, add cron as service
-    { 'crond' => 5 }
+    [
+      system_service('crond', 5)
+    ]
+  end
+
+  def status_for_maintenance_mode(mode_on)
+    if services[0].running?
+      [
+        'cron jobs: running',
+        mode_on ? [Procedures::Service::Stop.new(:only => 'crond')] : []
+      ]
+    else
+      [
+        'cron jobs: not running',
+        mode_on ? [] : [Procedures::Service::Start.new(:only => 'crond')]
+      ]
+    end
   end
 end

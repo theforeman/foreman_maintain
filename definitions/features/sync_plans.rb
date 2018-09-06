@@ -36,12 +36,21 @@ class Features::SyncPlans < ForemanMaintain::Feature
     storage[:sync_plans] = @data
   end
 
-  def maintenance_mode?
+  def status_for_maintenance_mode(mode_on)
     default_storage = ForemanMaintain.storage(:default)
     load_from_storage(default_storage)
-    return nil if both_empty?
-    return 0 if @data[:enabled] && key_empty?(:disabled)
-    1
+    return ['sync plans: empty data', []] if both_empty?
+    if @data[:enabled] && key_empty?(:disabled)
+      [
+        'sync plans: enabled',
+        mode_on ? [Procedures::SyncPlans::Disable.new] : []
+      ]
+    else
+      [
+        'sync plans: disabled',
+        mode_on ? [] : [Procedures::SyncPlans::Enable.new]
+      ]
+    end
   end
 
   private

@@ -8,13 +8,9 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_step(Procedures::Iptables::AddChain.new)
+      add_step(Procedures::Iptables::AddMaintenanceModeChain.new)
       add_step(Procedures::SyncPlans::Disable.new)
-      puts feature(:cron).inspect
-      if feature(:cron)
-        cron_service = feature(:cron).services.key(5)
-        add_step(Procedures::Service::Stop.new(:only => cron_service))
-      end
+      add_step(Procedures::Service::Stop.new(:only => 'crond')) if feature(:cron)
     end
   end
 
@@ -27,12 +23,9 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_step(Procedures::Iptables::RemoveChain.new)
+      add_step(Procedures::Iptables::RemoveMaintenanceModeChain.new)
       add_step(Procedures::SyncPlans::Enable.new)
-      if feature(:cron)
-        cron_service = feature(:cron).services.key(5)
-        add_step(Procedures::Service::Start.new(:only => cron_service))
-      end
+      add_step(Procedures::Service::Start.new(:only => 'crond')) if feature(:cron)
     end
   end
 
@@ -45,7 +38,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_step(Procedures::MaintenanceMode::Check.new)
+      add_step(Checks::MaintenanceMode::CheckConsistency)
     end
   end
 

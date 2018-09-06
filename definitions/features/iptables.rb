@@ -3,56 +3,56 @@ class Features::Iptables < ForemanMaintain::Feature
     label :iptables
   end
 
-  def perform_action(action_name)
-    case action_name
-    when 'add_chain'
-      custom_iptables_chain(chain_name,
-                            ['-i lo -j ACCEPT',
-                             '-p tcp --dport 443 -j REJECT'])
-    when 'remove_chain'
-      del_custom_iptables_chain(chain_name)
-    else
-      raise "Unexpected argument #{action_name}"
+  def add_chain(chain_name, rules, rule_chain = 'INPUT')
+    # if the chain already exists, we assume it was set before: we're not touching
+    # it again
+    return if chain_exist?(chain_name)
+    execute!("iptables -N #{chain_name}")
+    rules.each do |rule|
+      execute!("iptables -A #{chain_name} #{rule}")
     end
+    execute!("iptables -I #{rule_chain} -j #{chain_name}")
   end
 
-  def chain_name
-    'FOREMAN_MAINTAIN'
+  def remove_chain(chain_name, rule_chain = 'INPUT')
+    return unless chain_exist?(chain_name) # the chain is already gone
+    execute!("iptables -D #{rule_chain} -j #{chain_name}") if rule_exist?(chain_name, rule_chain)
+    execute!("iptables -F #{chain_name}")
+    execute!("iptables -X #{chain_name}")
   end
 
-  def maintenance_mode?
-    is_chain_present = custom_chain_exists?(chain_name)
-    is_rules_present = chain_rules_exist?(chain_name)
-    return 2 if (is_chain_present && !is_rules_present) || (!is_chain_present && is_rules_present)
-    return 0 unless is_chain_present
-    1
+  def chain_exist?(chain_name)
+    execute?("iptables -L #{chain_name}")
+  end
+
+  def rule_exist?(target_name, rule_chain = 'INPUT')
+    execute?("iptables -L #{rule_chain} | tail -n +3 | grep '^#{target_name} '")
+  end
+
+  def add_maintenance_mode_chain
+    add_chain(custom_chain_name,
+              ['-i lo -j ACCEPT', '-p tcp --dport 443 -j REJECT'])
+  end
+
+  def remove_maintenance_mode_chain
+    remove_chain(custom_chain_name)
+  end
+
+  def maintenance_mode_chain_exist?
+    chain_exist?(custom_chain_name)
+  end
+
+  def status_for_maintenance_mode
+    if maintenance_mode_chain_exist?
+      ['Iptables chain: present', []]
+    else
+      ['Iptables chain: absent', []]
+    end
   end
 
   private
 
-  def custom_iptables_chain(name, rules)
-    # if the chain already exists, we assume it was set before: we're not touching
-    # it again
-    return if custom_chain_exists?(name)
-    execute!("iptables -N #{name}")
-    rules.each do |rule|
-      execute!("iptables -A #{name} #{rule}")
-    end
-    execute!("iptables -I INPUT -j #{name}")
-  end
-
-  def del_custom_iptables_chain(name)
-    return unless custom_chain_exists?(name) # the chain is already gone
-    execute!("iptables -D INPUT -j #{name}") if chain_rules_exist?(name)
-    execute!("iptables -F #{name}")
-    execute!("iptables -X #{name}")
-  end
-
-  def custom_chain_exists?(name)
-    execute?("iptables -L #{name}")
-  end
-
-  def chain_rules_exist?(name)
-    execute?("iptables -L INPUT | tail -n +3 | grep '^#{name} '")
+  def custom_chain_name
+    'FOREMAN_MAINTAIN'
   end
 end

@@ -130,14 +130,14 @@ module ForemanMaintain::Scenarios
     def add_offline_backup_steps
       include_dumps if include_db_dumps?
       add_steps_with_context(
-        Procedures::MaintenanceMode::Enable,
+        find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
         Procedures::Backup::Pulp,
         Procedures::Backup::Offline::Mongo,
         Procedures::Backup::Offline::CandlepinDB,
         Procedures::Backup::Offline::ForemanDB,
         Procedures::Service::Start,
-        Procedures::MaintenanceMode::Disable
+        find_procedures(:maintenance_mode_off)
       )
     end
 
@@ -160,14 +160,14 @@ module ForemanMaintain::Scenarios
     def add_snapshot_backup_steps
       add_steps_with_context(
         Procedures::Backup::Snapshot::PrepareMount,
-        Procedures::MaintenanceMode::Enable,
+        find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
         Procedures::Backup::Snapshot::MountMongo,
         Procedures::Backup::Snapshot::MountPulp,
         Procedures::Backup::Snapshot::MountCandlepinDB,
         Procedures::Backup::Snapshot::MountForemanDB,
         Procedures::Service::Start,
-        Procedures::MaintenanceMode::Disable,
+        find_procedures(:maintenance_mode_off),
         Procedures::Backup::Pulp
       )
       if feature(:instance).database_local?(:candlepin_database)
@@ -219,7 +219,7 @@ module ForemanMaintain::Scenarios
 
     def compose
       add_step_with_context(Procedures::Service::Start) if strategy != :online
-      add_step_with_context(Procedures::MaintenanceMode::Disable) if strategy != :online
+      add_step_with_context(find_procedures(:maintenance_mode_off)) if strategy != :online
       add_step_with_context(Procedures::Backup::Snapshot::CleanMount) if strategy == :snapshot
       add_step_with_context(Procedures::Backup::Clean)
     end
