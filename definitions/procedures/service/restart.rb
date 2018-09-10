@@ -2,12 +2,12 @@ require 'procedures/service/base'
 
 module Procedures::Service
   class Restart < Base
-    include ForemanMaintain::Concerns::Hammer
     metadata do
       description 'Restart applicable services'
       Base.common_params(self)
       param :wait_for_hammer_ping,
             'Wait for hammer ping to return successfully before terminating'
+      preparation_steps { Procedures::HammerSetup.new if feature(:katello) }
     end
 
     RETRIES_FOR_SERVICES_RESTART = 5

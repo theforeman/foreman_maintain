@@ -8,8 +8,8 @@ class Features::Gofer < ForemanMaintain::Feature
   end
 
   def services
-    {
-      'goferd' => 30
-    }
+    [
+      system_service('goferd', 30)
+    ]
   end
 end

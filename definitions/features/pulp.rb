@@ -8,16 +8,16 @@ class Features::Pulp < ForemanMaintain::Feature
   end
 
   def services
-    {
-      'squid'                    => 10,
-      'qpidd'                    => 10,
-      'qdrouterd'                => 10,
-      'pulp_workers'             => 20,
-      'pulp_celerybeat'          => 20,
-      'pulp_resource_manager'    => 20,
-      'pulp_streamer'            => 20,
-      'httpd'                    => 30
-    }
+    [
+      system_service('squid', 10),
+      system_service('qpidd', 10),
+      system_service('qdrouterd', 10),
+      system_service('pulp_workers', 20),
+      system_service('pulp_celerybeat', 20),
+      system_service('pulp_resource_manager', 20),
+      system_service('pulp_streamer', 20),
+      system_service('httpd', 30)
+    ]
   end
 
   def data_dir

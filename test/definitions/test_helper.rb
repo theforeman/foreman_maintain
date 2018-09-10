@@ -2,6 +2,7 @@ require File.expand_path('../test_helper', File.dirname(__FILE__))
 
 module DefinitionsTestHelper
   include ForemanMaintain::Concerns::Finders
+  include ForemanMaintain::Concerns::SystemService
 
   def detector
     @detector ||= ForemanMaintain.detector
@@ -55,11 +56,7 @@ module DefinitionsTestHelper
 
   def stub_systemctl_calls(services, action)
     services.each do |service|
-      Features::Service.
-        any_instance.
-        stubs(:perform_action_on_service).
-        with(action, service).
-        returns(true)
+      service.stubs(action.to_sym).returns([0, "#{action} succeeded."])
     end
   end
 
@@ -117,6 +114,18 @@ module DefinitionsTestHelper
     Features::Installer.any_instance.stubs(:find_package).with do |args|
       args == package
     end.returns(package)
+  end
+
+  def existing_system_service(name, priority, options = {})
+    service = system_service(name, priority, options)
+    service.stubs(:exist?).returns(true)
+    service
+  end
+
+  def missing_system_service(name, priority, options = {})
+    service = system_service(name, priority, options)
+    service.stubs(:exist?).returns(false)
+    service
   end
 end
 

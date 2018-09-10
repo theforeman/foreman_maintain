@@ -21,13 +21,15 @@ module ForemanMaintain
       end
 
       def run
-        logger.debug(hide_strings("Running command #{@command} with stdin #{@stdin.inspect}"))
+        if logger
+          logger.debug(hide_strings("Running command #{@command} with stdin #{@stdin.inspect}"))
+        end
         if @interactive
           run_interactively
         else
           run_non_interactively
         end
-        logger.debug("output of the command:\n #{hide_strings(output)}")
+        logger.debug("output of the command:\n #{hide_strings(output)}") if logger
       end
 
       def interactive?

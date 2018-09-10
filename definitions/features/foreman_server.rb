@@ -9,10 +9,9 @@ module ForemanMaintain
       end
 
       def services
-        {
-          'postgresql'               => 5,
-          'httpd'                    => 30
-        }
+        [
+          system_service('httpd', 30)
+        ]
       end
 
       def plugins
