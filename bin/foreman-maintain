@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# Ensure we use UTF-8 by defualt, even when run with LC_ALL=C
+Encoding.default_internal = Encoding.default_external = Encoding::UTF_8
+
 $LOAD_PATH.unshift(File.expand_path('../../lib', __FILE__))
 
 require 'foreman_maintain'
