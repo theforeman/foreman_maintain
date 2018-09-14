@@ -50,8 +50,8 @@ class Features::Service < ForemanMaintain::Feature
     filtered_services(options).each do |service|
       spinner.update("#{action_noun(action)} #{service}")
       _, output = service.send(action.to_sym)
-      puts output
-      puts '' if !output.nil? && !output.empty?
+      puts ''
+      puts output if !output.nil? && !output.empty?
     end
 
     spinner.update("All services #{action_past_tense(action)}")
