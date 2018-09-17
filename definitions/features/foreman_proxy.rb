@@ -25,10 +25,10 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def services
-    {
-      'foreman-proxy'            => 20,
-      'smart_proxy_dynflow_core' => 20
-    }
+    [
+      system_service('smart_proxy_dynflow_core', 20),
+      system_service('foreman-proxy', 40)
+    ]
   end
 
   def features

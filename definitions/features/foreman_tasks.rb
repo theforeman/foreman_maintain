@@ -108,7 +108,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def services
-    { service_name => 30 }
+    [system_service(service_name, 30)]
   end
 
   def service_name

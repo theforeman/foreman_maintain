@@ -12,7 +12,9 @@ class Features::Mongo < ForemanMaintain::Feature
   end
 
   def services
-    core.services
+    core.services.map do |service, priority|
+      system_service(service, priority, :db_feature => self)
+    end
   end
 
   def data_dir

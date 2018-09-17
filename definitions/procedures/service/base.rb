@@ -16,7 +16,7 @@ module Procedures
         action_noun = feature(:service).action_noun(action).capitalize
         puts "#{action_noun} the following service(s):\n"
         services = feature(:service).filtered_services(options)
-        feature(:service).list_services(services)
+        print_services(services)
 
         with_spinner('') do |spinner|
           feature(:service).handle_services(spinner, action, options)
@@ -25,6 +25,12 @@ module Procedures
 
       def common_options
         { :only => @only, :exclude => @exclude }
+      end
+
+      private
+
+      def print_services(services)
+        puts services.map(&:to_s).join(', ')
       end
     end
   end

@@ -26,7 +26,7 @@ module Procedures::Restore
     def handle_mongo_service(action, spinner)
       if feature(:instance).database_local?(:mongo)
         feature(:service).handle_services(spinner, action,
-                                          :only => feature(:mongo).services.keys)
+                                          :only => feature(:mongo).services)
       end
     end
 

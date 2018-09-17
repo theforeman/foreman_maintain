@@ -1,16 +1,13 @@
 require 'test_helper'
 
-FEATURES = %w[foreman_server katello pulp candlepin_database].freeze
-
 describe 'Service procedures perform appropiate actions' do
   include DefinitionsTestHelper
 
   before do
-    FEATURES.each { |feature| assume_feature_present(feature) }
-    features = FEATURES.map { |feature| feature(feature.to_sym) }
-    @services = feature(:service).get_services_from_features(features)
+    @services = %w[tomcat qpidd httpd squid].map do |s|
+      ForemanMaintain::Utils.system_service(s, 10)
+    end
     Features::Service.any_instance.stubs(:filtered_services).returns(@services)
-    Features::Service.any_instance.stubs(:list_services).returns(nil)
   end
 
   describe 'Stop services procedure runs successfully' do

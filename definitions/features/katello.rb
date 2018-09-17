@@ -16,9 +16,9 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def services
-    {
-      'elasticsearch' => 30
-    }
+    [
+      system_service('elasticsearch', 30)
+    ]
   end
 
   # rubocop:disable  Metrics/MethodLength

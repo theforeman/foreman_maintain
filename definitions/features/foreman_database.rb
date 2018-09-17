@@ -15,6 +15,13 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
     @configuration || load_configuration
   end
 
+  def services
+    [
+      system_service('postgresql', 10, :component => 'foreman',
+                                       :db_feature => feature(:foreman_database))
+    ]
+  end
+
   private
 
   def load_configuration
