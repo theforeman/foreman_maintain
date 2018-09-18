@@ -42,6 +42,7 @@ describe Features::Installer do
 
     context '#upgrade' do
       it '#upgrade runs the installer with correct params' do
+        assume_feature_absent(:downstream)
         installer_inst.expects(:'execute!').
           with('LANG=en_US.utf-8 foreman-installer --upgrade', :interactive => true).
           returns(true)
@@ -59,6 +60,7 @@ describe Features::Installer do
 
     context '#run' do
       it 'runs the installer with correct params' do
+        assume_feature_absent(:downstream)
         installer_inst.expects(:'execute!').
           with('LANG=en_US.utf-8 foreman-installer --password=changeme', :interactive => true).
           returns(true)
