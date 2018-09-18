@@ -7,7 +7,7 @@ module Checks
         description 'Check for duplicate Puppet class records'
         tags :pre_upgrade
         confine do
-          feature(:foreman_database) && feature(:foreman_database).check_max_version('foreman', '1.20')
+          check_max_version('foreman', '1.20')
         end
       end
 

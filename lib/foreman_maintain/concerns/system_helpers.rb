@@ -43,13 +43,13 @@ module ForemanMaintain
 
       def check_min_version(name, minimal_version)
         check_version(name) do |current_version|
-          version_cmp current_version, version(minimal_version)
+          current_version >= version(minimal_version)
         end
       end
 
       def check_max_version(name, maximal_version)
         check_version(name) do |current_version|
-          version_cmp version(maximal_version), current_version
+          version(maximal_version) >= current_version
         end
       end
 
@@ -199,12 +199,8 @@ module ForemanMaintain
       def check_version(name)
         current_version = package_version(name)
         if current_version
-          yield current_version if block_given?
+          yield current_version
         end
-      end
-
-      def version_cmp(version, other_version)
-        version >= other_version
       end
     end
   end
