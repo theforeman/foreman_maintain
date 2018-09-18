@@ -68,8 +68,8 @@ module ForemanMaintain
     end
 
     it 'is sortable' do
-      services = [crond_service, httpd_service, ntpd_service]
-      services.sort.must_equal [ntpd_service, crond_service, httpd_service]
+      services = [httpd_service, crond_service, httpd_service, ntpd_service]
+      services.sort.must_equal [ntpd_service, crond_service, httpd_service, httpd_service]
     end
 
     it 'starts the service' do
