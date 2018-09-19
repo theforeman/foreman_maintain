@@ -12,7 +12,7 @@ module Checks
         end
       end
 
-      EXPECTED_IO = 80
+      EXPECTED_IO = 60
       DEFAULT_UNIT   = 'MB/sec'.freeze
       DEFAULT_DIRS   = ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'].freeze
 
