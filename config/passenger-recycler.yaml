@@ -1,8 +1,9 @@
 ---
 #
 # Trivial Passenger memory monitor. By default it is executed from cron every
-# five minutes and it kills one process that exceeds the RSS memory threashold
-# configured.
+# five minutes and it kills processes exceeding the RSS memory threashold
+# configured with MAX_PRIV_RSS_MEMORY. Up to MAX_TERMINATION processes is
+# terminated during one execution.
 #
 
 # Set to 'false' to completely disable this script.
@@ -14,7 +15,7 @@
 # Controls amount of processes killed during one run. This number should be
 # smaller by one or two than maximum allowed amount of processes by passenger
 # (defaults to 6) so there is at least one process left.
-:MAX_TERMINATION: 4
+:MAX_TERMINATION: 1
 
 # Kill processes which do not terminate gracefully using SIGKILL after
 # GRACEFUL_SHUTDOWN_SLEEP period.
