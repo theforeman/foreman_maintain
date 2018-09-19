@@ -127,6 +127,39 @@ module DefinitionsTestHelper
     service.stubs(:exist?).returns(false)
     service
   end
+
+  def mock_service(name, priority = 30)
+    service = ForemanMaintain::Utils::Service::Systemd.new(name, priority)
+    service.stubs(:execute).raises(
+      RuntimeError, "Mocked service can't execute system commads. Stub your method properly."
+    )
+    yield service if block_given?
+    ForemanMaintain::Utils.stubs(:system_service).with(name, priority).returns(service)
+    service
+  end
+
+  def assume_service_running(name, priority = 30)
+    mock_service(name, priority) do |service|
+      service.stubs(:status).returns([0, 'OK'])
+      service.stubs(:exist?).returns(true)
+      yield service if block_given?
+    end
+  end
+
+  def assume_service_stopped(name, priority = 30)
+    mock_service(name, priority) do |service|
+      service.stubs(:status).returns([1, 'STOPPED'])
+      service.stubs(:exist?).returns(true)
+      yield service if block_given?
+    end
+  end
+
+  def assume_service_missing(name, priority = 30)
+    mock_service(name, priority) do |service|
+      service.stubs(:exist?).returns(false)
+      yield service if block_given?
+    end
+  end
 end
 
 TEST_DIR = File.dirname(__FILE__)
