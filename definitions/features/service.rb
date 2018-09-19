@@ -43,18 +43,35 @@ class Features::Service < ForemanMaintain::Feature
 
   def use_system_service(action, options, spinner)
     options[:reverse] = action == 'stop'
-    unless %w[start stop restart status enable disable].include?(action)
-      raise 'Unsupported action detected'
-    end
+    raise 'Unsupported action detected' unless allowed_action?(action)
+
+    status = 0
+    failed_services = []
 
     filtered_services(options).each do |service|
       spinner.update("#{action_noun(action)} #{service}")
-      _, output = service.send(action.to_sym)
-      puts ''
-      puts output if !output.nil? && !output.empty?
+      item_status, output = service.send(action.to_sym)
+
+      if item_status > 0
+        status = item_status
+        failed_services << service
+      end
+
+      puts format_status(output)
     end
 
     spinner.update("All services #{action_past_tense(action)}")
+    raise "Some services are not running (#{failed_services.join(', ')})" if status > 0
+  end
+
+  def format_status(output)
+    status = "\n"
+    status += output if !output.nil? && !output.empty?
+    status
+  end
+
+  def allowed_action?(action)
+    %w[start stop restart status enable disable].include?(action)
   end
 
   def filter_services(service_list, options)
