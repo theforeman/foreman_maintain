@@ -5,8 +5,13 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
   end
 
   def run
-    result = feature(:hammer).setup_admin_access
-    logger.info 'Hammer was configured successfully.' if result
+    if feature(:foreman_server) && ForemanMaintain::Utils.system_service('httpd', 30).running?
+      puts 'Configuring Hammer CLI...'
+      result = feature(:hammer).setup_admin_access
+      logger.info 'Hammer was configured successfully.' if result
+    else
+      skip("#{feature(:instance).product_name} server is not running. Hammer can't be setup now.")
+    end
   end
 
   def necessary?
