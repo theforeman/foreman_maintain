@@ -10,7 +10,8 @@ module ForemanMaintain::Utils
       end
 
       def <=>(other)
-        @priority <=> other.priority
+        prio_cmp = @priority <=> other.priority
+        prio_cmp == 0 ? @name <=> other.name : prio_cmp
       end
 
       def to_s
