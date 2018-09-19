@@ -30,7 +30,7 @@ describe Checks::Disk::Performance do
   end
 
   it 'raise error if disk speed does not meet minimal requirement' do
-    slow_speed = 79
+    slow_speed = 59
     err_msg = 'Slow disk'
 
     check_disk_performance.stubs(:check_only_single_device?).returns(true)
