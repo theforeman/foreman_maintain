@@ -68,6 +68,8 @@ module ForemanMaintain
         end
       end
 
+      attr_reader :last_line, :max_length
+
       def initialize(stdout = STDOUT, stdin = STDIN, options = {})
         @stdout = stdout
         @stdin = stdin

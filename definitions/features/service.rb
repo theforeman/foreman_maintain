@@ -45,6 +45,16 @@ class Features::Service < ForemanMaintain::Feature
     options[:reverse] = action == 'stop'
     raise 'Unsupported action detected' unless allowed_action?(action)
 
+    status, failed_services = run_action_on_services(action, options, spinner)
+
+    spinner.update("All services #{action_past_tense(action)}")
+    if action == 'status'
+      raise "Some services are not running (#{failed_services.join(', ')})" if status > 0
+      spinner.update('All services are running')
+    end
+  end
+
+  def run_action_on_services(action, options, spinner)
     status = 0
     failed_services = []
 
@@ -52,22 +62,33 @@ class Features::Service < ForemanMaintain::Feature
       spinner.update("#{action_noun(action)} #{service}")
       item_status, output = service.send(action.to_sym)
 
+      formatted = format_status(output, item_status, options)
+      puts formatted unless formatted.empty?
+
       if item_status > 0
         status = item_status
         failed_services << service
       end
-
-      puts format_status(output)
     end
-
-    spinner.update("All services #{action_past_tense(action)}")
-    raise "Some services are not running (#{failed_services.join(', ')})" if status > 0
+    [status, failed_services]
   end
 
-  def format_status(output)
-    status = "\n"
-    status += output if !output.nil? && !output.empty?
+  def format_status(output, exit_code, options)
+    status = ''
+    if !options[:failing] || exit_code > 0
+      if options[:brief]
+        status += format_brief_status(exit_code)
+      elsif !(output.nil? || output.empty?)
+        status += "\n" + output
+      end
+    end
     status
+  end
+
+  def format_brief_status(exit_code)
+    result = exit_code == 0 ? reporter.status_label(:success) : reporter.status_label(:fail)
+    padding = reporter.max_length - reporter.last_line.to_s.length - 30
+    "#{' ' * padding} #{result}"
   end
 
   def allowed_action?(action)
