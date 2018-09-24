@@ -1,5 +1,7 @@
 module Procedures::Pulp
   class Migrate < ForemanMaintain::Procedure
+    include ForemanMaintain::Concerns::SystemService
+
     metadata do
       description 'Migrate pulp db'
       for_feature :pulp
@@ -7,7 +9,7 @@ module Procedures::Pulp
 
     def run
       with_spinner('Migrating pulp') do |spinner|
-        necessary_services = feature(:mongo).services.keys + ['qpidd']
+        necessary_services = feature(:mongo).services + [system_service('qpidd', 10)]
         pulp_services = %w[pulp_celerybeat pulp_workers pulp_resource_manager]
 
         feature(:service).handle_services(spinner, 'start', :only => necessary_services)
