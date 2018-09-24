@@ -139,8 +139,8 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def run_katello_service(command)
-    puts 'Services are handled by katello-service in Satellite versions 6.2 and earlier. ' \
-         "Redirecting to: \n#{command}\n"
+    puts "Services are handled by katello-service in Satellite versions 6.2 and earlier. \n" \
+         "Flags --brief or --failing will be ignored if present. Redirecting to: \n#{command}\n"
     puts execute(command)
   end
 
