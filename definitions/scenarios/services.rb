@@ -151,6 +151,12 @@ module ForemanMaintain::Scenarios
 
       context.map(:exclude,
                   Procedures::Service::Status => :exclude)
+
+      context.map(:brief,
+                  Procedures::Service::Status => :brief)
+
+      context.map(:failing,
+                  Procedures::Service::Status => :failing)
     end
   end
 end
