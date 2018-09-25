@@ -52,11 +52,15 @@ module ForemanMaintain
 
       subcommand 'status', 'Get statuses of applicable services' do
         service_options
+        option ['-b', '--brief'], :flag, 'Print only service name and status'
+        option ['-f', '--failing'], :flag, 'List only services which are not running'
 
         def execute
           scenario = Scenarios::ServiceStatus.new(
             :only => only,
-            :exclude => exclude
+            :exclude => exclude,
+            :brief => brief?,
+            :failing => failing?
           )
 
           run_scenario(scenario)
