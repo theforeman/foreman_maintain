@@ -150,8 +150,12 @@ class Features::Service < ForemanMaintain::Feature
 
   def katello_service_filters(options)
     filters = ''
-    filters += "--exclude #{options[:exclude]}" if options[:exclude] && options[:exclude].any?
-    filters += "--only #{options[:only]}" if options[:only] && options[:only].any?
+    if options[:exclude] && options[:exclude].any?
+      filters += "--exclude #{options[:exclude].join(',')}"
+    end
+    if options[:only] && options[:only].any?
+      filters += "--only #{options[:only].join(',')}"
+    end
     filters
   end
 end
