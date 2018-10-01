@@ -35,6 +35,19 @@ Subcommands:
       list                          List applicable services
       enable                        Enable applicable services
       disable                       Disable applicable services
+
+    backup                        Backup server
+      online                        Keep services online during backup
+      offline                       Shut down services to preserve consistent backup
+      snapshot                      Use snapshots of the databases to create backup
+
+    restore                       Restore a backup
+
+    maintenance-mode              Control maintenance-mode for application
+      start                         Start maintenance-mode
+      stop                          Stop maintenance-mode
+      status                        Get maintenance-mode status
+      is-enabled                    Get maintenance-mode status code
 ```
 
 ### Upgrades
@@ -377,8 +390,6 @@ Execute `rake` to run the tests.
 ```
 foreman-maintain health [check|fix]
 foreman-maintain upgrade [check|run|abort] [foreman_1_14, satellite_6_1, satellite_6_2]
-foreman-maintain maintenance-mode [on|off]
-foreman-maintain backup [save|restore]
 foreman-maintain monitor [display|upload]
 foreman-maintain debug [save|upload|tail]
 foreman-maintain console
@@ -391,18 +402,18 @@ The completion offers suggestion of possible command-line subcommands and their 
 as usual. It can also suggest values for options and params where file
 or directory path is expected.
 
-Bash completion is automatically installed by RPM. To use it for development setup 
-`cp ./config/foreman-maintain.completion /etc/bash_completion.d/foreman-maintain` 
+Bash completion is automatically installed by RPM. To use it for development setup
+`cp ./config/foreman-maintain.completion /etc/bash_completion.d/foreman-maintain`
 and load it to the current shell `source /etc/bash_completion.d/foreman-maintain`.
 Make sure the `$PWD/bin` is in `PATH` or there is full path to `foreman-maintain-complete`
 executable specified in `/etc/bash_completion.d/foreman-maintain`.
 
-Bash completion for foreman-maintain needs pre-built cache that holds description of 
-all subcommands and its parameters. The cache is located by default in 
+Bash completion for foreman-maintain needs pre-built cache that holds description of
+all subcommands and its parameters. The cache is located by default in
 `~/.cache/foreman_maintain_completion.yml`. The location can be changed in foreman-maintain's
-config file. The cache can be built manually with 
+config file. The cache can be built manually with
 `foreman-maintain advanced prebuild-bash-completion` or is built automatically when
-completion is used and the cache is missing (this may cause slight delay). The cache expires 
+completion is used and the cache is missing (this may cause slight delay). The cache expires
 after installer scenario answer file changed (it indicates that the features on the instance
 may have changed which has impact on foreman-maintain CLI options and subcommands).
 
@@ -418,9 +429,18 @@ Possible options for the `:completion` attribute are:
  - `{ :type => :flag }` option has no value, default for flags
  - `{ :type => :value }` option has value of unknown type, no suggestions for the value, default
  - `{ :type => :directory }` value is directory, suggestions follow directory structure
- - `{ :type => :file, :filter => '\.txt$' }` value is file, suggestions follow directory structure, 
+ - `{ :type => :file, :filter => '\.txt$' }` value is file, suggestions follow directory structure,
  	optional `:filter` is regexp to filter the results.
- 
+
+### Difference between maintenance-mode status and is-enabled:
+
+* `maintenance-mode status` gives a brief output with On/Off message. This includes status of each step.
+
+* `maintenance-mode is-enabled` returns `0 or 1` output depending upon the maintenance-mode status.
+Here, 1=ON & 0=OFF.
+
+If User would like to check whether maintenance-mode is ON/OFF on system in their external script then
+they can use subcommand `foreman-maintain maintenance-mode is-enabled`.
 
 ## How to contribute?
 
