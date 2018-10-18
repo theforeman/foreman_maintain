@@ -212,6 +212,6 @@ class Features::Hammer < ForemanMaintain::Feature
   end
 
   def _check_connection
-    `#{command_base} architecture list 2>&1` && $CHILD_STATUS.exitstatus == 0
+    `#{command_base} user list --per-page 1 2>&1` && $CHILD_STATUS.exitstatus == 0
   end
 end
