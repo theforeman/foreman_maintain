@@ -3,11 +3,12 @@ class Procedures::PassengerRecycler < ForemanMaintain::Procedure
     description 'Perform Passenger memory recycling'
 
     confine do
-      execute?('which scl') && execute?('which passenger-recycler')
+      execute?('which passenger-recycler')
     end
   end
 
   def run
-    execute!('scl enable tfm -- ruby passenger-recycler')
+    passenger_recycler_path = execute('which passenger-recycler')
+    execute!(passenger_recycler_path)
   end
 end

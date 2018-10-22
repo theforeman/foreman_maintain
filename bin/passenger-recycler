@@ -11,9 +11,9 @@ CONFIG = YAML.load_file(CONFIG_FILE) if File.readable?(CONFIG_FILE)
 exit 0 unless CONFIG[:ENABLED]
 
 def running?(pid)
-  return Process.getpgid(pid) != -1
+  Process.getpgid(pid) != -1
 rescue Errno::ESRCH
-  return false
+  false
 end
 
 def debug(msg)
@@ -25,11 +25,10 @@ def verbose(msg)
 end
 
 def kill(pid)
-  if running?(pid) && CONFIG[:KILL_BUSY]
-    verbose "Process #{pid} is still running, sending SIGKILL"
-    Process.kill 'KILL', pid
-    sleep 5
-  end
+  return unless running?(pid) && CONFIG[:KILL_BUSY]
+  verbose "Process #{pid} is still running, sending SIGKILL"
+  Process.kill 'KILL', pid
+  sleep 5
 end
 
 def process_status?(pid)
@@ -38,6 +37,10 @@ def process_status?(pid)
   else
     verbose "Process successfully #{pid} terminated"
   end
+end
+
+def show_passenger_status(status_messages)
+  status_messages.each { |msg| verbose msg }
 end
 
 require 'phusion_passenger'
@@ -65,25 +68,22 @@ stats.passenger_processes.each do |p|
   pid = p.pid.to_i
   started = get_process_start(pid)
   get_pid_mem_kb, get_pid_mem_mb = get_rss_info(p)
-  debug_message = "Checking #{pid} with RSS of #{get_pid_mem_kb}"
-  verbose_message = "Terminating #{pid} (started #{started}) with private" \
-                    " RSS size of #{get_pid_mem_mb} MB"
-  debug debug_message
+  debug "Checking #{pid} with RSS of #{get_pid_mem_kb}"
   next unless get_pid_mem_kb > CONFIG[:MAX_PRIV_RSS_MEMORY]
   status_ps = `ps -p#{pid} -u`
   status_all = `passenger-status 2> /dev/null`
   status_backtraces = `passenger-status --show=backtraces 2>/dev/null`
-  verbose verbose_message
-  Process.kill 'SIGUSR1', pid
-  sleep CONFIG[:GRACEFUL_SHUTDOWN_SLEEP]
-  kill(pid)
-  process_status?(pid)
-  if CONFIG[:SEND_STATUS]
-    verbose status_ps
-    verbose status_all
-    verbose status_backtraces
+  verbose("Terminating #{pid} (started #{started}) with private RSS size of #{get_pid_mem_mb} MB")
+  begin
+    Process.kill 'SIGUSR1', pid
+    sleep CONFIG[:GRACEFUL_SHUTDOWN_SLEEP]
+    kill(pid)
+    process_status?(pid)
+    show_passenger_status([status_ps, status_all, status_backtraces]) if CONFIG[:SEND_STATUS]
+    killed += 1
+    exit(1) if killed >= CONFIG[:MAX_TERMINATION]
+  rescue Errno::ESRCH
+    puts "#{Process.pid}: #{pid} is NOT running"
   end
-  killed += 1
-  exit(1) if killed >= CONFIG[:MAX_TERMINATION]
 end
 exit 0
