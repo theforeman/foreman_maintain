@@ -1,4 +1,6 @@
 class Features::Mongo < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::DirectoryMarker
+
   # assume mongo is installed when there is Pulp
   PULP_DB_CONFIG = '/etc/pulp/server.conf'.freeze
 
@@ -125,10 +127,6 @@ class Features::Mongo < ForemanMaintain::Feature
       }.merge(extra_tar_options)
       feature(:tar).run(tar_options)
     end
-  end
-
-  def find_base_directory(directory)
-    find_dir_containing_file(directory, 'mongod.lock')
   end
 
   private
