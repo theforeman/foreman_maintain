@@ -41,7 +41,12 @@ module Procedures::Backup
     def pulp_dir
       return feature(:pulp).data_dir if @mount_dir.nil?
       mount_point = File.join(@mount_dir, 'pulp')
-      feature(:pulp).find_base_directory(mount_point)
+      dir = feature(:pulp).find_marked_directory(mount_point)
+      unless dir
+        raise ForemanMaintain::Error::Fail,
+              "Pulp base directory not found in the mount point (#{mount_point})"
+      end
+      dir
     end
 
     def ensure_dir_unchanged

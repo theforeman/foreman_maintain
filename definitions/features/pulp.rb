@@ -1,4 +1,6 @@
 class Features::Pulp < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::DirectoryMarker
+
   metadata do
     label :pulp
 
@@ -35,9 +37,5 @@ class Features::Pulp < ForemanMaintain::Feature
       '/var/lib/qpidd',
       '/etc/qpid-dispatch'
     ]
-  end
-
-  def find_base_directory(directory)
-    find_dir_containing_file(directory, '0005_puppet_module_name_change.txt')
   end
 end

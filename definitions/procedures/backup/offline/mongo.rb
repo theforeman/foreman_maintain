@@ -26,7 +26,7 @@ module Procedures::Backup
       def data_dir
         return nil if @mount_dir.nil?
         mount_point = File.join(@mount_dir, 'mongodb')
-        dir = feature(:mongo).find_base_directory(mount_point)
+        dir = feature(:mongo).find_marked_directory(mount_point)
         fail!("Snapshot of Mongo DB was not found mounted in #{mount_point}") if dir.nil?
         dir
       end

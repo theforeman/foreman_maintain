@@ -19,6 +19,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/system_service'
   require 'foreman_maintain/concerns/hammer'
   require 'foreman_maintain/concerns/base_database'
+  require 'foreman_maintain/concerns/directory_marker'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'

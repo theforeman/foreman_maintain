@@ -56,6 +56,7 @@ class Features::Tar < ForemanMaintain::Feature
       tar_command << options.fetch(:files, '*')
     end
 
+    logger.debug("Invoking tar from #{FileUtils.pwd}")
     execute!(tar_command.join(' '))
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
