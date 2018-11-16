@@ -37,9 +37,9 @@ module Procedures::Backup
           '*** It is highly suggested to backup to a different logical volume than' \
           " the #{shared_lv.join(', ')} database.\n" \
           '*** If you would like to continue, the snapshot size will be required to be at least' \
-          "the size of the actual #{shared_lv.join(', ')} database.\n" \
+          " the size of the actual #{shared_lv.join(', ')} database.\n" \
           "*** You can skip this confirmation with the '-y' flag.\n\n" \
-          'Do you want to proceed(y/n)?', 'y(yes), q(quit)')
+          'Do you want to proceed?', 'y(yes), q(quit)')
         abort! unless answer == :yes
       end
     end
