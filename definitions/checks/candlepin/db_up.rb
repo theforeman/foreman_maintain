@@ -18,7 +18,7 @@ module Checks
       end
 
       def next_steps
-        if feature(:foreman_database).local?
+        if feature(:candlepin_database).local?
           [Procedures::Service::Start.new(:only => 'postgresql')]
         else
           [] # there is nothing we can do for remote db

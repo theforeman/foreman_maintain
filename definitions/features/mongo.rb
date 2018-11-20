@@ -88,30 +88,30 @@ class Features::Mongo < ForemanMaintain::Feature
 
   def dump(target, config = configuration)
     execute!(base_command(core.dump_command, config, "-d #{config['name']} --out #{target}"),
-             :hidden_patterns => [config['password']].compact)
+             :hidden_patterns => [config['password']])
   end
 
   def restore(dir, config = configuration)
     cmd = base_command(core.restore_command, config,
                        "-d #{config['name']} #{File.join(dir, config['name'])}")
-    execute!(cmd, :hidden_patterns => [config['password']].compact)
+    execute!(cmd, :hidden_patterns => [config['password']])
   end
 
   def dropdb(config = configuration)
     execute!(mongo_command("--eval 'db.dropDatabase()'", config),
-             :hidden_patterns => [config['password']].compact)
+             :hidden_patterns => [config['password']])
   end
 
   def ping(config = configuration)
     execute?(mongo_command("--eval 'ping:1'", config),
-             :hidden_patterns => [config['password']].compact)
+             :hidden_patterns => [config['password']])
   end
 
   def server_version(config = configuration)
     # do not use any core methods as we need this prior the core is created
     mongo_cmd = base_command(available_core.client_command, config,
                              "--eval 'db.version()' #{config['name']}")
-    version = execute!(mongo_cmd, :hidden_patterns => [config['password']].compact)
+    version = execute!(mongo_cmd, :hidden_patterns => [config['password']])
     version.split("\n").last
   end
 
