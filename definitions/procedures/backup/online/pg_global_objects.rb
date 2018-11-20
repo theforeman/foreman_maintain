@@ -14,7 +14,11 @@ module Procedures::Backup
 
       def run
         if feature(:instance).postgresql_local?
-          local_db = feature(:foreman_database).local? ? :foreman_database : :candlepin_database
+          local_db = if feature(:instance).database_local?(:foreman_database)
+                       :foreman_database
+                     else
+                       :candlepin_database
+                     end
           feature(local_db).backup_global_objects(File.join(@backup_dir, 'pg_globals.dump'))
         else
           skip 'Backup of global objects is not supported for remote databases.'

@@ -13,7 +13,7 @@ module ForemanMaintain
         @logger = logger
         @command = command
         @stdin = options[:stdin]
-        @hidden_patterns = Array(options[:hidden_patterns])
+        @hidden_patterns = Array(options[:hidden_patterns]).compact
         @interactive = options[:interactive]
         @options = options
         @valid_exit_statuses = options[:valid_exit_statuses]
