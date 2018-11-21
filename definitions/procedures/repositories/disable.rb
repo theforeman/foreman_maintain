@@ -6,7 +6,7 @@ module Procedures::Repositories
     end
     def run
       with_spinner('Disabling repositories') do
-        execute!("yum-config-manager --disable #{@repos}")
+        feature(:system_repos).disable_repos(@repos)
       end
     end
   end
