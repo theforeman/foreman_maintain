@@ -26,7 +26,7 @@ module ForemanMaintain
       def config_files
         [
           '/etc/httpd',
-          '/var/www/html/pub',
+          '/var/www/html/pub/katello-*',
           '/etc/squid',
           '/etc/foreman',
           '/etc/selinux/targeted/contexts/files/file_contexts.subs',
