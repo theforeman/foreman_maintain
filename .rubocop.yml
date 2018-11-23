@@ -93,3 +93,6 @@ Style/DoubleNegation:
   Description: 'Checks for uses of double negation (!!).'
   StyleGuide: '#no-bang-bang'
   Enabled: false
+
+Performance/Casecmp:
+  Enabled: false

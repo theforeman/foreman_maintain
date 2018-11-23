@@ -20,13 +20,17 @@ describe Checks::SystemRegistration do
       let(:msg) { '[Server] expected to raise error' }
 
       it 'system is self registered' do
-        subject.stubs(:rhsm_hostname_eql_hostname?).returns(true)
+        assume_feature_present(:capsule)
+
+        subject.stubs(:rhsm_hostname).returns('sat.example.com')
+        subject.stubs(:hostname).returns('sat.example.com')
         result = run_step(subject)
 
         assert result.fail?, msg
       end
 
       it 'hostname is sat.example.com & rhsm.conf contains hostname=sat.example.com' do
+        assume_satellite_present
         subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_no_space.conf')
         subject.stubs(:hostname).returns('sat.example.com')
         result = run_step(subject)
@@ -47,6 +51,7 @@ describe Checks::SystemRegistration do
       let(:msg) { '[Server] expected NOT to raise error' }
 
       it 'hostname is sat.example.com & rhsm.conf contains hostname = another-sat.example.com' do
+        assume_satellite_present
         subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_mismatch.conf')
         subject.stubs(:hostname).returns('sat.example.com')
         result = run_step(subject)
@@ -55,6 +60,7 @@ describe Checks::SystemRegistration do
       end
 
       it 'hostname commented' do
+        assume_satellite_present
         subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/bad_rhsm.conf')
         subject.stubs(:hostname).returns('foreman.example.com')
         result = run_step(subject)
