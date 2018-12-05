@@ -33,7 +33,12 @@ module ForemanMaintain
           run_scenario(scenario)
           procedure_used = fetch_procedure(scenario, Procedures::MaintenanceMode::IsEnabled)
           puts procedure_used.status_code
-          exit runner.exit_code
+
+          if procedure_used.status_code == 1
+            exit procedure_used.status_code
+          else
+            exit runner.exit_code
+          end
         end
 
         def fetch_procedure(scenario, procedure_class_name)

@@ -43,7 +43,7 @@ module ForemanMaintain
     end
 
     def load_cron_option
-      opt_val = @options.fetch(:manage_crond, true)
+      opt_val = @options.fetch(:manage_crond, false)
       @manage_crond = boolean?(opt_val) ? opt_val : false
     end
 
