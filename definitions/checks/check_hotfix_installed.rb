@@ -9,25 +9,15 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     confine do
       feature(:downstream)
     end
-
-    # param :version,
-    #      'Version for which repositories needs to be consider',
-    #      :required => true
-
-    # manual_detection
   end
 
   def run
-    # TODO: Remove this part as it is only for testing changes locally
-    @version = '6.2'
     if feature(:downstream) && feature(:downstream).subscribed_using_activationkey?
       skip 'Your system is subscribed using custom activationkey'
     else
-      with_spinner('Checking for presence of hotfix(es). It may takes some time to verify.') do
-        hotfix_rpmlist = []
-
-        hotfix_rpmlist = find_hotfix_rpms_installed if feature(:downstream)
-        files_modifications = rpm_verify_command(@version)
+      with_spinner('Checking for presence of hotfix(es). It may take some time to verify.') do
+        hotfix_rpmlist, installed_pkg_list = installed_packages
+        files_modifications = installed_pkg_list.flat_map { |pkg| modified_files(pkg) }
         assert(hotfix_rpmlist.empty? && files_modifications.empty?,
                warning_message(hotfix_rpmlist, files_modifications))
       end
@@ -36,57 +26,59 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
 
   private
 
-  def warning_message(hotfix_rpmlist, files_modifications)
+  def modified_files(package)
+    changed_files = []
+    IO.popen(['rpm', '-V', package]) do |pipe|
+      pipe.each do |line|
+        arr_output = line.chomp.split
+        flags = arr_output.first
+        filename = arr_output.last
+        changed_files << filename if flags.include?('5') && filename =~ /\.(rb|py|erb|js)$/
+      end
+    end
+    changed_files
+  end
+
+  def installed_packages
+    hotfix_packages = []
+    packages = []
+    repoquery_cmd = execute!('which repoquery')
+    IO.popen([repoquery_cmd, '-a', '--installed', '--qf', '%{ui_from_repo} %{nvra}']) do |io|
+      io.each do |line|
+        repo, pkg = line.chomp.split
+        hotfix_packages << pkg if pkg.include?('HOTFIX')
+        packages << pkg if /satellite|rhscl/ =~ repo[1..-1]
+      end
+    end
+    [hotfix_packages, packages]
+  end
+
+  def warning_message(hotfix_rpmlist, files_modified)
     message = "\n"
     unless hotfix_rpmlist.empty?
-      message += "Found below HOTFIX rpm(s) applied on this system.\n"
-      message += hotfix_rpmlist
+      message += msg_for_hotfix_rpms(hotfix_rpmlist)
     end
-    unless files_modifications.empty?
-      message += "Found #{files_modifications.length} file(s) modified on this system.\n"
-      if files_modifications.length > 10
-        message += 'Here, it shows only 10 records. For complete result, please check a log file.'
-      end
-      message += files_modifications[0..9].join("\n")
+    unless files_modified.empty?
+      message += msg_for_modified_files(files_modified)
     end
-    message += "\nBefore continuing upgrade, please verify above hotfix(es) details\n"
+    message += "\n\nBefore package(s) update, please make sure the avaliablility of above file(s) "\
+      'modifications in latest.'\
+      "\nFor safe side, you can take backup of above file(s) belongs to package(s)\n"
     message
   end
 
-  # only for downstream
-  def find_hotfix_rpms_installed
-    cmd = "rpm -qa 'HOTFIXRHBZ*'"
-    output = execute!(cmd).strip
-    return [] if output.empty?
-
-    output.split("\n")
+  def msg_for_hotfix_rpms(rpms_list)
+    message = "Found below HOTFIX rpm(s) applied on this system.\n"
+    message += rpms_list.join(',')
+    message
   end
 
-  def rpm_verify_command(version)
-    cmd = "rpm -V `#{find_installed_packages(version)}` | grep -E '#{regex_for_files_check}'"
-    cmd += " | awk '{print $2}' "
-    return [] unless execute?(cmd) # handle echo $? = 1
-
-    output = execute!(cmd).strip
-    return [] if output.empty?
-
-    output.strip.split("\n")
-  end
-
-  def find_installed_packages(version)
-    repolist_regexstr = feature(:downstream).repolist_for_hotfix_verify(version).join('|')
-
-    # IO.popen(" awk '/#{repolist_regexstr}/ {print $2}'", "w").write (
-    #  IO.popen("repoquery -a --installed --qf '%{ui_from_repo} %{name}'").read
-    # )
-
-    repoquery_cmd = "repoquery -a --installed --qf '%{ui_from_repo} %{name}'"
-    repoquery_cmd += " | awk '/#{repolist_regexstr}/ {print $2}'"
-    execute!(repoquery_cmd)
-    repoquery_cmd
-  end
-
-  def regex_for_files_check
-    '^(..5....T.){1}(.{2}[^c])+.+\.(rb|py|erb|js)$'
+  def msg_for_modified_files(files_modified)
+    message = "\n\nFound #{files_modified.length} file(s) modified on this system.\n"
+    if files_modified.length > 10
+      message += 'Here, it shows only 10 records. For complete result, please check a log file.'
+    end
+    message += files_modified[0..9].join("\n")
+    message
   end
 end

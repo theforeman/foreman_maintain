@@ -58,11 +58,6 @@ class Features::Downstream < ForemanMaintain::Feature
     rh_repos(sat_version)
   end
 
-  def repolist_for_hotfix_verify(sat_version)
-    repos = rh_repos(sat_version)
-    repos.select { |repo_name| repo_name =~ /rhscl|satellite\-+[\d]/ }
-  end
-
   private
 
   def rh_repos(sat_version)
