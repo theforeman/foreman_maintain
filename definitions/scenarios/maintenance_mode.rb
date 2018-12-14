@@ -10,7 +10,9 @@ module ForemanMaintain::Scenarios
     def compose
       add_step(Procedures::Iptables::AddMaintenanceModeChain.new)
       add_step(Procedures::SyncPlans::Disable.new)
-      add_step(Procedures::Service::Stop.new(:only => 'crond')) if feature(:cron)
+      if feature(:cron)
+        add_step(Procedures::Service::Stop.new(:only => 'crond', :include_unregister => true))
+      end
     end
   end
 
@@ -25,7 +27,9 @@ module ForemanMaintain::Scenarios
     def compose
       add_step(Procedures::Iptables::RemoveMaintenanceModeChain.new)
       add_step(Procedures::SyncPlans::Enable.new)
-      add_step(Procedures::Service::Start.new(:only => 'crond')) if feature(:cron)
+      if feature(:cron)
+        add_step(Procedures::Service::Start.new(:only => 'crond', :include_unregister => true))
+      end
     end
   end
 

@@ -47,6 +47,7 @@ module Checks::MaintenanceMode
       unless ForemanMaintain.config.manage_crond && feature(:cron)
         return ['cron jobs: not managed', []]
       end
+
       feature(:cron).status_for_maintenance_mode(is_mode_on)
     end
 

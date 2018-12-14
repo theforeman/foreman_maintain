@@ -14,20 +14,35 @@ class Features::Service < ForemanMaintain::Feature
     end
   end
 
-  def existing_services
+  def existing_services(options = {})
+    include_unregister = options.fetch(:include_unregister, false)
     ForemanMaintain.available_features.map(&:services).
       flatten(1).
       sort.
       inject([]) do |pool, service| # uniq(&:to_s) for ruby 1.8.7
-        pool.last.nil? || !pool.last.matches?(service) ? pool << service : pool
+        if pool.last.nil? || !pool.last.matches?(service)
+          pool << service_by_register_filter(service, include_unregister)
+          pool.compact
+        else
+          pool
+        end
       end.
       select(&:exist?)
   end
 
+  def service_by_register_filter(service, include_unregister)
+    if include_unregister
+      return service
+    elsif service.register?
+      return service
+    end
+  end
+
   def filtered_services(options)
-    service_list = existing_services
+    service_list = existing_services(options)
     service_list = filter_services(service_list, options)
     raise 'No services found matching your parameters' unless service_list.any?
+
     options[:reverse] ? service_list.reverse : service_list
   end
 
@@ -50,6 +65,7 @@ class Features::Service < ForemanMaintain::Feature
     spinner.update("All services #{action_past_tense(action)}")
     if action == 'status'
       raise "Some services are not running (#{failed_services.join(', ')})" if status > 0
+
       spinner.update('All services are running')
     end
   end
@@ -145,7 +161,7 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def exclude_services_only(options)
-    existing_services - filtered_services(options)
+    existing_services(options) - filtered_services(options)
   end
 
   def katello_service_filters(options)

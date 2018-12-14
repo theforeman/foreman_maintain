@@ -2,11 +2,13 @@ module ForemanMaintain::Utils
   module Service
     class Abstract
       include Comparable
-      attr_reader :name, :priority
+      attr_reader :name, :priority, :register
+      alias register? register
 
-      def initialize(name, priority, _options = {})
+      def initialize(name, priority, options = {})
         @name = name
         @priority = priority
+        @register = options.fetch(:register, true)
       end
 
       def <=>(other)
