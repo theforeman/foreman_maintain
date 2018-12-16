@@ -35,7 +35,7 @@ module ForemanMaintain::Scenarios
       when :offline
         add_offline_backup_steps
       when :snapshot
-        add_snaphot_backup_steps
+        add_snapshot_backup_steps
       end
       add_step_with_context(Procedures::Backup::CompressData)
     end
@@ -157,7 +157,7 @@ module ForemanMaintain::Scenarios
     end
 
     # rubocop:disable  Metrics/MethodLength
-    def add_snaphot_backup_steps
+    def add_snapshot_backup_steps
       add_steps_with_context(
         Procedures::Backup::Snapshot::PrepareMount,
         Procedures::MaintenanceMode::Enable,
