@@ -23,5 +23,8 @@
 # Mention directory path to store candlepin db backups
 # :db_backup_dir: '/var/lib/foreman-maintain/db-backups'
 
+# Disable commands and subcommands. Default: []
+# :disable_commands: [ 'SnapshotBackupCommand' ]
+
 # Location of cache for bash completion
 :completion_cache_file: '~/.cache/foreman_maintain_completion.yml'

@@ -4,7 +4,7 @@ module ForemanMaintain
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
                   :storage_file, :backup_dir, :foreman_proxy_cert_path,
-                  :db_backup_dir, :completion_cache_file
+                  :db_backup_dir, :completion_cache_file, :disable_commands
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -18,6 +18,7 @@ module ForemanMaintain
       @completion_cache_file = File.expand_path(
         @options.fetch(:completion_cache_file, '~/.cache/foreman_maintain_completion.yml')
       )
+      @disable_commands = @options.fetch(:disable_commands, [])
     end
 
     private

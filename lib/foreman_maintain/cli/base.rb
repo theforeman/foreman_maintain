@@ -7,6 +7,23 @@ module ForemanMaintain
 
       attr_reader :runner
 
+      class << self
+        include Concerns::Logger
+
+        def subcommand(name, description, subcommand_class = self, &block)
+          add_command = true
+          if subcommand_class.superclass == ForemanMaintain::Cli::Base
+            sc = subcommand_class.to_s
+            sc.slice!('ForemanMaintain::Cli::')
+            if ForemanMaintain.config.disable_commands.include? sc
+              logger.info("Disable command #{sc}")
+              add_command = false
+            end
+          end
+          super if add_command
+        end
+      end
+
       def self.dashize(string)
         string.to_s.tr('_', '-')
       end
