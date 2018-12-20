@@ -7,12 +7,12 @@ module Checks::RemoteExecution
         feature(:downstream) &&
           feature(:downstream).current_minor_version == '6.2' &&
           find_package('tfm-rubygem-smart_proxy_dynflow_core') &&
-          file_exists?('/etc/smart_proxy_dynflow_core')
+          file_exist?('/etc/smart_proxy_dynflow_core')
       end
     end
 
     def run
-      if file_exists?(settingd_dir_path)
+      if file_exist?(settingd_dir_path)
         symlinks = find_symlinks(settingd_dir_path)
         assert(
           symlinks.empty?,

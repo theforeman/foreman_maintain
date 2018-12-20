@@ -13,12 +13,16 @@ module ForemanMaintain
         ensure_one_object(:check, label)
       end
 
-      def find_checks(conditions)
-        detector.available_checks(conditions)
-      end
-
       def procedure(label)
         ensure_one_object(:procedure, label)
+      end
+
+      def report(label)
+        ensure_one_object(:report, label)
+      end
+
+      def find_checks(conditions)
+        detector.available_checks(conditions)
       end
 
       def find_procedures(conditions)
@@ -31,6 +35,10 @@ module ForemanMaintain
 
       def find_all_scenarios(conditions)
         detector.all_scenarios(conditions)
+      end
+
+      def find_reports
+        detector.available_reports
       end
 
       private
@@ -64,6 +72,8 @@ module ForemanMaintain
           detector.available_procedures(conditions)
         when :check
           detector.available_checks(conditions)
+        when :report
+          detector.available_reports(conditions)
         else
           raise "Unexpected object type #{object_type}"
         end

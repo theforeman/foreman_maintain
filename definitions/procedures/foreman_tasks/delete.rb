@@ -13,7 +13,6 @@ module Procedures::ForemanTasks
     def run
       with_spinner("Deleting #{@state} task") do |spinner|
         count_tasks_before = feature(:foreman_tasks).count(@state)
-
         if count_tasks_before > 0
           spinner.update "Backup #{@state} tasks"
           feature(:foreman_tasks).backup_tasks(@state) do |backup_progress|

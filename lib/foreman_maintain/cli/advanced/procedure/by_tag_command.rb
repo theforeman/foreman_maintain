@@ -14,8 +14,7 @@ module ForemanMaintain
           ).map do |procedure|
             procedure.label.to_s
           end
-
-          subcommand(dashize(tag), "Run procedures tagged ##{tag}: #{procedures.join(', ')}", klass)
+          subcommand(tag.dashize, "Run procedures tagged ##{tag}: #{procedures.join(', ')}", klass)
         end
 
         def execute

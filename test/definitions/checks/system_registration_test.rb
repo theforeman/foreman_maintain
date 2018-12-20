@@ -13,7 +13,7 @@ describe Checks::SystemRegistration do
     let(:rhsm_hostname_cmd) { "grep '\\bhostname\\b' < /etc/rhsm/rhsm.conf" }
 
     before do
-      subject.stubs(:file_exists?).returns(true)
+      subject.stubs(:file_exist?).returns(true)
     end
 
     context 'smart-proxy' do
@@ -73,7 +73,7 @@ describe Checks::SystemRegistration do
 
   context 'when RH subscription manager conf does not exists' do
     before do
-      subject.stubs(:file_exists?).returns(false)
+      subject.stubs(:file_exist?).returns(false)
     end
 
     it "runs does not executes when rpm 'katello-ca-consumer' is absent" do

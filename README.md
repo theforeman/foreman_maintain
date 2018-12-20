@@ -15,7 +15,11 @@ Subcommands:
       check                         Run the health checks against the system
         --label label               Run only a specific check
         --tags tags                 Limit only for specific set of tags
-
+    report                        Generate reports
+      disk-usage                    Report disk consumption and availability of directories
+      table-counts                  Get table counts
+      table-sizes                   Get table sizes
+      all                           Generate all reports
     upgrade                       Upgrade related commands
       list-versions                 List versions this system is upgradable to
       check --target-version TARGET_VERSION   Run pre-upgrade checks for upgrading to specified version

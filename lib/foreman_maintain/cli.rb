@@ -8,6 +8,8 @@ require 'foreman_maintain/cli/backup_command'
 require 'foreman_maintain/cli/advanced_command'
 require 'foreman_maintain/cli/service_command'
 require 'foreman_maintain/cli/restore_command'
+require 'foreman_maintain/cli/system_report'
+require 'foreman_maintain/cli/report_command'
 
 module ForemanMaintain
   module Cli
@@ -20,6 +22,7 @@ module ForemanMaintain
       subcommand 'backup', 'Backup server', BackupCommand
       subcommand 'restore', 'Restore a backup', RestoreCommand
       subcommand 'advanced', 'Advanced tools for server maintenance', AdvancedCommand
+      subcommand 'report', 'Generate reports', ReportCommand
 
       def run(*arguments)
         logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")

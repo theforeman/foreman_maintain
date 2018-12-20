@@ -32,11 +32,13 @@ module ForemanMaintain
   require 'foreman_maintain/check'
   require 'foreman_maintain/procedure'
   require 'foreman_maintain/scenario'
+  require 'foreman_maintain/reporter'
+  require 'foreman_maintain/report_runner'
   require 'foreman_maintain/runner'
   require 'foreman_maintain/upgrade_runner'
-  require 'foreman_maintain/reporter'
   require 'foreman_maintain/utils'
   require 'foreman_maintain/error'
+  require 'foreman_maintain/report'
 
   class << self
     attr_accessor :config, :logger
@@ -114,6 +116,10 @@ module ForemanMaintain
     def allowed_available_procedures(*args)
       procedures = detector.available_procedures(*args)
       procedures.select(&:advanced_run?)
+    end
+
+    def available_reports(*args)
+      detector.available_reports(*args)
     end
 
     def init_logger

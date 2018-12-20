@@ -77,7 +77,7 @@ module ForemanMaintain
         [$CHILD_STATUS.to_i, result_msg]
       end
 
-      def file_exists?(filename)
+      def file_exist?(filename)
         File.exist?(filename)
       end
 

@@ -6,6 +6,7 @@ module ForemanMaintain
       end
     end
     require 'foreman_maintain/reporter/cli_reporter'
+    require 'foreman_maintain/reporter/plain_text_reporter'
 
     DECISION_MAPPER = {
       %w[y yes] => :yes,

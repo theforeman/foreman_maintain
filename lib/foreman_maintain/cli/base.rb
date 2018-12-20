@@ -7,24 +7,12 @@ module ForemanMaintain
 
       attr_reader :runner
 
-      def self.dashize(string)
-        string.to_s.tr('_', '-')
-      end
-
-      def dashize(string)
-        self.class.dashize(string)
-      end
-
-      def underscorize(string)
-        string.to_s.tr('-', '_')
-      end
-
       def label_string(string)
-        HighLine.color("[#{dashize(string)}]", :yellow)
+        HighLine.color("[#{string.dashize}]", :yellow)
       end
 
       def tag_string(string)
-        HighLine.color("[#{dashize(string)}]", :cyan)
+        HighLine.color("[#{string.dashize}]", :cyan)
       end
 
       def print_check_info(check)
@@ -115,8 +103,8 @@ module ForemanMaintain
         option '--label', 'label',
                'Limit only for a specific label. ' \
                  '(Use "list" command to see available labels)' do |label|
-          raise ArgumentError, 'value not specified' if label.nil? || label.empty?
-          underscorize(label).to_sym
+          raise ArgumentError, 'value not specified' if label.blank?
+          label.underscorize.to_sym
         end
       end
 
@@ -125,8 +113,8 @@ module ForemanMaintain
                'Limit only for specific set of labels. ' \
                  '(Use list-tags command to see available tags)',
                :multivalued => true) do |tags|
-          raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
-          tags.map { |tag| underscorize(tag).to_sym }
+          raise ArgumentError, 'value not specified' if tags.blank?
+          tags.map(&:strip).map { |tag| tag.underscorize.to_sym }
         end
       end
 

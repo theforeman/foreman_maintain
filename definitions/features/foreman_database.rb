@@ -7,7 +7,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
     label :foreman_database
 
     confine do
-      file_exists?(FOREMAN_DB_CONFIG)
+      file_exist?(FOREMAN_DB_CONFIG)
     end
   end
 
