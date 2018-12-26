@@ -16,7 +16,8 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
       skip 'Your system is subscribed using custom activationkey'
     else
       with_spinner('Checking for presence of hotfix(es). It may take some time to verify.') do
-        hotfix_rpmlist, installed_pkg_list = installed_packages
+        hotfix_rpmlist = find_hotfix_packages
+        installed_pkg_list = installed_packages
         files_modifications = installed_pkg_list.flat_map { |pkg| modified_files(pkg) }
         assert(hotfix_rpmlist.empty? && files_modifications.empty?,
                warning_message(hotfix_rpmlist, files_modifications))
@@ -40,17 +41,22 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
   end
 
   def installed_packages
-    hotfix_packages = []
     packages = []
     repoquery_cmd = execute!('which repoquery')
     IO.popen([repoquery_cmd, '-a', '--installed', '--qf', '%{ui_from_repo} %{nvra}']) do |io|
       io.each do |line|
         repo, pkg = line.chomp.split
-        hotfix_packages << pkg if pkg.include?('HOTFIX')
         packages << pkg if /satellite|rhscl/ =~ repo[1..-1]
       end
     end
-    [hotfix_packages, packages]
+    packages
+  end
+
+  def find_hotfix_packages
+    output = execute!('rpm -qa release="*HOTFIX*"').strip
+    return [] if output.empty?
+
+    output.split("\n")
   end
 
   def warning_message(hotfix_rpmlist, files_modified)
