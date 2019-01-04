@@ -12,8 +12,8 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
   end
 
   def run
-    if feature(:downstream) && feature(:downstream).subscribed_using_activationkey?
-      skip 'Your system is subscribed using custom activationkey'
+    if feature(:downstream).subscribed_using_activation_key?
+      skip "Your system is subscribed using custom activation key. Hotfixes can't be detected."
     else
       with_spinner('Checking for presence of hotfix(es). It may take some time to verify.') do
         hotfix_rpmlist = find_hotfix_packages
@@ -67,24 +67,21 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     unless files_modified.empty?
       message += msg_for_modified_files(files_modified)
     end
-    message += "\n\nBefore package(s) update, please make sure the avaliablility of above file(s) "\
-      'modifications in latest.'\
-      "\nFor safe side, you can take backup of above file(s) belongs to package(s)\n"
+    message += "\n\nBefore update make sure the updated packages contain the listed modifications "\
+      'otherwise these fixes will be lost. '\
+      'It is also recommended to backup the modified files prior update.'
     message
   end
 
   def msg_for_hotfix_rpms(rpms_list)
-    message = "Found below HOTFIX rpm(s) applied on this system.\n"
+    message = "HOTFIX rpm(s) applied on this system:\n"
     message += rpms_list.join(',')
     message
   end
 
   def msg_for_modified_files(files_modified)
     message = "\n\nFound #{files_modified.length} file(s) modified on this system.\n"
-    if files_modified.length > 10
-      message += 'Here, it shows only 10 records. For complete result, please check a log file.'
-    end
-    message += files_modified[0..9].join("\n")
+    message += files_modified.join("\n")
     message
   end
 end
