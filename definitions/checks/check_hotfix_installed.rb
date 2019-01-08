@@ -2,6 +2,7 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
   metadata do
     label :check_hotfix_installed
     description 'Check to verify if any hotfix installed on system'
+    tags :pre_upgrade
     preparation_steps do
       Procedures::Packages::Install.new(:packages => %w[yum-utils])
     end
@@ -20,7 +21,8 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
         installed_pkg_list = installed_packages
         files_modifications = installed_pkg_list.flat_map { |pkg| modified_files(pkg) }
         assert(hotfix_rpmlist.empty? && files_modifications.empty?,
-               warning_message(hotfix_rpmlist, files_modifications))
+               warning_message(hotfix_rpmlist, files_modifications),
+               :warn => true)
       end
     end
   end
@@ -67,9 +69,10 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     unless files_modified.empty?
       message += msg_for_modified_files(files_modified)
     end
-    message += "\n\nBefore update make sure the updated packages contain the listed modifications "\
-      'otherwise these fixes will be lost. '\
-      'It is also recommended to backup the modified files prior update.'
+    message += "\n\n*** WARNING: Before update make sure the updated packages contain"\
+      " the listed modifications\n"\
+      "*** otherwise these fixes will be lost. \n"\
+      '*** It is also recommended to backup the modified files prior update.'
     message
   end
 
