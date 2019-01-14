@@ -50,7 +50,7 @@ class Features::Downstream < ForemanMaintain::Feature
     execute!(%(subscription-manager refresh))
   end
 
-  def subscribed_using_activationkey?
+  def subscribed_using_activation_key?
     ENV['EXTERNAL_SAT_ACTIVATION_KEY'] && ENV['EXTERNAL_SAT_ORG']
   end
 
