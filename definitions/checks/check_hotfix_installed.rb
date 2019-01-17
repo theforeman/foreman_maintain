@@ -48,7 +48,7 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     IO.popen([repoquery_cmd, '-a', '--installed', '--qf', '%{ui_from_repo} %{nvra}']) do |io|
       io.each do |line|
         repo, pkg = line.chomp.split
-        packages << pkg if /satellite|rhscl/ =~ repo[1..-1]
+        packages << pkg if /satellite|rhscl/ =~ repo[1..-1].downcase
       end
     end
     packages
