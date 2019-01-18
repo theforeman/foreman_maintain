@@ -9,15 +9,16 @@ class Features::Cron < ForemanMaintain::Feature
   end
 
   def status_for_maintenance_mode(mode_on)
-    if system_service(service_name).running?
+    cron_service = system_service(service_name)
+    if cron_service.running?
       [
         'cron jobs: running',
-        mode_on ? [Procedures::Service::Stop.new(:only => service_name)] : []
+        mode_on ? [Procedures::Service::Stop.new(:only => cron_service)] : []
       ]
     else
       [
         'cron jobs: not running',
-        mode_on ? [] : [Procedures::Service::Start.new(:only => service_name)]
+        mode_on ? [] : [Procedures::Service::Start.new(:only => cron_service)]
       ]
     end
   end
