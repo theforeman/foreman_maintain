@@ -4,8 +4,7 @@ module ForemanMaintain
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
                   :storage_file, :backup_dir, :foreman_proxy_cert_path,
-                  :db_backup_dir, :completion_cache_file, :disable_commands,
-                  :manage_crond, :maintenance_file
+                  :db_backup_dir, :completion_cache_file, :disable_commands, :manage_crond
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -39,7 +38,6 @@ module ForemanMaintain
       @db_backup_dir = find_dir_path(
         @options.fetch(:db_backup_dir, '/var/lib/foreman-maintain/db-backups')
       )
-      @maintenance_file = '/var/lib/foreman-maintain/maintenance_file.lock'
     end
 
     def load_cron_option
