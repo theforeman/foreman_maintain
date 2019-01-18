@@ -1,7 +1,7 @@
 module ForemanMaintain::Utils
   module Service
     class Systemd < Abstract
-      def initialize(name, priority, options = {})
+      def initialize(name, priority, _options = {})
         super
         @sys = SystemHelpers.new
       end

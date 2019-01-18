@@ -7,10 +7,9 @@ module Procedures
 
       def self.common_params(context)
         context.instance_eval do
-          param :only, 'A comma-separated list of services to include', :array => true
+          param :only, 'A comma-separated list of services to run', :array => true
           param :exclude, 'A comma-separated list of services to skip', :array => true
-          param :include_unregister, 'Include unregistered services for action',
-                :flag => true, :default => false, :hidden => true
+          param :include, 'A comma-separated list of services to include', :array => true
         end
       end
 
@@ -26,7 +25,7 @@ module Procedures
       end
 
       def common_options
-        { :only => @only, :exclude => @exclude, :include_unregister => @include_unregister }
+        { :only => @only, :exclude => @exclude, :include => @include }
       end
 
       private
