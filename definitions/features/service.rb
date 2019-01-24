@@ -101,6 +101,7 @@ class Features::Service < ForemanMaintain::Feature
 
   def filter_services(service_list, options)
     service_list = include_unregistered_services(service_list, options[:include])
+
     if options[:only] && options[:only].any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }
@@ -111,7 +112,7 @@ class Features::Service < ForemanMaintain::Feature
     if options[:exclude] && options[:exclude].any?
       service_list = service_list.reject { |service| options[:exclude].include?(service.name) }
     end
-    service_list
+    service_list.sort
   end
 
   def include_unregistered_services(service_list, services_filter)
