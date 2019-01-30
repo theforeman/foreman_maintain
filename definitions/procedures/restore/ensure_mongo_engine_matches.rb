@@ -6,8 +6,8 @@ module Procedures::Restore
     end
 
     def run
-      if feature(:mongo).local? && engine_mismatch?
-        with_spinner('') do |spinner|
+      if feature(:mongo).local? && mongo_data_dir_exists? && engine_mismatch?
+        with_spinner('Clean MongoDB data') do |spinner|
           feature(:service).handle_services(spinner, 'stop', :only => feature(:mongo).services)
           spinner.update('Clean MongoDB data')
           data_path = Dir[feature(:mongo).data_dir + '/*']
@@ -23,6 +23,10 @@ module Procedures::Restore
       tiger_file = File.join(feature(:mongo).data_dir, 'WiredTiger.wt')
       config_file = feature(:mongo).core.server_config_files.first
       File.exist?(tiger_file) && File.open(config_file).grep(/^storage.engine:\s*mmapv1/).any?
+    end
+
+    def mongo_data_dir_exists?
+      File.directory?(feature(:mongp).data_dir)
     end
   end
 end
