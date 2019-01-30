@@ -32,6 +32,10 @@ class Features::Mongo < ForemanMaintain::Feature
   end
 
   def initialize
+    reload_db_config
+  end
+
+  def reload_db_config
     @configuration = load_db_config(config_file)
   end
 
