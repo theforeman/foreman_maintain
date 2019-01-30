@@ -26,7 +26,7 @@ module Procedures::Restore
     end
 
     def mongo_data_dir_exists?
-      File.directory?(feature(:mongp).data_dir)
+      File.directory?(feature(:mongo).data_dir)
     end
   end
 end
