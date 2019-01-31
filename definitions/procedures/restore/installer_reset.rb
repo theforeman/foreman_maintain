@@ -2,19 +2,11 @@ module Procedures::Restore
   class InstallerReset < ForemanMaintain::Procedure
     metadata do
       description 'Run installer reset'
-
-      param :incremental_backup,
-            'Is the backup incremental?'
     end
 
     def run
-      with_spinner('Resetting') do |spinner|
-        if @incremental_backup
-          spinner.update('Skipping installer reset for incremental update')
-        else
-          spinner.update('Installer reset')
-          execute!(installer_cmd)
-        end
+      with_spinner('Installer reset') do
+        execute!(installer_cmd)
       end
     end
 
