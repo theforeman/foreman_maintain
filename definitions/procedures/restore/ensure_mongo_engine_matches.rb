@@ -12,6 +12,7 @@ module Procedures::Restore
           spinner.update('Clean MongoDB data')
           data_path = Dir[feature(:mongo).data_dir + '/*']
           FileUtils.rm_rf(data_path)
+          FileUtils.rm_rf('/var/tmp/mongodb_engine_upgrade')
           feature(:service).handle_services(spinner, 'start', :only => feature(:mongo).services)
         end
       end
