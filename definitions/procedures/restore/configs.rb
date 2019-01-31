@@ -14,6 +14,7 @@ module Procedures::Restore
         spinner.update('Restoring configs')
         clean_conflicting_data
         restore_configs(backup)
+        reload_configs
       end
     end
 
@@ -28,6 +29,10 @@ module Procedures::Restore
       }
 
       feature(:tar).run(tar_options)
+    end
+
+    def reload_configs
+      feature(:mongo).reload_db_config if feature(:mongo)
     end
 
     private

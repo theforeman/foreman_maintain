@@ -19,9 +19,12 @@ module ForemanMaintain::Scenarios
                              Procedures::Restore::Confirmation,
                              Checks::Restore::ValidateHostname,
                              Procedures::Selinux::SetFileSecurity,
-                             Procedures::Restore::Configs,
-                             Procedures::Restore::InstallerReset,
-                             Procedures::Service::Stop)
+                             Procedures::Restore::Configs)
+      unless backup.incremental?
+        add_steps_with_context(Procedures::Restore::EnsureMongoEngineMatches,
+                               Procedures::Restore::InstallerReset)
+      end
+      add_step_with_context(Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
       drop_dbs(backup)
       if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
@@ -84,8 +87,7 @@ module ForemanMaintain::Scenarios
                   Procedures::Restore::MongoDump => :backup_dir)
 
       context.map(:incremental_backup,
-                  Procedures::Selinux::SetFileSecurity => :incremental_backup,
-                  Procedures::Restore::InstallerReset => :incremental_backup)
+                  Procedures::Selinux::SetFileSecurity => :incremental_backup)
     end
   end
 end
