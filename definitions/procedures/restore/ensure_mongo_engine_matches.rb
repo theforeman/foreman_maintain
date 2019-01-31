@@ -5,6 +5,7 @@ module Procedures::Restore
       for_feature :mongo
     end
 
+    # rubocop:disable Metrics/AbcSize
     def run
       if feature(:mongo).local? && mongo_data_dir_exists? && engine_mismatch?
         with_spinner('Clean MongoDB data') do |spinner|
@@ -17,6 +18,7 @@ module Procedures::Restore
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     private
 
