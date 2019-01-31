@@ -4,7 +4,7 @@ module ForemanMaintain
 
     def initialize(name, description, options, &block)
       options.validate_options!(:description, :required, :flag, :array,
-                                :allowed_values, :default, :hidden)
+                                :allowed_values, :default)
       @name = name
       @description = description || options[:description] || ''
       @options = options

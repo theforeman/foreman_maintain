@@ -13,6 +13,6 @@ module ForemanMaintain::Utils
   end
 
   def self.valid_sys_service?(service)
-    service.instance_of?(Service::RemoteDB) || service.instance_of?(Service::Systemd)
+    service.class < Service::Abstract
   end
 end
