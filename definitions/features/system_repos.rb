@@ -21,16 +21,16 @@ class Features::SystemRepos < ForemanMaintain::Feature
     Hash[*repos.delete!(' ').split("\n")]
   end
 
-  def upstream_repos_id
-    comma_separated_repoid(upstream_repos.keys)
+  def upstream_repos_ids
+    trim_repoids(upstream_repos.keys)
   end
 
-  def comma_separated_repoid(repos)
-    repos.map { |r| r.gsub(%r{Repo-id:|\/+\w*}, '') }.join(',')
+  def trim_repoids(repos)
+    repos.map { |r| r.gsub(%r{Repo-id:|\/+\w*}, '') }
   end
 
-  def disable_repos(repo_id)
-    execute!("yum-config-manager --disable #{repo_id}")
+  def disable_repos(repo_ids)
+    execute!("yum-config-manager --disable #{repo_ids.join(',')}")
   end
 
   def upstream_repo_urls
