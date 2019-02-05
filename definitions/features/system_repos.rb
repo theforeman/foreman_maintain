@@ -42,6 +42,7 @@ class Features::SystemRepos < ForemanMaintain::Feature
      /#{repo_urls[:Katello]}+client/,
      /#{repo_urls[:Katello]}+candlepin/,
      /#{repo_urls[:Katello]}+pulp/,
-     %r{yum.puppetlabs.com\/el\/[\w|\/|\.]*\/x86_64}]
+     %r{yum.puppetlabs.com\/el\/[\w|\/|\.]*\/x86_64},
+     %r{repos.fedorapeople.org\/repos\/pulp\/[\/|\w|.]*\/x86_64}]
   end
 end
