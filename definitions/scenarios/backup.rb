@@ -219,7 +219,7 @@ module ForemanMaintain::Scenarios
 
     def compose
       add_step_with_context(Procedures::Service::Start) if strategy != :online
-      add_step_with_context(find_procedures(:maintenance_mode_off)) if strategy != :online
+      add_steps_with_context(find_procedures(:maintenance_mode_off)) if strategy != :online
       add_step_with_context(Procedures::Backup::Snapshot::CleanMount) if strategy == :snapshot
       add_step_with_context(Procedures::Backup::Clean)
     end
