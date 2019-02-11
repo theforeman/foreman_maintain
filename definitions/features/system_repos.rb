@@ -25,12 +25,14 @@ class Features::SystemRepos < ForemanMaintain::Feature
     trim_repoids(upstream_repos.keys)
   end
 
-  def trim_repoids(repos)
-    repos.map { |r| r.gsub(%r{Repo-id:|\/+\w*}, '') }
-  end
-
   def disable_repos(repo_ids)
     execute!("yum-config-manager --disable #{repo_ids.join(',')}")
+  end
+
+  private
+
+  def trim_repoids(repos)
+    repos.map { |r| r.gsub(%r{Repo-id:|\/+\w*}, '') }
   end
 
   def upstream_repo_urls
