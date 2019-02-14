@@ -5,6 +5,9 @@ module Procedures::Foreman
       tags :pre_migration
       desc = 'Create additional filters so that each filter has only permissions of one resource'
       description desc
+      confine do
+        check_min_version('foreman', '1.15')
+      end
     end
 
     def run
