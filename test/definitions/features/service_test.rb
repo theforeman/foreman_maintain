@@ -45,7 +45,7 @@ describe Features::Service do
   end
   let(:missing) { missing_system_service('missing', 30) }
 
-  let(:crond) { existing_system_service('crond', 30) }
+  let(:crond) { existing_system_service('crond', 50) }
 
   class TestFeature < ForemanMaintain::Feature
     def initialize(*services)
@@ -98,7 +98,7 @@ describe Features::Service do
     end
 
     it 'applies the only filters which includes ungistered services as well' do
-      filtered_service_list = subject.filtered_services(:only => %w[httpd crond])
+      filtered_service_list = subject.filtered_services(:only => ['httpd', crond])
 
       includes_available_feature_services?(filtered_service_list, [httpd])
       service_names_match?(filtered_service_list, [httpd, crond])
@@ -118,18 +118,12 @@ describe Features::Service do
       subject.filtered_services(:exclude => ['postgresql']).must_equal [httpd]
     end
 
-    it 'applies the include filters' do
-      filtered_service_list = subject.filtered_services(:include => ['crond'])
+    it 'the :include accepts also list of SystemServices' do
+      filtered_service_list = subject.filtered_services(:include => [crond])
       feature_services = [remote_candlepin_db, remote_foreman_db, httpd]
 
       includes_available_feature_services?(filtered_service_list, feature_services)
       service_names_match?(filtered_service_list, feature_services.push(crond))
-    end
-
-    it 'the :include accepts also list of SystemServices' do
-      filtered_service_list = subject.filtered_services(:include => [httpd])
-
-      assert filtered_service_list.include?(httpd)
     end
 
     it 'on adding non-exist service into :include raise exception' do
