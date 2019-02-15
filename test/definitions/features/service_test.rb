@@ -45,6 +45,8 @@ describe Features::Service do
   end
   let(:missing) { missing_system_service('missing', 30) }
 
+  let(:crond) { existing_system_service('crond', 30) }
+
   class TestFeature < ForemanMaintain::Feature
     def initialize(*services)
       @services = services
@@ -96,10 +98,10 @@ describe Features::Service do
     end
 
     it 'applies the only filters which includes ungistered services as well' do
-      filtered_service_list = subject.filtered_services(:only => %w[httpd missing])
+      filtered_service_list = subject.filtered_services(:only => %w[httpd crond])
 
       includes_available_feature_services?(filtered_service_list, [httpd])
-      service_names_match?(filtered_service_list, [httpd, missing])
+      service_names_match?(filtered_service_list, [httpd, crond])
     end
 
     it 'the :only filters all services regardless on component' do
@@ -117,17 +119,24 @@ describe Features::Service do
     end
 
     it 'applies the include filters' do
-      filtered_service_list = subject.filtered_services(:include => ['missing'])
+      filtered_service_list = subject.filtered_services(:include => ['crond'])
       feature_services = [remote_candlepin_db, remote_foreman_db, httpd]
 
       includes_available_feature_services?(filtered_service_list, feature_services)
-      service_names_match?(filtered_service_list, feature_services.push(missing))
+      service_names_match?(filtered_service_list, feature_services.push(crond))
     end
 
     it 'the :include accepts also list of SystemServices' do
-      filtered_service_list = subject.filtered_services(:include => [httpd, 'missing'])
+      filtered_service_list = subject.filtered_services(:include => [httpd])
 
       assert filtered_service_list.include?(httpd)
+    end
+
+    it 'on adding non-exist service into :include raise exception' do
+      err = assert_raises RuntimeError do
+        subject.filtered_services(:include => [missing])
+      end
+      assert_match "No service found matching your parameter '#{missing.name}'", err.message
     end
   end
 end

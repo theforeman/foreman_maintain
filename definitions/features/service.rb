@@ -124,12 +124,14 @@ class Features::Service < ForemanMaintain::Feature
     end
 
     unregistered_service_list = services_filter.map do |obj|
-      if obj.is_a? String
-        system_service(obj)
-      elsif valid_sys_service?(obj)
-        obj
-      end
+      service = if obj.is_a? String
+                  system_service(obj)
+                elsif valid_sys_service?(obj)
+                  obj
+                end
+      service.exist? ? service : raise("No service found matching your parameter '#{service.name}'")
     end
+
     service_list.concat(unregistered_service_list)
     service_list
   end

@@ -20,6 +20,18 @@ class Features::SyncPlans < ForemanMaintain::Feature
     ).map { |r| r['id'].to_i }
   end
 
+  def verify_existing_ids_by_status(ids, enabled = true)
+    return [] if ids.empty?
+
+    enabled = enabled ? 't' : 'f'
+    ids_condition = ids.map { |id| "'#{id}'" }.join(',')
+    feature(:foreman_database).query(
+      <<-SQL
+        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled}' AND id IN (#{ids_condition})
+      SQL
+    ).map { |r| r['id'].to_i }
+  end
+
   def make_disable(ids)
     update_records(ids, false)
   end
@@ -40,6 +52,7 @@ class Features::SyncPlans < ForemanMaintain::Feature
     default_storage = ForemanMaintain.storage(:default)
     load_from_storage(default_storage)
     return ['sync plans: empty data', []] if both_empty?
+
     if @data[:enabled] && key_empty?(:disabled)
       [
         'sync plans: enabled',
@@ -56,8 +69,11 @@ class Features::SyncPlans < ForemanMaintain::Feature
   private
 
   def update_records(ids, enabled)
+    ids_not_required_update = verify_existing_ids_by_status(ids, enabled)
+    ids_required_update = ids - ids_not_required_update
+    make_data_key_empty(enabled) if !ids_not_required_update.empty? && ids_required_update.empty?
     updated_record_ids = []
-    ids.each do |sp_id|
+    ids_required_update.each do |sp_id|
       result = feature(:hammer).run("sync-plan update --id #{sp_id} --enabled #{enabled}")
       if result.include?('Sync plan updated')
         updated_record_ids << sp_id
@@ -72,7 +88,13 @@ class Features::SyncPlans < ForemanMaintain::Feature
 
   def data
     raise 'Use load_from_storage before accessing the data' unless defined? @data
+
     @data
+  end
+
+  def make_data_key_empty(enabled)
+    key_name = enabled ? 'disabled' : 'enabled'
+    @data[:"#{key_name}"] = []
   end
 
   def update_data(enabled, new_ids)
@@ -81,6 +103,7 @@ class Features::SyncPlans < ForemanMaintain::Feature
       @data[:enabled] = new_ids
     else
       @data[:disabled] = [] unless @data[:disabled]
+      @data[:enabled] = [] if @data[:disabled].empty?
       @data[:disabled].concat(new_ids)
     end
   end
