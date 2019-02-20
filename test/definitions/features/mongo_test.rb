@@ -47,5 +47,12 @@ describe Features::Mongo do
       stub_config_file("#{data_dir}/mongo/default_server.conf")
       subject.base_command('mongo').must_equal 'mongo --host mymongo --port 27019 '
     end
+
+    it 'produce command with right parameters for SSL without verification' do
+      stub_config_file("#{data_dir}/mongo/self_signed_certs_server.conf")
+      cmd = 'mongo --host mymongo --port 27019 --ssl --sslAllowInvalidCertificates' \
+            ' --sslCAFile /etc/pki/tls/certs/test_ca.pem '
+      subject.base_command('mongo').must_equal cmd
+    end
   end
 end
