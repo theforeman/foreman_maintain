@@ -62,7 +62,9 @@ module ForemanMaintain::Utils
         if @db_feature.ping
           [0, "#{self} is remote and is UP.#{msg}"]
         else
-          [1, "#{self} is remote and is DOWN.#{msg}"]
+          [1, "#{self} is remote and is DOWN.#{msg}" \
+            "\n  Unable to connect to the remote database." \
+            "\n  See the log (#{ForemanMaintain.config.log_filename}) for more details.#{msg}"]
         end
       end
     end

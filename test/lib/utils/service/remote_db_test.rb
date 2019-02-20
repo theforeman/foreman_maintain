@@ -85,12 +85,20 @@ module ForemanMaintain
 
     it 'can handle remote db start' do
       remote_db_service.start.must_equal [0, 'mongod (Pulp) is remote and is UP.']
-      remote_stopped_db_service.start.must_equal [1, 'mongod (Pulp) is remote and is DOWN.']
+      result = remote_stopped_db_service.start
+      result[0].must_equal 1
+      result[1].must_match 'mongod (Pulp) is remote and is DOWN'
+      result[1].must_match 'Unable to connect to the remote database'
+      result[1].must_match(/See the log \(.*\) for more details/)
     end
 
     it 'can handle remote db stop' do
       remote_db_service.stop.must_equal [0, 'mongod (Pulp) is remote and is UP.']
-      remote_stopped_db_service.stop.must_equal [0, 'mongod (Pulp) is remote and is DOWN.']
+      result = remote_stopped_db_service.stop
+      result[0].must_equal 0
+      result[1].must_match 'mongod (Pulp) is remote and is DOWN'
+      result[1].must_match 'Unable to connect to the remote database'
+      result[1].must_match(/See the log \(.*\) for more details/)
     end
 
     describe 'matches?' do
