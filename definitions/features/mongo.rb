@@ -70,19 +70,24 @@ class Features::Mongo < ForemanMaintain::Feature
     ['localhost', '127.0.0.1', hostname].include?(configuration['host'])
   end
 
+  # rubocop:disable Metrics/AbcSize
   def base_command(command, config = configuration, args = '')
     if config['ssl']
       ssl = ' --ssl'
-      if config['ca_path']
+      if config['ca_path'] && !config['ca_path'].empty?
         ca_cert = " --sslCAFile #{config['ca_path']}"
-        client_cert = " --sslPEMKeyFile #{config['ssl_certfile']}" if config['ssl_certfile']
       end
+      if config['ssl_certfile'] && !config['ssl_certfile'].empty?
+        client_cert = " --sslPEMKeyFile #{config['ssl_certfile']}"
+      end
+      verify_ssl = ' --sslAllowInvalidCertificates' if config['verify_ssl'] == false
     end
     username = " -u #{config['username']}" if config['username']
     password = " -p #{config['password']}" if config['password']
     host = "--host #{config['host']} --port #{config['port']}"
-    "#{command}#{username}#{password} #{host}#{ssl}#{ca_cert}#{client_cert} #{args}"
+    "#{command}#{username}#{password} #{host}#{ssl}#{verify_ssl}#{ca_cert}#{client_cert} #{args}"
   end
+  # rubocop:enable Metrics/AbcSize
 
   def mongo_command(args, config = configuration)
     base_command(core.client_command, config, "#{args} #{config['name']}")

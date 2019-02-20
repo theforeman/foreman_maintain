@@ -3,7 +3,7 @@ module ForemanMaintain
   class Config
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
-                  :storage_file, :backup_dir, :foreman_proxy_cert_path,
+                  :log_filename, :storage_file, :backup_dir, :foreman_proxy_cert_path,
                   :db_backup_dir, :completion_cache_file
 
     def initialize(options)
@@ -26,6 +26,9 @@ module ForemanMaintain
       @log_level = @options.fetch(:log_level, ::Logger::DEBUG)
       @log_dir = find_dir_path(@options.fetch(:log_dir, 'log'))
       @log_file_size = @options.fetch(:log_file_size, 10_000)
+      # Note - If timestamp added to filename then number of log files i.e second
+      # argument to Logger.new will not work as expected
+      @log_filename = File.expand_path("#{@log_dir}/foreman-maintain.log")
     end
 
     def load_backup_dir_paths

@@ -116,12 +116,9 @@ module ForemanMaintain
     end
 
     def init_logger
-      # Note - If timestamp added to filename then number of log files i.e second
-      # argument to Logger.new will not work as expected
-      filename = File.expand_path("#{config.log_dir}/foreman-maintain.log")
       # convert size in KB to Bytes
       log_fsize = config.log_file_size.to_i * 1024
-      @logger = Logger.new(filename, 10, log_fsize).tap do |logger|
+      @logger = Logger.new(config.log_filename, 10, log_fsize).tap do |logger|
         logger.level = LOGGER_LEVEL_MAPPING[config.log_level] || Logger::DEBUG
         logger.datetime_format = '%Y-%m-%d %H:%M:%S%z '
       end
