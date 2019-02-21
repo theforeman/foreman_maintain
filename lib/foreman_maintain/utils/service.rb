@@ -11,4 +11,8 @@ module ForemanMaintain::Utils
       Service::Systemd.new(name, priority, options)
     end
   end
+
+  def self.valid_sys_service?(service)
+    service.class < Service::Abstract
+  end
 end

@@ -25,3 +25,7 @@
 
 # Location of cache for bash completion
 :completion_cache_file: '~/.cache/foreman_maintain_completion.yml'
+
+# Mention true/false.
+# Value true will to enable cron service stop/restart on maintenance-mode start/stop
+# :manage_crond: false

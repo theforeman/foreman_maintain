@@ -4,9 +4,11 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def handle_services(spinner, action, options = {})
-    # options is used to handle "exclude" and "only" i.e.
+    # options is used to handle "exclude" and "only" and "include" i.e.
     # { :only => ["httpd"] }
     # { :exclude => ["pulp-workers", "tomcat"] }
+    # { :include => ["crond"] }
+
     if feature(:downstream) && feature(:downstream).less_than_version?('6.3')
       use_katello_service(action, options)
     else
@@ -28,6 +30,7 @@ class Features::Service < ForemanMaintain::Feature
     service_list = existing_services
     service_list = filter_services(service_list, options)
     raise 'No services found matching your parameters' unless service_list.any?
+
     options[:reverse] ? service_list.reverse : service_list
   end
 
@@ -50,6 +53,7 @@ class Features::Service < ForemanMaintain::Feature
     spinner.update("All services #{action_past_tense(action)}")
     if action == 'status'
       raise "Some services are not running (#{failed_services.join(', ')})" if status > 0
+
       spinner.update('All services are running')
     end
   end
@@ -96,14 +100,39 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def filter_services(service_list, options)
+    service_list = include_unregistered_services(service_list, options[:include])
+
     if options[:only] && options[:only].any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }
       end
+      service_list = include_unregistered_services(service_list, options[:only])
     end
+
     if options[:exclude] && options[:exclude].any?
       service_list = service_list.reject { |service| options[:exclude].include?(service.name) }
     end
+    service_list.sort
+  end
+
+  def include_unregistered_services(service_list, services_filter)
+    return service_list unless services_filter
+    return service_list unless services_filter.any?
+
+    services_filter = services_filter.reject do |obj|
+      service_list.any? { |service| service.matches?(obj) }
+    end
+
+    unregistered_service_list = services_filter.map do |obj|
+      service = if obj.is_a? String
+                  system_service(obj)
+                elsif valid_sys_service?(obj)
+                  obj
+                end
+      service.exist? ? service : raise("No service found matching your parameter '#{service.name}'")
+    end
+
+    service_list.concat(unregistered_service_list)
     service_list
   end
 
@@ -140,7 +169,9 @@ class Features::Service < ForemanMaintain::Feature
 
   def run_katello_service(command)
     puts "Services are handled by katello-service in Satellite versions 6.2 and earlier. \n" \
-         "Flags --brief or --failing will be ignored if present. Redirecting to: \n#{command}\n"
+         "Flags --brief or --failing will be ignored if present. \n"\
+         "Similarly, services that are not listed by katello-service will get ignored. \n"\
+         "Redirecting to: \n#{command}\n"
     puts execute(command)
   end
 

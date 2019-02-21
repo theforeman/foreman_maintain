@@ -44,7 +44,7 @@ module ForemanMaintain::Utils
           systemd = @sys.execute("systemctl is-enabled #{@name} 2>&1 | tail -1").strip
           systemd == 'enabled' || systemd == 'disabled'
         else
-          File.exist?("/etc/init.d/#{service}")
+          File.exist?("/etc/init.d/#{@name}")
         end
       end
 

@@ -15,6 +15,17 @@ describe Features::Service do
     end
   end
 
+  def service_names_match?(filtered_services, services_to_compare)
+    filtered_services.map(&:name).must_equal services_to_compare.map(&:name)
+  end
+
+  def includes_available_feature_services?(filtered_services, feature_services)
+    matching_services = feature_services.select do |service|
+      filtered_services.any? { |obj| service.matches?(obj) }
+    end
+    assert matching_services.length, feature_services.length
+  end
+
   let(:httpd) { existing_system_service('httpd', 30) }
   let(:local_foreman_db) do
     existing_system_service('postgresql', 20,
@@ -33,6 +44,8 @@ describe Features::Service do
                             :component => 'Candlepin', :db_feature => RemoteDBFeature.new)
   end
   let(:missing) { missing_system_service('missing', 30) }
+
+  let(:crond) { existing_system_service('crond', 50) }
 
   class TestFeature < ForemanMaintain::Feature
     def initialize(*services)
@@ -84,12 +97,16 @@ describe Features::Service do
       subject.filtered_services({}).must_equal [remote_candlepin_db, remote_foreman_db, httpd]
     end
 
-    it 'applies the only filters' do
-      subject.filtered_services(:only => %w[httpd missing]).must_equal [httpd]
+    it 'applies the only filters which includes ungistered services as well' do
+      filtered_service_list = subject.filtered_services(:only => ['httpd', crond])
+
+      includes_available_feature_services?(filtered_service_list, [httpd])
+      service_names_match?(filtered_service_list, [httpd, crond])
     end
 
     it 'the :only filters all services regardless on component' do
       remote_dbs = [remote_candlepin_db, remote_foreman_db]
+
       subject.filtered_services(:only => ['postgresql']).must_equal remote_dbs
     end
 
@@ -99,6 +116,21 @@ describe Features::Service do
 
     it 'applies the exclude filters' do
       subject.filtered_services(:exclude => ['postgresql']).must_equal [httpd]
+    end
+
+    it 'the :include accepts also list of SystemServices' do
+      filtered_service_list = subject.filtered_services(:include => [crond])
+      feature_services = [remote_candlepin_db, remote_foreman_db, httpd]
+
+      includes_available_feature_services?(filtered_service_list, feature_services)
+      service_names_match?(filtered_service_list, feature_services.push(crond))
+    end
+
+    it 'on adding non-exist service into :include raise exception' do
+      err = assert_raises RuntimeError do
+        subject.filtered_services(:include => [missing])
+      end
+      assert_match "No service found matching your parameter '#{missing.name}'", err.message
     end
   end
 end
