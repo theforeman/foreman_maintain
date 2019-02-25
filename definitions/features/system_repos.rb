@@ -11,7 +11,7 @@ class Features::SystemRepos < ForemanMaintain::Feature
         repositories[repo] = url if url =~ regex
       end
     end
-    return repositories
+    repositories
   end
 
   def enabled_repos_hash
