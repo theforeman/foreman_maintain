@@ -6,7 +6,7 @@ class Features::SystemRepos < ForemanMaintain::Feature
 
   def upstream_repos
     repositories = {}
-    list.each do |repo, url|
+    enabled_repos_hash.each do |repo, url|
       upstream_repo_urls.each do |regex|
         repositories[repo] = url if url =~ regex
       end
@@ -14,7 +14,7 @@ class Features::SystemRepos < ForemanMaintain::Feature
     return repositories
   end
 
-  def list
+  def enabled_repos_hash
     repos = execute("yum repolist enabled -d 6 -e 0 2> /dev/null | grep -E 'Repo-id|Repo-baseurl'")
     return {} if repos.empty?
 
