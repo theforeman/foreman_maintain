@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = "Provides various features that helps keeping \
 the Foreman/Satellite up and running."
 
-  s.files = Dir['{bin,lib,definitions}/**/*'] + Dir['config/*']
+  s.files = Dir['{bin,lib,definitions}/**/*'] + `git ls-files config`.split("\n")
   s.extra_rdoc_files = [
     'LICENSE',
     'README.md'
