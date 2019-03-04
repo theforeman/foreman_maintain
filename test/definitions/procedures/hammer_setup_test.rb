@@ -53,7 +53,7 @@ describe Procedures::HammerSetup do
       assert result.success?, 'the procedure was expected to succeed'
     end
 
-    it 'skipps setup_admin_access if httpd is down' do
+    it 'skips setup_admin_access if httpd is down' do
       assume_feature_present(:foreman_server)
       assume_service_stopped('httpd')
       hammer_ins.stubs(:_check_connection).returns(false)

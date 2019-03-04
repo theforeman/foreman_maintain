@@ -64,6 +64,11 @@ module ForemanMaintain
         runner.run
       end
 
+      def run_scenarios_and_exit(scenarios, rescue_scenario: nil)
+        run_scenario(scenarios, rescue_scenario)
+        exit runner.exit_code
+      end
+
       def available_checks
         filter = {}
         filter[:tags] = tags if respond_to?(:tags)

@@ -7,7 +7,7 @@ module Procedures::Packages
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
-      clean_all_packages
+      feature(:package_manager).clean_cache
       packages_action(:update, @packages, :assumeyes => assumeyes_val)
     end
 
