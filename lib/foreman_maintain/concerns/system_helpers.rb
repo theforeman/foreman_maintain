@@ -54,6 +54,10 @@ module ForemanMaintain
         $CHILD_STATUS.success?
       end
 
+      def command_present?(command_name)
+        execute?("command -v #{command_name}")
+      end
+
       def execute!(command, options = {})
         command_runner = Utils::CommandRunner.new(logger, command, options)
         execution.puts '' if command_runner.interactive? && respond_to?(:execution)
@@ -86,10 +90,7 @@ module ForemanMaintain
       end
 
       def find_package(name)
-        result = execute(%(rpm -q '#{name}'))
-        if $CHILD_STATUS.success?
-          result
-        end
+        feature(:package_manager).find_installed_package(name)
       end
 
       def hostname
@@ -105,20 +106,15 @@ module ForemanMaintain
       end
 
       def packages_action(action, packages, options = {})
-        expected_actions = [:install, :update]
-        unless expected_actions.include?(action)
+        options.validate_options!(:assumeyes)
+        case action
+        when :install
+          feature(:package_manager).install(packages, :assumeyes => options[:assumeyes])
+        when :update
+          feature(:package_manager).update(packages, :assumeyes => options[:assumeyes])
+        else
           raise ArgumentError, "Unexpected action #{action} expected #{expected_actions.inspect}"
         end
-        options.validate_options!(:assumeyes)
-        yum_options = []
-        yum_options << '-y' if options[:assumeyes]
-        execute!("yum #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
-                 :interactive => true)
-      end
-
-      def clean_all_packages
-        execute!('dnf clean all') if find_package('dnf')
-        execute!('yum clean all') if find_package('yum')
       end
 
       def package_version(name)

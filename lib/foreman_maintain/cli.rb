@@ -9,6 +9,7 @@ require 'foreman_maintain/cli/advanced_command'
 require 'foreman_maintain/cli/service_command'
 require 'foreman_maintain/cli/restore_command'
 require 'foreman_maintain/cli/maintenance_mode_command'
+require 'foreman_maintain/cli/packages_command'
 
 module ForemanMaintain
   module Cli
@@ -20,6 +21,7 @@ module ForemanMaintain
       subcommand 'service', 'Control applicable services', ServiceCommand
       subcommand 'backup', 'Backup server', BackupCommand
       subcommand 'restore', 'Restore a backup', RestoreCommand
+      subcommand 'packages', 'Lock/Unlock installed packages', PackagesCommand
       subcommand 'advanced', 'Advanced tools for server maintenance', AdvancedCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
                  MaintenanceModeCommand
