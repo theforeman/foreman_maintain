@@ -26,7 +26,11 @@ module Checks
           puts "\n"
           puts stats.stdout
 
-          assert(success, io_obj.slow_disk_error_msg)
+          if feature(:downstream) && feature(:downstream).at_least_version?('6.3')
+            assert(success, io_obj.slow_disk_error_msg + warning_message, :warn => true)
+          else
+            assert(success, io_obj.slow_disk_error_msg)
+          end
         end
       end
 
@@ -38,10 +42,16 @@ module Checks
 
       def dirs_to_check
         return DEFAULT_DIRS.first(1) if check_only_single_device?
+
         DEFAULT_DIRS
       end
 
       private
+
+      def warning_message
+        "\nWARNING: Low disk speed might have a negative impact on the system."\
+        "\nSee https://access.redhat.com/solutions/3397771 before proceeding"
+      end
 
       def compute_disk_speed(spinner)
         success = true

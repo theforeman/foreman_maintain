@@ -116,7 +116,7 @@ module ForemanMaintain
           [dummy-check-warn]
 
         The steps in warning state itself might not mean there is an error,
-        but it should be reviews to ensure the behavior is expected
+        but it should be reviewed to ensure the behavior is expected
       MESSAGE
     end
 
@@ -147,7 +147,7 @@ module ForemanMaintain
         use --whitelist=\"dummy-check-fail\"
 
         The steps in warning state itself might not mean there is an error,
-        but it should be reviews to ensure the behavior is expected
+        but it should be reviewed to ensure the behavior is expected
       MESSAGE
     end
 
