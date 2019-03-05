@@ -317,7 +317,7 @@ module ForemanMaintain
 
           recommend << <<-MESSAGE.strip_heredoc
           The steps in warning state itself might not mean there is an error,
-          but it should be reviews to ensure the behavior is expected
+          but it should be reviewed to ensure the behavior is expected
           MESSAGE
         end
         puts((message + recommend).join("\n"))
