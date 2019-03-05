@@ -12,10 +12,10 @@ class Checks::YumExclude < ForemanMaintain::Check
   end
 
   def exclude_set?
-    yum_exclude == 'exclude ='
+    yum_exclude == 'exclude =' || yum_exclude == 'exclude='
   end
 
   def yum_exclude
-    execute!('yum-config-manager --disableplugin=* main|grep -w exclude')
+    execute!('grep -w exclude /etc/yum.conf')
   end
 end
