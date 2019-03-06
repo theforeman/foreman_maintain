@@ -19,7 +19,6 @@ module ForemanMaintain::Scenarios
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
     end
 
-    # rubocop:disable  Metrics/MethodLength
     def compose
       check_valid_startegy
       safety_confirmation
@@ -27,7 +26,6 @@ module ForemanMaintain::Scenarios
       prepare_directory
       logical_volume_confirmation
       add_step_with_context(Procedures::Backup::Metadata)
-      add_step_with_context(Procedures::Backup::ConfigFiles)
 
       case strategy
       when :online
@@ -39,7 +37,6 @@ module ForemanMaintain::Scenarios
       end
       add_step_with_context(Procedures::Backup::CompressData)
     end
-    # rubocop:enable  Metrics/MethodLength
 
     # rubocop:disable  Metrics/MethodLength
     def set_context_mapping
@@ -132,6 +129,7 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(
         find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
+        Procedures::Backup::ConfigFiles,
         Procedures::Backup::Pulp,
         Procedures::Backup::Offline::Mongo,
         Procedures::Backup::Offline::CandlepinDB,
@@ -162,6 +160,7 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Snapshot::PrepareMount,
         find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
+        Procedures::Backup::ConfigFiles,
         Procedures::Backup::Snapshot::MountMongo,
         Procedures::Backup::Snapshot::MountPulp,
         Procedures::Backup::Snapshot::MountCandlepinDB,
@@ -184,6 +183,7 @@ module ForemanMaintain::Scenarios
     # rubocop:enable  Metrics/MethodLength
 
     def add_online_backup_steps
+      add_step_with_context(Procedures::Backup::ConfigFiles)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
       add_steps_with_context(
         Procedures::Backup::Online::Mongo,
