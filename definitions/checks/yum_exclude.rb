@@ -12,10 +12,12 @@ class Checks::YumExclude < ForemanMaintain::Check
   end
 
   def exclude_set?
-    yum_exclude == 'exclude =' || yum_exclude == 'exclude='
+    yum_exclude == 'exclude=' || yum_exclude == 'exclude ='
   end
 
   def yum_exclude
     execute!('grep -w exclude /etc/yum.conf')
+  rescue ForemanMaintain::Error::ExecutionError
+    'exclude='
   end
 end
