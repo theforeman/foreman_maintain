@@ -81,6 +81,10 @@ module ForemanMaintain
         File.exist?(filename)
       end
 
+      def file_nonzero?(filename)
+        File.exist?(filename) && !File.zero?(filename)
+      end
+
       def find_package(name)
         result = execute(%(rpm -q '#{name}'))
         if $CHILD_STATUS.success?
