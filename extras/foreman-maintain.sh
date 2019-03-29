@@ -1,7 +1,7 @@
 #!/bin/bash 
 function quit_if_in_maintenance_mode {
   /usr/bin/foreman-maintain maintenance-mode is-enabled
-  if [ $? -ne 0 ]
+  if [ $? -eq 0 ]
   then
     echo "Maintenance mode is on can not continue"
     exit 1

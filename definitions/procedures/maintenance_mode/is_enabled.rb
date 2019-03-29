@@ -9,8 +9,8 @@ module Procedures::MaintenanceMode
     attr_reader :status_code
 
     def run
-      @status_code = feature(:iptables).maintenance_mode_chain_exist? ? 1 : 0
-      puts "Maintenance mode is #{@status_code == 0 ? 'Off' : 'On'}"
+      @status_code = feature(:iptables).maintenance_mode_chain_exist? ? 0 : 1
+      puts "Maintenance mode is #{@status_code == 1 ? 'Off' : 'On'}"
     end
   end
 end

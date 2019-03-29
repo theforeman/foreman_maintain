@@ -443,7 +443,7 @@ Possible options for the `:completion` attribute are:
 * `maintenance-mode status` gives a brief output with On/Off message. This includes status of each step.
 
 * `maintenance-mode is-enabled` returns `0 or 1` output depending upon the maintenance-mode status.
-Here, 1=ON & 0=OFF.
+Here, 0=ON & 1=OFF.
 
 If User would like to check whether maintenance-mode is ON/OFF on system in their external script then
 they can use subcommand `foreman-maintain maintenance-mode is-enabled`.
