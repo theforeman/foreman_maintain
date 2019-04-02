@@ -81,7 +81,7 @@ class Features::Downstream < ForemanMaintain::Feature
     sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"
 
     # Override to use Beta repositories for sat version until GA
-    if sat_version.to_s == '6.5'
+    if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
       sat_repo_id = "rhel-server-#{rh_version_major}-satellite-6-beta-rpms"
       sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
       sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms"
