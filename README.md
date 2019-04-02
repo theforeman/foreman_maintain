@@ -120,6 +120,12 @@ export EXTERNAL_SAT_ORG='Sat6-CI'
 export EXTERNAL_SAT_ACTIVATION_KEY='Satellite QA RHEL7'
 ```
 
+To use beta repositories during upgrade, set the following environment variable
+
+```
+export FOREMAN_MAINTAIN_USE_BETA='1'
+```
+
 ## Implementation
 
 `foreman_maintain` maps the CLI commands into definitions. This allows to keep the set
