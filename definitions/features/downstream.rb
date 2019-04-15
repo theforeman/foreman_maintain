@@ -75,10 +75,10 @@ class Features::Downstream < ForemanMaintain::Feature
   end
 
   def enable_ansible_repo(sat_version, rh_repos, rh_version_major)
-    if [version('6.4'), version('6.5')].include?(sat_version)
-      rh_repos << "rhel-#{rh_version_major}-server-ansible-2.6-rpms"
-    elsif sat_version == version('6.6')
+    if sat_version >= version('6.6')
       rh_repos << "rhel-#{rh_version_major}-server-ansible-2.8-rpms"
+    elsif sat_version >= version('6.4')
+      rh_repos << "rhel-#{rh_version_major}-server-ansible-2.6-rpms"
     end
   end
 
