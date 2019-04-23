@@ -7,15 +7,15 @@ class Checks::ForemanLoginSession < ForemanMaintain::Check
 
   def run
     login_session_count = count
-    assert(login_session_count <= 2151782769,
+    assert(login_session_count <= 2_151_782_769,
            "Login session reached #{login_session_count}. Its better to clear login sessions",
            :next_steps => Procedures::ForemanLoginSession.new)
   end
 
-   def count
-     sql = <<-SQL
-      SELECT last_value FROM sessions_id_seq
-     SQL
-     feature(:foreman_database).query(sql).first['last_value'].to_i
-   end
+  def count
+    sql = <<-SQL
+    SELECT last_value FROM sessions_id_seq
+    SQL
+    feature(:foreman_database).query(sql).first['last_value'].to_i
+  end
 end

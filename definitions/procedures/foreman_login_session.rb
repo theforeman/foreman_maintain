@@ -4,7 +4,7 @@ class Procedures::ForemanLoginSession < ForemanMaintain::Procedure
   end
 
   def run
-    if delete_all_sessions && alter_sessions_id_seq 
+    if delete_all_sessions && alter_sessions_id_seq
       'DB Session cleared'
     end
   end
