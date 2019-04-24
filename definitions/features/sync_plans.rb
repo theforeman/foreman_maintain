@@ -3,33 +3,49 @@ class Features::SyncPlans < ForemanMaintain::Feature
     label :sync_plans
   end
 
-  def active_sync_plans_count
-    feature(:foreman_database).query(
-      <<-SQL
-        SELECT count(*) AS count FROM katello_sync_plans WHERE enabled ='t'
-      SQL
-    ).first['count'].to_i
+  def required_new_implementation
+    @required_new_implementation ||=
+      feature(:foreman_database).query(
+        <<-SQL
+          SELECT COUNT(1) FROM information_schema.table_constraints
+          WHERE constraint_name='katello_sync_plan_foreman_tasks_recurring_logic_fk' AND table_name='katello_sync_plans'
+        SQL
+      ).first['count'].to_i > 0
   end
 
   def ids_by_status(enabled = true)
-    enabled = enabled ? 't' : 'f'
-    feature(:foreman_database).query(
-      <<-SQL
-        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled}'
+    if required_new_implementation
+      enabled_val = enabled ? 'active' : 'disabled'
+      query = <<-SQL
+        select sp.id as id from katello_sync_plans sp inner join foreman_tasks_recurring_logics rl
+        on sp.foreman_tasks_recurring_logic_id = rl.id where rl.state='#{enabled_val}'
       SQL
-    ).map { |r| r['id'].to_i }
+    else
+      enabled_val = enabled ? 't' : 'f'
+      query = <<-SQL
+        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled_val}'
+      SQL
+    end
+    feature(:foreman_database).query(query).map { |r| r['id'].to_i }
   end
 
   def verify_existing_ids_by_status(ids, enabled = true)
     return [] if ids.empty?
 
-    enabled = enabled ? 't' : 'f'
     ids_condition = ids.map { |id| "'#{id}'" }.join(',')
-    feature(:foreman_database).query(
-      <<-SQL
-        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled}' AND id IN (#{ids_condition})
+    if required_new_implementation
+      enabled_val = enabled ? 'active' : 'disabled'
+      query = <<-SQL
+        SELECT sp.id as id FROM katello_sync_plans sp inner join foreman_tasks_recurring_logics rl
+        on sp.foreman_tasks_recurring_logic_id = rl.id WHERE rl.state ='#{enabled_val}' AND sp.id IN (#{ids_condition})
       SQL
-    ).map { |r| r['id'].to_i }
+    else
+      enabled_val = enabled ? 't' : 'f'
+      query = <<-SQL
+        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled_val}' AND id IN (#{ids_condition})
+      SQL
+    end
+    feature(:foreman_database).query(query).map { |r| r['id'].to_i }
   end
 
   def make_disable(ids)
@@ -104,7 +120,7 @@ class Features::SyncPlans < ForemanMaintain::Feature
     else
       @data[:disabled] = [] unless @data[:disabled]
       @data[:enabled] = [] if @data[:disabled].empty?
-      @data[:disabled].concat(new_ids)
+      @data[:disabled].concat(new_ids).uniq!
     end
   end
 
