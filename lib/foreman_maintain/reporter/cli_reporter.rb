@@ -293,13 +293,15 @@ module ForemanMaintain
         end
 
         steps_with_error = scenario.steps_with_error(:whitelisted => false)
+        steps_with_skipped = scenario.steps_with_skipped(:whitelisted => true)
+        steps_to_whitelist = steps_with_error + steps_with_skipped
         unless steps_with_error.empty?
           message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_error, "\n", 2))
           The following steps ended up in failing state:
 
           %s
           MESSAGE
-          whitelist_labels = steps_with_error.map(&:label_dashed).join(',')
+          whitelist_labels = steps_to_whitelist.map(&:label_dashed).join(',')
           recommend << format(<<-MESSAGE.strip_heredoc, whitelist_labels)
           Resolve the failed steps and rerun
           the command. In case the failures are false positives,
