@@ -13,36 +13,21 @@ class Features::SyncPlans < ForemanMaintain::Feature
       ).first['count'].to_i > 0
   end
 
-  def ids_by_status(enabled = true)
-    if required_new_implementation
-      enabled_val = enabled ? 'active' : 'disabled'
-      query = <<-SQL
-        select sp.id as id from katello_sync_plans sp inner join foreman_tasks_recurring_logics rl
-        on sp.foreman_tasks_recurring_logic_id = rl.id where rl.state='#{enabled_val}'
-      SQL
-    else
-      enabled_val = enabled ? 't' : 'f'
-      query = <<-SQL
-        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled_val}'
-      SQL
+  def sync_plan_ids_by_status(enabled = true, filter_ids = nil)
+    if filter_ids
+      return [] if filter_ids.empty?
+
+      ids_condition = filter_ids.map { |id| "'#{id}'" }.join(',')
     end
-    feature(:foreman_database).query(query).map { |r| r['id'].to_i }
-  end
 
-  def verify_existing_ids_by_status(ids, enabled = true)
-    return [] if ids.empty?
-
-    ids_condition = ids.map { |id| "'#{id}'" }.join(',')
     if required_new_implementation
-      enabled_val = enabled ? 'active' : 'disabled'
       query = <<-SQL
-        SELECT sp.id as id FROM katello_sync_plans sp inner join foreman_tasks_recurring_logics rl
-        on sp.foreman_tasks_recurring_logic_id = rl.id WHERE rl.state ='#{enabled_val}' AND sp.id IN (#{ids_condition})
+        select sp.id as id from katello_sync_plans sp inner join foreman_tasks_recurring_logics rl on sp.foreman_tasks_recurring_logic_id = rl.id
+        where rl.state='#{enabled ? 'active' : 'disabled'}' #{ids_condition ? " AND sp.id IN (#{ids_condition})" : ''}
       SQL
     else
-      enabled_val = enabled ? 't' : 'f'
       query = <<-SQL
-        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled_val}' AND id IN (#{ids_condition})
+        SELECT id FROM katello_sync_plans WHERE enabled ='#{enabled ? 't' : 'f'}' #{ids_condition ? " AND id IN (#{ids_condition})" : ''}
       SQL
     end
     feature(:foreman_database).query(query).map { |r| r['id'].to_i }
@@ -85,7 +70,7 @@ class Features::SyncPlans < ForemanMaintain::Feature
   private
 
   def update_records(ids, enabled)
-    ids_not_required_update = verify_existing_ids_by_status(ids, enabled)
+    ids_not_required_update = sync_plan_ids_by_status(enabled, ids)
     ids_required_update = ids - ids_not_required_update
     make_data_key_empty(enabled) if !ids_not_required_update.empty? && ids_required_update.empty?
     updated_record_ids = []
