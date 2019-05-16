@@ -33,7 +33,6 @@ describe Checks::Disk::Performance do
     assume_feature_present(:downstream) do |feature_class|
       feature_class.any_instance.stubs(:current_version => version('6.2.0'))
     end
-
     slow_speed = 59
     err_msg = 'Slow disk'
 

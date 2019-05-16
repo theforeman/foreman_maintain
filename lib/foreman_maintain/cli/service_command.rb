@@ -34,15 +34,16 @@ module ForemanMaintain
       subcommand 'restart', 'Restart applicable services' do
         service_options
         if feature(:katello)
-          option ['-p', '--wait-for-hammer-ping'], :flag,
-                 'Wait for hammer ping to return successfully before terminating'
+          option ['-p', '--wait-for-server-response', '--wait-for-hammer-ping'], :flag,
+                 'Wait for hammer ping to return successfully before terminating',
+                 :attribute_name => :wait_for_server_response
         end
 
         def execute
           scenario = Scenarios::ServiceRestart.new(
             :only => only,
             :exclude => exclude,
-            :wait_for_hammer_ping => option_wrapper('wait_for_hammer_ping?')
+            :wait_for_server_response => option_wrapper(:wait_for_server_response?)
           )
 
           run_scenario(scenario)

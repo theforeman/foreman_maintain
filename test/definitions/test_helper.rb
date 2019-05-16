@@ -139,6 +139,13 @@ module DefinitionsTestHelper
     service
   end
 
+  def mock_net_http_response(code, body)
+    response = mock('response')
+    response.stubs(:code).returns(code.to_s)
+    response.stubs(:body).returns(JSON.dump(body))
+    response
+  end
+
   def assume_service_running(name, priority = 30)
     mock_service(name, priority) do |service|
       service.stubs(:status).returns([0, 'OK'])

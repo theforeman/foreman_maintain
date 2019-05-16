@@ -9,7 +9,7 @@ class Checks::ServicesUp < ForemanMaintain::Check
     failed_services = feature(:service).existing_services.reject(&:running?)
     restart_procedure = Procedures::Service::Restart.new(
       :only => failed_services,
-      :wait_for_hammer_ping => !!feature(:katello)
+      :wait_for_server_response => true
     )
     assert(failed_services.empty?,
            'Following services are not running: ' + failed_services.map(&:to_s).join(', '),

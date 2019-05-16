@@ -5,7 +5,7 @@ module Checks::ForemanTasks
       for_feature :foreman_tasks
       description 'Check for paused tasks'
       tags :default
-      after :services_up, :hammer_ping
+      after :services_up, :server_ping
     end
 
     def run
