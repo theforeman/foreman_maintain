@@ -107,4 +107,136 @@ describe Features::Instance do
       end
     end
   end
+
+  describe '.ping' do
+    let(:conn_error_msg) { 'Connection refused - connect(2)' }
+
+    context 'katello' do
+      let(:existing_httpd) { existing_system_service('httpd', 10) }
+      let(:existing_mongod) { existing_system_service('mongod', 5) }
+      let(:missing_mongod) { missing_system_service('mongo38d', 5) }
+      let(:success_response_body) do
+        {
+          'status' => 'ok',
+          'services' => {
+            'pulp' => { 'status' => 'ok', 'duration_ms' => '44' },
+            'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' }
+          }
+        }
+      end
+      let(:failing_response_body) do
+        {
+          'status' => 'ok',
+          'services' => {
+            'pulp' => { 'status' => 'FAIL', 'duration_ms' => '44' },
+            'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' }
+          }
+        }
+      end
+      let(:connection) { mock('connection') }
+
+      before do
+        assume_feature_present(:katello)
+      end
+
+      it 'fails when server is down' do
+        connection.expects(:get).with('/katello/api/ping').raises conn_error_msg
+        subject.stubs(:server_connection).returns(connection)
+
+        subject.ping?.must_equal false
+        subject.last_ping_status.must_equal "Couldn't connect to the server: #{conn_error_msg}"
+        subject.last_ping_result.must_equal false
+        subject.last_ping_failing_services.must_be_nil
+      end
+
+      it 'succeeds when all the components are okay' do
+        connection.expects(:get).with('/katello/api/ping').
+          returns(mock_net_http_response('200', success_response_body))
+        subject.stubs(:server_connection).returns(connection)
+
+        subject.ping?.must_equal true
+        subject.last_ping_result.must_equal true
+        subject.last_ping_status.must_equal 'Success'
+        subject.last_ping_failing_services.must_be_nil
+      end
+
+      it 'fails when some of the components fail' do
+        assume_feature_present(:pulp) do |feature_class|
+          feature_class.any_instance.stubs(:services).returns(existing_httpd)
+        end
+        assume_feature_present(:mongo) do |feature_class|
+          feature_class.any_instance.stubs(:services).returns([existing_mongod, missing_mongod])
+          server_conf = "#{data_dir}/mongo/default_server.conf"
+          feature_class.any_instance.stubs(:config_file).returns(server_conf)
+        end
+        connection.expects(:get).with('/katello/api/ping').
+          returns(mock_net_http_response('200', failing_response_body))
+        subject.stubs(:server_connection).returns(connection)
+
+        subject.ping?.must_equal false
+        subject.last_ping_result.must_equal false
+        subject.last_ping_status.must_equal 'Some components are failing: pulp'
+        subject.last_ping_failing_services.must_equal [existing_httpd, existing_mongod]
+      end
+    end
+
+    context 'proxy' do
+      before do
+        assume_feature_absent(:katello)
+        assume_feature_absent(:foreman_server)
+      end
+
+      it 'fails when proxy is down' do
+        assume_feature_present(:foreman_proxy) do |feature_class|
+          feature_class.any_instance.stubs(:features).raises conn_error_msg
+        end
+
+        subject.ping?.must_equal false
+        subject.last_ping_status.must_equal "Couldn't connect to the proxy: #{conn_error_msg}"
+        subject.last_ping_result.must_equal false
+        subject.last_ping_failing_services.must_be_nil
+      end
+
+      it 'succeeds when proxy responds' do
+        assume_feature_present(:foreman_proxy) do |feature_class|
+          feature_class.any_instance.stubs(:features).returns(%w[dhcp dns])
+        end
+
+        subject.ping?.must_equal true
+        subject.last_ping_result.must_equal true
+        subject.last_ping_status.must_equal 'Success'
+        subject.last_ping_failing_services.must_be_nil
+      end
+    end
+
+    context 'foreman' do
+      let(:connection) { mock('connection') }
+
+      before do
+        assume_feature_absent(:katello)
+        assume_feature_present(:foreman_server)
+      end
+
+      it 'fails when server is down' do
+        connection.expects(:get).with('/apidoc/apipie_checksum').raises conn_error_msg
+        subject.stubs(:server_connection).returns(connection)
+
+        subject.ping?.must_equal false
+        subject.last_ping_status.must_equal "Couldn't connect to the server: #{conn_error_msg}"
+        subject.last_ping_result.must_equal false
+        subject.last_ping_failing_services.must_be_nil
+      end
+
+      it 'succeeds when all the components are okay' do
+        connection.expects(:get).with('/apidoc/apipie_checksum').
+          returns(mock_net_http_response('200', 'checksum' => 1234))
+        subject.stubs(:server_connection).returns(connection)
+
+        subject.ping?.must_equal true
+        subject.last_ping_result.must_equal true
+        subject.last_ping_status.must_equal 'Success'
+        subject.last_ping_failing_services.must_be_nil
+      end
+    end
+  end
 end

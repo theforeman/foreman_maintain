@@ -4,7 +4,8 @@ module ForemanMaintain
     attr_accessor :pre_setup_log_messages,
                   :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
                   :log_filename, :storage_file, :backup_dir, :foreman_proxy_cert_path,
-                  :db_backup_dir, :completion_cache_file, :disable_commands, :manage_crond
+                  :db_backup_dir, :completion_cache_file, :disable_commands, :manage_crond,
+                  :foreman_url, :foreman_port
 
     def initialize(options)
       @pre_setup_log_messages = []
@@ -20,6 +21,8 @@ module ForemanMaintain
         @options.fetch(:completion_cache_file, '~/.cache/foreman_maintain_completion.yml')
       )
       @disable_commands = @options.fetch(:disable_commands, [])
+      @foreman_url = @options.fetch(:foreman_url, `hostname -f`.chomp)
+      @foreman_port = @options.fetch(:foreman_port, 443)
     end
 
     private

@@ -32,3 +32,9 @@
 # Mention true/false.
 # Value true will to enable cron service stop/restart on maintenance-mode start/stop
 # :manage_crond: false
+
+# URL of the Foreman/Satellite server
+# :foreman_url:
+
+# Port on which Foreman server is listening
+# :foreman_port: 443

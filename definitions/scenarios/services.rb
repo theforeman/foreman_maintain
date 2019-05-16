@@ -19,8 +19,8 @@ module ForemanMaintain::Scenarios
       context.map(:exclude,
                   Procedures::Service::Restart => :exclude)
 
-      context.map(:wait_for_hammer_ping,
-                  Procedures::Service::Restart => :wait_for_hammer_ping)
+      context.map(:wait_for_server_response,
+                  Procedures::Service::Restart => :wait_for_server_response)
     end
   end
 

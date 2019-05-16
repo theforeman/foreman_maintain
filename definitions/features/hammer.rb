@@ -37,16 +37,6 @@ class Features::Hammer < ForemanMaintain::Feature
     ready?
   end
 
-  def hammer_ping_cmd
-    cmd_output = exec_hammer_cmd('--output json ping', true)
-    return init_result_obj(false, cmd_output) if cmd_output.is_a?(String)
-    resources_failed = find_resources_which_failed(cmd_output.first)
-    return init_result_obj if resources_failed.empty?
-    services = map_resources_with_services(resources_failed)
-    msg_to_show = "#{resources_failed.join(', ')} resource(s) are failing."
-    init_result_obj(false, msg_to_show, services)
-  end
-
   def ready?
     setup_admin_access if @ready.nil?
     @ready
@@ -127,45 +117,6 @@ class Features::Hammer < ForemanMaintain::Feature
     configuration[:foreman][:password].nil? ||
       configuration[:foreman][:password].empty? ||
       configuration[:foreman][:username] != 'admin'
-  end
-
-  def find_resources_which_failed(hammer_ping_output)
-    resources_failed = []
-    hammer_ping_output.each do |resource, resp_obj|
-      resources_failed << resource if /FAIL/ =~ resp_obj['Status']
-    end
-    resources_failed
-  end
-
-  def related_services(resource)
-    case resource
-    when 'candlepin_auth'
-      %w[postgresql tomcat]
-    when 'candlepin'
-      %w[postgresql tomcat]
-    when 'pulp_auth'
-      %w[pulp_resource_manager pulp_workers pulp_celerybeat]
-    when 'pulp'
-      %w[pulp_resource_manager pulp_workers pulp_celerybeat]
-    when 'foreman_tasks'
-      [feature(:foreman_tasks).service_name]
-    end
-  end
-
-  def map_resources_with_services(resources)
-    service_names = []
-    resources.each do |resource|
-      service_names.concat(related_services(resource))
-    end
-    service_names
-  end
-
-  def init_result_obj(success_val = true, message = '', data = [])
-    {
-      :success => success_val,
-      :message => message,
-      :data => data
-    }
   end
 
   def exec_hammer_cmd(cmd, required_json = false)
