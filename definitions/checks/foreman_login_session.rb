@@ -5,7 +5,7 @@ class Checks::ForemanLoginSession < ForemanMaintain::Check
     description 'Check the login session count'
   end
 
-  # The max id value that we can't go beyond is 2151782969. 
+  # The max id value that we can't go beyond is 2151782969.
   # Therefore setting MAX_SESSION_ID = 2151782969/2
   MAX_SESSION_ID = 1_075_891_484
 
