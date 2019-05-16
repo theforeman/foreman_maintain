@@ -16,5 +16,4 @@ class Procedures::ForemanLoginSession < ForemanMaintain::Procedure
     COMMIT;
     SQL
   end
-
 end
