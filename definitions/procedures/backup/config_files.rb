@@ -11,6 +11,8 @@ module Procedures::Backup
       param :backup_dir, 'Directory where to backup to', :required => true
       param :proxy_features, 'List of proxy features to backup (default: all)',
             :array => true, :default => ['all']
+      param :ignore_changed_files, 'Should packing tar ignore changed files',
+            :flag => true, :default => false
     end
 
     def run
@@ -18,9 +20,10 @@ module Procedures::Backup
       increments = File.join(@backup_dir, '.config.snar')
       with_spinner('Collecting config files to backup') do
         configs = config_files.join(' ')
+        statuses = @ignore_changed_files ? [0, 1] : [0]
         execute!("tar --selinux --create --gzip --file=#{tarball} " \
           "--listed-incremental=#{increments} --ignore-failed-read " \
-          "#{configs}")
+          "#{configs}", :valid_exit_statuses => statuses)
       end
     end
 
