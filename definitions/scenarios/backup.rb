@@ -183,7 +183,7 @@ module ForemanMaintain::Scenarios
     # rubocop:enable  Metrics/MethodLength
 
     def add_online_backup_steps
-      add_step_with_context(Procedures::Backup::ConfigFiles)
+      add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
       add_steps_with_context(
         Procedures::Backup::Online::Mongo,
