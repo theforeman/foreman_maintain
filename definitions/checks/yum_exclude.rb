@@ -5,7 +5,7 @@ class Checks::YumExclude < ForemanMaintain::Check
     tags :pre_upgrade
   end
 
-  EXCLUDE_SET_RE = /^exclude\s*=\s*\S+.*$/.freeze
+  EXCLUDE_SET_RE = /^exclude\s*=\s*\S+.*$/
 
   def run
     grep_result = grep_yum_exclude
