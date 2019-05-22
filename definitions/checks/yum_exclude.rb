@@ -5,19 +5,17 @@ class Checks::YumExclude < ForemanMaintain::Check
     tags :pre_upgrade
   end
 
+  EXCLUDE_SET_RE = /^exclude\s*=\s*\S+.*$/.freeze
+
   def run
-    assert(!exclude_set?, 'The /etc/yum.conf has exclude list configured as below,'\
-          "\n  #{grep_yum_exclude[1]}"\
+    grep_result = grep_yum_exclude
+    assert(!grep_result.match(EXCLUDE_SET_RE),
+           'The /etc/yum.conf has exclude list configured as below,'\
+          "\n  #{grep_result}"\
           "\nUnset this as it can cause yum update or upgrade failures !")
   end
 
-  def exclude_set?
-    return true if grep_yum_exclude[1] =~ /^exclude\s*=\s*\S+/
-
-    false
-  end
-
   def grep_yum_exclude
-    execute_with_status('grep -w exclude /etc/yum.conf')
+    execute_with_status('grep -w exclude /etc/yum.conf')[1]
   end
 end
