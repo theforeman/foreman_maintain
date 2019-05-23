@@ -36,6 +36,11 @@ module ForemanMaintain::PackageManager
       raise NotImplementedError
     end
 
+    # remove package
+    def remove(packages, assumeyes: false)
+      raise NotImplementedError
+    end
+
     # update package
     def update(packages = [], assumeyes: false)
       raise NotImplementedError
