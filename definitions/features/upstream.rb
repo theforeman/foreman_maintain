@@ -1,9 +1,10 @@
+# TODO: verify and remove if not required
 class Features::Upstream < ForemanMaintain::Feature
   metadata do
     label :upstream
 
     confine do
-      !downstream_installation?
+      !feature(:downstream)
     end
   end
 

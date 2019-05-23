@@ -4,6 +4,7 @@ module Checks::RemoteExecution
       description 'Check to verify remote_execution_ssh settings already exist'
 
       confine do
+        # TODO: Yes but verify valid for capsule as well?
         feature(:downstream) &&
           feature(:downstream).current_minor_version == '6.2' &&
           find_package('tfm-rubygem-smart_proxy_dynflow_core') &&

@@ -13,8 +13,15 @@ module Checks
       end
 
       EXPECTED_IO = 60
-      DEFAULT_UNIT   = 'MB/sec'.freeze
-      DEFAULT_DIRS   = ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'].freeze
+      DEFAULT_UNIT = 'MB/sec'.freeze
+
+      # TODO: for capsule - which directories to consider?
+      # in document, only '/var/lib/pulp', '/var/lib/mongodb' directories mentioned
+      DEFAULT_DIRS = if feature(:downstream) && feature(:downstream).capsule?
+                       ['/var/lib/pulp', '/var/lib/mongodb'].freeze
+                     else
+                       ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'].freeze
+                     end
 
       attr_reader :stats
 

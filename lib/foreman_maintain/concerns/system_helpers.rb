@@ -44,7 +44,7 @@ module ForemanMaintain
         end
       end
 
-      def downstream_installation?
+      def satellite_installation?
         execute?('rpm -q satellite') ||
           (execute('rpm -q foreman') =~ /sat.noarch/)
       end

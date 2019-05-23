@@ -3,8 +3,12 @@ class Features::Downstream < ForemanMaintain::Feature
     label :downstream
 
     confine do
-      downstream_installation?
+      feature(:satellite) || feature(:capsule)
     end
+  end
+
+  def current_feature
+    @current_feature ||= feature(:satellite) || feature(:capsule)
   end
 
   def less_than_version?(version)
@@ -16,13 +20,14 @@ class Features::Downstream < ForemanMaintain::Feature
   end
 
   def current_version
-    @current_version ||= rpm_version('satellite') || version_from_source
+    @current_version ||= current_feature.send(:current_version)
   end
 
   def current_minor_version
     current_version.to_s[/^\d+\.\d+/]
   end
 
+  # TODO: Modify activation_key changes as per server
   def setup_repositories(version)
     activation_key = ENV['EXTERNAL_SAT_ACTIVATION_KEY']
     org = ENV['EXTERNAL_SAT_ORG']
@@ -50,54 +55,82 @@ class Features::Downstream < ForemanMaintain::Feature
     execute!(%(subscription-manager refresh))
   end
 
+  # TODO: Verify this is valid for capsule?
   def subscribed_using_activation_key?
     ENV['EXTERNAL_SAT_ACTIVATION_KEY'] && ENV['EXTERNAL_SAT_ORG']
   end
 
+  def satellite?
+    current_feature.label == :satellite
+  end
+
+  def capsule?
+    current_feature.label == :capsule
+  end
+
   private
 
-  def rh_repos(sat_version)
-    sat_version = version(sat_version)
-    rh_version_major = ForemanMaintain::Utils::Facter.os_major_release
+  def package_name_for_server
+    if current_feature.label == :satellite
+      'satellite'
+    elsif current_feature.label == :capsule
+      'satellite-capsule'
+    end
+  end
 
+  def rh_repos(server_version)
+    server_version = version(server_version)
+    rh_version_major = ForemanMaintain::Utils::Facter.os_major_release
     rh_repos = main_rh_repos(rh_version_major)
 
-    rh_repos.concat(sat_and_tools_repos(rh_version_major, sat_version))
+    server_version_full = "#{server_version.major}.#{server_version.minor}"
+    rh_repos.concat(repos_specific_to_server(rh_version_major, server_version_full))
 
-    if sat_version > version('6.3')
-      rh_repos << ansible_repo(sat_version, rh_version_major)
-    end
-
-    if current_minor_version == '6.3' && sat_version.to_s != '6.4' && (
-      feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
-      rh_repos << "rhel-#{rh_version_major}-server-satellite-tools-6.3-puppet4-rpms"
+    if server_version > version('6.3')
+      rh_repos << ansible_repo(server_version, rh_version_major)
     end
 
     rh_repos
   end
 
-  def ansible_repo(sat_version, rh_version_major)
-    if sat_version >= version('6.6')
+  def ansible_repo(server_version, rh_version_major)
+    if server_version >= version('6.6')
       "rhel-#{rh_version_major}-server-ansible-2.8-rpms"
-    elsif sat_version >= version('6.4')
+    elsif server_version >= version('6.4')
       "rhel-#{rh_version_major}-server-ansible-2.6-rpms"
     end
   end
 
-  def sat_and_tools_repos(rh_version_major, sat_version)
-    sat_version_full = "#{sat_version.major}.#{sat_version.minor}"
-    sat_repo_id = "rhel-#{rh_version_major}-server-satellite-#{sat_version_full}-rpms"
-    sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-#{sat_version_full}-rpms"
+  def repos_specific_to_server(rh_version_major, full_version)
+    repos = []
+    package_name = package_name_for_server
+
+    repos << if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
+               "rhel-server-#{rh_version_major}-#{package_name}-6-beta-rpms"
+             else
+               "rhel-#{rh_version_major}-server-#{package_name}-#{full_version}-rpms"
+             end
+
+    if current_minor_version == '6.3' && server_version.to_s != '6.4' && (
+      feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
+      # TODO: confirm repo for capsule. It might be same repo
+      repos << "rhel-#{rh_version_major}-server-satellite-tools-6.3-puppet4-rpms"
+    end
+
+    repos.concat(common_repos(rh_version_major, full_version))
+  end
+
+  def common_repos(rh_version_major, full_version)
+    sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}-rpms"
     sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"
 
     # Override to use Beta repositories for sat version until GA
     if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-      sat_repo_id = "rhel-server-#{rh_version_major}-satellite-6-beta-rpms"
       sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
       sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms"
     end
 
-    [sat_repo_id, sat_tools_repo_id, sat_maintenance_repo_id]
+    [sat_tools_repo_id, sat_maintenance_repo_id]
   end
 
   def main_rh_repos(rh_version_major)

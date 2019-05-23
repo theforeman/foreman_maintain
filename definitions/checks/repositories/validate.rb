@@ -7,6 +7,7 @@ module Checks::Repositories
       end
 
       confine do
+        # TODO: tito
         feature(:downstream)
       end
 

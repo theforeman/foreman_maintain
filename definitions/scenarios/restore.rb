@@ -66,6 +66,7 @@ module ForemanMaintain::Scenarios
       end
     end
 
+    # TODO: replace feature if specific to satellite?
     def supported_version_check
       if feature(:downstream) && feature(:downstream).less_than_version?('6.3')
         msg = 'ERROR: Restore subcommand is supported by Satellite 6.3+. ' \

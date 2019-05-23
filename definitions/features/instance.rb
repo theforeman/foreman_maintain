@@ -6,6 +6,7 @@ class Features::Instance < ForemanMaintain::Feature
     label :instance
   end
 
+  # TO DO - verify here
   def foreman_proxy_product_name
     feature(:downstream) ? 'Capsule' : 'Foreman Proxy'
   end

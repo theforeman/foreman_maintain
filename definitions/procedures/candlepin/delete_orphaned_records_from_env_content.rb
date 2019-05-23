@@ -6,7 +6,7 @@ module Procedures::Candlepin
 
       confine do
         feature(:candlepin_database) &&
-          feature(:downstream) &&
+          feature(:downstream) && feature(:downstream).satellite? &&
           feature(:downstream).current_minor_version == '6.2'
       end
     end
