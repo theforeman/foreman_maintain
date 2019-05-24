@@ -15,6 +15,12 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
     @configuration || load_configuration
   end
 
+  def config_files
+    [
+      '/var/lib/pgsql/data/postgresql.conf'
+    ]
+  end
+
   def services
     [
       system_service('postgresql', 10, :component => 'foreman',
