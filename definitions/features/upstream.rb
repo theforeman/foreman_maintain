@@ -1,4 +1,3 @@
-# TODO: verify and remove if not required
 class Features::Upstream < ForemanMaintain::Feature
   metadata do
     label :upstream

@@ -1,4 +1,3 @@
-# TODO: test/verify services for satellite/capsule and fetch list
 class Features::Service < ForemanMaintain::Feature
   metadata do
     label :service

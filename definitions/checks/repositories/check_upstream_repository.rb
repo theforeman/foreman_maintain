@@ -7,7 +7,6 @@ class Checks::CheckUpstreamRepository < ForemanMaintain::Check
       Procedures::Packages::Install.new(:packages => %w[yum-utils])
     end
     confine do
-      # TODO: I think its valid check for capsule but confirm
       feature(:downstream)
     end
   end
