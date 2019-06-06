@@ -58,6 +58,8 @@ module Scenarios::Satellite_6_6
     end
 
     def compose
+      add_step(Procedures::ForemanDocker::RemoveForemanDocker.new)
+      add_step(Procedures::Foreman::ApipieCache.new)
       add_step(Procedures::Service::Start.new)
       add_steps(find_procedures(:post_migrations))
     end

@@ -8,7 +8,7 @@ class Features::PackageManager < ForemanMaintain::Feature
                  :installed?, :find_installed_package, :install, :update,
                  :version_locking_enabled?, :configure_version_locking,
                  :foreman_related_packages, :version_locking_packages,
-                 :versions_locked?, :clean_cache
+                 :versions_locked?, :clean_cache, :remove
 
   def self.type
     @type ||= %w[dnf yum apt].find { |manager| command_present?(manager) }

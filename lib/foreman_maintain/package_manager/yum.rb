@@ -90,6 +90,10 @@ module ForemanMaintain::PackageManager
       yum_action('install', packages, :assumeyes => assumeyes)
     end
 
+    def remove(packages, assumeyes: false)
+      yum_action('remove', packages, :assumeyes => assumeyes)
+    end
+
     def update(packages = [], assumeyes: false)
       yum_action('update', packages, :assumeyes => assumeyes)
     end
