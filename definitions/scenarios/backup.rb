@@ -156,6 +156,7 @@ module ForemanMaintain::Scenarios
 
     # rubocop:disable  Metrics/MethodLength
     def add_snapshot_backup_steps
+      include_dumps if include_db_dumps?
       add_steps_with_context(
         Procedures::Backup::Snapshot::PrepareMount,
         find_procedures(:maintenance_mode_on),

@@ -130,6 +130,7 @@ module ForemanMaintain
       include BackupCommon
       interactive_option
       common_backup_options
+      option '--include-db-dumps', :flag, 'Also dump full database schema before snapshot backup'
       option ['-d', '--snapshot-mount-dir'], 'SNAPSHOT_MOUNT_DIR',
              "Override default directory ('/var/snap/') where the snapshots will be mounted",
              :default => '/var/snap/' do |dir|
@@ -144,7 +145,8 @@ module ForemanMaintain
       def execute
         perform_backup(:snapshot,
                        :snapshot_mount_dir => snapshot_mount_dir,
-                       :snapshot_block_size => snapshot_block_size)
+                       :snapshot_block_size => snapshot_block_size,
+                       :include_db_dumps => include_db_dumps?)
       end
     end
 
