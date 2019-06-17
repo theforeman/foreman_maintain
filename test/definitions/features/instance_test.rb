@@ -143,10 +143,10 @@ describe Features::Instance do
         connection.expects(:get).with('/katello/api/ping').raises conn_error_msg
         subject.stubs(:server_connection).returns(connection)
 
-        subject.ping?.must_equal false
-        subject.last_ping_status.must_equal "Couldn't connect to the server: #{conn_error_msg}"
-        subject.last_ping_result.must_equal false
-        subject.last_ping_failing_services.must_be_nil
+        ping = subject.ping
+        ping.success?.must_equal false
+        ping.message.must_equal "Couldn't connect to the server: #{conn_error_msg}"
+        ping.data[:failing_services].must_be_nil
       end
 
       it 'succeeds when all the components are okay' do
@@ -154,10 +154,10 @@ describe Features::Instance do
           returns(mock_net_http_response('200', success_response_body))
         subject.stubs(:server_connection).returns(connection)
 
-        subject.ping?.must_equal true
-        subject.last_ping_result.must_equal true
-        subject.last_ping_status.must_equal 'Success'
-        subject.last_ping_failing_services.must_be_nil
+        ping = subject.ping
+        ping.success?.must_equal true
+        ping.message.must_equal 'Success'
+        ping.data[:failing_services].must_be_nil
       end
 
       it 'fails when some of the components fail' do
@@ -173,10 +173,10 @@ describe Features::Instance do
           returns(mock_net_http_response('200', failing_response_body))
         subject.stubs(:server_connection).returns(connection)
 
-        subject.ping?.must_equal false
-        subject.last_ping_result.must_equal false
-        subject.last_ping_status.must_equal 'Some components are failing: pulp'
-        subject.last_ping_failing_services.must_equal [existing_httpd, existing_mongod]
+        ping = subject.ping
+        ping.success?.must_equal false
+        ping.message.must_equal 'Some components are failing: pulp'
+        ping.data[:failing_services].must_equal [existing_httpd, existing_mongod]
       end
     end
 
@@ -191,10 +191,10 @@ describe Features::Instance do
           feature_class.any_instance.stubs(:features).raises conn_error_msg
         end
 
-        subject.ping?.must_equal false
-        subject.last_ping_status.must_equal "Couldn't connect to the proxy: #{conn_error_msg}"
-        subject.last_ping_result.must_equal false
-        subject.last_ping_failing_services.must_be_nil
+        ping = subject.ping
+        ping.success?.must_equal false
+        ping.message.must_equal "Couldn't connect to the proxy: #{conn_error_msg}"
+        ping.data[:failing_services].must_be_nil
       end
 
       it 'succeeds when proxy responds' do
@@ -202,10 +202,10 @@ describe Features::Instance do
           feature_class.any_instance.stubs(:features).returns(%w[dhcp dns])
         end
 
-        subject.ping?.must_equal true
-        subject.last_ping_result.must_equal true
-        subject.last_ping_status.must_equal 'Success'
-        subject.last_ping_failing_services.must_be_nil
+        ping = subject.ping
+        ping.success?.must_equal true
+        ping.message.must_equal 'Success'
+        ping.data[:failing_services].must_be_nil
       end
     end
 
@@ -221,10 +221,10 @@ describe Features::Instance do
         connection.expects(:get).with('/apidoc/apipie_checksum').raises conn_error_msg
         subject.stubs(:server_connection).returns(connection)
 
-        subject.ping?.must_equal false
-        subject.last_ping_status.must_equal "Couldn't connect to the server: #{conn_error_msg}"
-        subject.last_ping_result.must_equal false
-        subject.last_ping_failing_services.must_be_nil
+        ping = subject.ping
+        ping.success?.must_equal false
+        ping.message.must_equal "Couldn't connect to the server: #{conn_error_msg}"
+        ping.data[:failing_services].must_be_nil
       end
 
       it 'succeeds when all the components are okay' do
@@ -232,10 +232,10 @@ describe Features::Instance do
           returns(mock_net_http_response('200', 'checksum' => 1234))
         subject.stubs(:server_connection).returns(connection)
 
-        subject.ping?.must_equal true
-        subject.last_ping_result.must_equal true
-        subject.last_ping_status.must_equal 'Success'
-        subject.last_ping_failing_services.must_be_nil
+        ping = subject.ping
+        ping.success?.must_equal true
+        ping.message.must_equal 'Success'
+        ping.data[:failing_services].must_be_nil
       end
     end
   end

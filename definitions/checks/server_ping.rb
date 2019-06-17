@@ -6,11 +6,11 @@ class Checks::ServerPing < ForemanMaintain::Check
   end
 
   def run
-    result = feature(:instance).ping?
+    response = feature(:instance).ping
     restart_procedure = Procedures::Service::Restart.new(
-      :only => feature(:instance).last_ping_failing_services,
+      :only => response.data[:failing_services],
       :wait_for_server_response => true
     )
-    assert(result, feature(:instance).last_ping_status, :next_steps => restart_procedure)
+    assert(response.success?, response.message, :next_steps => restart_procedure)
   end
 end
