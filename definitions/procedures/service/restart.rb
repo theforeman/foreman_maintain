@@ -22,10 +22,12 @@ module Procedures::Service
       with_spinner('Checking server response') do |spinner|
         RETRIES_FOR_SERVICES_RESTART.times do |retry_count|
           spinner.update retry_message(retry_count)
-          if feature(:instance).ping?
+          response = feature(:instance).ping
+          if response.success?
             spinner.update 'Server responded successfully!'
             break
           elsif retry_count < (RETRIES_FOR_SERVICES_RESTART - 1)
+            puts "\n#{response.message}"
             apply_sleep_before_retry(spinner)
           else
             raise 'Server response check failed!'
@@ -40,7 +42,6 @@ module Procedures::Service
     end
 
     def apply_sleep_before_retry(spinner)
-      puts "\n#{feature(:instance).last_ping_status}"
       spinner.update "Waiting #{PING_RETRY_INTERVAL} seconds before retry."
       sleep PING_RETRY_INTERVAL
     end

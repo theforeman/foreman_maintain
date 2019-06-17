@@ -6,8 +6,6 @@ class Features::Instance < ForemanMaintain::Feature
     label :instance
   end
 
-  attr_reader :last_ping_failing_services, :last_ping_status, :last_ping_result
-
   def foreman_proxy_product_name
     feature(:downstream) ? 'Capsule' : 'Foreman Proxy'
   end
@@ -50,7 +48,7 @@ class Features::Instance < ForemanMaintain::Feature
     feature(:foreman_proxy) && feature(:foreman_proxy).with_content? && !feature(:katello)
   end
 
-  def ping?
+  def ping
     if feature(:katello)
       katello_ping
     elsif external_proxy?
@@ -58,7 +56,6 @@ class Features::Instance < ForemanMaintain::Feature
     else
       foreman_ping
     end
-    last_ping_result
   end
 
   def server_connection
@@ -76,19 +73,20 @@ class Features::Instance < ForemanMaintain::Feature
     logger.debug("Response: #{res.code}, #{res.body}")
     response = JSON.parse(res.body)
     if res.code != '200' # foreman error
-      set_ping_result(false, response.message, nil)
+      result = create_response(false, response['message'] || response['displayMessage'])
     else # valid response
       failing_components = pick_failing_components(response['services'])
       if failing_components.empty? # all okay
-        set_ping_result(true, 'Success', nil)
+        result = create_response(true, 'Success')
       else # some components not okay
-        set_ping_result(false,
-                        "Some components are failing: #{failing_components.join(', ')}",
-                        component_services(failing_components))
+        result = create_response(false,
+                                 "Some components are failing: #{failing_components.join(', ')}",
+                                 component_services(failing_components))
       end
     end
+    result
   rescue StandardError => e # server error, server down
-    set_ping_result(false, "Couldn't connect to the server: #{e.message}", nil)
+    create_response(false, "Couldn't connect to the server: #{e.message}")
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
@@ -96,32 +94,33 @@ class Features::Instance < ForemanMaintain::Feature
     res = server_connection.get('/apidoc/apipie_checksum')
     logger.debug('Called /apidoc/apipie_checksum')
     logger.debug("Response: #{res.code}, #{res.body}")
+
     if res.code != '200' # foreman error
-      set_ping_result(false, response.message, nil)
+      create_response(false, response.message)
     else # valid response
-      set_ping_result(true, 'Success', nil)
+      create_response(true, 'Success')
     end
   rescue StandardError => e # server error, server down
-    set_ping_result(false, "Couldn't connect to the server: #{e.message}", nil)
+    create_response(false, "Couldn't connect to the server: #{e.message}")
   end
 
   def proxy_ping
     feature(:foreman_proxy).features
-    set_ping_result(true, 'Success', nil)
+    create_response(true, 'Success')
   rescue StandardError => e # server error, proxy down
-    set_ping_result(false, "Couldn't connect to the proxy: #{e.message}", nil)
+    create_response(false, "Couldn't connect to the proxy: #{e.message}")
   end
 
   def pick_failing_components(components)
-    components.inject([]) do |failing, (name, data)|
-      data['status'] != 'ok' ? failing << name : failing
+    components.each_with_object([]) do |(name, data), failing|
+      failing << name unless data['status'] == 'ok'
     end
   end
 
-  def set_ping_result(result, message, failing_services)
-    @last_ping_status = message
-    @last_ping_failing_services = failing_services
-    @last_ping_result = result
+  def create_response(succeeded, message, failing_services = nil)
+    data = {}
+    data[:failing_services] = failing_services
+    ForemanMaintain::Utils::Response.new(succeeded, message, :data => data)
   end
 
   def installer_scenario_answers
@@ -139,7 +138,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def component_services(components)
-    components = [components].flatten(1)
+    components = Array(components)
     cf_map = component_features_map
     # map ping components to features
     features = components.map { |component| cf_map[component] }.flatten.uniq
