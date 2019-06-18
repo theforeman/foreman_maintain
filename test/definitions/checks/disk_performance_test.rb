@@ -30,6 +30,10 @@ describe Checks::Disk::Performance do
   end
 
   it 'raise error if disk speed does not meet minimal requirement' do
+    assume_feature_present(:downstream) do |feature_class|
+      feature_class.any_instance.stubs(:current_version => version('6.2.0'))
+    end
+
     slow_speed = 59
     err_msg = 'Slow disk'
 
@@ -48,5 +52,32 @@ describe Checks::Disk::Performance do
     step = run_step(check_disk_performance)
     assert_equal(:fail, step.status)
     assert_equal(err_msg, step.output)
+  end
+
+  it 'print warning if disk speed does not meet minimal requirement on Sat >= 6.3' do
+    assume_feature_present(:downstream) do |feature_class|
+      feature_class.any_instance.stubs(:current_version => version('6.4.0'))
+    end
+
+    slow_speed = 59
+    err_msg = 'Slow disk'
+    warning_msg = "\nWARNING: Low disk speed might have a negative impact on the system.\n" \
+                  'See https://access.redhat.com/solutions/3397771 before proceeding' \
+
+    check_disk_performance.stubs(:check_only_single_device?).returns(true)
+
+    io_obj = MiniTest::Mock.new
+    2.times { io_obj.expect(:read_speed, slow_speed) }
+    io_obj.expect(:slow_disk_error_msg, err_msg)
+    io_obj.expect(:name, '/dev/sda')
+    io_obj.expect(:unit, 'MB/sec')
+    io_obj.expect(:dir, '/var/lib/pulp')
+    2.times { io_obj.expect(:performance, '90 MB/sec') }
+
+    ForemanMaintain::Utils::Disk::Device.stubs(:new).returns(io_obj)
+
+    step = run_step(check_disk_performance)
+    assert_equal(:warning, step.status)
+    assert_equal(err_msg + warning_msg, step.output)
   end
 end
