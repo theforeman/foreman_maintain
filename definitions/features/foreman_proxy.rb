@@ -33,7 +33,14 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
   def features
     # TODO: handle failures
-    run_curl_cmd("#{curl_cmd}/features").result
+    @features ||= run_curl_cmd("#{curl_cmd}/features").result
+    @features = [] if @features.is_a?(String)
+    @features
+  end
+
+  def refresh_features
+    @features = nil
+    features
   end
 
   def internal?

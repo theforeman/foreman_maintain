@@ -126,6 +126,7 @@ module ForemanMaintain::Scenarios
 
     def add_offline_backup_steps
       include_dumps if include_db_dumps?
+      add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
       add_steps_with_context(
         find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
@@ -157,6 +158,7 @@ module ForemanMaintain::Scenarios
     # rubocop:disable  Metrics/MethodLength
     def add_snapshot_backup_steps
       include_dumps if include_db_dumps?
+      add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
       add_steps_with_context(
         Procedures::Backup::Snapshot::PrepareMount,
         find_procedures(:maintenance_mode_on),
