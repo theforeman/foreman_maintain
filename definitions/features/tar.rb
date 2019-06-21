@@ -18,7 +18,10 @@ class Features::Tar < ForemanMaintain::Feature
   # @option options [Boolean] :multi_volume create/list/extract multi-volume archive
   # @option options [Boolean] :overwrite overwrite existing files when extracting
   # @option options [Boolean] :gzip filter the archive through gzip
+  # @option options [Boolean] :ignore_failed_read do not fail on missing files
+  # @option options [Boolean] :allow_changing_files do not fail on changing files
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def run(options = {})
     volume_size = options.fetch(:volume_size, nil)
     validate_volume_size(volume_size) unless volume_size.nil?
@@ -51,15 +54,19 @@ class Features::Tar < ForemanMaintain::Feature
     tar_command << '-M' if options[:multi_volume]
     tar_command << "--directory=#{options[:directory]}" if options[:directory]
 
+    tar_command << '--ignore-failed-read' if options[:ignore_failed_read]
+
     if options[:files]
       tar_command << '-S'
       tar_command << options.fetch(:files, '*')
     end
 
     logger.debug("Invoking tar from #{FileUtils.pwd}")
-    execute!(tar_command.join(' '))
+    statuses = options[:allow_changing_files] ? [0, 1] : [0]
+    execute!(tar_command.join(' '), :valid_exit_statuses => statuses)
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def validate_volume_size(size)
     if size.nil? || size !~ /^\d+[bBcGKkMPTw]?$/

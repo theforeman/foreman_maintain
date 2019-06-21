@@ -66,6 +66,11 @@ module ForemanMaintain::PackageManager
       raise NotImplementedError
     end
 
+    # list all files not owned by installed package
+    def files_not_owned_by_package(directory)
+      raise NotImplementedError
+    end
+
     private
 
     def sys

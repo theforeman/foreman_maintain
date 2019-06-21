@@ -19,21 +19,36 @@ module Procedures::Backup
       tarball = File.join(@backup_dir, 'config_files.tar.gz')
       increments = File.join(@backup_dir, '.config.snar')
       with_spinner('Collecting config files to backup') do
-        configs = config_files.join(' ')
-        statuses = @ignore_changed_files ? [0, 1] : [0]
-        execute!("tar --selinux --create --gzip --file=#{tarball} " \
-          "--listed-incremental=#{increments} --ignore-failed-read " \
-          "#{configs}", :valid_exit_statuses => statuses)
+        configs, to_exclude = config_files
+        feature(:tar).run(
+          :command => 'create', :gzip => true, :archive => tarball,
+          :listed_incremental => increments, :ignore_failed_read => true,
+          :exclude => to_exclude, :allow_changing_files => @ignore_changed_files,
+          :files => configs.join(' ')
+        )
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def config_files
       configs = []
-      # exclude proxy as it has special handling later
-      features = ForemanMaintain.available_features - [feature(:foreman_proxy)]
-      configs += features.inject([]) { |files, feature| files + feature.config_files }
-      configs += feature(:foreman_proxy).config_files(@proxy_features) if feature(:foreman_proxy)
+      exclude_configs = []
+      ForemanMaintain.available_features.each do |feature|
+        # exclude proxy as it has special handling later
+        next if feature == feature(:foreman_proxy)
+        configs += feature.config_files
+        exclude_configs += feature.config_files_to_exclude
+      end
+
+      if feature(:foreman_proxy)
+        configs += feature(:foreman_proxy).config_files(@proxy_features)
+        exclude_configs += feature(:foreman_proxy).config_files_to_exclude(@proxy_features)
+      end
+
       configs.compact.select { |path| Dir.glob(path).any? }
+      exclude_configs.compact.select { |path| Dir.glob(path).any? }
+      [configs, exclude_configs]
     end
+    # rubocop:enable Metrics/AbcSize
   end
 end
