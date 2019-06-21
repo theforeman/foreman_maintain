@@ -19,13 +19,17 @@ module Procedures::Restore
     end
 
     def restore_configs(backup)
+      exclude = ForemanMaintain.available_features.each_with_object([]) do |feat, cfgs|
+        feat.config_files_to_exclude.each { |f| cfgs << f }
+      end
       tar_options = {
         :overwrite => true,
         :listed_incremental => '/dev/null',
         :command => 'extract',
         :directory => '/',
         :archive => backup.file_map[:config_files][:path],
-        :gzip => true
+        :gzip => true,
+        :exclude => exclude
       }
 
       feature(:tar).run(tar_options)

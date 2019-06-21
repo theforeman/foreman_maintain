@@ -35,6 +35,12 @@ module ForemanMaintain
           '/var/lib/foreman'
         ]
       end
+
+      def config_files_to_exclude
+        [
+          '/var/lib/foreman/public/assets'
+        ]
+      end
     end
   end
 end

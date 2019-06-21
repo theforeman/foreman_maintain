@@ -102,6 +102,11 @@ module ForemanMaintain::PackageManager
       yum_action('clean', 'all')
     end
 
+    def files_not_owned_by_package(directory)
+      find_cmd = "find #{directory} -exec /bin/sh -c 'rpm -qf {} &> /dev/null || echo {}' \\;"
+      sys.execute(find_cmd).split("\n")
+    end
+
     private
 
     def versionlock_config

@@ -73,6 +73,10 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     configs
   end
 
+  def config_files_to_exclude(_for_features = ['all'])
+    []
+  end
+
   def content_module
     return @content_module if @content_module_detected
     @content_module_detected = true
