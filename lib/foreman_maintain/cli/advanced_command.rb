@@ -1,6 +1,5 @@
 require 'foreman_maintain/cli/advanced/procedure_command'
 require 'foreman_maintain/cli/advanced/prebuild_bash_completion'
-require 'foreman_maintain/cli/advanced/task_cleanup_command'
 
 module ForemanMaintain
   module Cli
@@ -9,7 +8,12 @@ module ForemanMaintain
       subcommand 'prebuild-bash-completion',
                  'Prepare map of options and subcommands for Bash completion',
                  PrebuildBashCompletionCommand
-      subcommand 'task-cleanup', 'Perform task cleanup', TaskCleanupCommand
+
+      if defined?(Procedures::ForemanTasks)
+        procedure = Procedures::ForemanTasks::Cleanup
+        klass = Class.new(Procedure::AbstractProcedureCommand) { params_to_options(procedure.params) }
+        subcommand(dashize(procedure.label), procedure.description, klass)
+      end
     end
   end
 end
