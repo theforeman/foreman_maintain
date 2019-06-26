@@ -1,3 +1,5 @@
+puts "LOADING"
+
 module Procedures::ForemanTasks
   class Cleanup < ForemanMaintain::Procedure
     PERMITTED_STATES = %w[all pending scheduled planning planned running paused stopped].freeze
@@ -16,7 +18,7 @@ module Procedures::ForemanTasks
       end
       param :after,
             'Operate on tasks older than AFTER. Expected format is a number ' \
-            "followed by the time unit (s,h,m,y), such as '10d' for 10 days"
+            "followed by the time unit (s,h,d,m,y), such as '10d' for 10 days"
       param :backup, 'Backup deleted tasks', :flag => true
       param :noop, 'Do a dry run, print what would be done', :flag => true
       param :search, 'Use QUERY in scoped search format to match tasks to delete'
