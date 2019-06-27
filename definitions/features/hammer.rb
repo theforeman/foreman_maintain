@@ -150,7 +150,11 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def password_from_answers
     return nil unless feature(:installer)
-    feature(:installer).answers['foreman']['admin_password']
+    if feature(:downstream).current_minor_version >= '6.6'
+      feature(:installer).answers['foreman']['initial_admin_password']
+    else
+      feature(:installer).answers['foreman']['admin_password']
+    end
   end
 
   def save_config_and_check(config)
