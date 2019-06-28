@@ -85,7 +85,7 @@ class Features::Hammer < ForemanMaintain::Feature
     if !ready? && custom_config[:foreman][:password].nil?
       msg = 'Invalid admin password was found in hammer configs. Looking into installer answers'
       logger.info(msg)
-      custom_config[:foreman][:password] = password_from_answers
+      custom_config[:foreman][:password] = feature(:installer).password_from_answers
       save_config_and_check(custom_config)
     end
     custom_config
@@ -107,7 +107,7 @@ class Features::Hammer < ForemanMaintain::Feature
     if admin_password_missing?
       msg = 'Admin password was not found in hammer configs. Looking into installer answers'
       logger.info(msg)
-      custom_config[:foreman][:password] = password_from_answers
+      custom_config[:foreman][:password] = feature(:installer).password_from_answers
     end
     save_config_and_check(custom_config)
     custom_config
@@ -145,15 +145,6 @@ class Features::Hammer < ForemanMaintain::Feature
         ForemanMaintain::Utils::HashTools.deep_merge!(@configuration, config)
         @config_files << file_path
       end
-    end
-  end
-
-  def password_from_answers
-    return nil unless feature(:installer)
-    if feature(:downstream).current_minor_version >= '6.6'
-      feature(:installer).answers['foreman']['initial_admin_password']
-    else
-      feature(:installer).answers['foreman']['admin_password']
     end
   end
 
