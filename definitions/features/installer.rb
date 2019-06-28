@@ -93,14 +93,6 @@ class Features::Installer < ForemanMaintain::Feature
     run(arguments, exec_options)
   end
 
-  def password_from_answers
-    if check_min_version('foreman', '1.22')
-      answers['foreman']['initial_admin_password']
-    else
-      answers['foreman']['admin_password']
-    end
-  end
-
   private
 
   def load_answers(config)
