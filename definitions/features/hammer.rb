@@ -28,7 +28,7 @@ class Features::Hammer < ForemanMaintain::Feature
   def setup_admin_access
     return true if check_connection
     logger.info('Hammer setup is not valid. Fixing configuration.')
-    custom_config = { :foreman => { :username => 'admin' } }
+    custom_config = { :foreman => { :username => admin_username } }
     custom_config = on_invalid_host(custom_config)
     custom_config = on_missing_password(custom_config) # get password from answers
     custom_config = on_invalid_password(custom_config) # get password from answers
@@ -70,6 +70,15 @@ class Features::Hammer < ForemanMaintain::Feature
     execute("#{command_base} #{args}")
   end
 
+  def admin_username
+    return nil unless feature(:installer)
+    if check_min_version('foreman', '1.22')
+      feature(:installer).answers['foreman']['initial_admin_username']
+    else
+      feature(:installer).answers['foreman']['admin_username']
+    end
+  end
+
   private
 
   def on_invalid_host(custom_config)
@@ -99,7 +108,8 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def config_error
     raise ForemanMaintain::HammerConfigurationError, 'Hammer configuration failed: '\
-                  "Is the admin password correct? (it was stored in #{custom_config_file})" \
+                  'Is the admin username and password correct? ' \
+                  "(it was stored in #{custom_config_file})" \
                   'Is the server down?'
   end
 
