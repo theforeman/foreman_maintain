@@ -13,11 +13,12 @@ module Checks
 
       def run
         duplicate_roles = find_duplicate_roles
+        roles_names = duplicate_roles.map { |r| r['name'] }.uniq
         assert(
           duplicate_roles.empty?,
-          'Duplicate entries found for role(s) in your DB',
+          "Duplicate entries found for role(s) - #{roles_names.join(', ')} in your DB",
           :next_steps => [
-            Procedures::Foreman::RemoveObsoleteRoles.new,
+            Procedures::Foreman::RemoveDuplicateObsoleteRoles.new,
             Procedures::KnowledgeBaseArticle.new(
               :doc => 'fix_db_migrate_failure_on_duplicate_roles'
             )
@@ -31,7 +32,7 @@ module Checks
 
       def self.query_to_get_duplicate_roles
         <<-SQL
-          SELECT r.id FROM roles r JOIN (
+          SELECT r.id, r.name FROM roles r JOIN (
             SELECT name, COUNT(*) FROM roles GROUP BY name HAVING count(*) > 1
           ) dr ON r.name = dr.name ORDER BY r.name
         SQL
