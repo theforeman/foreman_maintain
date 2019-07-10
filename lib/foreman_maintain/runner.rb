@@ -92,7 +92,6 @@ module ForemanMaintain
 
     def execute_scenario_steps(scenario, force = false)
       scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
-      confirm_scenario(scenario)
       return if !force && quit? # the before scenarios caused the stop of the execution
       @reporter.before_scenario_starts(scenario)
       run_steps(scenario, scenario.steps)
