@@ -31,6 +31,7 @@ module ForemanMaintain
       @scenarios.each do |scenario|
         run_scenario(scenario)
         next unless @quit
+
         if @rescue_scenario
           logger.debug('=== Rescue scenario found. Executing ===')
           execute_scenario_steps(@rescue_scenario, true)
@@ -60,6 +61,7 @@ module ForemanMaintain
 
     def confirm_scenario(scenario)
       return unless @last_scenario
+
       decision = if @last_scenario.steps_with_error(:whitelisted => false).any? ||
                     @last_scenario.steps_with_abort(:whitelisted => false).any?
                    :quit
@@ -92,7 +94,9 @@ module ForemanMaintain
 
     def execute_scenario_steps(scenario, force = false)
       scenario.before_scenarios.flatten.each { |before_scenario| run_scenario(before_scenario) }
+      confirm_scenario(scenario) if @rescue_scenario
       return if !force && quit? # the before scenarios caused the stop of the execution
+
       @reporter.before_scenario_starts(scenario)
       run_steps(scenario, scenario.steps)
       @reporter.after_scenario_finishes(scenario)
