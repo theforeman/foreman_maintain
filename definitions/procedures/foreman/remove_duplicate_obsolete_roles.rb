@@ -4,7 +4,7 @@ module Procedures::Foreman
       for_feature :foreman_database
       description 'Remove duplicate obsolete roles from DB'
       confine do
-        check_min_version('foreman', '1.11')
+        check_max_version('foreman', '1.20')
       end
     end
 

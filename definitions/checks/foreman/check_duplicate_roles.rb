@@ -7,7 +7,7 @@ module Checks
         description 'Check for duplicate roles from DB'
         tags :pre_upgrade
         confine do
-          check_min_version('foreman', '1.11')
+          check_max_version('foreman', '1.20')
         end
       end
 
