@@ -16,7 +16,7 @@ module ForemanMaintain
     end
 
     it 'prints procedure' do
-      assert_cmd <<-OUTPUT.strip_heredoc
+      assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
         Usage:
             foreman-maintain advanced [OPTIONS] SUBCOMMAND [ARG] ...
 
@@ -39,7 +39,7 @@ module ForemanMaintain
       end
 
       it 'prints: run and by-tag subcommands' do
-        assert_cmd <<-OUTPUT.strip_heredoc
+        assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
           Usage:
               foreman-maintain advanced procedure [OPTIONS] SUBCOMMAND [ARG] ...
 
@@ -63,7 +63,7 @@ module ForemanMaintain
       end
 
       it 'prints: available subcommands for by-tag' do
-        assert_cmd <<-OUTPUT.strip_heredoc
+        assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
           Usage:
               foreman-maintain advanced procedure by-tag [OPTIONS] SUBCOMMAND [ARG] ...
 
@@ -92,7 +92,7 @@ module ForemanMaintain
       end
 
       it 'prints: available subcommands for run' do
-        assert_cmd <<-OUTPUT.strip_heredoc
+        assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
           Usage:
               foreman-maintain advanced procedure run [OPTIONS] SUBCOMMAND [ARG] ...
 

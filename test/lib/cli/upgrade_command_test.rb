@@ -15,7 +15,7 @@ module ForemanMaintain
     end
 
     it 'prints help' do
-      assert_cmd <<-OUTPUT.strip_heredoc
+      assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
         Usage:
             foreman-maintain upgrade [OPTIONS] SUBCOMMAND [ARG] ...
 

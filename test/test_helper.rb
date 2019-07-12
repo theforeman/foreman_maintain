@@ -7,8 +7,12 @@ require File.dirname(__FILE__) + '/support/minitest_spec_context'
 require File.expand_path('../lib/support/log_reporter', __FILE__)
 
 module CliAssertions
-  def assert_cmd(expected_output, args = [])
+  def assert_cmd(expected_output, args = [], ignore_whitespace: false)
     output = run_cmd(args)
+    if ignore_whitespace
+      expected_output = expected_output.gsub(/\s+/, ' ')
+      output = output.gsub(/\s+/, ' ')
+    end
     assert_equal expected_output, remove_colors(simulate_carriage_returns(output))
   end
 
