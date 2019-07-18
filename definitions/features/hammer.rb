@@ -71,7 +71,7 @@ class Features::Hammer < ForemanMaintain::Feature
   end
 
   def admin_username
-    return nil unless feature(:installer)
+    return 'admin' unless feature(:installer)
     if check_min_version('foreman', '1.22')
       feature(:installer).answers['foreman']['initial_admin_username']
     else
