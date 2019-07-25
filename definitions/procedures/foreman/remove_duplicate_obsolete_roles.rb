@@ -18,7 +18,7 @@ module Procedures::Foreman
         new_obj[r_name] << role_rec['id'].to_i
       end
       duplicate_role_ids = filter_consumed_roles(roles_hash)
-      remove_obsolete_role_records(duplicate_role_ids)
+      remove_obsolete_role_records(duplicate_role_ids) unless duplicate_role_ids.empty?
     end
 
     private
@@ -26,8 +26,12 @@ module Procedures::Foreman
     def filter_consumed_roles(roles_hash)
       consumed_role_ids = find_consumed_role_ids
       roles_hash.values.map do |ids|
-        if !(consumed_ids = (ids & consumed_role_ids)).empty?
+        consumed_ids = ids & consumed_role_ids
+        if consumed_ids.count == 1
           ids -= consumed_ids
+        elsif consumed_ids.count > 1
+          ids -= consumed_ids
+          update_duplicate_consumed_roles(consumed_ids)
         elsif ids.length > 1
           ids.delete(ids.min)
         end
@@ -38,6 +42,14 @@ module Procedures::Foreman
     def find_consumed_role_ids
       feature(:foreman_database).query(<<-SQL).map { |r| r['role_id'].to_i }
        select DISTINCT(role_id) role_id from user_roles
+      SQL
+    end
+
+    def update_duplicate_consumed_roles(role_ids)
+      logger.info("Updating name of duplicate consumed roles using id(s): #{role_ids.join(', ')}")
+
+      feature(:foreman_database).psql(<<-SQL)
+        UPDATE roles set name = concat(name, ' - ', id) where id in (#{role_ids.join(', ')})
       SQL
     end
 
