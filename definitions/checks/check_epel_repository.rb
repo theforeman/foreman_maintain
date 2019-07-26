@@ -4,7 +4,7 @@ class Checks::CheckEpelRepository < ForemanMaintain::Check
     description 'Check if EPEL repository enabled on system'
     tags :pre_upgrade
     confine do
-      feature(:downstream)
+      feature(:instance).downstream
     end
   end
 

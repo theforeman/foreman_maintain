@@ -67,7 +67,7 @@ module ForemanMaintain::Scenarios
     end
 
     def supported_version_check
-      if feature(:downstream) && feature(:downstream).less_than_version?('6.3')
+      if feature(:instance).downstream && feature(:instance).downstream.less_than_version?('6.3')
         msg = 'ERROR: Restore subcommand is supported by Satellite 6.3+. ' \
               'Please use katello-restore instead.'
         abort(msg)

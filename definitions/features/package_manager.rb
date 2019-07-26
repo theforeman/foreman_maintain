@@ -28,6 +28,22 @@ class Features::PackageManager < ForemanMaintain::Feature
                  end
   end
 
+  def satellite_installed?
+    installed?([satellite_package]) || (find_package('foreman') =~ /sat.noarch/)
+  end
+
+  def external_capsule_installed?
+    installed?([capsule_package])
+  end
+
+  def satellite_package
+    'satellite'
+  end
+
+  def capsule_package
+    'satellite-capsule'
+  end
+
   # TODO: DEB  grep ^Package: /var/lib/apt/lists/deb.theforeman.org_dists_*
   # TODO DEB apt-mark hold/unhold <package>
 end

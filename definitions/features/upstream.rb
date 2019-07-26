@@ -3,7 +3,8 @@ class Features::Upstream < ForemanMaintain::Feature
     label :upstream
 
     confine do
-      !feature(:downstream)
+      # TODO: remove this upstream feature
+      !feature(:instance).downstream
     end
   end
 

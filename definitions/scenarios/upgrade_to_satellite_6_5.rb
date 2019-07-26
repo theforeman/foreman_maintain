@@ -4,7 +4,7 @@ module Scenarios::Satellite_6_5
       metadata do
         tags :upgrade_to_satellite_6_5
         confine do
-          feature(:satellite) && feature(:downstream).current_minor_version == '6.4'
+          feature(:satellite) && feature(:satellite).current_minor_version == '6.4'
         end
         instance_eval(&block)
       end

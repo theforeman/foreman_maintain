@@ -42,15 +42,15 @@ describe Features::Installer do
 
     context '#upgrade' do
       it '#upgrade runs the installer with correct params' do
-        assume_feature_absent(:downstream)
+        assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
           with('LANG=en_US.utf-8 foreman-installer --upgrade', :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
       end
 
-      it '#upgrade runs the installer with correct params in downstream' do
-        assume_feature_present(:downstream)
+      it '#upgrade runs the installer with correct params in satellite' do
+        assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
           with('LANG=en_US.utf-8 satellite-installer --upgrade', :interactive => true).
           returns(true)
@@ -60,15 +60,15 @@ describe Features::Installer do
 
     context '#run' do
       it 'runs the installer with correct params' do
-        assume_feature_absent(:downstream)
+        assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
           with('LANG=en_US.utf-8 foreman-installer --password=changeme', :interactive => true).
           returns(true)
         subject.run('--password=changeme', :interactive => true)
       end
 
-      it 'runs the installer with correct params in downstream' do
-        assume_feature_present(:downstream)
+      it 'runs the installer with correct params in satellite' do
+        assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
           with('LANG=en_US.utf-8 satellite-installer --password=changeme', :interactive => true).
           returns(true)

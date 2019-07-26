@@ -44,11 +44,6 @@ module ForemanMaintain
         end
       end
 
-      def satellite_installation?
-        execute?('rpm -q satellite') ||
-          (execute('rpm -q foreman') =~ /sat.noarch/)
-      end
-
       def execute?(command, options = {})
         execute(command, options)
         $CHILD_STATUS.success?
@@ -99,10 +94,6 @@ module ForemanMaintain
 
       def server?
         find_package('foreman')
-      end
-
-      def smart_proxy?
-        !server? && find_package('foreman-proxy')
       end
 
       def packages_action(action, packages, options = {})

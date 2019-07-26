@@ -10,13 +10,13 @@ describe Features::Instance do
     it 'recognizes Capsule' do
       assume_feature_absent(:foreman_server)
       assume_feature_present(:foreman_proxy)
-      assume_feature_present(:downstream)
+      assume_feature_present(:satellite)
       subject.product_name.must_equal 'Capsule'
     end
 
     it 'recognizes Foreman Proxy' do
       assume_feature_absent(:foreman_server)
-      assume_feature_absent(:downstream)
+      assume_feature_absent(:satellite)
       assume_feature_present(:foreman_proxy)
       subject.product_name.must_equal 'Foreman Proxy'
     end
@@ -25,7 +25,7 @@ describe Features::Instance do
       assume_feature_present(:foreman_server)
       assume_feature_present(:foreman_proxy)
       assume_feature_present(:katello)
-      assume_feature_absent(:downstream)
+      assume_feature_absent(:satellite)
       subject.product_name.must_equal 'Katello'
     end
 
@@ -33,7 +33,7 @@ describe Features::Instance do
       assume_feature_present(:foreman_server)
       assume_feature_present(:foreman_proxy)
       assume_feature_present(:katello)
-      assume_feature_present(:downstream)
+      assume_feature_present(:satellite)
       subject.product_name.must_equal 'Satellite'
     end
 
@@ -41,7 +41,7 @@ describe Features::Instance do
       assume_feature_present(:foreman_server)
       assume_feature_present(:foreman_proxy)
       assume_feature_absent(:katello)
-      assume_feature_absent(:downstream)
+      assume_feature_absent(:satellite)
       subject.product_name.must_equal 'Foreman'
     end
   end

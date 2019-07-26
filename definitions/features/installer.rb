@@ -72,6 +72,7 @@ class Features::Installer < ForemanMaintain::Feature
   def installer_command
     case @installer_type
     when :scenarios
+      # TODO: verify satellite or feature(:instance).downstream
       if feature(:downstream)
         'satellite-installer'
       else

@@ -8,12 +8,12 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     end
 
     confine do
-      feature(:downstream)
+      feature(:instance).downstream
     end
   end
 
   def run
-    if feature(:downstream).subscribed_using_activation_key?
+    if feature(:instance).downstream.subscribed_using_activation_key?
       skip "Your system is subscribed using custom activation key. Hotfixes can't be detected."
     else
       with_spinner('Checking for presence of hotfix(es). It may take some time to verify.') do

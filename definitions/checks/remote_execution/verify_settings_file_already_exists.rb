@@ -4,8 +4,8 @@ module Checks::RemoteExecution
       description 'Check to verify remote_execution_ssh settings already exist'
 
       confine do
-        feature(:downstream) &&
-          feature(:downstream).current_minor_version == '6.2' &&
+        feature(:instance).downstream &&
+          feature(:instance).downstream.current_minor_version == '6.2' &&
           find_package('tfm-rubygem-smart_proxy_dynflow_core') &&
           file_exists?('/etc/smart_proxy_dynflow_core')
       end

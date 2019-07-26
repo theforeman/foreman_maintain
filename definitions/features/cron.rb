@@ -3,7 +3,7 @@ class Features::Cron < ForemanMaintain::Feature
     label :cron
     confine do
       ForemanMaintain.config.manage_crond && !(
-        feature(:downstream) && feature(:downstream).less_than_version?('6.3')
+        feature(:instance).downstream && feature(:instance).downstream.less_than_version?('6.3')
       )
     end
   end

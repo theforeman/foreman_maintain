@@ -3,7 +3,7 @@ class Procedures::KnowledgeBaseArticle < ForemanMaintain::Procedure
     description 'Show knowledge base article for troubleshooting'
 
     confine do
-      feature(:downstream)
+      feature(:instance).downstream
     end
     param :doc,
           'Document name required to select a correct article',

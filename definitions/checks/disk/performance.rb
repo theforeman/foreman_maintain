@@ -28,7 +28,7 @@ module Checks
           puts "\n"
           puts stats.stdout
 
-          if feature(:downstream) && feature(:downstream).at_least_version?('6.3')
+          if feature(:instance).downstream && feature(:instance).downstream.at_least_version?('6.3')
             assert(success, io_obj.slow_disk_error_msg + warning_message, :warn => true)
           else
             assert(success, io_obj.slow_disk_error_msg)
