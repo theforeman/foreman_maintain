@@ -111,38 +111,38 @@ module ForemanMaintain
         end
 
         it 'offers parameters of dictionary type with completion' do
-          result = subject.complete('backup online dir_')
-          result.must_equal %w[dir_a dir_b]
+          result = subject.complete('backup online dir_').sort
+          result.must_equal %w[dir_a dir_b].sort
         end
 
         it 'offers parameters of a file type with completion' do
-          result = subject.complete('backup online dir_a val dir_')
-          result.must_equal ['dir_a/', 'dir_b/']
+          result = subject.complete('backup online dir_a val dir_').sort
+          result.must_equal ['dir_a/', 'dir_b/'].sort
         end
 
         it 'offers options of dictionary type with completion for unfinished values' do
-          result = subject.complete('backup online --pool dir_')
-          result.must_equal %w[dir_a dir_b]
+          result = subject.complete('backup online --pool dir_').sort
+          result.must_equal %w[dir_a dir_b].sort
         end
 
         it 'offers options of dictionary type with completion' do
-          result = subject.complete('backup online --pool ')
-          result.must_equal %w[dir_a dir_b]
+          result = subject.complete('backup online --pool ').sort
+          result.must_equal %w[dir_a dir_b].sort
         end
 
         it 'offers options of a file type with completion for unfinished values - dir' do
-          result = subject.complete('backup online --log dir_')
-          result.must_equal ['dir_a/', 'dir_b/']
+          result = subject.complete('backup online --log dir_').sort
+          result.must_equal ['dir_a/', 'dir_b/'].sort
         end
 
         it 'offers options of a file type with completion for unfinished values - file' do
           result = subject.complete('backup online --log dir_a/alpha/').sort
-          result.must_equal ['dir_a/alpha/a.log ', 'dir_a/alpha/b.log ']
+          result.must_equal ['dir_a/alpha/a.log ', 'dir_a/alpha/b.log '].sort
         end
 
         it 'offers options of a file type with completion' do
-          result = subject.complete('backup online --log ')
-          result.must_equal ['dir_a/', 'dir_b/']
+          result = subject.complete('backup online --log ').sort
+          result.must_equal ['dir_a/', 'dir_b/'].sort
         end
 
         it 'offers parameters of dictionary type with completion, adding slash on single option' do
