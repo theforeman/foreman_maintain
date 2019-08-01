@@ -6,14 +6,12 @@ class Features::Instance < ForemanMaintain::Feature
     label :instance
   end
 
-  # TODO: verify for downstream
   def foreman_proxy_product_name
-    feature(:downstream) ? 'Capsule' : 'Foreman Proxy'
+    feature(:capsule) ? 'Capsule' : 'Foreman Proxy'
   end
 
-  # TODO: replace feature :downstream with :satellite
   def server_product_name
-    if feature(:downstream)
+    if feature(:satellite)
       'Satellite'
     elsif feature(:katello)
       'Katello'
@@ -22,7 +20,6 @@ class Features::Instance < ForemanMaintain::Feature
     end
   end
 
-  # TODO: move this to respective fetaure of proxy
   def external_proxy?
     !!(feature(:foreman_proxy) && !feature(:foreman_server))
   end
@@ -52,8 +49,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def downstream?
-    feature(:package_manager).satellite_installed? ||
-      feature(:package_manager).external_capsule_installed?
+    feature(:package_manager).satellite_installed? || feature(:package_manager).capsule_installed?
   end
 
   def downstream

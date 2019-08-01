@@ -43,7 +43,9 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     features
   end
 
-  # TODO: implement feature(:foreman_proxy).external?
+  def external?
+    !feature(:foreman_server)
+  end
 
   def internal?
     !!feature(:foreman_server)

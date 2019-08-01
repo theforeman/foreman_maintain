@@ -32,7 +32,7 @@ class Features::PackageManager < ForemanMaintain::Feature
     installed?([satellite_package]) || (find_package('foreman') =~ /sat.noarch/)
   end
 
-  def external_capsule_installed?
+  def capsule_installed?
     installed?([capsule_package])
   end
 
