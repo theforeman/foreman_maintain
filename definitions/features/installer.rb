@@ -93,6 +93,16 @@ class Features::Installer < ForemanMaintain::Feature
     run(arguments, exec_options)
   end
 
+  def initial_admin_username
+    feature(:installer).answers['foreman']['initial_admin_username'] ||
+      feature(:installer).answers['foreman']['admin_username']
+  end
+
+  def initial_admin_password
+    feature(:installer).answers['foreman']['initial_admin_password'] ||
+      feature(:installer).answers['foreman']['admin_password']
+  end
+
   private
 
   def load_answers(config)
