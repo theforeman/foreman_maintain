@@ -8,6 +8,7 @@ module Procedures::Backup
           Checks::Backup::CertsTarExist.new
         end
       end
+      MAX_RETRIES = 3
       param :backup_dir, 'Directory where to backup to', :required => true
       param :proxy_features, 'List of proxy features to backup (default: all)',
             :array => true, :default => ['all']
@@ -16,17 +17,37 @@ module Procedures::Backup
     end
 
     def run
-      tarball = File.join(@backup_dir, 'config_files.tar.gz')
-      increments = File.join(@backup_dir, '.config.snar')
       with_spinner('Collecting config files to backup') do
-        configs, to_exclude = config_files
-        feature(:tar).run(
-          :command => 'create', :gzip => true, :archive => tarball,
-          :listed_incremental => increments, :ignore_failed_read => true,
-          :exclude => to_exclude, :allow_changing_files => @ignore_changed_files,
-          :files => configs.join(' ')
-        )
+        create_tarball
       end
+    end
+
+    def create_tarball
+      (1..MAX_RETRIES).each do |ret|
+        exit_status = execute_tar_cmd
+        break unless statuses.include? exit_status
+
+        warn "\nRemoving config files archive #{@tarball_path} as its incomplete"
+        execute("rm -rf #{@tarball_path}")
+        warn "Recollecting config files backup, retry #{ret} !"
+        warn! 'Config files backup failed' if MAX_RETRIES == ret
+      end
+    end
+
+    def execute_tar_cmd
+      @tarball_path ||= File.join(@backup_dir, 'config_files.tar.gz')
+      @increments_path ||= File.join(@backup_dir, '.config.snar')
+      configs, to_exclude = config_files
+      feature(:tar).run(
+        :command => 'create', :gzip => true, :archive => @tarball_path,
+        :listed_incremental => @increments_path, :ignore_failed_read => true,
+        :exclude => to_exclude, :allow_changing_files => @ignore_changed_files,
+        :files => configs.join(' ')
+      )
+    end
+
+    def statuses
+      @ignore_changed_files ? [0, 1] : [0]
     end
 
     # rubocop:disable Metrics/AbcSize
