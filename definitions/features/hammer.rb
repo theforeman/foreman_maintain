@@ -82,12 +82,11 @@ class Features::Hammer < ForemanMaintain::Feature
   end
 
   def on_invalid_password(custom_config)
-    if !ready? && custom_config[:foreman][:password] != password_from_answers(
-        custom_config[:foreman][:username]
-      )
+    admin_password = password_from_answers(custom_config[:foreman][:username])
+    if !ready? && custom_config[:foreman][:password] != admin_password
       msg = 'Invalid admin password was found in hammer configs. Looking into installer answers'
       logger.info(msg)
-      custom_config[:foreman][:password] = password_from_answers(custom_config[:foreman][:username])
+      custom_config[:foreman][:password] = admin_password
       save_config_and_check(custom_config)
     end
     custom_config
@@ -101,8 +100,8 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def config_error
     raise ForemanMaintain::HammerConfigurationError, 'Hammer configuration failed: '\
-                  'Is the admin username and password correct? ' \
-                  "\n(it was stored in #{custom_config_file})\n" \
+                  'Is the admin credential from the file' \
+                  " #{custom_config_file} correct?\n" \
                   'Is the server down?'
   end
 
