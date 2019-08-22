@@ -25,7 +25,7 @@ module ForemanMaintain
             service                       Control applicable services
             backup                        Backup server
             restore                       Restore a backup
-            packages                      Lock/Unlock installed packages
+            packages                      Lock/Unlock package protection, install, update
             advanced                      Advanced tools for server maintenance
             maintenance-mode              Control maintenance-mode for application
 

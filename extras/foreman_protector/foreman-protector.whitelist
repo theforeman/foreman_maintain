@@ -1,0 +1,19 @@
+# list of packages allowed to be installed and updated freely
+# foreman-maintain runtime installed deps
+# fio and deps
+fio
+libaio
+libibverbs
+librbd1
+libpmem
+numactl-libs
+ndctl-libs
+daxctl-libs
+libpmemblk
+librados2
+librdmacm
+rdma-core
+boost-random
+boost-iostreams
+# foreman-maintain
+rubygem-foreman_maintain

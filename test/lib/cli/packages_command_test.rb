@@ -20,10 +20,12 @@ module ForemanMaintain
             [ARG] ...                     subcommand arguments
 
         Subcommands:
-            lock                          Prevent Foreman-related packages from automatic update
-            unlock                        Enable Foreman-related packages for automatic update
-            status                        Check if Foreman-related packages are protected against update
-            is-locked                     Check if update of Foreman-related packages is allowed
+            lock                          Prevent packages from automatic update
+            unlock                        Enable packages for automatic update
+            status                        Check if packages are protected against update
+            install                       Install packages in an unlocked session
+            update                        Update packages in an unlocked session
+            is-locked                     Check if update of packages is allowed
 
         Options:
             -h, --help                    print help

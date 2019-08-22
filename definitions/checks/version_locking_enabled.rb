@@ -1,7 +1,7 @@
 module Checks
   class VersionLockingEnabled < ForemanMaintain::Check
     metadata do
-      description 'Check if tooling for package version locking is installed'
+      description 'Check if tooling for package locking is installed'
     end
 
     def run

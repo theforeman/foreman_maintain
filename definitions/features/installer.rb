@@ -24,7 +24,7 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def configuration
-    YAML.load_file(config_file)
+    @configuration ||= YAML.load_file(config_file)
   end
 
   def config_file
@@ -85,7 +85,9 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def run(arguments = '', exec_options = {})
-    execute!("LANG=en_US.utf-8 #{installer_command} #{arguments}".strip, exec_options)
+    out = execute!("LANG=en_US.utf-8 #{installer_command} #{arguments}".strip, exec_options)
+    @configuration = nil
+    out
   end
 
   def upgrade(exec_options = {})
@@ -101,6 +103,14 @@ class Features::Installer < ForemanMaintain::Feature
   def initial_admin_password
     feature(:installer).answers['foreman']['initial_admin_password'] ||
       feature(:installer).answers['foreman']['admin_password']
+  end
+
+  def lock_package_versions?
+    !!(configuration[:custom] && configuration[:custom][:lock_package_versions])
+  end
+
+  def lock_package_versions_supported?
+    !(configuration[:custom] && configuration[:custom][:lock_package_versions]).nil?
   end
 
   private

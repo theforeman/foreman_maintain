@@ -6,12 +6,7 @@ module Procedures::Packages
     end
 
     def run
-      packages = feature(:package_manager).version_locking_packages
-      feature(:package_manager).install(packages, :assumeyes => @assumeyes)
-      unless feature(:package_manager).installed?(packages)
-        raise "Unable to install some of the required dependences:  #{packages.join(' ')}"
-      end
-      feature(:package_manager).configure_version_locking
+      feature(:package_manager).install_version_locking(:assumeyes => @assumeyes)
     end
   end
 end

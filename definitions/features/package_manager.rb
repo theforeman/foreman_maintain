@@ -6,8 +6,7 @@ class Features::PackageManager < ForemanMaintain::Feature
   extend Forwardable
   def_delegators :manager, :lock_versions, :unlock_versions,
                  :installed?, :find_installed_package, :install, :update,
-                 :version_locking_enabled?, :configure_version_locking,
-                 :foreman_related_packages, :version_locking_packages,
+                 :version_locking_enabled?, :install_version_locking,
                  :versions_locked?, :clean_cache, :remove, :files_not_owned_by_package
 
   def self.type
