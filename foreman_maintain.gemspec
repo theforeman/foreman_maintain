@@ -13,11 +13,10 @@ Gem::Specification.new do |s|
   s.description = "Provides various features that helps keeping \
 the Foreman/Satellite up and running."
 
-  s.files = Dir['{bin,lib,definitions}/**/*'] + `git ls-files config`.split("\n")
-  s.extra_rdoc_files = [
-    'LICENSE',
-    'README.md'
-  ]
+  s.files = Dir['{bin,lib,definitions}/**/*']
+  s.files += `git ls-files config`.split("\n")
+  s.files += `git ls-files extras`.split("\n")
+  s.extra_rdoc_files = ['LICENSE', 'README.md']
   s.require_paths = ['lib']
   s.executables = ['foreman-maintain', 'passenger-recycler',
                    'foreman-maintain-complete', 'foreman-maintain-rotate-tar']

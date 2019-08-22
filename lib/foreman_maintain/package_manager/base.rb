@@ -1,23 +1,13 @@
 module ForemanMaintain::PackageManager
   # rubocop:disable Lint/UnusedMethodArgument
   class Base
-    def foreman_related_packages
-      raise NotImplementedError
-    end
-
-    # list of packages providing the version locking
-    def version_locking_packages
-      raise NotImplementedError
-    end
-
     # check tools are installed and enabled
     def version_locking_enabled?
       raise NotImplementedError
     end
 
     # make sure the version locking tools are configured
-    # we can assume it is already installed
-    def configure_version_locking
+    def install_version_locking(assumeyes: false)
       raise NotImplementedError
     end
 
@@ -46,8 +36,8 @@ module ForemanMaintain::PackageManager
       raise NotImplementedError
     end
 
-    # prevent listed packages from update
-    def lock_versions(package_list)
+    # prevent selected packages from update or install
+    def lock_versions
       raise NotImplementedError
     end
 

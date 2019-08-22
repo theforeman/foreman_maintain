@@ -1,77 +1,36 @@
 module ForemanMaintain::PackageManager
   class Yum < Base
-    VERSIONLOCK_START_CLAUSE = '## foreman-maintain - start'.freeze
-    VERSIONLOCK_END_CLAUSE = '## foreman-maintain - end'.freeze
-    VERSIONLOCK_CONFIG_FILE = '/etc/yum/pluginconf.d/versionlock.conf'.freeze
-    VERSIONLOCK_DEFAULT_LIST_FILE = '/etc/yum/pluginconf.d/versionlock.list'.freeze
+    PROTECTOR_CONFIG_FILE = '/etc/yum/pluginconf.d/foreman-protector.conf'.freeze
+    PROTECTOR_WHITELIST_FILE = '/etc/yum/pluginconf.d/foreman-protector.whitelist'.freeze
+    PROTECTOR_PLUGIN_FILE = '/usr/lib/yum-plugins/foreman-protector.py'.freeze
 
     def self.parse_envra(envra)
       # envra format: 0:foreman-1.20.1.10-1.el7sat.noarch
       parsed = envra.match(/\d*:?(?<name>.*)-[^-]+-[^-]+\.[^.]+/)
-      parsed ? Hash[parsed.names.zip(parsed.captures)].merge(:envra => envra) : nil
+      parsed ? Hash[parsed.names.map(&:to_sym).zip(parsed.captures)].merge(:envra => envra) : nil
     end
 
-    def foreman_related_packages
-      query = "repoquery -a --qf='%{envra} %{repo.id}' --search foreman-installer |head -n1"
-      foreman_repo = sys.execute(query).split[1]
-      query_installed = "repoquery -a --qf='%{envra}' --repoid='#{foreman_repo}'"
-      sys.execute(query_installed). split("\n").map do |pkg|
-        self.class.parse_envra(pkg)
-      end
-    end
-
-    def version_locking_packages
-      %w[yum-utils yum-plugin-versionlock]
-    end
-
-    def lock_versions(package_list)
-      unlock_versions
-      File.open(versionlock_file, 'a') do |f|
-        f.puts VERSIONLOCK_START_CLAUSE
-        f.puts '# The following packages are locked by foreman-maintain. Do not modify!'
-        package_list.each { |package| f.puts "#{package[:envra]}.*" }
-        f.puts '# End of list of packages locked by foreman-maintain'
-        f.puts VERSIONLOCK_END_CLAUSE
-      end
+    def lock_versions
+      enable_protector
     end
 
     def unlock_versions
-      lock_file = versionlock_file
-      content = File.read(lock_file)
-      content = content.gsub(/#{VERSIONLOCK_START_CLAUSE}.*#{VERSIONLOCK_END_CLAUSE}\n/m, '')
-      File.open(lock_file, 'w') { |f| f.write content }
+      disable_protector
     end
 
     def versions_locked?
-      lock_file = versionlock_file
-      return false if lock_file.nil?
-      content = File.read(lock_file)
-      !!content.match(/#{VERSIONLOCK_START_CLAUSE}.*#{VERSIONLOCK_END_CLAUSE}\n/m)
+      !!(protector_config =~ /^\s*enabled\s*=\s*1/)
     end
 
     def version_locking_enabled?
-      installed?(version_locking_packages) && versionlock_config =~ /^\s*enabled\s+=\s+1/ \
-        && File.exist?(versionlock_file)
+      File.exist?(PROTECTOR_PLUGIN_FILE) && File.exist?(PROTECTOR_CONFIG_FILE) &&
+        File.exist?(PROTECTOR_WHITELIST_FILE)
     end
 
-    # make sure the version locking tools are configured
-    #  enabled = 1
-    #  locklist = <list file>
-    # we can assume it is already installed
-    def configure_version_locking
-      config = versionlock_config
-      config += "\n" unless config[-1] == "\n"
-      enabled_re = /^\s*enabled\s*=.*$/
-      if enabled_re.match(config)
-        config = config.gsub(enabled_re, 'enabled = 1')
-      else
-        config += "enabled = 1\n"
-      end
-      unless config =~ /^\s*locklist\s*=.*$/
-        config += "locklist = #{VERSIONLOCK_DEFAULT_LIST_FILE}\n"
-      end
-      File.open(versionlock_config_file, 'w') { |file| file.puts config }
-      FileUtils.touch(versionlock_file)
+    def install_version_locking(*)
+      install_extras('foreman_protector/foreman-protector.py', PROTECTOR_PLUGIN_FILE)
+      install_extras('foreman_protector/foreman-protector.conf', PROTECTOR_CONFIG_FILE)
+      install_extras('foreman_protector/foreman-protector.whitelist', PROTECTOR_WHITELIST_FILE)
     end
 
     def installed?(packages)
@@ -109,17 +68,32 @@ module ForemanMaintain::PackageManager
 
     private
 
-    def versionlock_config
-      File.exist?(versionlock_config_file) ? File.read(versionlock_config_file) : ''
+    def protector_config
+      File.exist?(protector_config_file) ? File.read(protector_config_file) : ''
     end
 
-    def versionlock_config_file
-      VERSIONLOCK_CONFIG_FILE
+    def protector_config_file
+      PROTECTOR_CONFIG_FILE
     end
 
-    def versionlock_file
-      result = versionlock_config.match(/^\s*locklist\s*=\s*(\S+)/)
-      result.nil? ? nil : File.expand_path(result.captures[0])
+    def enable_protector
+      setup_protector(true)
+    end
+
+    def disable_protector
+      setup_protector(false)
+    end
+
+    def setup_protector(enabled)
+      config = protector_config
+      config += "\n" unless config[-1] == "\n"
+      enabled_re = /^\s*enabled\s*=.*$/
+      if enabled_re.match(config)
+        config = config.gsub(enabled_re, "enabled = #{enabled ? '1' : '0'}")
+      else
+        config += "enabled = #{enabled ? '1' : '0'}\n"
+      end
+      File.open(protector_config_file, 'w') { |file| file.puts config }
     end
 
     def yum_action(action, packages, assumeyes: false)
@@ -130,6 +104,15 @@ module ForemanMaintain::PackageManager
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
       sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
                    :interactive => true)
+    end
+
+    def install_extras(src, dest, override: false)
+      extras_src = File.expand_path('../../../../extras', __FILE__)
+      if override ||
+         (File.directory?(dest) && !File.exist?(File.join(dest, src))) ||
+         !File.exist?(dest)
+        FileUtils.cp(File.join(extras_src, src), dest)
+      end
     end
   end
 end
