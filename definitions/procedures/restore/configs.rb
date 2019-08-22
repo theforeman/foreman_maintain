@@ -20,7 +20,7 @@ module Procedures::Restore
 
     def restore_configs(backup)
       exclude = ForemanMaintain.available_features.each_with_object([]) do |feat, cfgs|
-        feat.config_files_to_exclude.each { |f| cfgs << f }
+        feat.config_files_to_exclude.each { |f| cfgs << f.gsub(%r{^/}, '') }
       end
       tar_options = {
         :overwrite => true,
