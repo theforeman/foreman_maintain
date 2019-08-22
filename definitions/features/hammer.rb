@@ -117,7 +117,8 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def admin_password_missing?
     configuration[:foreman][:password].nil? ||
-      configuration[:foreman][:password].empty?
+      configuration[:foreman][:password].empty? ||
+      configuration[:foreman][:username] != username
   end
 
   def exec_hammer_cmd(cmd, required_json = false)
