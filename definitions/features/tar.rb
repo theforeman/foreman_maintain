@@ -61,7 +61,7 @@ class Features::Tar < ForemanMaintain::Feature
       tar_command << options.fetch(:files, '*')
     end
 
-    logger.debug("Invoking tar from #{FileUtils.pwd}")
+    logger.debug("Invoking tar from #{options[:directory] || FileUtils.pwd}")
     statuses = options[:allow_changing_files] ? [0, 1] : [0]
     execute!(tar_command.join(' '), :valid_exit_statuses => statuses)
   end
