@@ -1,3 +1,4 @@
 ---
 foreman:
+  admin_username: 'admin'
   admin_password: 'inspasswd'

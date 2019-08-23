@@ -65,6 +65,7 @@ describe Features::Hammer do
     before do
       assume_feature_present(:installer)
       mock_installer_package('foreman-installer')
+      installer_config_dir("#{data_dir}/installer/simple_config")
     end
 
     it 'gets credentials from hammer configs' do
@@ -95,7 +96,6 @@ describe Features::Hammer do
       hammer_config_dirs(["#{data_dir}/hammer/sample_default_config"])
       stub_hostname
       stub_connection_check(false, true)
-      installer_config_dir("#{data_dir}/installer/simple_config")
 
       expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
       subject.setup_admin_access.must_equal true
@@ -106,7 +106,6 @@ describe Features::Hammer do
                            "#{data_dir}/hammer/sample_admin_config",
                            "#{data_dir}/hammer/sample_default_config"
                          ])
-      installer_config_dir("#{data_dir}/installer/simple_config")
       stub_hostname
       stub_connection_check(false, false, true)
       expect_custom_config(:foreman => { :username => 'admin' })
@@ -119,7 +118,6 @@ describe Features::Hammer do
                            "#{data_dir}/hammer/sample_user_config",
                            "#{data_dir}/hammer/sample_default_config"
                          ])
-      installer_config_dir("#{data_dir}/installer/simple_config")
       stub_hostname
       stub_connection_check(false, true)
       expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
@@ -130,7 +128,6 @@ describe Features::Hammer do
       hammer_config_dirs([
                            "#{data_dir}/hammer/sample_default_config"
                          ])
-      installer_config_dir("#{data_dir}/installer/simple_config")
       stub_hostname
       stub_connection_check(false, false, true)
       log_reporter.input << 'manual'
@@ -144,7 +141,6 @@ describe Features::Hammer do
       hammer_config_dirs([
                            "#{data_dir}/hammer/sample_default_config"
                          ])
-      installer_config_dir("#{data_dir}/installer/simple_config")
       stub_hostname
       stub_connection_check(false, false)
       log_reporter.input << 'manual'
