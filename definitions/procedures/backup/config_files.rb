@@ -24,8 +24,7 @@ module Procedures::Backup
 
     def create_tarball
       (1..MAX_RETRIES).each do |ret|
-        exit_status = execute_tar_cmd
-        break unless statuses.include? exit_status
+        break unless allowed_exit_statuses.include? execute_tar_cmd
 
         warn "\nRemoving config files archive #{@tarball_path} as its incomplete"
         execute("rm -rf #{@tarball_path}")
@@ -46,7 +45,7 @@ module Procedures::Backup
       )
     end
 
-    def statuses
+    def allowed_exit_statuses
       @ignore_changed_files ? [0, 1] : [0]
     end
 
