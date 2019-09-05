@@ -16,6 +16,7 @@ module ForemanMaintain
       @scenarios = Array(scenarios)
       @quit = false
       @last_scenario = nil
+      @last_scenario_continuation_confirmed = false
       @exit_code = 0
     end
 
@@ -40,18 +41,19 @@ module ForemanMaintain
       end
     end
 
-    def run_scenario(scenario, confirm = true)
+    def run_scenario(scenario)
       return if scenario.steps.empty?
       raise 'The runner is already in quit state' if quit?
 
-      if confirm
-        confirm_scenario(scenario)
-        return if quit?
-      end
+      confirm_scenario(scenario)
+      return if quit?
 
       execute_scenario_steps(scenario)
     ensure
-      @last_scenario = scenario unless scenario.steps.empty?
+      unless scenario.steps.empty?
+        @last_scenario = scenario
+        @last_scenario_continuation_confirmed = false
+      end
       @exit_code = 1 if scenario.failed?
     end
 
@@ -60,12 +62,13 @@ module ForemanMaintain
     end
 
     def confirm_scenario(scenario)
-      return unless @last_scenario
+      return if @last_scenario.nil? || @last_scenario_continuation_confirmed
 
       decision = if @last_scenario.steps_with_error(:whitelisted => false).any? ||
                     @last_scenario.steps_with_abort(:whitelisted => false).any?
                    :quit
                  elsif @last_scenario.steps_with_warning(:whitelisted => false).any?
+                   @last_scenario_continuation_confirmed = true
                    reporter.ask_decision("Continue with [#{scenario.description}]")
                  end
 
