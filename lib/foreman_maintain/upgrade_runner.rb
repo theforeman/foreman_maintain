@@ -135,7 +135,7 @@ module ForemanMaintain
         confirm_scenario(scenario)
         return if quit?
         self.phase = phase
-        run_scenario(scenario, false)
+        run_scenario(scenario)
         # if we started from the :pre_upgrade_checks, ensure to ask before
         # continuing with the rest of the upgrade
         @ask_to_confirm_upgrade = phase == :pre_upgrade_checks
@@ -155,12 +155,15 @@ module ForemanMaintain
 
     private
 
+    # rubocop:disable Metrics/MethodLength
     def rollback_pre_migrations
       raise "Unexpected phase #{phase}, expecting pre_migrations" unless phase == :pre_migrations
       rollback_needed = scenario(:pre_migrations).steps.any? { |s| s.executed? && s.success? }
       if rollback_needed
         @quit = false
-        @last_scenario = nil # to prevent the unnecessary confirmation questions
+        # prevent the unnecessary confirmation questions
+        @last_scenario = nil
+        @last_scenario_continuation_confirmed = true
         [:post_migrations, :post_upgrade_checks].each do |phase|
           if quit? && phase == :post_upgrade_checks
             self.phase = :pre_migrations
@@ -174,6 +177,7 @@ module ForemanMaintain
         The upgrade failed and system was restored to pre-upgrade state.
       MESSAGE
     end
+    # rubocop:enable Metrics/MethodLength
 
     def with_non_empty_scenario(phase)
       next_scenario = scenario(phase)
