@@ -82,22 +82,24 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
     @content_module_detected = true
     answer = feature(:installer).answers.find do |_, config|
-      config.is_a?(Hash) && config.key?(certs_param_name.values[0])
+      config.is_a?(Hash) && config.key?(certs_param_name[:param_key])
     end
-    @content_module = answer.nil? ? certs_param_name.keys[0] : answer.first
+    @content_module = answer.nil? ? certs_param_name[:param_section] : answer.first
     logger.debug("foreman proxy content module detected: #{@content_module}")
     @content_module
   end
 
   def certs_param_name
-    return { 'certs' => 'tar_file' } if check_min_version('foreman', '1.21')
+    if check_min_version('foreman', '1.21')
+      return { :param_section => 'certs', :param_key => 'tar_file' }
+    end
 
-    { 'foreman_proxy_content' => 'certs_tar' }
+    { :param_section => 'foreman_proxy_content', :param_key => 'certs_tar' }
   end
 
   def certs_tar
     if content_module && with_content?
-      feature(:installer).answers[content_module][certs_param_name.values[0]]
+      feature(:installer).answers[content_module][certs_param_name[:param_section]]
     end
   end
 
