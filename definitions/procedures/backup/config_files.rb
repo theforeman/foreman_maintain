@@ -28,8 +28,8 @@ module Procedures::Backup
 
         warn "\nRemoving config files archive #{@tarball_path} as its incomplete"
         execute("rm -rf #{@tarball_path}")
-        warn "Recollecting config files backup, retry #{ret} !"
         warn! 'Config files backup failed' if MAX_RETRIES == ret
+        warn "Recollecting config files backup, retry #{ret} !"
       end
     end
 
