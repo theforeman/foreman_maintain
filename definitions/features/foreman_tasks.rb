@@ -74,9 +74,9 @@ class Features::ForemanTasks < ForemanMaintain::Feature
 
     feature(:foreman_database).psql(<<-SQL)
      BEGIN;
-       DELETE FROM dynflow_steps USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_steps.execution_plan_uuid) AND #{tasks_condition};
-       DELETE FROM dynflow_actions USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_actions.execution_plan_uuid) AND #{tasks_condition};
-       DELETE FROM dynflow_execution_plans USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_execution_plans.uuid) AND #{tasks_condition};
+       DELETE FROM dynflow_steps USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_steps.execution_plan_uuid::varchar) AND #{tasks_condition};
+       DELETE FROM dynflow_actions USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_actions.execution_plan_uuid::varchar) AND #{tasks_condition};
+       DELETE FROM dynflow_execution_plans USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_execution_plans.uuid::varchar) AND #{tasks_condition};
        DELETE FROM foreman_tasks_tasks WHERE #{tasks_condition};
      COMMIT;
     SQL
@@ -154,7 +154,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   def backup_table(table, state, fkey = 'execution_plan_uuid')
     yield("Backup #{table} [running]")
     sql = "SELECT #{table}.* FROM foreman_tasks_tasks JOIN #{table} ON\
-       (foreman_tasks_tasks.external_id = #{table}.#{fkey})"
+       (foreman_tasks_tasks.external_id = #{table}.#{fkey}::varchar)"
     export_csv(sql, "#{table}.csv", state)
     yield("Backup #{table} [DONE]")
   end
