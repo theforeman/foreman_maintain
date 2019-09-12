@@ -112,6 +112,12 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def pick_failing_components(components)
+    if feature(:katello).current_version < Gem::Version.new('3.2.0')
+      # Note that katello_ping returns an empty result against foreman_auth.
+      # https://github.com/Katello/katello/commit/95d7b9067d38f269a5ec121fb73b5c19d4422baf
+      components.reject! { |n| n.eql?('foreman_auth') }
+    end
+
     components.each_with_object([]) do |(name, data), failing|
       failing << name unless data['status'] == 'ok'
     end
@@ -129,7 +135,7 @@ class Features::Instance < ForemanMaintain::Feature
 
   def component_features_map
     {
-      'candlepin_auth' =>  %w[candlepin candlepin_database],
+      'candlepin_auth' => %w[candlepin candlepin_database],
       'candlepin' => %w[candlepin candlepin_database],
       'pulp_auth' => %w[pulp mongo],
       'pulp' => %w[pulp mongo],
