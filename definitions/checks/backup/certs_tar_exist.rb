@@ -4,7 +4,7 @@ module Checks::Backup
       description 'Check if proxy certs_tar exist'
       tags :backup
       confine do
-        feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
+        feature(:instance).proxy_feature && !feature(:instance).proxy_feature.internal?
       end
     end
 
@@ -18,7 +18,7 @@ module Checks::Backup
     end
 
     def certs_tar
-      feature(:foreman_proxy).certs_tar
+      feature(:instance).proxy_feature.certs_tar
     end
   end
 end

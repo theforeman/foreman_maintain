@@ -6,8 +6,7 @@ class Checks::SystemRegistration < ForemanMaintain::Check
 
     confine do
       file_exists?('/etc/rhsm/rhsm.conf') &&
-        !feature(:foreman_server) &&
-        feature(:foreman_proxy)
+        feature(:instance).proxy_feature && feature(:instance).proxy_feature.external?
     end
   end
 

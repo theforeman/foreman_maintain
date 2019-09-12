@@ -20,8 +20,8 @@ module Procedures::Restore
       # We always disable system checks to avoid unnecessary errors. The installer should have
       # already ran since this is to be run on an existing system, which means installer checks
       # has already been skipped
-      if feature(:foreman_proxy) &&
-         feature(:foreman_proxy).with_content? &&
+      if feature(:instance).proxy_feature &&
+         feature(:instance).proxy_feature.with_content? &&
          check_min_version('katello-installer-base', '3.2.0')
         installer << '--disable-system-checks '
       end

@@ -1,23 +1,22 @@
-require 'features/foreman_proxy'
-
-class Features::Capsule < Features::ForemanProxy
+class Features::Capsule < ForemanMaintain::Feature
   include ForemanMaintain::Concerns::Downstream
+  include ForemanMaintain::Concerns::BaseForemanProxy
 
   metadata do
     label :capsule
 
     confine do
-      # TODO: check on :super for confine
       find_package('foreman-proxy') && feature(:instance).downstream?
     end
   end
 
   def internal?
-    server?
+    !!feature(:foreman_server)
   end
 
   def external?
-    !server? && feature(:installer) && feature(:installer).last_scenario.eql?('capsule')
+    !feature(:foreman_server) &&
+      feature(:installer) && feature(:installer).last_scenario.eql?('capsule')
   end
 
   def current_version

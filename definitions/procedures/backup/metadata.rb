@@ -47,9 +47,9 @@ module Procedures::Backup
     end
 
     def proxy_feature_list(spinner)
-      if feature(:foreman_proxy)
+      if feature(:instance).proxy_feature
         spinner.update('Collecting list of proxy features')
-        feature(:foreman_proxy).features
+        feature(:instance).proxy_feature.features
       end
     end
   end

@@ -53,7 +53,7 @@ module ForemanMaintain
 
             dir
           end
-          proxy_name = ForemanMaintain.detector.feature(:instance).foreman_proxy_product_name
+          proxy_name = ForemanMaintain.detector.feature(:capsule) ? 'Capsule' : 'Foreman Proxy'
           option '--features', 'FEATURES',
                  "#{proxy_name} features to include in the backup. " \
                      'Valid features are tftp, dns, dhcp, openscap, and all.', :multivalued => true
