@@ -136,7 +136,9 @@ describe Features::Instance do
       let(:connection) { mock('connection') }
 
       before do
-        assume_feature_present(:katello)
+        assume_feature_present(:katello) do |feature_class|
+          feature_class.any_instance.stubs(:current_version => version('3.2.0'))
+        end
       end
 
       it 'fails when server is down' do
