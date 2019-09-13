@@ -1,5 +1,8 @@
 module Procedures::Backup
   class ConfigFiles < ForemanMaintain::Procedure
+    MAX_RETRIES = 3
+    RETRY_DELAY = 10
+
     metadata do
       description 'Backup config files'
       tags :backup
@@ -8,7 +11,7 @@ module Procedures::Backup
           Checks::Backup::CertsTarExist.new
         end
       end
-      MAX_RETRIES = 3
+
       param :backup_dir, 'Directory where to backup to', :required => true
       param :proxy_features, 'List of proxy features to backup (default: all)',
             :array => true, :default => ['all']
@@ -16,38 +19,31 @@ module Procedures::Backup
             :flag => true, :default => false
     end
 
+    # rubocop:disable Metrics/MethodLength
     def run
-      with_spinner('Collecting config files to backup') do |spinner|
-        create_tarball(spinner)
+      logger.debug("Invoking tar from #{FileUtils.pwd}")
+      tar_cmd = tar_command
+      attempt_no = 1
+      loop do
+        runner = nil
+        with_spinner('Collecting config files to backup') do
+          runner = execute_runner(tar_cmd, :valid_exit_statuses => [0, 1])
+        end
+        break if runner.exit_status == 0 || @ignore_changed_files
+
+        puts "WARNING: Attempt #{attempt_no}/#{MAX_RETRIES} to collect all config files failed!"
+        puts 'Some files were modified during creation of the archive.'
+        if attempt_no == MAX_RETRIES
+          raise runner.execution_error
+        else
+          attempt_no += 1
+          FileUtils.rm_rf(tarball_path)
+          puts "We will re-try after #{RETRY_DELAY} seconds."
+          sleep(RETRY_DELAY)
+        end
       end
     end
-
-    def create_tarball(spinner)
-      (1..MAX_RETRIES).each do |ret|
-        break unless allowed_exit_statuses.include? execute_tar_cmd
-
-        warn "\nRemoving config files archive #{@tarball_path} as its incomplete"
-        execute("rm -rf #{@tarball_path}")
-        warn! 'Config files backup failed' if MAX_RETRIES == ret
-        spinner.update "Recollecting config files backup, retry #{ret} !"
-      end
-    end
-
-    def execute_tar_cmd
-      @tarball_path ||= File.join(@backup_dir, 'config_files.tar.gz')
-      @increments_path ||= File.join(@backup_dir, '.config.snar')
-      configs, to_exclude = config_files
-      feature(:tar).run(
-        :command => 'create', :gzip => true, :archive => @tarball_path,
-        :listed_incremental => @increments_path, :ignore_failed_read => true,
-        :exclude => to_exclude, :allow_changing_files => @ignore_changed_files,
-        :files => configs.join(' ')
-      )
-    end
-
-    def allowed_exit_statuses
-      @ignore_changed_files ? [0, 1] : [0]
-    end
+    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Metrics/AbcSize
     def config_files
@@ -71,5 +67,22 @@ module Procedures::Backup
       [configs, exclude_configs]
     end
     # rubocop:enable Metrics/AbcSize
+
+    private
+
+    def tar_command
+      increments_path = File.join(@backup_dir, '.config.snar')
+      configs, to_exclude = config_files
+
+      feature(:tar).tar_command(
+        :command => 'create', :gzip => true, :archive => tarball_path,
+        :listed_incremental => increments_path, :ignore_failed_read => true,
+        :exclude => to_exclude, :files => configs.join(' ')
+      )
+    end
+
+    def tarball_path
+      @tarball_path ||= File.join(@backup_dir, 'config_files.tar.gz')
+    end
   end
 end

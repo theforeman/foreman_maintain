@@ -53,10 +53,15 @@ module ForemanMaintain
         execute?("command -v #{command_name}")
       end
 
-      def execute!(command, options = {})
+      def execute_runner(command, options = {})
         command_runner = Utils::CommandRunner.new(logger, command, options)
         execution.puts '' if command_runner.interactive? && respond_to?(:execution)
         command_runner.run
+        command_runner
+      end
+
+      def execute!(command, options = {})
+        command_runner = execute_runner(command, options)
         if command_runner.success?
           command_runner.output
         else
@@ -65,15 +70,12 @@ module ForemanMaintain
       end
 
       def execute(command, options = {})
-        command_runner = Utils::CommandRunner.new(logger, command, options)
-        execution.puts '' if command_runner.interactive? && respond_to?(:execution)
-        command_runner.run
-        command_runner.output
+        execute_runner(command, options).output
       end
 
       def execute_with_status(command, options = {})
-        result_msg = execute(command, options)
-        [$CHILD_STATUS.to_i, result_msg]
+        command_runner = execute_runner(command, options)
+        [command_runner.exit_status, command_runner.output]
       end
 
       def file_exists?(filename)
