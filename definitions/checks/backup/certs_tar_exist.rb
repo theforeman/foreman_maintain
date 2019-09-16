@@ -9,7 +9,7 @@ module Checks::Backup
     def run
       unless feature(:foreman_proxy).internal?
         if certs_tar && !File.exist?(certs_tar)
-          name = feature(:instance).proxy_product_name
+          name = feature(:instance).foreman_proxy_product_name
           fail! "#{name} certs tar file is not present on the system" \
                 " in path '#{certs_tar}'. \nPlease move the file back to that" \
                 ' location or generate a new one on the main server.'
