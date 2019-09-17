@@ -3,17 +3,17 @@ module Checks::Backup
     metadata do
       description 'Check if proxy certs_tar exist'
       tags :backup
-      for_feature :foreman_proxy
+      confine do
+        feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
+      end
     end
 
     def run
-      unless feature(:foreman_proxy).internal?
-        if certs_tar && !File.exist?(certs_tar)
-          name = feature(:instance).proxy_product_name
-          fail! "#{name} certs tar file is not present on the system" \
-                " in path '#{certs_tar}'. \nPlease move the file back to that" \
-                ' location or generate a new one on the main server.'
-        end
+      if certs_tar && !File.exist?(certs_tar)
+        name = feature(:instance).foreman_proxy_product_name
+        fail! "#{name} certs tar file is not present on the system" \
+              " in path '#{certs_tar}'. \nPlease move the file back to that" \
+              ' location or generate a new one on the main server.'
       end
     end
 
