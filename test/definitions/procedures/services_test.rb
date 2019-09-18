@@ -8,6 +8,10 @@ describe 'Service procedures perform appropiate actions' do
       ForemanMaintain::Utils.system_service(s, 10)
     end
     Features::Service.any_instance.stubs(:filtered_services).returns(@services)
+
+    assume_feature_present(:package_manager) do |feature_class|
+      feature_class.any_instance.stubs(:satellite_installed? => true)
+    end
   end
 
   describe 'Stop services procedure runs successfully' do

@@ -3,6 +3,13 @@ require 'test_helper'
 describe Checks::Disk::Performance do
   include DefinitionsTestHelper
   include UnitTestHelper
+
+  before do
+    assume_feature_present(:package_manager) do |feature_class|
+      feature_class.any_instance.stubs(:satellite_installed? => true)
+    end
+  end
+
   let(:check_disk_performance) { described_class.new }
 
   it 'should confine existence of fio' do
@@ -30,7 +37,7 @@ describe Checks::Disk::Performance do
   end
 
   it 'raise error if disk speed does not meet minimal requirement' do
-    assume_feature_present(:downstream) do |feature_class|
+    assume_feature_present(:satellite) do |feature_class|
       feature_class.any_instance.stubs(:current_version => version('6.2.0'))
     end
     slow_speed = 59
@@ -54,7 +61,7 @@ describe Checks::Disk::Performance do
   end
 
   it 'print warning if disk speed does not meet minimal requirement on Sat >= 6.3' do
-    assume_feature_present(:downstream) do |feature_class|
+    assume_feature_present(:satellite) do |feature_class|
       feature_class.any_instance.stubs(:current_version => version('6.4.0'))
     end
 
