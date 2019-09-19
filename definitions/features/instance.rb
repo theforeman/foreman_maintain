@@ -53,11 +53,11 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def downstream
-    feature(:satellite) || feature(:capsule)
+    @downstream ||= (feature(:satellite) || feature(:capsule))
   end
 
   def proxy_feature
-    feature(:foreman_proxy) || feature(:capsule)
+    @proxy_feature ||= (feature(:foreman_proxy) || feature(:capsule))
   end
 
   def ping

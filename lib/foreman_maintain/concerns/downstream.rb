@@ -98,16 +98,16 @@ module ForemanMaintain
       end
 
       def common_repos(rh_version_major, full_version)
-        sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}-rpms"
-        sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"
+        tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}-rpms"
+        maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms"
 
         # Override to use Beta repositories for sat version until GA
         if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-          sat_tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
-          sat_maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms"
+          tools_repo_id = "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"
+          maintenance_repo_id = "rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms"
         end
 
-        [sat_tools_repo_id, sat_maintenance_repo_id]
+        [tools_repo_id, maintenance_repo_id]
       end
 
       def main_rh_repos(rh_version_major)

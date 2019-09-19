@@ -108,7 +108,11 @@ module ForemanMaintain
 
       def backup_features(for_features)
         full_features = features
-        backup_features = for_features.include?('all') ? full_features : (full_features & for_features)
+        backup_features = if for_features.include?('all')
+                            full_features
+                          else
+                            (full_features & for_features)
+                          end
         logger.info("Proxy features: #{full_features}")
         logger.info("Proxy features to backup: #{backup_features}")
         backup_features
@@ -136,6 +140,7 @@ module ForemanMaintain
           http_line = ''
           array_output.each do |str|
             next unless str.include?('HTTP')
+
             http_line = str
           end
           msg = http_line.split(curl_http_status.to_s).last
@@ -195,6 +200,7 @@ module ForemanMaintain
       def lookup_dhcpd_config_file
         dhcpd_config_file = lookup_using_dhcp_yml
         raise "Couldn't find DHCP Configuration file" if dhcpd_config_file.nil?
+
         dhcpd_config_file
       end
 
@@ -207,7 +213,9 @@ module ForemanMaintain
           return configs_from_dhcp_yml[:dhcp_config]
         elsif configs_from_dhcp_yml.key?(:use_provider)
           settings_d_dir = File.dirname(dhcp_yml_path)
-          dhcp_provider_fpath = File.join(settings_d_dir, "#{configs_from_dhcp_yml[:use_provider]}.yml")
+          dhcp_provider_fpath = File.join(
+            settings_d_dir, "#{configs_from_dhcp_yml[:use_provider]}.yml"
+          )
           dhcp_provider_configs = yaml_load(dhcp_provider_fpath)
           return dhcp_provider_configs[:config] if dhcp_provider_configs.key?(:config)
         else

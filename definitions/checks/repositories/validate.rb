@@ -30,11 +30,12 @@ module Checks::Repositories
     private
 
     def find_absent_repos(spinner)
-      absent_repos = feature(:instance).downstream.absent_repos(@version)
+      current_downstream_feature = feature(:instance).downstream
+      absent_repos = current_downstream_feature.absent_repos(@version)
       unless absent_repos.empty?
         spinner.update('Some repositories missing, calling `subscription-manager refresh`')
-        feature(:instance).downstream.rhsm_refresh
-        absent_repos = feature(:instance).downstream.absent_repos(@version)
+        current_downstream_feature.rhsm_refresh
+        absent_repos = current_downstream_feature.absent_repos(@version)
       end
       unless absent_repos.empty?
         fail!(

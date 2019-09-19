@@ -41,9 +41,10 @@ module Procedures::Backup
         exclude_configs += feature.config_files_to_exclude
       end
 
-      if feature(:instance).proxy_feature
-        configs += feature(:instance).proxy_feature.config_files(@proxy_features)
-        exclude_configs += feature(:instance).proxy_feature.config_files_to_exclude(@proxy_features)
+      current_proxy_feature = feature(:instance).proxy_feature
+      if current_proxy_feature
+        configs += current_proxy_feature.config_files(@proxy_features)
+        exclude_configs += current_proxy_feature.config_files_to_exclude(@proxy_features)
       end
 
       configs.compact.select { |path| Dir.glob(path).any? }

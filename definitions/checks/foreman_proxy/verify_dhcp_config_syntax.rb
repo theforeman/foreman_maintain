@@ -9,12 +9,13 @@ module Checks::ForemanProxy
     end
 
     def run
-      if feature(:instance).proxy_feature.features.include?('dhcp')
-        if feature(:instance).proxy_feature.dhcpd_conf_exist?
-          success = feature(:instance).proxy_feature.valid_dhcp_configs?
+      current_proxy_feature = feature(:instance).proxy_feature
+      if current_proxy_feature.features.include?('dhcp')
+        if current_proxy_feature.dhcpd_conf_exist?
+          success = current_proxy_feature.valid_dhcp_configs?
           assert(success, 'Please check and verify DHCP configurations.')
         else
-          fail! "Couldn't find configuration file at #{feature(:instance).proxy_feature.dhcpd_config_file}"
+          fail! "Couldn't find configuration file at #{current_proxy_feature.dhcpd_config_file}"
         end
       else
         skip 'DHCP feature is not enabled'
