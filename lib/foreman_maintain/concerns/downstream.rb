@@ -116,7 +116,7 @@ module ForemanMaintain
       end
 
       def version_from_source
-        version(File.read('/usr/share/foreman/lib/satellite/version.rb')[/6\.\d\.\d/])
+        raise NotImplementedError
       end
     end
   end

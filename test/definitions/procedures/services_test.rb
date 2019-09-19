@@ -9,8 +9,8 @@ describe 'Service procedures perform appropiate actions' do
     end
     Features::Service.any_instance.stubs(:filtered_services).returns(@services)
 
-    assume_feature_present(:package_manager) do |feature_class|
-      feature_class.any_instance.stubs(:satellite_installed? => true)
+    assume_satellite_present do |feature_class|
+      feature_class.any_instance.stubs(:less_than_version? => false)
     end
   end
 

@@ -1,8 +1,10 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
+require File.expand_path('assume_feature_dependencies_helper', File.dirname(__FILE__))
 
 module DefinitionsTestHelper
   include ForemanMaintain::Concerns::Finders
   include ForemanMaintain::Concerns::SystemService
+  include AssumeFeatureDependenciesHelper
 
   def detector
     @detector ||= ForemanMaintain.detector
@@ -11,6 +13,7 @@ module DefinitionsTestHelper
   def feature_class(feature_label)
     feature_class = detector.send(:autodetect_features)[feature_label.to_sym].first
     raise "Feature #{feature_label} not present in autodetect features" unless feature_class
+
     feature_class
   end
 
