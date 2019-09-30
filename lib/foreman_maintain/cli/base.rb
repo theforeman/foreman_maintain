@@ -135,7 +135,7 @@ module ForemanMaintain
 
       def self.label_option
         option '--label', 'label',
-               'Limit only for a specific label. ' \
+               'Run only a specific check with a label. ' \
                  '(Use "list" command to see available labels)' do |label|
           raise ArgumentError, 'value not specified' if label.nil? || label.empty?
           underscorize(label).to_sym
@@ -144,7 +144,7 @@ module ForemanMaintain
 
       def self.tags_option
         option('--tags', 'tags',
-               'Limit only for specific set of labels. ' \
+               'Run only those with all specific set of tags. ' \
                  '(Use list-tags command to see available tags)',
                :multivalued => true) do |tags|
           raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
