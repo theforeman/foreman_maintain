@@ -80,6 +80,7 @@ def exclude_hook(conduit):
                         'WARNING: Excluding %d update%s due to foreman-protector. \n'
                         'Use foreman-maintain packages install/update <package> \n'
                         'to safely install packages without restrictions.\n'
+                        'Use foreman-maintain upgrade run for full upgrade.\n'
                         % (total, suffix))
 
     _add_package_whitelist_excluders(conduit)
