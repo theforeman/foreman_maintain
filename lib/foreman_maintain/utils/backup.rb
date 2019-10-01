@@ -213,16 +213,9 @@ module ForemanMaintain
       private
 
       def tarball_file_list(tarball)
-        # accepts tar.gz files only
-        file_list = []
-        File.open(tarball, 'rb') do |file|
-          ::Zlib::GzipReader.wrap(file) do |gz|
-            ::Gem::Package::TarReader.new(gz) do |tar|
-              tar.each { |entry| file_list << entry.full_name }
-            end
-          end
+        feature(:tar).run(:command => 'list', :archive => tarball).split("\n").map do |line|
+          line.gsub(/(\S+\s+){5}(.*)/, '\2')
         end
-        file_list
       end
     end
   end
