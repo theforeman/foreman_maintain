@@ -213,9 +213,7 @@ module ForemanMaintain
       private
 
       def tarball_file_list(tarball)
-        feature(:tar).run(:command => 'list', :archive => tarball).split("\n").map do |line|
-          line.gsub(/(\S+\s+){5}(.*)/, '\2')
-        end
+        execute("tar -tf #{tarball}").split("\n")
       end
     end
   end
