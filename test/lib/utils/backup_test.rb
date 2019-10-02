@@ -165,5 +165,11 @@ module ForemanMaintain
       incremental_backup = subject.new(katello_standard_incremental)
       assert incremental_backup.incremental?
     end
+
+    it 'Validates hostname from the backup' do
+      kat_stand_backup = subject.new(katello_standard)
+      kat_stand_backup.stubs(:hostname).returns('sat-6.example.com')
+      assert kat_stand_backup.validate_hostname?
+    end
   end
 end
