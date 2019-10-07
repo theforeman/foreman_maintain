@@ -1,6 +1,6 @@
-class Procedures::ForemanLoginSession < ForemanMaintain::Procedure
+class Procedures::ResetLoginSessionIds < ForemanMaintain::Procedure
   metadata do
-    description 'Clean login sessions'
+    description 'Reset Login Session Ids'
   end
 
   def run

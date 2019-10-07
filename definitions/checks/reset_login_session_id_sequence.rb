@@ -1,4 +1,4 @@
-class Checks::ForemanLoginSession < ForemanMaintain::Check
+class Checks::ResetLoginSessionIds < ForemanMaintain::Check
   metadata do
     label :foreman_login_session
     tags :default
@@ -13,7 +13,7 @@ class Checks::ForemanLoginSession < ForemanMaintain::Check
     login_session_count = count
     assert(login_session_count <= MAX_SESSION_ID,
            "Login session reached #{login_session_count}. Its better to clear login sessions",
-           :next_steps => Procedures::ForemanLoginSession.new)
+           :next_steps => Procedures::ResetLoginSessionIds.new)
   end
 
   def count
