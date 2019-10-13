@@ -168,16 +168,15 @@ module ForemanMaintain
       def validate_hostname?
         # make sure that the system hostname is the same as the backup
         config_tarball = file_map[:config_files][:path]
-        config_files = tarball_file_list(config_tarball)
+        tar_cmd = "tar zxf #{config_tarball} etc/httpd/conf/httpd.conf --to-stdout"
+        status, httpd_config = execute_with_status(tar_cmd)
 
         # Incremental backups sometimes don't include httpd.conf. Since a "base" backup
         # is restored before an incremental, we can assume that the hostname is checked
         # during the base backup restore
-        if config_files.include?('etc/httpd/conf/httpd.conf')
-          tar_cmd = "tar zxf #{config_tarball} etc/httpd/conf/httpd.conf " \
-                    "--to-stdout | grep ServerName | awk {'print $2'} | tr -d '\"'"
-          backup_hostname = execute(tar_cmd).chomp
-          backup_hostname == hostname
+        if status == 0
+          match = httpd_config.match(/\s*ServerName\s+"*([^ "]+)"*\s*$/)
+          match ? match[1] == hostname : false
         else
           true
         end
@@ -208,12 +207,6 @@ module ForemanMaintain
 
       def incremental?
         !!metadata.fetch('incremental', false)
-      end
-
-      private
-
-      def tarball_file_list(tarball)
-        execute("tar -tf #{tarball}").split("\n")
       end
     end
   end
