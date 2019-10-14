@@ -1,11 +1,12 @@
 class Procedures::ResetLoginSessionIds < ForemanMaintain::Procedure
   metadata do
     description 'Reset Login Session Ids'
+    for_feature :foreman_database
   end
 
   def run
-    if alter_sessions_id_seq
-      'DB Session cleared'
+    with_spinner("Reset the login session sequence:") do |spinner|
+        alter_sessions_id_seq
     end
   end
 

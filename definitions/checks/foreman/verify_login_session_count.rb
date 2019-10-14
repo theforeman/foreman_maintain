@@ -1,8 +1,9 @@
-class Checks::ResetLoginSessionIds < ForemanMaintain::Check
+class Checks::VerifyLoginSessionCount < ForemanMaintain::Check
   metadata do
     label :foreman_login_session
     tags :default
     description 'Check the login session count'
+    for_feature :foreman_database
   end
 
   # The max id value that we can't go beyond is 2151782969.
@@ -12,7 +13,7 @@ class Checks::ResetLoginSessionIds < ForemanMaintain::Check
   def run
     login_session_count = count
     assert(login_session_count <= MAX_SESSION_ID,
-           "Login session reached #{login_session_count}. Its better to clear login sessions",
+           "Login session count reached to #{login_session_count} i.e greater than #{MAX_SESSION_ID} which will cause a problem while creating a new session. It needs to reset login session sequence",
            :next_steps => Procedures::ResetLoginSessionIds.new)
   end
 
