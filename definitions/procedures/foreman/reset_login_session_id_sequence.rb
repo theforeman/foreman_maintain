@@ -5,8 +5,9 @@ class Procedures::ResetLoginSessionIds < ForemanMaintain::Procedure
   end
 
   def run
-    with_spinner("Reset the login session sequence:") do |spinner|
-        alter_sessions_id_seq
+    with_spinner('Reset the login session sequence:') do |spinner|
+      spinner.update 'Reseting sessions id sequence'
+      alter_sessions_id_seq
     end
   end
 

@@ -13,7 +13,9 @@ class Checks::VerifyLoginSessionCount < ForemanMaintain::Check
   def run
     login_session_count = count
     assert(login_session_count <= MAX_SESSION_ID,
-           "Login session count reached to #{login_session_count} i.e greater than #{MAX_SESSION_ID} which will cause a problem while creating a new session. It needs to reset login session sequence",
+           "Login session count reached to #{login_session_count} i.e greater than"\
+           " #{MAX_SESSION_ID} which will cause a problem while creating a new session."\
+           ' It needs to reset login session sequence',
            :next_steps => Procedures::ResetLoginSessionIds.new)
   end
 
