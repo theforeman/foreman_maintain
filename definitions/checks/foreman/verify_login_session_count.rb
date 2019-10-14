@@ -1,6 +1,6 @@
 module Checks
   module Foreman
-    class Checks::VerifyLoginSessionCount < ForemanMaintain::Check
+    class VerifyLoginSessionCount < ForemanMaintain::Check
       metadata do
         label :foreman_login_session
         tags :default

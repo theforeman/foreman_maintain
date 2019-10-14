@@ -1,5 +1,5 @@
 module Procedures::Foreman
-  class Procedures::ResetLoginSessionIds < ForemanMaintain::Procedure
+  class ResetLoginSessionIds < ForemanMaintain::Procedure
     metadata do
       description 'Reset Login Session Ids'
       for_feature :foreman_database
