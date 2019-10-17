@@ -5,7 +5,7 @@ class Features::Satellite < ForemanMaintain::Feature
     label :satellite
 
     confine do
-      feature(:package_manager).satellite_installed?
+      feature(:package_manager).installed?(['satellite'])
     end
   end
 
@@ -13,11 +13,11 @@ class Features::Satellite < ForemanMaintain::Feature
     @current_version ||= rpm_version(package_name) || version_from_source
   end
 
-  private
-
   def package_name
-    feature(:package_manager).satellite_package
+    'satellite'
   end
+
+  private
 
   def version_from_source
     version(File.read('/usr/share/foreman/lib/satellite/version.rb')[/6\.\d\.\d/])

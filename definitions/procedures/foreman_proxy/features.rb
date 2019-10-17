@@ -5,12 +5,12 @@ module Procedures::ForemanProxy
       description 'Detect features available in the local proxy'
 
       confine do
-        feature(:instance).proxy_feature
+        feature(:foreman_proxy)
       end
     end
 
     def run
-      features = feature(:instance).proxy_feature.refresh_features
+      features = feature(:foreman_proxy).refresh_features
       puts features.join(', ') unless @load_only
     end
   end

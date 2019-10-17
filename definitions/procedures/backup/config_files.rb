@@ -4,7 +4,7 @@ module Procedures::Backup
       description 'Backup config files'
       tags :backup
       preparation_steps do
-        if feature(:instance).proxy_feature && !feature(:instance).proxy_feature.internal?
+        if feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
           Checks::Backup::CertsTarExist.new
         end
       end
@@ -41,10 +41,9 @@ module Procedures::Backup
         exclude_configs += feature.config_files_to_exclude
       end
 
-      current_proxy_feature = feature(:instance).proxy_feature
-      if current_proxy_feature
-        configs += current_proxy_feature.config_files(@proxy_features)
-        exclude_configs += current_proxy_feature.config_files_to_exclude(@proxy_features)
+      if feature(:foreman_proxy)
+        configs += feature(:foreman_proxy).config_files(@proxy_features)
+        exclude_configs += feature(:foreman_proxy).config_files_to_exclude(@proxy_features)
       end
 
       configs.compact.select { |path| Dir.glob(path).any? }

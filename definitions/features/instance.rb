@@ -20,12 +20,8 @@ class Features::Instance < ForemanMaintain::Feature
     end
   end
 
-  def external_proxy?
-    !!(proxy_feature && !feature(:foreman_server))
-  end
-
   def product_name
-    if external_proxy?
+    if feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
       foreman_proxy_product_name
     else
       server_product_name
@@ -45,11 +41,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def foreman_proxy_with_content?
-    proxy_feature && proxy_feature.with_content? && !feature(:katello)
-  end
-
-  def downstream?
-    feature(:package_manager).satellite_installed? || feature(:package_manager).capsule_installed?
+    feature(:foreman_proxy) && feature(:foreman_proxy).with_content? && !feature(:katello)
   end
 
   def downstream
@@ -63,7 +55,7 @@ class Features::Instance < ForemanMaintain::Feature
   def ping
     if feature(:katello)
       katello_ping
-    elsif external_proxy?
+    elsif feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
       proxy_ping
     else
       foreman_ping
@@ -117,7 +109,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def proxy_ping
-    proxy_feature.features
+    feature(:foreman_proxy).features
     create_response(true, 'Success')
   rescue StandardError => e # server error, proxy down
     create_response(false, "Couldn't connect to the proxy: #{e.message}")

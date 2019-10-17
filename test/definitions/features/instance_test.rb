@@ -9,6 +9,7 @@ describe Features::Instance do
   describe '.product_name' do
     it 'recognizes Capsule' do
       assume_feature_absent(:foreman_server)
+      assume_feature_present(:foreman_proxy)
       assume_feature_present(:capsule)
       assume_feature_absent(:satellite)
       subject.product_name.must_equal 'Capsule'
@@ -16,8 +17,8 @@ describe Features::Instance do
 
     it 'recognizes Foreman Proxy' do
       assume_feature_absent(:foreman_server)
-      assume_feature_absent(:capsule)
       assume_feature_present(:foreman_proxy)
+      assume_feature_absent(:capsule)
       subject.product_name.must_equal 'Foreman Proxy'
     end
 

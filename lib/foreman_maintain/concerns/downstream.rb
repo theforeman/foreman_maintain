@@ -50,11 +50,11 @@ module ForemanMaintain
         ENV['EXTERNAL_SAT_ACTIVATION_KEY'] && ENV['EXTERNAL_SAT_ORG']
       end
 
-      private
-
       def package_name
         raise NotImplementedError
       end
+
+      private
 
       def rh_repos(server_version)
         server_version = version(server_version)
