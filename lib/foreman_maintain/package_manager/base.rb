@@ -61,6 +61,21 @@ module ForemanMaintain::PackageManager
       raise NotImplementedError
     end
 
+    # upgrade package sources to install Foreman from
+    def upgrade_foreman_repos(to_version)
+      raise NotImplementedError
+    end
+
+    # check if given repo url is valid and reachable
+    def link_valid?(link)
+      raise NotImplementedError
+    end
+
+    # Update the package if installed, else install it from the given url
+    def update_or_install(package, package_url, assumeyes: false)
+      raise NotImplementedError
+    end
+
     private
 
     def sys

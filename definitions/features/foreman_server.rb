@@ -8,6 +8,8 @@ module ForemanMaintain
         end
       end
 
+      FOREMAN_RELEASE_PACKAGE = 'foreman-release'.freeze
+
       def services
         if execute?('systemctl is-enabled foreman')
           [system_service('foreman', 30, :socket => 'foreman')]
@@ -46,6 +48,27 @@ module ForemanMaintain
 
       def services_running?
         services.all?(&:running?)
+      end
+
+      def current_version
+        @current_version ||= rpm_version('foreman')
+      end
+
+      def rake!(command)
+        execute!("foreman-rake #{command}")
+      end
+
+      def repos_rpm(version, os_release)
+        "https://yum.theforeman.org/releases/#{version}/el#{os_release}"\
+        "/x86_64/#{FOREMAN_RELEASE_PACKAGE}.rpm"
+      end
+
+      def update_repos(version)
+        repos_rpm = repos_rpm(version, ForemanMaintain::Utils::Facter.os_major_release)
+        package_manager.update_or_install(FOREMAN_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
+        %w[foreman-release-scl centos-release-scl-rh].each do |package|
+          package_manager.update(package, :assumeyes => true)
+        end
       end
     end
   end

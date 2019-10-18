@@ -71,6 +71,22 @@ module ForemanMaintain::PackageManager
       sys.execute(find_cmd).split("\n")
     end
 
+    def update_or_install(package, package_url, assumeyes: false)
+      if installed?(package)
+        update(package, :assumeyes => assumeyes)
+      else
+        install(package_url, :assumeyes => assumeyes)
+      end
+    end
+
+    def link_valid?(link)
+      url = URI.parse(link)
+      req = Net::HTTP.new(url.host, url.port)
+      req.use_ssl = true
+      res = req.request_head(url.path)
+      res.code == '200'
+    end
+
     private
 
     def protector_config

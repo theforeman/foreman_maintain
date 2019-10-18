@@ -56,7 +56,11 @@ class Features::PuppetServer < ForemanMaintain::Feature
   end
 
   def puppet_ssldir_path
-    execute!("#{puppet_path} config print ssldir")
+    if puppet_version.major >= 6
+      execute!('puppet config print ssldir')
+    else
+      execute!('puppet master --configprint ssldir')
+    end
   end
 
   def puppet_path

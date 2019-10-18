@@ -58,6 +58,7 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def can_upgrade?
+    # TODO: how about capsules?
     @installer_type == :scenarios || @installer_type == :legacy_katello
   end
 
@@ -100,7 +101,8 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def installer_arguments
-    installer_args = ' --disable-system-checks'
+    # FIXME: katello capsule too
+    installer_args = ' --disable-system-checks' if feature(:katello) || feature(:satellite)
     unless check_min_version('foreman', '2.1') || check_min_version('foreman-proxy', '2.1')
       installer_args += ' --upgrade' if can_upgrade?
     end

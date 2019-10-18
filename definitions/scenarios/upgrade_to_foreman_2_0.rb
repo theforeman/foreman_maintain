@@ -1,25 +1,25 @@
-module Scenarios::Satellite_6_7
+module Scenarios::Foreman_2_0
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:satellite) &&
-            (feature(:satellite).current_minor_version == '6.6' || \
-            ForemanMaintain.upgrade_in_progress == '6.7')
+          feature(:instance).upstream? && feature(:foreman_server) && \
+            (feature(:foreman_server).current_version.major_minor == '1.24' || \
+                ForemanMaintain.upgrade_in_progress == '2.0')
         end
         instance_eval(&block)
       end
     end
 
     def target_version
-      '6.7'
+      '2.0'
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Satellite 6.7'
+      description 'Checks before upgrading to Foreman 2.0'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -27,14 +27,13 @@ module Scenarios::Satellite_6_7
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
-      add_step(Checks::RemoteExecution::VerifySettingsFileAlreadyExists.new)
-      add_step(Checks::Repositories::Validate.new(:version => '6.7'))
+      add_step(Checks::Repositories::Validate.new(:version => '2.0'))
     end
   end
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before migrating to Satellite 6.7'
+      description 'Procedures before migrating to Foreman 2.0'
       tags :pre_migrations
     end
 
@@ -46,37 +45,45 @@ module Scenarios::Satellite_6_7
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Migration scripts to Satellite 6.7'
+      description 'Migration scripts to Foreman 2.0'
       tags :migrations
     end
 
-    def set_context_mapping
-      context.map(:assumeyes, Procedures::Installer::Upgrade => :assumeyes)
-    end
-
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => '6.7'))
+      add_step(Procedures::Repositories::Setup.new(:version => '2.0'))
       add_step(Procedures::Packages::UnlockVersions.new)
+      add_step(Procedures::Packages::UpdateCollections.new(:assumeyes => true))
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
-      add_step_with_context(Procedures::Installer::Upgrade)
+      add_step(Procedures::Service::Start.new(:only => 'postgresql'))
+      add_step(Procedures::Foreman::DbMigrate.new)
+      add_step(Procedures::Foreman::DbSeed.new)
+      add_step(Procedures::Installer::Upgrade.new)
     end
   end
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures after migrating to Satellite 6.7'
+      description 'Procedures after migrating to Foreman 2.0'
       tags :post_migrations
     end
 
     def compose
+      add_step(Procedures::Foreman::ClearCache.new)
+      add_step(Procedures::Foreman::ClearSessions.new)
+      add_step(Procedures::Foreman::ApipieCache.new)
+      add_step(Procedures::Service::Stop.new(:exclude => 'postgresql'))
+      add_step(Procedures::Foreman::VacuumDatabase.new)
       add_step(Procedures::Service::Start.new)
+      add_step(Procedures::Packages::CleanupCollections.new(
+                 :packages => %w[rhscl-\* rh-ruby22\* rh-ror42\*]
+      ))
       add_steps(find_procedures(:post_migrations))
     end
   end
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Satellite 6.7'
+      description 'Checks after upgrading to Foreman 2.0'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end

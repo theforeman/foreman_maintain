@@ -30,6 +30,10 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
     ]
   end
 
+  def mysql_db_in_use?
+    feature(:installer).answers['foreman-db-type'] == 'mysql'
+  end
+
   private
 
   def load_configuration

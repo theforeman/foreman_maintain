@@ -6,9 +6,6 @@ module Procedures::Repositories
         Procedures::Packages::Install.new(:packages => [ForemanMaintain::Utils::Facter.package])
       end
 
-      confine do
-        feature(:instance).downstream || feature(:upstream)
-      end
       param :version,
             'Version for which repositories needs to be setup',
             :required => true
@@ -17,7 +14,8 @@ module Procedures::Repositories
 
     def run
       with_spinner("Configuring repositories for #{@version}") do
-        (feature(:instance).downstream || feature(:upstream)).setup_repositories(@version)
+        (feature(:instance).downstream ||
+        feature(:upstream_repositories)).setup_repositories(@version)
       end
     end
   end
