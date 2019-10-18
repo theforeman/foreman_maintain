@@ -2,6 +2,7 @@ class Checks::OriginalAssets < ForemanMaintain::Check
   metadata do
     description 'Check if only installed assets are present on the system'
     tags :post_upgrade
+    for_feature :foreman_server
   end
 
   ASSETS_DIR = '/var/lib/foreman/public/assets'.freeze

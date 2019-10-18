@@ -2,12 +2,16 @@ module Scenarios::Satellite_6_7
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
-        tags :upgrade_to_satellite_6_7
+        tags :upgrade_scenario
         confine do
           feature(:satellite) && feature(:satellite).current_minor_version == '6.6'
         end
         instance_eval(&block)
       end
+    end
+
+    def target_version
+      '6.7'
     end
   end
 
@@ -76,5 +80,3 @@ module Scenarios::Satellite_6_7
     end
   end
 end
-
-ForemanMaintain::UpgradeRunner.register_version('6.7', :upgrade_to_satellite_6_7)
