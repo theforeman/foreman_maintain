@@ -38,7 +38,7 @@ module ForemanMaintain
 
       subcommand 'update', 'Update packages in an unlocked session' do
         interactive_option
-        parameter 'PACKAGES ...', 'packages to update', :attribute_name => :packages
+        parameter '[PACKAGES ...]', 'packages to update', :attribute_name => :packages
 
         def execute
           run_scenarios_and_exit(
