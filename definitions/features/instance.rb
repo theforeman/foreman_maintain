@@ -48,10 +48,6 @@ class Features::Instance < ForemanMaintain::Feature
     @downstream ||= (feature(:satellite) || feature(:capsule))
   end
 
-  def proxy_feature
-    @proxy_feature ||= (feature(:foreman_proxy) || feature(:capsule))
-  end
-
   def ping
     if feature(:katello)
       katello_ping
