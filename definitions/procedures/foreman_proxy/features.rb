@@ -3,7 +3,10 @@ module Procedures::ForemanProxy
     metadata do
       param :load_only, 'Do not print the features', :default => false
       description 'Detect features available in the local proxy'
-      for_feature :foreman_proxy
+
+      confine do
+        feature(:foreman_proxy)
+      end
     end
 
     def run

@@ -35,7 +35,8 @@ module Procedures::Backup
       exclude_configs = []
       ForemanMaintain.available_features.each do |feature|
         # exclude proxy as it has special handling later
-        next if feature == feature(:foreman_proxy)
+        next if [:foreman_proxy, :capsule].include?(feature.label)
+
         configs += feature.config_files
         exclude_configs += feature.config_files_to_exclude
       end

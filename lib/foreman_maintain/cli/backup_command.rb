@@ -50,9 +50,10 @@ module ForemanMaintain
             unless File.directory?(dir)
               raise ArgumentError, "Previous backup directory does not exist: #{dir}"
             end
+
             dir
           end
-          proxy_name = ForemanMaintain.detector.feature(:downstream) ? 'Capsule' : 'Foreman Proxy'
+          proxy_name = ForemanMaintain.detector.feature(:capsule) ? 'Capsule' : 'Foreman Proxy'
           option '--features', 'FEATURES',
                  "#{proxy_name} features to include in the backup. " \
                      'Valid features are tftp, dns, dhcp, openscap, and all.', :multivalued => true

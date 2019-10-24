@@ -9,7 +9,7 @@ class Features::Service < ForemanMaintain::Feature
     # { :exclude => ["pulp-workers", "tomcat"] }
     # { :include => ["crond"] }
 
-    if feature(:downstream) && feature(:downstream).less_than_version?('6.3')
+    if feature(:instance).downstream && feature(:instance).downstream.less_than_version?('6.3')
       use_katello_service(action, options)
     else
       use_system_service(action, options, spinner)
@@ -157,7 +157,7 @@ class Features::Service < ForemanMaintain::Feature
     command = "katello-service #{action} "
 
     # katello-service in 6.1 does not support --only
-    if feature(:downstream).less_than_version?('6.2')
+    if feature(:instance).downstream.less_than_version?('6.2')
       excluded_services = exclude_services_only(options)
       command += "--exclude #{excluded_services.join(',')}" if excluded_services.any?
     else

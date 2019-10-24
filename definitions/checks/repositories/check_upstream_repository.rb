@@ -7,7 +7,7 @@ class Checks::CheckUpstreamRepository < ForemanMaintain::Check
       Procedures::Packages::Install.new(:packages => %w[yum-utils])
     end
     confine do
-      feature(:downstream)
+      feature(:instance).downstream
     end
   end
 

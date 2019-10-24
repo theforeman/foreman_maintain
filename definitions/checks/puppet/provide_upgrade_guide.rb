@@ -4,8 +4,8 @@ module Checks::Puppet
       description 'Verify puppet and provide upgrade guide for it'
       tags :puppet_upgrade_guide
       confine do
-        feature(:downstream) &&
-          feature(:downstream).current_minor_version == '6.3' &&
+        feature(:instance).downstream &&
+          feature(:instance).downstream.current_minor_version == '6.3' &&
           find_package('puppet')
       end
       manual_detection
@@ -15,7 +15,7 @@ module Checks::Puppet
       with_spinner('Verifying puppet version before upgrade') do |spinner|
         puppet_package = find_package('puppet')
         spinner.update "current puppet version: #{puppet_package}"
-        curr_sat_version = feature(:downstream).current_minor_version
+        curr_sat_version = feature(:instance).downstream.current_minor_version
         assert(
           (puppet_package !~ /puppet-3/),
           'Before continuing with upgrade, please make sure you finish puppet upgrade.',

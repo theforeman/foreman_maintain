@@ -66,13 +66,14 @@ class Features::Installer < ForemanMaintain::Feature
 
   def last_scenario
     return nil unless with_scenarios?
+
     File.basename(last_scenario_config).split('.')[0]
   end
 
   def installer_command
     case @installer_type
     when :scenarios
-      if feature(:downstream)
+      if feature(:satellite)
         'satellite-installer'
       else
         'foreman-installer'

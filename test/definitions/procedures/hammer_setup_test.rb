@@ -54,6 +54,7 @@ describe Procedures::HammerSetup do
     end
 
     it 'skips setup_admin_access if httpd is down' do
+      Features::Instance.any_instance.stubs(:product_name => 'Foreman')
       assume_feature_present(:foreman_server)
       assume_service_stopped('httpd')
       hammer_ins.stubs(:_check_connection).returns(false)

@@ -13,8 +13,10 @@ module Checks
       end
 
       EXPECTED_IO = 60
-      DEFAULT_UNIT   = 'MB/sec'.freeze
-      DEFAULT_DIRS   = ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'].freeze
+      DEFAULT_UNIT = 'MB/sec'.freeze
+      DEFAULT_DIRS = [
+        '/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'
+      ].select { |file_path| File.directory?(file_path) }.freeze
 
       attr_reader :stats
 
@@ -26,7 +28,8 @@ module Checks
           puts "\n"
           puts stats.stdout
 
-          if feature(:downstream) && feature(:downstream).at_least_version?('6.3')
+          current_downstream_feature = feature(:instance).downstream
+          if current_downstream_feature && current_downstream_feature.at_least_version?('6.3')
             assert(success, io_obj.slow_disk_error_msg + warning_message, :warn => true)
           else
             assert(success, io_obj.slow_disk_error_msg)

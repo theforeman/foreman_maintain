@@ -3,7 +3,8 @@ class Features::Upstream < ForemanMaintain::Feature
     label :upstream
 
     confine do
-      !downstream_installation?
+      # TODO: remove this upstream feature
+      !feature(:instance).downstream
     end
   end
 

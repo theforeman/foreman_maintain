@@ -7,7 +7,7 @@ module Procedures::Repositories
       end
 
       confine do
-        feature(:downstream) || feature(:upstream)
+        feature(:instance).downstream || feature(:upstream)
       end
       param :version,
             'Version for which repositories needs to be setup',
@@ -17,7 +17,7 @@ module Procedures::Repositories
 
     def run
       with_spinner("Configuring repositories for #{@version}") do
-        (feature(:downstream) || feature(:upstream)).setup_repositories(@version)
+        (feature(:instance).downstream || feature(:upstream)).setup_repositories(@version)
       end
     end
   end

@@ -7,11 +7,11 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def foreman_proxy_product_name
-    feature(:downstream) ? 'Capsule' : 'Foreman Proxy'
+    feature(:capsule) ? 'Capsule' : 'Foreman Proxy'
   end
 
   def server_product_name
-    if feature(:downstream)
+    if feature(:satellite)
       'Satellite'
     elsif feature(:katello)
       'Katello'
@@ -20,12 +20,8 @@ class Features::Instance < ForemanMaintain::Feature
     end
   end
 
-  def external_proxy?
-    !!(feature(:foreman_proxy) && !feature(:foreman_server))
-  end
-
   def product_name
-    if external_proxy?
+    if feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
       foreman_proxy_product_name
     else
       server_product_name
@@ -48,10 +44,14 @@ class Features::Instance < ForemanMaintain::Feature
     feature(:foreman_proxy) && feature(:foreman_proxy).with_content? && !feature(:katello)
   end
 
+  def downstream
+    @downstream ||= (feature(:satellite) || feature(:capsule))
+  end
+
   def ping
     if feature(:katello)
       katello_ping
-    elsif external_proxy?
+    elsif feature(:foreman_proxy) && !feature(:foreman_proxy).internal?
       proxy_ping
     else
       foreman_ping

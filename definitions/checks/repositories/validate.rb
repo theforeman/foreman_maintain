@@ -7,7 +7,7 @@ module Checks::Repositories
       end
 
       confine do
-        feature(:downstream)
+        feature(:instance).downstream
       end
 
       param :version,
@@ -18,7 +18,7 @@ module Checks::Repositories
     end
 
     def run
-      if feature(:downstream).subscribed_using_activation_key?
+      if feature(:instance).downstream.subscribed_using_activation_key?
         skip 'Your system is subscribed using custom activation key'
       else
         with_spinner("Validating availability of repositories for #{@version}") do |spinner|
@@ -30,11 +30,12 @@ module Checks::Repositories
     private
 
     def find_absent_repos(spinner)
-      absent_repos = feature(:downstream).absent_repos(@version)
+      current_downstream_feature = feature(:instance).downstream
+      absent_repos = current_downstream_feature.absent_repos(@version)
       unless absent_repos.empty?
         spinner.update('Some repositories missing, calling `subscription-manager refresh`')
-        feature(:downstream).rhsm_refresh
-        absent_repos = feature(:downstream).absent_repos(@version)
+        current_downstream_feature.rhsm_refresh
+        absent_repos = current_downstream_feature.absent_repos(@version)
       end
       unless absent_repos.empty?
         fail!(
