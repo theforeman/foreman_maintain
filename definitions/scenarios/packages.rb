@@ -71,8 +71,10 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        add_step_with_context(Procedures::Packages::InstallerConfirmation)
-        add_step_with_context(Procedures::Packages::UnlockVersions)
+        add_steps_with_context(
+          Procedures::Packages::UpdateAllConfirmation,
+          Procedures::Packages::InstallerConfirmation,
+          Procedures::Packages::UnlockVersions)
         add_step_with_context(Procedures::Packages::Update, :force => true, :warn_on_errors => true)
         add_step_with_context(Procedures::Installer::Run,
                               :arguments => '--upgrade --disable-system-checks')
@@ -81,7 +83,8 @@ module ForemanMaintain::Scenarios
 
       def set_context_mapping
         context.map(:packages,
-                    Procedures::Packages::Update => :packages)
+                    Procedures::Packages::Update => :packages,
+                    Procedures::Packages::UpdateAllConfirmation => :packages)
         context.map(:assumeyes,
                     Procedures::Packages::Update => :assumeyes)
       end
