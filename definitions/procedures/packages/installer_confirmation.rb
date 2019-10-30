@@ -5,7 +5,7 @@ module Procedures::Packages
     end
 
     def run
-      question = "WARNING: This script runs #{feature(:installer).installer_command} " \
+      question = "\nWARNING: This script runs #{feature(:installer).installer_command} " \
         "after the yum execution \n" \
         "to ensure the #{feature(:instance).product_name} " \
         "is in a consistent state.\n" \
