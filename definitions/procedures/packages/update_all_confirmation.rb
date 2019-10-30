@@ -7,10 +7,10 @@ module Procedures::Packages
     end
 
     def run
-      if @packages.nil? or @packages.empty?
+      if @packages.nil? || @packages.empty?
         question = "\nWARNING: No speciffic packages to update were provided " \
           "so we are going to update all available packages.\n" \
-          "It is recommended to update everything only as part of " \
+          'It is recommended to update everything only as part of ' \
           "upgrade of the #{feature(:instance).product_name} to the next version. \n" \
           "To Upgrade to next version use 'foreman-maintain upgrade'.\n\n" \
           'Do you want to proceed with update of everything regardless of the recommendations?'
