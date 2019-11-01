@@ -10,7 +10,7 @@ class Checks::OriginalAssets < ForemanMaintain::Check
     custom_assets = []
     product_name = feature(:instance).product_name
     with_spinner('Checking for presence of non-original assets...') do
-      custom_assets = feature(:package_manager).files_not_owned_by_package(ASSETS_DIR)
+      custom_assets = package_manager.files_not_owned_by_package(ASSETS_DIR)
       logger.info("Non-original assets detected:\n" + custom_assets.join("\n"))
     end
     remove_files = Procedures::Files::Remove.new(:files => custom_assets, :assumeyes => true)

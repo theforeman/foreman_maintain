@@ -1,7 +1,6 @@
 module Procedures::Packages
   class LockingStatus < ForemanMaintain::Procedure
     metadata do
-      for_feature :package_manager
       description 'Check status of version locking of packages'
       preparation_steps { [Checks::VersionLockingEnabled.new] }
     end
@@ -14,7 +13,7 @@ module Procedures::Packages
     private
 
     def check_version_locked
-      if feature(:package_manager).versions_locked?
+      if package_manager.versions_locked?
         puts '  Packages are locked.'
       else
         puts '  Packages are not locked.'

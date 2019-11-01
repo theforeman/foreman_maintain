@@ -6,7 +6,7 @@ module Procedures::Packages
     end
 
     def run
-      feature(:package_manager).install_version_locking(:assumeyes => @assumeyes)
+      package_manager.install_version_locking(:assumeyes => @assumeyes)
     end
   end
 end
