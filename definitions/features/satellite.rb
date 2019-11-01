@@ -5,7 +5,7 @@ class Features::Satellite < ForemanMaintain::Feature
     label :satellite
 
     confine do
-      feature(:package_manager).installed?(['satellite'])
+      package_manager.installed?(['satellite'])
     end
   end
 
