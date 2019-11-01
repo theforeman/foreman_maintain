@@ -69,7 +69,7 @@ module DefinitionsTestHelper
 
   def setup
     reset_reporter
-    mock_package_manager
+    PackageManagerTestHelper.mock_package_manager
   end
 
   def teardown
@@ -170,31 +170,6 @@ module DefinitionsTestHelper
       service.stubs(:exist?).returns(false)
       yield service if block_given?
     end
-  end
-
-  class FakePackageManager < ForemanMaintain::PackageManager::Base
-    def initialize
-      @packages = []
-    end
-
-    def mock_packages(packages)
-      @packages = [packages].flatten(1)
-    end
-
-    def find_installed_package(name)
-      @packages.find { |package| package =~ /^#{name}/ }
-    end
-  end
-
-  def mock_package_manager(manager = FakePackageManager.new)
-    Features::PackageManager.any_instance.stubs(:manager).returns(manager)
-  end
-
-  def assume_package_exist(packages)
-    packages = [packages].flatten(1)
-    manager = FakePackageManager.new
-    manager.mock_packages(packages)
-    mock_package_manager(manager)
   end
 end
 

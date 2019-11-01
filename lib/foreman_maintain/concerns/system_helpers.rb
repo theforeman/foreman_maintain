@@ -85,7 +85,7 @@ module ForemanMaintain
       end
 
       def find_package(name)
-        feature(:package_manager).find_installed_package(name)
+        package_manager.find_installed_package(name)
       end
 
       def hostname
@@ -100,11 +100,11 @@ module ForemanMaintain
         options.validate_options!(:assumeyes)
         case action
         when :install
-          feature(:package_manager).install(packages, :assumeyes => options[:assumeyes])
+          package_manager.install(packages, :assumeyes => options[:assumeyes])
         when :update
-          feature(:package_manager).update(packages, :assumeyes => options[:assumeyes])
+          package_manager.update(packages, :assumeyes => options[:assumeyes])
         when :remove
-          feature(:package_manager).remove(packages, :assumeyes => options[:assumeyes])
+          package_manager.remove(packages, :assumeyes => options[:assumeyes])
         else
           raise ArgumentError, "Unexpected action #{action} expected #{expected_actions.inspect}"
         end
@@ -176,6 +176,10 @@ module ForemanMaintain
           result = File.dirname(path) if File.basename(path) == target
         end
         result
+      end
+
+      def package_manager
+        ForemanMaintain.package_manager
       end
 
       private

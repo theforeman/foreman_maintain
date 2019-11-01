@@ -10,8 +10,7 @@ module ForemanMaintain
 
     describe '.find_package' do
       it 'returns nil if package does not exist' do
-        Features::PackageManager.any_instance.stubs(:find_installed_package).
-          with('unknown').returns(nil)
+        PackageManagerTestHelper.assume_package_exist([])
         assert_nil system.find_package('unknown')
       end
     end

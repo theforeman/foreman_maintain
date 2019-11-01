@@ -36,9 +36,9 @@ module ForemanMaintain
   require 'foreman_maintain/runner'
   require 'foreman_maintain/upgrade_runner'
   require 'foreman_maintain/reporter'
+  require 'foreman_maintain/package_manager'
   require 'foreman_maintain/utils'
   require 'foreman_maintain/error'
-  require 'foreman_maintain/package_manager'
 
   class << self
     attr_accessor :config, :logger
