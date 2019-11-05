@@ -186,7 +186,7 @@ module ForemanMaintain
 
       def ask_decision(message, options = 'y(yes), n(no), q(quit)')
         if assumeyes?
-          print("#{message} (assuming yes)")
+          print("#{message} (assuming yes)\n")
           return :yes
         end
         until_valid_decision do
