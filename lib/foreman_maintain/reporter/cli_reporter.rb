@@ -184,8 +184,8 @@ module ForemanMaintain
         ask_to_select('Select step to continue', steps, &:runtime_message)
       end
 
-      def ask_decision(message, options = 'y(yes), n(no), q(quit)')
-        if assumeyes?
+      def ask_decision(message, options = 'y(yes), n(no), q(quit)', ignore_assumeyes: false)
+        if !ignore_assumeyes && assumeyes?
           print("#{message} (assuming yes)\n")
           return :yes
         end
