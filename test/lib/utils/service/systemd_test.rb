@@ -5,6 +5,9 @@ module ForemanMaintain
     let(:httpd_service) { ForemanMaintain::Utils::Service::Systemd.new('httpd', 30) }
     let(:crond_service) { ForemanMaintain::Utils::Service::Systemd.new('crond', 20) }
     let(:ntpd_service) { ForemanMaintain::Utils::Service::Systemd.new('ntpd', 10) }
+    let(:http_all_service) do
+      ForemanMaintain::Utils::Service::Systemd.new('http*', 30, :all => true)
+    end
 
     it 'has name' do
       httpd_service.name.must_equal 'httpd'
@@ -94,6 +97,12 @@ module ForemanMaintain
       disable_response = [0, '']
       httpd_service.stubs(:execute).with('disable', :wait => false).returns(disable_response)
       httpd_service.disable.must_equal disable_response
+    end
+
+    it 'starts service with --all' do
+      start_response = [0, '']
+      http_all_service.stubs(:execute).with('start').returns(start_response)
+      http_all_service.start.must_equal start_response
     end
 
     describe 'matches?' do

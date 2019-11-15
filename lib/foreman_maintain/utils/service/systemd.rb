@@ -8,10 +8,13 @@ module ForemanMaintain::Utils
 
       def command(action, options = {})
         do_wait = options.fetch(:wait, true) # wait for service to start
+        all = options.fetch(:all, false)
         if do_wait && File.exist?('/usr/sbin/service-wait')
           "service-wait #{@name} #{action}"
         else
-          "systemctl #{action} #{@name}"
+          cmd = "systemctl #{action} #{@name}"
+          cmd += ' --all' if all
+          cmd
         end
       end
 
