@@ -3,7 +3,7 @@ module Procedures::Packages
     metadata do
       param :packages, 'List of packages to update', :array => true
 
-      description 'Confirm update all is intentionall'
+      description 'Confirm update all is intentional'
     end
 
     def run
