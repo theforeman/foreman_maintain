@@ -16,7 +16,6 @@ module ForemanMaintain
           @spinner_chars = %w[| / - \\]
           @current_line = ''
           @puts_needed = false
-          start_spinner
         end
 
         def update(line)
@@ -42,8 +41,6 @@ module ForemanMaintain
           end
         end
 
-        private
-
         def start_spinner
           @thread = Thread.new do
             loop do
@@ -52,6 +49,8 @@ module ForemanMaintain
             end
           end
         end
+
+        private
 
         def spin
           @mutex.synchronize do
@@ -80,6 +79,7 @@ module ForemanMaintain
         @line_char = '-'
         @cell_char = '|'
         @spinner = Spinner.new(self)
+        @spinner.start_spinner if @stdout.tty?
         @last_line = ''
       end
 
