@@ -38,7 +38,7 @@ module Procedures::Backup
         else
           attempt_no += 1
           FileUtils.rm_rf(tarball_path)
-          puts "We will re-try after #{RETRY_DELAY} seconds."
+          puts "Waiting #{RETRY_DELAY} seconds before re-try"
           sleep(RETRY_DELAY)
         end
       end
