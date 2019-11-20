@@ -17,7 +17,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def with_content?
-    !!feature(:pulp)
+    !!feature(:instance).pulp
   end
 
   def dhcpd_conf_exist?

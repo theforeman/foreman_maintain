@@ -2,7 +2,7 @@ module Procedures::Restore
   class MongoDump < ForemanMaintain::Procedure
     metadata do
       description 'Restore mongo dump'
-      for_feature :pulp
+      for_feature :pulp2
       param :backup_dir,
             'Path to backup directory',
             :required => true
@@ -10,7 +10,7 @@ module Procedures::Restore
         [Checks::Mongo::DBUp.new, Checks::Mongo::ToolsInstalled.new]
       end
       confine do
-        feature(:mongo) && feature(:pulp)
+        feature(:mongo) && feature(:pulp2)
       end
     end
 

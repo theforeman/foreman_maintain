@@ -4,7 +4,7 @@ module Procedures::Pulp
 
     metadata do
       description 'Migrate pulp db'
-      for_feature :pulp
+      for_feature :pulp2
     end
 
     def run

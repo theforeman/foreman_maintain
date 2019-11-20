@@ -164,7 +164,7 @@ describe Features::Instance do
       end
 
       it 'fails when some of the components fail' do
-        assume_feature_present(:pulp) do |feature_class|
+        assume_feature_present(:pulp2) do |feature_class|
           feature_class.any_instance.stubs(:services).returns(existing_httpd)
         end
         assume_feature_present(:mongo) do |feature_class|
