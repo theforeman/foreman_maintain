@@ -108,7 +108,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def services
-    [system_service(service_name, 30)]
+    feature(:dynflow_sidekiq) ? [] : [system_service(service_name, 30)]
   end
 
   def service_name
