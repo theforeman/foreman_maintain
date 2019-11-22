@@ -7,11 +7,7 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
     end
 
     def services
-      [
-        # TODO: Move redis to a separate feature when we're sure how it will be configured
-        system_service('redis', 10),
-        service_names.map { |service| system_service service, instance_priority(service) }
-      ].flatten
+      service_names.map { |service| system_service service, instance_priority(service) }
     end
 
     def config_files
