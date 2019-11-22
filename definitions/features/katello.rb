@@ -32,7 +32,11 @@ class Features::Katello < ForemanMaintain::Feature
       '/etc/sysconfig/tomcat*',
       '/etc/tomcat*',
       '/var/lib/candlepin',
-      '/usr/share/foreman/bundler.d/katello.rb'
+      '/usr/share/foreman/bundler.d/katello.rb',
+      '/etc/qpid',
+      '/etc/qpid-dispatch',
+      '/var/lib/qpidd',
+      '/etc/qpid-dispatch'
     ]
 
     if installer_scenario_answers['certs']
