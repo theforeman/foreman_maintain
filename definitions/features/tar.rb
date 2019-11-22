@@ -20,9 +20,23 @@ class Features::Tar < ForemanMaintain::Feature
   # @option options [Boolean] :gzip filter the archive through gzip
   # @option options [Boolean] :ignore_failed_read do not fail on missing files
   # @option options [Boolean] :allow_changing_files do not fail on changing files
+  def run(options = {})
+    logger.debug("Invoking tar from #{options[:directory] || FileUtils.pwd}")
+    statuses = options[:allow_changing_files] ? [0, 1] : [0]
+    execute!(tar_command(options), :valid_exit_statuses => statuses)
+  end
+
+  def validate_volume_size(size)
+    if size.nil? || size !~ /^\d+[bBcGKkMPTw]?$/
+      raise ForemanMaintain::Error::Validation,
+            "Please specify size according to 'tar --tape-length' format."
+    end
+    true
+  end
+
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def run(options = {})
+  def tar_command(options)
     volume_size = options.fetch(:volume_size, nil)
     validate_volume_size(volume_size) unless volume_size.nil?
 
@@ -61,29 +75,20 @@ class Features::Tar < ForemanMaintain::Feature
       tar_command << options.fetch(:files, '*')
     end
 
-    logger.debug("Invoking tar from #{options[:directory] || FileUtils.pwd}")
-    statuses = options[:allow_changing_files] ? [0, 1] : [0]
-    execute!(tar_command.join(' '), :valid_exit_statuses => statuses)
+    tar_command.join(' ')
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
-  def validate_volume_size(size)
-    if size.nil? || size !~ /^\d+[bBcGKkMPTw]?$/
-      raise ForemanMaintain::Error::Validation,
-            "Please specify size according to 'tar --tape-length' format."
-    end
-    true
-  end
-
   private
 
   def default_split_tar_script
-    utils_path = File.expand_path('../../../bin', __FILE__)
+    utils_path = File.expand_path('../../bin', __dir__)
     split_tar_script = File.join(utils_path, 'foreman-maintain-rotate-tar')
     unless File.executable?(split_tar_script)
       raise ForemanMaintain::Error::Fail, "Script #{split_tar_script} is not executable"
     end
+
     split_tar_script
   end
 end

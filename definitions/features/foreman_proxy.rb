@@ -79,17 +79,26 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
   def content_module
     return @content_module if @content_module_detected
+
     @content_module_detected = true
     answer = feature(:installer).answers.find do |_, config|
-      config.is_a?(Hash) && config.key?('certs_tar')
+      config.is_a?(Hash) && config.key?(certs_param_name[:param_key])
     end
-    @content_module = answer.nil? ? 'foreman_proxy_content' : answer.first
+    @content_module = answer.nil? ? certs_param_name[:param_section] : answer.first
     logger.debug("foreman proxy content module detected: #{@content_module}")
     @content_module
   end
 
+  def certs_param_name
+    if check_min_version('foreman', '1.21')
+      return { :param_section => 'certs', :param_key => 'tar_file' }
+    end
+
+    { :param_section => 'foreman_proxy_content', :param_key => 'certs_tar' }
+  end
+
   def certs_tar
-    feature(:installer).answers[content_module]['certs_tar'] if content_module
+    feature(:installer).answers[content_module][certs_param_name[:param_section]] if content_module
   end
 
   def settings_file
@@ -136,6 +145,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
       http_line = ''
       array_output.each do |str|
         next unless str.include?('HTTP')
+
         http_line = str
       end
       msg = http_line.split(curl_http_status.to_s).last
@@ -195,6 +205,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   def lookup_dhcpd_config_file
     dhcpd_config_file = lookup_using_dhcp_yml
     raise "Couldn't find DHCP Configuration file" if dhcpd_config_file.nil?
+
     dhcpd_config_file
   end
 
