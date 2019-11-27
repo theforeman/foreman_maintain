@@ -8,8 +8,7 @@ module Checks
         for_feature :foreman_database
       end
 
-      # The max id value that we can't go beyond is 2151782969.
-      # Therefore setting MAX_SESSION_ID = 2151782969/2
+      # As session ID is of type integer, server can't add a new session record beyond 2151782969. Therefore assigning MAX_SESSION_ID to 2151782969/2.
       MAX_SESSION_ID = 1_075_891_484
 
       def run

@@ -7,7 +7,7 @@ module Procedures::Foreman
 
     def run
       with_spinner('Reset the login session sequence:') do |spinner|
-        spinner.update 'Reseting sessions id sequence'
+        spinner.update 'Resetting sessions id sequence'
         alter_sessions_id_seq
       end
     end
