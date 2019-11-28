@@ -46,15 +46,15 @@ module Checks
       end
 
       def check_only_single_device?
-        @default_dirs.values do |dir|
+        default_dirs.values do |dir|
           ForemanMaintain::Utils::Disk::Device.new(dir).name
         end.uniq.length <= 1
       end
 
       def dirs_to_check
-        return @default_dirs.values.first(1) if check_only_single_device?
+        return default_dirs.values.first(1) if check_only_single_device?
 
-        @default_dirs.values
+        default_dirs.values
       end
 
       private

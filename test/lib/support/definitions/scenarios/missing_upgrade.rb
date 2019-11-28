@@ -1,10 +1,14 @@
 module Scenarios::MissingUpgrade
   class PreUpgradeChecks < ForemanMaintain::Scenario
     metadata do
-      tags :upgrade, :missing_upgrade, :pre_upgrade_checks
+      tags :upgrade, :missing_upgrade, :pre_upgrade_checks, :upgrade_scenario
       description 'missing_service upgrade scenario'
       confine do
         feature(:missing_service)
+      end
+
+      def target_version
+        '1.14'
       end
     end
 
@@ -14,4 +18,4 @@ module Scenarios::MissingUpgrade
   end
 end
 
-ForemanMaintain::UpgradeRunner.register_version('1.14', :missing_upgrade)
+# ForemanMaintain::UpgradeRunner.register_version('1.14', :missing_upgrade)

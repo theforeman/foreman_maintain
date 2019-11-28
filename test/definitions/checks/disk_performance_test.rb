@@ -1,10 +1,15 @@
 require 'test_helper'
-
 describe Checks::Disk::Performance do
   include DefinitionsTestHelper
   include UnitTestHelper
 
   let(:check_disk_performance) { described_class.new }
+
+  before do
+    assume_feature_absent(:mongo)
+    assume_feature_present(:pulp2) || assume_feature_present(:pulp3)
+    check_disk_performance.stubs(:default_dirs).returns(:pulp => '/var/lib/pulp')
+  end
 
   it 'should confine existence of fio' do
     described_class.stubs(:execute?).with('which fio').returns(true)
