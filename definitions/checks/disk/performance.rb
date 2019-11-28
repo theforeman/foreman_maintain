@@ -1,16 +1,10 @@
 module Checks
   module Disk
     class Performance < ForemanMaintain::Check
-      DEFAULT_DIRS = [
-        '/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql'
-      ].select { |file_path| File.directory?(file_path) }.freeze
-
       metadata do
         label :disk_performance
-        description "Check recommended disk speed for #{DEFAULT_DIRS.join(',')} directories."
         tags :pre_upgrade
         preparation_steps { Procedures::Packages::Install.new(:packages => %w[fio]) }
-
         confine do
           feature(:instance).pulp
         end
@@ -38,16 +32,29 @@ module Checks
         end
       end
 
+      def default_dirs
+        @default_dirs ||= %i[pulp mongo foreman_database].inject({}) do |dirs, f|
+          if feature(f) && File.directory?(feature(f).data_dir)
+            dirs[feature(f).label_dashed] = feature(f).data_dir
+          end
+          dirs
+        end
+      end
+
+      def description
+        "Check recommended disk speed for #{default_dirs.keys.join(', ')} directories."
+      end
+
       def check_only_single_device?
-        DEFAULT_DIRS.map do |dir|
+        @default_dirs.values do |dir|
           ForemanMaintain::Utils::Disk::Device.new(dir).name
         end.uniq.length <= 1
       end
 
       def dirs_to_check
-        return DEFAULT_DIRS.first(1) if check_only_single_device?
+        return @default_dirs.values.first(1) if check_only_single_device?
 
-        DEFAULT_DIRS
+        @default_dirs.values
       end
 
       private
