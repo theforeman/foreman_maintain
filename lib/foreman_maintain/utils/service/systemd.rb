@@ -1,14 +1,14 @@
 module ForemanMaintain::Utils
   module Service
     class Systemd < Abstract
-      def initialize(name, priority, _options = {})
+      def initialize(name, priority, options = {})
         super
         @sys = SystemHelpers.new
       end
 
       def command(action, options = {})
         do_wait = options.fetch(:wait, true) # wait for service to start
-        all = options.fetch(:all, false)
+        all = @options.fetch(:all, false)
         if do_wait && File.exist?('/usr/sbin/service-wait')
           "service-wait #{@name} #{action}"
         else
