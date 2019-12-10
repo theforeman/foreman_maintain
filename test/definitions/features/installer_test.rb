@@ -44,7 +44,8 @@ describe Features::Installer do
       it '#upgrade runs the installer with correct params' do
         assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 foreman-installer --upgrade', :interactive => true).
+          with('LANG=en_US.utf-8 foreman-installer --disable-system-checks --upgrade',
+               :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
       end
@@ -52,7 +53,8 @@ describe Features::Installer do
       it '#upgrade runs the installer with correct params in satellite' do
         assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 satellite-installer --upgrade', :interactive => true).
+          with('LANG=en_US.utf-8 satellite-installer --disable-system-checks --upgrade',
+               :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
       end
@@ -73,106 +75,6 @@ describe Features::Installer do
           with('LANG=en_US.utf-8 satellite-installer --password=changeme', :interactive => true).
           returns(true)
         subject.run('--password=changeme', :interactive => true)
-      end
-    end
-  end
-
-  context 'legacy katello installer without scenarios (6.1)' do
-    before do
-      installer_config_dir(["#{data_dir}/installer/katello-installer"])
-      mock_installer_package('katello-installer')
-    end
-
-    it 'loads list of configs on the start' do
-      expected_config_files = [
-        "#{data_dir}/installer/katello-installer/answers.capsule-certs-generate.yaml",
-        "#{data_dir}/installer/katello-installer/answers.katello-installer.yaml",
-        "#{data_dir}/installer/katello-installer/capsule-certs-generate.yaml",
-        "#{data_dir}/installer/katello-installer/config_header.txt",
-        "#{data_dir}/installer/katello-installer/katello-installer.yaml",
-        '/usr/local/bin/validate_postgresql_connection.sh'
-      ].sort
-      subject.config_files.sort.must_equal(expected_config_files)
-    end
-
-    it 'can tell if we use scenarios or not' do
-      subject.with_scenarios?.must_equal false
-    end
-
-    it 'can tell last used scenario from the link' do
-      subject.last_scenario.must_be_nil
-    end
-
-    it 'returns the answers as a hash' do
-      subject.answers['foreman']['admin_password'].must_equal('changeme')
-    end
-
-    it 'has --upgrade' do
-      subject.can_upgrade?.must_equal true
-    end
-
-    context '#upgrade' do
-      it 'runs the installer with correct params' do
-        installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 katello-installer --upgrade', :interactive => true).
-          returns(true)
-        subject.upgrade(:interactive => true)
-      end
-    end
-
-    context '#run' do
-      it 'runs the installer with correct params' do
-        installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 katello-installer --password=changeme', :interactive => true).
-          returns(true)
-        subject.run('--password=changeme', :interactive => true)
-      end
-    end
-  end
-
-  context 'legacy capsule installer without scenarios (6.1)' do
-    before do
-      installer_config_dir(["#{data_dir}/installer/capsule-installer"])
-      mock_installer_package('capsule-installer')
-    end
-
-    it 'loads list of configs on the start' do
-      expected_config_files = [
-        "#{data_dir}/installer/capsule-installer/answers.capsule-installer.yaml",
-        "#{data_dir}/installer/capsule-installer/capsule-installer.yaml",
-        "#{data_dir}/installer/capsule-installer/config_header.txt",
-        '/usr/local/bin/validate_postgresql_connection.sh'
-      ].sort
-      subject.config_files.sort.must_equal(expected_config_files)
-    end
-
-    it 'can tell if we use scenarios or not' do
-      subject.with_scenarios?.must_equal false
-    end
-
-    it 'returns the answers as a hash' do
-      subject.answers['certs']['deploy'].must_equal(true)
-    end
-
-    it 'does not have --upgrade' do
-      subject.can_upgrade?.must_equal false
-    end
-
-    context '#upgrade' do
-      it 'runs the installer with correct params' do
-        installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 capsule-installer', :interactive => true).
-          returns(true)
-        subject.upgrade(:interactive => true)
-      end
-    end
-
-    context '#run' do
-      it 'runs the installer with correct params' do
-        installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 capsule-installer --certs=true', :interactive => true).
-          returns(true)
-        subject.run('--certs=true', :interactive => true)
       end
     end
   end
