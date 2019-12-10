@@ -14,6 +14,7 @@ module Procedures::Restore
         spinner.update('Restoring configs')
         clean_conflicting_data
         restore_configs(backup)
+        reset_qpid_jrnls
         reload_configs
       end
     end
@@ -44,6 +45,12 @@ module Procedures::Restore
     def clean_conflicting_data
       # tar is unable to --overwrite dir with symlink
       execute('rm -rf /usr/share/foreman-proxy/.ssh')
+    end
+
+    def reset_qpid_jrnls
+      # on restore without pulp data qpid fails to start
+      # https://access.redhat.com/solutions/4645231
+      execute('rm -rf /var/lib/qpidd/.qpidd/qls/dat2/__db.00*')
     end
   end
 end
