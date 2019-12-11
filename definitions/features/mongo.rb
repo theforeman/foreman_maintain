@@ -9,7 +9,7 @@ class Features::Mongo < ForemanMaintain::Feature
     label :mongo
 
     confine do
-      feature(:pulp)
+      feature(:pulp2)
     end
   end
 

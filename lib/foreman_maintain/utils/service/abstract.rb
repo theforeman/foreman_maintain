@@ -4,9 +4,10 @@ module ForemanMaintain::Utils
       include Comparable
       attr_reader :name, :priority
 
-      def initialize(name, priority, _options = {})
+      def initialize(name, priority, options = {})
         @name = name
         @priority = priority
+        @options = options
       end
 
       def <=>(other)

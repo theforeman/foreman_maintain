@@ -3,7 +3,7 @@ module Procedures::Backup
     metadata do
       description 'Backup Pulp data'
       tags :backup
-      for_feature :pulp
+      for_feature :pulp2
       param :backup_dir, 'Directory where to backup to', :required => true
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
       param :ensure_unchanged, 'Ensure the data did not change during backup'
@@ -39,9 +39,9 @@ module Procedures::Backup
     end
 
     def pulp_dir
-      return feature(:pulp).data_dir if @mount_dir.nil?
+      return feature(:pulp2).data_dir if @mount_dir.nil?
       mount_point = File.join(@mount_dir, 'pulp')
-      dir = feature(:pulp).find_marked_directory(mount_point)
+      dir = feature(:pulp2).find_marked_directory(mount_point)
       unless dir
         raise ForemanMaintain::Error::Fail,
               "Pulp base directory not found in the mount point (#{mount_point})"

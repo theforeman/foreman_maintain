@@ -5,7 +5,7 @@ module Procedures::Backup
       metadata do
         description 'Create and mount snapshot of Pulp data'
         tags :backup
-        for_feature :pulp
+        for_feature :pulp2
         MountBase.common_params(self)
         param :skip, 'Skip Pulp content during backup'
       end
@@ -13,8 +13,8 @@ module Procedures::Backup
       def run
         skip if @skip
         with_spinner('Creating snapshot of Pulp') do |spinner|
-          feature(:pulp).with_marked_directory(feature(:pulp).data_dir) do
-            lv_info = get_lv_info(feature(:pulp).data_dir)
+          feature(:pulp2).with_marked_directory(feature(:pulp2).data_dir) do
+            lv_info = get_lv_info(feature(:pulp2).data_dir)
             create_lv_snapshot('pulp-snap', @block_size, lv_info[0])
             spinner.update("Mounting snapshot of Pulp on #{mount_location('pulp')}")
             mount_snapshot('pulp', lv_info[1])

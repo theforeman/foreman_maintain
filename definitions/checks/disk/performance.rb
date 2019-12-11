@@ -8,7 +8,7 @@ module Checks
         preparation_steps { Procedures::Packages::Install.new(:packages => %w[fio]) }
 
         confine do
-          feature(:pulp)
+          feature(:instance).pulp
         end
       end
 

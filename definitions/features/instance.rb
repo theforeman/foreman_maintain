@@ -64,6 +64,10 @@ class Features::Instance < ForemanMaintain::Feature
     net
   end
 
+  def pulp
+    feature(:pulp2) || feature(:pulp3)
+  end
+
   private
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -137,8 +141,8 @@ class Features::Instance < ForemanMaintain::Feature
     {
       'candlepin_auth' => %w[candlepin candlepin_database],
       'candlepin' => %w[candlepin candlepin_database],
-      'pulp_auth' => %w[pulp mongo],
-      'pulp' => %w[pulp mongo],
+      'pulp_auth' => %w[pulp2 mongo],
+      'pulp' => %w[pulp2 mongo],
       'foreman_tasks' => %w[foreman_tasks]
     }
   end

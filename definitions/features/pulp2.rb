@@ -2,7 +2,7 @@ class Features::Pulp < ForemanMaintain::Feature
   include ForemanMaintain::Concerns::DirectoryMarker
 
   metadata do
-    label :pulp
+    label :pulp2
 
     confine do
       find_package('pulp-server')
