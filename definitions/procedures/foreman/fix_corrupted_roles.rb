@@ -2,7 +2,6 @@ module Procedures::Foreman
   class FixCorruptedRoles < ForemanMaintain::Procedure
     metadata do
       for_feature :foreman_database
-      tags :pre_migration
       desc = 'Create additional filters so that each filter has only permissions of one resource'
       description desc
       confine do
