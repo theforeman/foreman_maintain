@@ -15,5 +15,6 @@ librdmacm
 rdma-core
 boost-random
 boost-iostreams
+virt-who
 # foreman-maintain
 rubygem-foreman_maintain
