@@ -55,7 +55,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     sql = <<-SQL
       SELECT count(*) AS count
         FROM foreman_tasks_tasks
-        WHERE state IN ('paused')
+        WHERE state IN ('paused') AND result IN ('error')
     SQL
     unless ignored_tasks.empty?
       sql << "AND label NOT IN (#{quotize(ignored_tasks)})"
