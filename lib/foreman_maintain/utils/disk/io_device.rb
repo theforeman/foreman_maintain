@@ -27,7 +27,7 @@ module ForemanMaintain
         # In fio command, --direct option bypass the cache page
         def fio
           cmd = "fio --name=job1 --rw=read --size=1g --output-format=json\
-                  --directory=#{dir} --direct=1"
+                  --directory=#{dir} --direct=1 --unlink=1"
           stdout = execute(cmd)
           output = JSON.parse(stdout)
           @fio ||= output['jobs'].first['read']['bw'].to_i
