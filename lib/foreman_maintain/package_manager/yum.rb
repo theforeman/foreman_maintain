@@ -61,6 +61,13 @@ module ForemanMaintain::PackageManager
       yum_action('clean', 'all')
     end
 
+    def update_available?(package)
+      cmd_output = yum_action('check-update -q', package, :with_status => true, :assumeyes => false)
+      return true if cmd_output[0] == 100
+
+      false
+    end
+
     def files_not_owned_by_package(directory)
       find_cmd = "find #{directory} -exec /bin/sh -c 'rpm -qf {} &> /dev/null || echo {}' \\;"
       sys.execute(find_cmd).split("\n")
@@ -96,14 +103,19 @@ module ForemanMaintain::PackageManager
       File.open(protector_config_file, 'w') { |file| file.puts config }
     end
 
-    def yum_action(action, packages, assumeyes: false)
+    def yum_action(action, packages, with_status: false, assumeyes: false)
       yum_options = []
       packages = [packages].flatten(1)
       yum_options << '-y' if assumeyes
       yum_options_s = yum_options.empty? ? '' : ' ' + yum_options.join(' ')
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
-      sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
-                   :interactive => true)
+      if !with_status
+        sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
+                     :interactive => true)
+      else
+        sys.execute_with_status("yum#{yum_options_s} #{action}#{packages_s}",
+                                :interactive => true)
+      end
     end
 
     def install_extras(src, dest, override: false)

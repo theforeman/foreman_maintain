@@ -46,7 +46,7 @@ module ForemanMaintain
 
     describe 'check' do
       let :command do
-        %w[upgrade check]
+        %w[upgrade check --disable-self-upgrade]
       end
 
       it 'runs the upgrade checks for version' do
@@ -63,7 +63,7 @@ module ForemanMaintain
 
     describe 'run' do
       let :command do
-        %w[upgrade run]
+        %w[upgrade run --disable-self-upgrade]
       end
 
       it 'runs the full upgrade for version' do
@@ -73,7 +73,6 @@ module ForemanMaintain
 
       it 'remembers the current target version' do
         Cli::MainCommand.any_instance.expects(:exit!)
-
         assert_cmd <<-OUTPUT.strip_heredoc
           --target-version not specified
           Possible target versions are:
