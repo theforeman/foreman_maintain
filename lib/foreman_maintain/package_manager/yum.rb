@@ -63,9 +63,7 @@ module ForemanMaintain::PackageManager
 
     def update_available?(package)
       cmd_output = yum_action('check-update -q', package, :with_status => true, :assumeyes => false)
-      return true if cmd_output[0] == 100
-
-      false
+      cmd_output[0] == 100
     end
 
     def files_not_owned_by_package(directory)
@@ -109,12 +107,12 @@ module ForemanMaintain::PackageManager
       yum_options << '-y' if assumeyes
       yum_options_s = yum_options.empty? ? '' : ' ' + yum_options.join(' ')
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
-      if !with_status
-        sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
-                     :interactive => true)
-      else
+      if with_status
         sys.execute_with_status("yum#{yum_options_s} #{action}#{packages_s}",
                                 :interactive => true)
+      else
+        sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
+                     :interactive => true)
       end
     end
 

@@ -140,6 +140,18 @@ module ForemanMaintain
       logger.error "Invalid Storage label i.e #{label}. Error - #{e.message}"
     end
 
+    def perform_self_upgrade
+      puts 'Checking for new version of foreman-maintain...'
+      if ForemanMaintain.package_manager.update_available?('rubygem-foreman_maintain')
+        puts "\nUpdating rubygem-foreman_maintain package."
+        ForemanMaintain.package_manager.update('rubygem-foreman_maintain', :assumeyes => true)
+        puts "\nThe rubygem-foreman_maintain package successfully updated."\
+            "\nRe-run satellite-maintain or foreman-maintain with required options!"
+        exit 0
+      end
+      puts "Nothing to update, can't find new version of rubygem-foreman_maintain!"
+    end
+
     def upgrade_in_progress
       storage[:upgrade_target_version]
     end

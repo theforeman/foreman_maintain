@@ -7,7 +7,7 @@ module ForemanMaintain
       end
 
       def self.disable_self_upgrade_option
-        option '--disable-self-upgrade', :flag, "Don't auto update rubygem-foreman_maintain",
+        option '--disable-self-upgrade', :flag, 'Disable foreman-maintain auto-upgrade',
                :default => false
       end
 
@@ -52,20 +52,6 @@ module ForemanMaintain
         target_versions.sort.each { |version| puts version }
       end
 
-      def self_upgrade
-        unless disable_self_upgrade?
-          puts 'Checking if new version of rubygem-foreman_maintain is available?'
-          if ForemanMaintain.package_manager.update_available?('rubygem-foreman_maintain')
-            puts "\nUpdating rubygem-foreman_maintain package."
-            ForemanMaintain.package_manager.update('rubygem-foreman_maintain', :assumeyes => true)
-            puts "\nThe rubygem-foreman_maintain package successfully updated."\
-                "\nRe-run satellite-maintain or foreman-maintain with required options!"
-            exit 0
-          end
-          puts "Nothing to update, can't find new version of rubygem-foreman_maintain!"
-        end
-      end
-
       subcommand 'list-versions', 'List versions this system is upgradable to' do
         def execute
           print_versions(UpgradeRunner.available_targets)
@@ -78,7 +64,7 @@ module ForemanMaintain
         disable_self_upgrade_option
 
         def execute
-          self_upgrade
+          ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
           upgrade_runner.run_phase(:pre_upgrade_checks)
           exit upgrade_runner.exit_code
         end
@@ -97,7 +83,7 @@ module ForemanMaintain
         end
 
         def execute
-          self_upgrade
+          ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
           if phase
             upgrade_runner.run_phase(phase.to_sym)
           else
