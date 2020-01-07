@@ -16,6 +16,7 @@ module Procedures::Backup
         dbs[:mongo] = 'Mongo' if db_local?(:mongo)
         dbs[:candlepin_database] = 'Candlepin' if db_local?(:candlepin_database)
         dbs[:foreman_database] = 'Foreman' if db_local?(:foreman_database)
+        dbs[:pulpcore_database] = 'Pulpcore' if db_local?(:pulpcore_database)
 
         shared_lv = dbs.inject([]) do |list, (db_label, db_name)|
           db_lv = get_lv_info(feature(db_label).data_dir)

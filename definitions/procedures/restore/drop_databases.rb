@@ -8,7 +8,7 @@ module Procedures::Restore
             :required => true
 
       confine do
-        feature(:foreman_database) || feature(:candlepin_database)
+        feature(:foreman_database) || feature(:candlepin_database) || feature(:pulpcore_database)
       end
     end
 
@@ -19,6 +19,9 @@ module Procedures::Restore
         feature(:service).handle_services(spinner, 'start', :only => ['postgresql'])
         drop_foreman(backup, spinner)
         drop_candlepin(backup, spinner)
+        if feature(:pulpcore)
+          drop_pulpcore(backup, spinner)
+        end
       end
     end
 
@@ -33,6 +36,13 @@ module Procedures::Restore
       if backup.file_map[:candlepin_dump][:present]
         spinner.update('Dropping candlepin database')
         feature(:candlepin_database).dropdb
+      end
+    end
+
+    def drop_pulpcore(backup, spinner)
+      if backup.file_map[:pulpcore_dump][:present]
+        spinner.update('Dropping pulpcore database')
+        feature(:pulpcore_database).dropdb
       end
     end
   end

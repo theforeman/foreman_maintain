@@ -16,6 +16,9 @@ module ForemanMaintain
         @backup_dir = backup_dir
         @standard_files = ['config_files.tar.gz']
         @katello_online_files = ['mongo_dump', 'candlepin.dump', 'foreman.dump']
+        if feature(:pulpcore)
+          @katello_online_files << 'pulpcore.dump'
+        end
         @katello_offline_files = ['mongo_data.tar.gz', 'pgsql_data.tar.gz']
         @foreman_online_files = ['foreman.dump']
         @foreman_offline_files = ['pgsql_data.tar.gz']
@@ -35,6 +38,10 @@ module ForemanMaintain
           :pg_globals => map_file(@backup_dir, 'pg_globals.dump'),
           :metadata => map_file(@backup_dir, 'metadata.yml')
         }
+        if feature(:pulpcore)
+          @file_map[:pulpcore_dump] = map_file(@backup_dir, 'pulpcore.dump')
+        end
+        @file_map
       end
 
       def map_file(backup_dir, filename)
@@ -77,92 +84,80 @@ module ForemanMaintain
         foreman_standard_backup? || foreman_online_backup? || foreman_logical_backup?
       end
 
+      def check_file_existence(existence_map)
+        unless feature(:pulpcore)
+          existence_map[:present].delete(:pulpcore_dump)
+          existence_map[:absent].delete(:pulpcore_dump)
+        end
+
+        existence_map[:present].each do |file|
+          unless file_map[file][:present]
+            return false
+          end
+        end
+
+        existence_map[:absent].each do |file|
+          if file_map[file][:present]
+            return false
+          end
+        end
+
+        true
+      end
+
+      # TODO: Need to check for pulpcore feature?
       def katello_standard_backup?
-        file_map[:mongo_data][:present] &&
-          file_map[:pgsql_data][:present] &&
-          !(
-            file_map[:candlepin_dump][:present] ||
-            file_map[:foreman_dump][:present] ||
-            file_map[:mongo_dump][:present]
-          )
+        check_file_existence(:present => [:mongo_data, :pgsql_data],
+                             :absent => [:candlepin_dump, :foreman_dump,
+                                         :pulpcore_dump, :mongo_dump])
       end
 
       def katello_online_backup?
-        file_map[:candlepin_dump][:present] &&
-          file_map[:foreman_dump][:present] &&
-          file_map[:mongo_dump][:present] &&
-          !(
-            file_map[:mongo_data][:present] ||
-            file_map[:pgsql_data][:present]
-          )
+        check_file_existence(:present => [:candlepin_dump, :foreman_dump,
+                                          :pulpcore_dump, :mongo_dump],
+                             :absent => [:mongo_data, :pgsql_data])
       end
 
       def katello_logical_backup?
-        file_map[:mongo_dump][:present] &&
-          file_map[:mongo_data][:present] &&
-          file_map[:pgsql_data][:present] &&
-          file_map[:candlepin_dump][:present] &&
-          file_map[:foreman_dump][:present]
+        check_file_existence(:present => [:mongo_dump, :mongo_data, :pgsql_data,
+                                          :candlepin_dump, :pulpcore_dump, :foreman_dump],
+                             :absent => [])
       end
 
       def fpc_standard_backup?
-        file_map[:mongo_data][:present] &&
-          !(
-            file_map[:pgsql_data][:present] ||
-            file_map[:candlepin_dump][:present] ||
-            file_map[:foreman_dump][:present] ||
-            file_map[:mongo_dump][:present]
-          )
+        check_file_existence(:present => [:mongo_data],
+                             :absent => [:pgsql_data, :candlepin_dump,
+                                         :foreman_dump, :mongo_dump, :pulpcore_dump])
       end
 
       def fpc_online_backup?
-        file_map[:mongo_dump][:present] &&
-          !(
-            file_map[:mongo_data][:present] ||
-            file_map[:pgsql_data][:present] ||
-            file_map[:candlepin_dump][:present] ||
-            file_map[:foreman_dump][:present]
-          )
+        absent = [:mongo_data, :pgsql_data, :candlepin_dump, :foreman_dump]
+
+        check_file_existence(:present => [:mongo_dump], :absent => absent) ||
+          check_file_existence(:present => [:pulpcore_dump], :absent => absent)
       end
 
       def fpc_logical_backup?
-        file_map[:mongo_dump][:present] &&
-          file_map[:mongo_data][:present] &&
-          !(
-            file_map[:pgsql_data][:present] ||
-            file_map[:candlepin_dump][:present] ||
-            file_map[:foreman_dump][:present]
-          )
+        absent = [:pgsql_data, :candlepin_dump, :foreman_dump]
+        check_file_existence(:present => [:mongo_dump, :mongo_data], :absent => absent) ||
+          check_file_existence(:present => [:pulpcore_dump], :absent => absent)
       end
 
       def foreman_standard_backup?
-        file_map[:pgsql_data][:present] &&
-          !(
-            file_map[:candlepin_dump][:present] ||
-            file_map[:foreman_dump][:present] ||
-            file_map[:mongo_data][:present] ||
-            file_map[:mongo_dump][:present]
-          )
+        check_file_existence(:present => [:pgsql_data],
+                             :absent => [:candlepin_dump, :foreman_dump, :pulpcore_dump,
+                                         :mongo_data, :mongo_dump])
       end
 
       def foreman_online_backup?
-        file_map[:foreman_dump][:present] &&
-          !(
-            file_map[:candlepin_dump][:present] ||
-            file_map[:pgsql_data][:present] ||
-            file_map[:mongo_data][:present] ||
-            file_map[:mongo_dump][:present]
-          )
+        check_file_existence(:present => [:foreman_dump],
+                             :absent => [:candlepin_dump, :pgsql_data,
+                                         :mongo_data, :mongo_dump])
       end
 
       def foreman_logical_backup?
-        file_map[:pgsql_data][:present] &&
-          file_map[:foreman_dump][:present] &&
-          !(
-            file_map[:candlepin_dump][:present] ||
-            file_map[:mongo_data][:present] ||
-            file_map[:mongo_dump][:present]
-          )
+        check_file_existence(:present => [:pgsql_data, :foreman_dump],
+                             :absent => [:candlepin_dump, :mongo_data, :mongo_dump])
       end
 
       def validate_hostname?
@@ -202,7 +197,8 @@ module ForemanMaintain
 
       def sql_dump_files_exist?
         file_map[:foreman_dump][:present] ||
-          file_map[:candlepin_dump][:present]
+          file_map[:candlepin_dump][:present] ||
+          (feature(:pulpcore) && file_map[:pulpcore_dump][:present])
       end
 
       def incremental?

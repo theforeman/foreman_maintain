@@ -37,7 +37,9 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def postgresql_local?
-    database_local?(:candlepin_database) || database_local?(:foreman_database)
+    database_local?(:candlepin_database) ||
+      database_local?(:foreman_database) ||
+      database_local?(:pulpcore_database)
   end
 
   def foreman_proxy_with_content?
@@ -65,7 +67,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def pulp
-    feature(:pulp2) || feature(:pulp3)
+    feature(:pulp2) || feature(:pulpcore)
   end
 
   private
@@ -143,6 +145,7 @@ class Features::Instance < ForemanMaintain::Feature
       'candlepin' => %w[candlepin candlepin_database],
       'pulp_auth' => %w[pulp2 mongo],
       'pulp' => %w[pulp2 mongo],
+      'pulpcore' => %w[pulpcore pulpcore_database],
       'foreman_tasks' => %w[foreman_tasks]
     }
   end
