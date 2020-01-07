@@ -18,3 +18,8 @@ boost-iostreams
 boost-thread
 # foreman-maintain
 rubygem-foreman_maintain
+# virt-who
+virt-who
+python-suds
+libvirt-python
+systemd-python
