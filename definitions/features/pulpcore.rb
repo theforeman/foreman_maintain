@@ -1,8 +1,8 @@
 require 'foreman_maintain/utils/service/systemd'
 
-class Features::Pulp3 < ForemanMaintain::Feature
+class Features::Pulpcore < ForemanMaintain::Feature
   metadata do
-    label :pulp3
+    label :pulpcore
 
     confine do
       ForemanMaintain::Utils::Service::Systemd.new('pulpcore-api', 0).exist?
@@ -17,6 +17,12 @@ class Features::Pulp3 < ForemanMaintain::Feature
       system_service('pulpcore-worker@*', 20, :all => true, :skip_enablement => true),
       system_service('rh-redis5-redis', 30),
       system_service('httpd', 30)
+    ]
+  end
+
+  def config_files
+    [
+      '/etc/pulp/settings.py'
     ]
   end
 end

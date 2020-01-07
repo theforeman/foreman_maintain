@@ -36,6 +36,7 @@ module ForemanMaintain::Scenarios
       end
       restore_mongo_dump(backup)
       add_steps_with_context(Procedures::Pulp::Migrate,
+                             Procedures::Pulpcore::Migrate,
                              Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
@@ -43,7 +44,8 @@ module ForemanMaintain::Scenarios
 
     def drop_dbs(backup)
       if backup.file_map[:candlepin_dump][:present] ||
-         backup.file_map[:foreman_dump][:present]
+         backup.file_map[:foreman_dump][:present] ||
+         (feature(:pulpcore) && backup.file_map[:pulpcore_dump][:present])
         add_steps_with_context(Procedures::Restore::DropDatabases)
       end
     end
@@ -57,6 +59,9 @@ module ForemanMaintain::Scenarios
       end
       if backup.file_map[:foreman_dump][:present]
         add_steps_with_context(Procedures::Restore::ForemanDump)
+      end
+      if feature(:pulpcore) && backup.file_map[:pulpcore_dump][:present]
+        add_steps_with_context(Procedures::Restore::PulpcoreDump)
       end
     end
 
@@ -83,6 +88,7 @@ module ForemanMaintain::Scenarios
                   Procedures::Restore::PgGlobalObjects => :backup_dir,
                   Procedures::Restore::CandlepinDump => :backup_dir,
                   Procedures::Restore::ForemanDump => :backup_dir,
+                  Procedures::Restore::PulpcoreDump => :backup_dir,
                   Procedures::Restore::ExtractFiles => :backup_dir,
                   Procedures::Restore::MongoDump => :backup_dir)
 
