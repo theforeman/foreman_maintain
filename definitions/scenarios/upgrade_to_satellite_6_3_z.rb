@@ -4,7 +4,9 @@ module Scenarios::Satellite_6_3_z
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:satellite) && feature(:satellite).current_minor_version == '6.3'
+          feature(:satellite) &&
+            (feature(:satellite).current_minor_version == '6.3' || \
+            ForemanMaintain.upgrade_in_progress == '6.3.z')
         end
         instance_eval(&block)
       end

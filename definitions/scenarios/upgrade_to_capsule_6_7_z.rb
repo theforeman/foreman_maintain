@@ -4,7 +4,9 @@ module Scenarios::Capsule_6_7_z
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:capsule) && feature(:capsule).current_minor_version == '6.7'
+          feature(:capsule) &&
+            (feature(:capsule).current_minor_version == '6.7' || \
+              ForemanMaintain.upgrade_in_progress == '6.7.z')
         end
         instance_eval(&block)
       end
