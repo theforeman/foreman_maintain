@@ -139,5 +139,9 @@ module ForemanMaintain
     rescue StandardError => e
       logger.error "Invalid Storage label i.e #{label}. Error - #{e.message}"
     end
+
+    def upgrade_in_progress
+      storage[:upgrade_target_version]
+    end
   end
 end
