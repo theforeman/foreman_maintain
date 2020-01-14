@@ -8,6 +8,7 @@ module ForemanMaintain::PackageManager
     private
 
     def dnf_action(action, packages, with_status: false, assumeyes: false)
+      packages = [packages].flatten(1)
       yum_options = []
       yum_options << '-y' if assumeyes
       if with_status
