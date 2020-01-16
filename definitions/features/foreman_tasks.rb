@@ -162,8 +162,13 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   def export_csv(sql, file_name, state)
     dir = prepare_for_backup(state)
     filepath = "#{dir}/#{file_name}"
-    execute("echo \"COPY (#{sql}) TO STDOUT WITH CSV;\" \
-      | su - postgres -c '/usr/bin/psql -d foreman' | bzip2 -9 > #{filepath}.bz2")
+    csv_output = feature(:foreman_database).query_csv(sql)
+    File.open(filepath, 'w') do |f|
+      f.write(csv_output)
+      f.close
+    end
+    execute("bzip2 #{filepath} -c -9 > #{filepath}.bz2")
+    FileUtils.rm_rf(filepath)
   end
 
   def old_tasks_condition(state = "'stopped', 'paused'")
