@@ -15,11 +15,14 @@ class Features::Redis < ForemanMaintain::Feature
   end
 
   def config_files
-    ["/etc/opt/rh/#{SCL_NAME}/redis",
-     "/etc/opt/rh/#{SCL_NAME}/redis.conf"]
+    %w[redis redis.conf].map { |config| File.join(etc_prefix, config) }
   end
 
   private
+
+  def etc_prefix
+    "/etc/opt/rh/#{SCL_NAME}"
+  end
 
   def scl_prefix
     "#{SCL_NAME}-"
