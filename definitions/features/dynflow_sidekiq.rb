@@ -34,6 +34,6 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
   end
 
   def configured_instances
-    Dir['/etc/foreman/dynflow/*'].map { |config| File.basename(config).gsub(/\.yml$/, '') }
+    Dir['/etc/foreman/dynflow/*'].map { |config| File.basename(config, '.yml') }
   end
 end
