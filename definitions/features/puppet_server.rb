@@ -29,7 +29,7 @@ class Features::PuppetServer < ForemanMaintain::Feature
   end
 
   def puppet_version
-    version(execute!('puppet --version'))
+    version(execute!('/opt/puppetlabs/bin/puppet --version'))
   end
 
   def find_empty_cacert_request_files
@@ -56,6 +56,10 @@ class Features::PuppetServer < ForemanMaintain::Feature
   end
 
   def puppet_ssldir_path
-    execute!('puppet master --configprint ssldir')
+    if puppet_version.version.to_i >= 6
+      execute!('/opt/puppetlabs/bin/puppet config print ssldir')
+    else
+      execute!('/opt/puppetlabs/bin/puppet master --configprint ssldir')
+    end
   end
 end
