@@ -5,7 +5,7 @@ module ForemanMaintain::Utils
     FACTER_FILES = %w[/usr/bin/facter /opt/puppetlabs/bin/facter].freeze
 
     def self.package
-      puppet_version = version(execute!('puppet --version'))
+      puppet_version = version(execute!('/opt/puppetlabs/bin/puppet --version'))
 
       puppet_version.major >= 4 ? 'puppet-agent' : 'facter'
     end
