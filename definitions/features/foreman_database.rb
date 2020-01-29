@@ -16,8 +16,8 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   end
 
   def config_files
-    if check_min_version('foreman', '1.25')
-      ['/var/opt/rh/rh-postgresql10/lib/pgsql/data/postgresql.conf']
+    if check_min_version('foreman', '2.0')
+      ['/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf']
     else
       ['/var/lib/pgsql/data/postgresql.conf']
     end

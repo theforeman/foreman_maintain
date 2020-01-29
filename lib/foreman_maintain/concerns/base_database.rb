@@ -2,8 +2,8 @@ module ForemanMaintain
   module Concerns
     module BaseDatabase
       def data_dir
-        if check_min_version('foreman', '1.25')
-          '/var/opt/rh/rh-postgresql10/lib/pgsql/data/'
+        if check_min_version('foreman', '2.0')
+          '/var/opt/rh/rh-postgresql12/lib/pgsql/data/'
         else
           '/var/lib/pgsql/data/'
         end
