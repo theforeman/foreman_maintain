@@ -29,6 +29,7 @@ module Procedures::Restore
     def base_tar
       {
         :overwrite => true,
+        :absolute_names => true,
         :listed_incremental => '/dev/null',
         :command => 'extract',
         :directory => '/'
