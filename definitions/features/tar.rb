@@ -38,12 +38,17 @@ class Features::Tar < ForemanMaintain::Feature
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def tar_command(options)
     volume_size = options.fetch(:volume_size, nil)
+    absolute_names = options.fetch(:absolute_names, nil)
     validate_volume_size(volume_size) unless volume_size.nil?
 
     tar_command = ['tar']
     tar_command << '--selinux'
     tar_command << "--#{options.fetch(:command, 'create')}"
     tar_command << "--file=#{options.fetch(:archive)}"
+
+    if absolute_names
+      tar_command << '--absolute-names'
+    end
 
     if volume_size
       split_tar_script = default_split_tar_script
