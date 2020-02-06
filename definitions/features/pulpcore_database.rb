@@ -25,7 +25,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
   private
 
   def load_configuration
-    full_config = File.read(PULPCORE_DB_CONFIG).split(/[\s,':]/).reject(&:empty?)
+    full_config = File.read(PULPCORE_DB_CONFIG).split(/[\s,'":]/).reject(&:empty?)
 
     @configuration = {}
     @configuration['adapter'] = 'postgresql'
