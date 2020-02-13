@@ -4,7 +4,7 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     description 'Check to verify if any hotfix installed on system'
     tags :pre_upgrade
     preparation_steps do
-      Procedures::Packages::Install.new(:packages => %w[yum-utils])
+      [Checks::CheckEpelRepository.new, Procedures::Packages::Install.new(:packages => %w[yum-utils])]
     end
 
     confine do

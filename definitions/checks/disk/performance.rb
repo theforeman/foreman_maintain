@@ -3,7 +3,10 @@ module Checks
     class Performance < ForemanMaintain::Check
       metadata do
         label :disk_performance
-        preparation_steps { Procedures::Packages::Install.new(:packages => %w[fio]) }
+        preparation_steps do
+          [Checks::CheckEpelRepository.new, Procedures::Packages::Install.new(:packages => %w[fio])]
+        end
+
         confine do
           feature(:instance).pulp
         end
