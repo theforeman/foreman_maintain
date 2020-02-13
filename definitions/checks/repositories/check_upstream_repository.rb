@@ -4,7 +4,7 @@ class Checks::CheckUpstreamRepository < ForemanMaintain::Check
     description 'Check if any upstream repositories are enabled on system'
     tags :pre_upgrade
     preparation_steps do
-      Procedures::Packages::Install.new(:packages => %w[yum-utils])
+      [Checks::CheckEpelRepository.new, Procedures::Packages::Install.new(:packages => %w[yum-utils])]
     end
     confine do
       feature(:instance).downstream
