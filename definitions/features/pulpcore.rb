@@ -11,11 +11,11 @@ class Features::Pulpcore < ForemanMaintain::Feature
 
   def services
     [
+      system_service('rh-redis5-redis', 5),
       system_service('pulpcore-api', 10),
       system_service('pulpcore-content', 10),
       system_service('pulpcore-resource-manager', 10),
       system_service('pulpcore-worker@*', 20, :all => true, :skip_enablement => true),
-      system_service('rh-redis5-redis', 30),
       system_service('httpd', 30)
     ]
   end
