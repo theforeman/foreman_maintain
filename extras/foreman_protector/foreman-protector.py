@@ -77,7 +77,7 @@ def exclude_hook(conduit):
         else:
             suffix = ''
         conduit.info(1, '\n'
-                        'WARNING: Excluding %d update%s due to foreman-protector. \n'
+                        'WARNING: Excluding %d package%s due to foreman-protector. \n'
                         'Use foreman-maintain packages install/update <package> \n'
                         'to safely install packages without restrictions.\n'
                         'Use foreman-maintain upgrade run for full upgrade.\n'
