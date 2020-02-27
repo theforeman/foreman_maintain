@@ -17,12 +17,15 @@ module Procedures::Backup
             :array => true, :default => ['all']
       param :ignore_changed_files, 'Should packing tar ignore changed files',
             :flag => true, :default => false
+      param :exclude_qpidd_data, 'Exclude qpidd /var/lib/qpidd/ Directory during backup',
+            :flag => true, :default => false
     end
 
     # rubocop:disable Metrics/MethodLength
     def run
       logger.debug("Invoking tar from #{FileUtils.pwd}")
-      tar_cmd = tar_command
+      configs, to_exclude = config_files
+      tar_cmd = tar_command(configs, to_exclude)
       attempt_no = 1
       loop do
         runner = nil
@@ -33,7 +36,12 @@ module Procedures::Backup
 
         puts "WARNING: Attempt #{attempt_no}/#{MAX_RETRIES} to collect all config files failed!"
         puts 'Some files were modified during creation of the archive.'
-        if attempt_no == MAX_RETRIES
+        if attempt_no == MAX_RETRIES && @exclude_qpidd_data
+          tar_cmd = tar_command(configs, to_exclude.push('/var/lib/qpidd'))
+          with_spinner('Collecting config files to backup, skipping /var/lib/qpidd') do
+            runner = execute_runner(tar_cmd, :valid_exit_statuses => [0, 1])
+          end
+        elsif attempt_no == MAX_RETRIES
           raise runner.execution_error
         else
           attempt_no += 1
@@ -70,10 +78,8 @@ module Procedures::Backup
 
     private
 
-    def tar_command
+    def tar_command(configs, to_exclude)
       increments_path = File.join(@backup_dir, '.config.snar')
-      configs, to_exclude = config_files
-
       feature(:tar).tar_command(
         :command => 'create', :gzip => true, :archive => tarball_path,
         :listed_incremental => increments_path, :ignore_failed_read => true,
