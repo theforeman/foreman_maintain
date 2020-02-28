@@ -6,7 +6,7 @@ module Procedures::Content
     end
 
     def run
-      execute!('foreman-rake katello:pulp3_migration')
+      puts execute!('foreman-rake katello:pulp3_migration')
     end
   end
 end

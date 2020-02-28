@@ -6,9 +6,13 @@ module Procedures::Content
     end
 
     def run
-      execute!('foreman-rake katello:pulp3_migration')
-      execute!('foreman-rake katello:pulp3_post_migration_check')
-      execute!('foreman-rake katello:pulp3_content_switchover')
+      puts 'Performing final content migration before switching content'
+      puts execute!('foreman-rake katello:pulp3_migration')
+      puts 'Performing a check to verify everything that is needed has been migrated'
+      puts execute!('foreman-rake katello:pulp3_post_migration_check')
+      puts 'Switching specified content over to pulp 3'
+      puts execute!('foreman-rake katello:pulp3_content_switchover')
+      puts 'Re-running the installer to switch specified content over to pulp3'
       args = ['--foreman-proxy-content-proxy-pulp-isos-to-pulpcore=true',
               '--katello-use-pulp-2-for-file=false',
               '--katello-use-pulp-2-for-docker=false']
