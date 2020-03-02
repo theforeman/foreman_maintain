@@ -4,7 +4,12 @@ module Checks
       metadata do
         label :disk_performance
         preparation_steps do
-          [Checks::CheckEpelRepository.new, Procedures::Packages::Install.new(:packages => %w[fio])]
+          if feature(:instance).downstream
+            [Checks::CheckEpelRepository.new,
+             Procedures::Packages::Install.new(:packages => %w[fio])]
+          else
+            [Procedures::Packages::Install.new(:packages => %w[fio])]
+          end
         end
 
         confine do
