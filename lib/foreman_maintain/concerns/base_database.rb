@@ -150,6 +150,17 @@ module ForemanMaintain
         end
       end
 
+      def db_version(config = configuration)
+        if ping(config)
+          # Note - t removes headers, -A removes alignment whitespace
+          server_version_cmd = psql_command(config) + ' -c "SHOW server_version" -t -A'
+          version_string = execute!(server_version_cmd, :hidden_patterns => [config['password']])
+          version(version_string)
+        else
+          raise_service_error
+        end
+      end
+
       private
 
       def base_command(config, command = 'psql')
