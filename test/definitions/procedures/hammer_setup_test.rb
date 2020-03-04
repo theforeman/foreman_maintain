@@ -35,6 +35,7 @@ describe Procedures::HammerSetup do
   context 'there is a default configuration with valid credentials' do
     it 'uses the default config and sets the feature' do
       assume_feature_present(:foreman_server)
+      assume_feature_absent(:foreman_service)
       assume_service_running('httpd')
       hammer_ins.stubs(:_check_connection).returns(true)
       result = run_procedure(subject)
@@ -46,6 +47,7 @@ describe Procedures::HammerSetup do
   context 'there is a configuration with invalid credentials' do
     it 'calls setup_admin_access and sets the feature' do
       assume_feature_present(:foreman_server)
+      assume_feature_absent(:foreman_service)
       assume_service_running('httpd')
       hammer_ins.stubs(:_check_connection).returns(false)
       hammer_ins.expects(:setup_admin_access).returns(true)

@@ -9,9 +9,11 @@ module ForemanMaintain
       end
 
       def services
-        [
-          system_service('httpd', 30)
-        ]
+        if feature(:foreman_service)
+          [feature(:foreman_service).service]
+        else
+          [system_service('httpd', 30)]
+        end
       end
 
       def plugins
