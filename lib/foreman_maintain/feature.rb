@@ -41,5 +41,9 @@ module ForemanMaintain
     def config_files_to_exclude
       []
     end
+
+    def config_files_exclude_for_online
+      []
+    end
   end
 end
