@@ -17,6 +17,8 @@ module Procedures::Backup
             :array => true, :default => ['all']
       param :ignore_changed_files, 'Should packing tar ignore changed files',
             :flag => true, :default => false
+      param :online_backup, 'The config files are being prepared for an online backup',
+            :flag => true, :default => false
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -55,6 +57,7 @@ module Procedures::Backup
 
         configs += feature.config_files
         exclude_configs += feature.config_files_to_exclude
+        exclude_configs += feature.config_files_exclude_for_online if @online_backup
       end
 
       if feature(:foreman_proxy)

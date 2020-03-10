@@ -52,6 +52,13 @@ class Features::Katello < ForemanMaintain::Feature
   end
   # rubocop:enable  Metrics/MethodLength
 
+  def config_files_exclude_for_online
+    [
+      '/var/lib/qpidd',
+      '/var/lib/candlepin/activemq-artemis'
+    ]
+  end
+
   private
 
   def installer_scenario_answers
