@@ -96,5 +96,3 @@ module Scenarios::PresentUpgrade
     end
   end
 end
-
-# ForemanMaintain::UpgradeRunner.register_version('1.15', :present_upgrade)

@@ -4,6 +4,7 @@ require File.expand_path('assume_feature_dependencies_helper', File.dirname(__FI
 module DefinitionsTestHelper
   include ForemanMaintain::Concerns::Finders
   include ForemanMaintain::Concerns::SystemService
+  include ForemanMaintain::Concerns::SystemHelpers
   include AssumeFeatureDependenciesHelper
 
   def detector
