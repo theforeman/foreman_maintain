@@ -17,5 +17,3 @@ module Scenarios::MissingUpgrade
     end
   end
 end
-
-# ForemanMaintain::UpgradeRunner.register_version('1.14', :missing_upgrade)
