@@ -17,9 +17,11 @@ module Checks
       end
 
       def db_upgrade_message(db_version)
-        "\n\n*** WARNING: Server is running on PostgreSQL #{db_version}.\n"\
-        "*** Before performing the upgrade, please upgrade your database to PostgreSQL (>=12)\n"\
-        "*** otherwise data will be lost.\n"
+        product_name = feature(:instance).product_name
+
+        "\n\n*** ERROR: Server is running on PostgreSQL #{db_version} database.\n"\
+        "*** Newer version of #{product_name} supports only PostgreSQL version 12.\n"\
+        "*** Before proceeding further, you must upgrade database to PostgreSQL 12.\n"
       end
     end
   end
