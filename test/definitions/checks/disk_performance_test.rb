@@ -7,13 +7,8 @@ describe Checks::Disk::Performance do
 
   before do
     assume_feature_absent(:mongo)
-    current_feature = if file_nonzero?('/var/lib/pulp')
-                        :pulp2
-                      else
-                        :pulpcore_database
-                      end
-    assume_feature_present(current_feature)
-    check_disk_performance.stubs(:default_dirs).returns(:pulp => feature(current_feature).data_dir)
+    assume_feature_present(:pulp2)
+    check_disk_performance.stubs(:default_dirs).returns(:pulp2 => '/var/lib/pulp')
   end
 
   it 'should confine existence of fio' do
