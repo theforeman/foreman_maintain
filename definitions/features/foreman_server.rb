@@ -9,8 +9,8 @@ module ForemanMaintain
       end
 
       def services
-        if feature(:foreman_service)
-          [feature(:foreman_service).service]
+        if foreman_service_installed?
+          [system_service('foreman', 30)]
         else
           [system_service('httpd', 30)]
         end
@@ -42,6 +42,16 @@ module ForemanMaintain
         [
           '/var/lib/foreman/public'
         ]
+      end
+
+      def services_running?
+        services.all?(&:running?)
+      end
+
+      private
+
+      def foreman_service_installed?
+        package_manager.installed?(['foreman-service']) && check_min_version('foreman', '2.1')
       end
     end
   end
