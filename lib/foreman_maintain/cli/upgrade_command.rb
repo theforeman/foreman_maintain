@@ -7,7 +7,7 @@ module ForemanMaintain
       end
 
       def self.disable_self_upgrade_option
-        option '--disable-self-upgrade', :flag, 'Disable foreman-maintain auto-upgrade',
+        option '--disable-self-upgrade', :flag, 'Disable automatic self upgrade',
                :default => false
       end
 
