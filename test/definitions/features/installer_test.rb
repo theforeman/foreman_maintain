@@ -44,7 +44,7 @@ describe Features::Installer do
       it '#upgrade runs the installer with correct params' do
         assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 foreman-installer --disable-system-checks --upgrade',
+          with("LANG=en_US.utf-8 foreman-installer #{installer_args}",
                :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
@@ -53,7 +53,7 @@ describe Features::Installer do
       it '#upgrade runs the installer with correct params in satellite' do
         assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
-          with('LANG=en_US.utf-8 satellite-installer --disable-system-checks --upgrade',
+          with("LANG=en_US.utf-8 satellite-installer #{installer_args}",
                :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
