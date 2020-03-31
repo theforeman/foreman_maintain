@@ -92,9 +92,7 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def upgrade(exec_options = {})
-    arguments = '--disable-system-checks'
-    arguments += ' --upgrade' if can_upgrade?
-    run(arguments, exec_options)
+    run(installer_args, exec_options)
   end
 
   def initial_admin_username
