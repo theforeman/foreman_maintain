@@ -1,6 +1,5 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 require File.expand_path('assume_feature_dependencies_helper', File.dirname(__FILE__))
-
 module DefinitionsTestHelper
   include ForemanMaintain::Concerns::Finders
   include ForemanMaintain::Concerns::SystemService
@@ -106,6 +105,11 @@ module DefinitionsTestHelper
 
   def installer_config_dir(dirs)
     Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
+  end
+
+  def installer_args
+    Features::Installer.any_instance.stubs(:installer_arguments).returns(' --disable-system-checks \
+                                                                         --upgrade')
   end
 
   def stub_foreman_proxy_config
