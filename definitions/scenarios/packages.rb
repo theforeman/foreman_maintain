@@ -1,6 +1,5 @@
 module ForemanMaintain::Scenarios
   module Packages
-    include ForemanMaintain::Concerns::SystemHelpers
     class Status < ForemanMaintain::Scenario
       metadata do
         label :packages_status
@@ -50,8 +49,7 @@ module ForemanMaintain::Scenarios
         add_step_with_context(Procedures::Packages::UnlockVersions)
         add_step_with_context(Procedures::Packages::Install,
                               :force => true, :warn_on_errors => true)
-        add_step_with_context(Procedures::Installer::Run,
-                              :arguments => installer_args.to_s)
+        add_step_with_context(Procedures::Installer::Upgrade)
         add_step(Procedures::Packages::LockingStatus)
       end
 
@@ -78,8 +76,7 @@ module ForemanMaintain::Scenarios
           Procedures::Packages::UnlockVersions
         )
         add_step_with_context(Procedures::Packages::Update, :force => true, :warn_on_errors => true)
-        add_step_with_context(Procedures::Installer::Run,
-                              :arguments => installer_args.to_s)
+        add_step_with_context(Procedures::Installer::Upgrade)
         add_step(Procedures::Packages::LockingStatus)
       end
 

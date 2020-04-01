@@ -11,6 +11,7 @@ describe Features::Installer do
     before do
       installer_config_dir(["#{data_dir}/installer/simple_config"])
       mock_installer_package('foreman-installer')
+      installer_args
     end
 
     it 'loads list of configs on the start' do
@@ -44,7 +45,7 @@ describe Features::Installer do
       it '#upgrade runs the installer with correct params' do
         assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
-          with("LANG=en_US.utf-8 foreman-installer #{installer_args}",
+          with("LANG=en_US.utf-8 foreman-installer #{subject.installer_arguments}",
                :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
@@ -53,7 +54,7 @@ describe Features::Installer do
       it '#upgrade runs the installer with correct params in satellite' do
         assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
-          with("LANG=en_US.utf-8 satellite-installer #{installer_args}",
+          with("LANG=en_US.utf-8 satellite-installer #{subject.installer_arguments}",
                :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)

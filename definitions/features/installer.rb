@@ -92,7 +92,15 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def upgrade(exec_options = {})
-    run(installer_args, exec_options)
+    run(installer_arguments, exec_options)
+  end
+
+  def installer_arguments
+    installer_args = ' --disable-system-checks'
+    unless check_min_version('foreman', '2.1') || check_min_version('foreman-proxy', '2.1')
+      installer_args += ' --upgrade'
+    end
+    installer_args
   end
 
   def initial_admin_username
