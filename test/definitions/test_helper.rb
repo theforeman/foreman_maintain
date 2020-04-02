@@ -107,11 +107,6 @@ module DefinitionsTestHelper
     Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
   end
 
-  def installer_args
-    Features::Installer.any_instance.stubs(:installer_arguments).returns(' --disable-system-checks \
-                                                                         --upgrade')
-  end
-
   def stub_foreman_proxy_config
     settings_file = '/etc/foreman-proxy/settings.yml'
     Features::ForemanProxy.any_instance.stubs(
