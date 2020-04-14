@@ -16,6 +16,10 @@ module ForemanMaintain
         end
       end
 
+      def socket_name
+        foreman_service_installed? ? 'foreman.socket' : nil
+      end
+
       def plugins
         list_cmd = "export RUBYOPT='-W0'; foreman-rake plugin:list| grep 'Foreman plugin: '"
         plugin_list = execute(list_cmd).lines
