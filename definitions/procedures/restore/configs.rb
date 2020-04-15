@@ -19,10 +19,15 @@ module Procedures::Restore
       end
     end
 
+    # rubocop:disable  Metrics/MethodLength
     def restore_configs(backup)
       exclude = ForemanMaintain.available_features.each_with_object([]) do |feat, cfgs|
+        if online_backup?
+          feat.config_files_exclude_for_online.each { |f| cfgs << f.gsub(%r{^/}, '') }
+        end
         feat.config_files_to_exclude.each { |f| cfgs << f.gsub(%r{^/}, '') }
       end
+
       tar_options = {
         :overwrite => true,
         :listed_incremental => '/dev/null',
@@ -35,9 +40,15 @@ module Procedures::Restore
 
       feature(:tar).run(tar_options)
     end
+    # rubocop:enable  Metrics/MethodLength
 
     def reload_configs
       feature(:mongo).reload_db_config if feature(:mongo)
+    end
+
+    def online_backup?
+      metadata_file = YAML.load(File.read(options['backup_dir'] + 'metadata.yml'))
+      @online_flag = metadata_file['online']
     end
 
     private
