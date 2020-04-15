@@ -210,6 +210,7 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::ForemanDB,
         Procedures::Backup::Online::PulpcoreDB
       )
+      add_step_with_context(Procedures::Backup::Metadata, :online_backup => true)
     end
 
     def strategy

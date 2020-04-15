@@ -36,8 +36,10 @@ module ForemanMaintain::Scenarios
       end
       restore_mongo_dump(backup)
       add_steps_with_context(Procedures::Pulp::Migrate,
-                             Procedures::Pulpcore::Migrate,
-                             Procedures::Service::Start,
+                             Procedures::Pulpcore::Migrate)
+
+      add_steps_with_context(Procedures::Restore::RegenerateQueues) if online_backup?
+      add_steps_with_context(Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
@@ -94,6 +96,11 @@ module ForemanMaintain::Scenarios
 
       context.map(:incremental_backup,
                   Procedures::Selinux::SetFileSecurity => :incremental_backup)
+    end
+
+    def online_backup?
+      metadata_file = YAML.load(File.read(context.get(:backup_dir) + 'metadata.yml'))
+      @online_flag = metadata_file['online']
     end
   end
 end
