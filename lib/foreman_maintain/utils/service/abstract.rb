@@ -10,6 +10,12 @@ module ForemanMaintain::Utils
         @options = options
       end
 
+      def socket
+        if @options[:socket]
+          self.class.new("#{@options[:socket]}.socket", priority)
+        end
+      end
+
       def <=>(other)
         prio_cmp = @priority <=> other.priority
         prio_cmp == 0 ? @name <=> other.name : prio_cmp

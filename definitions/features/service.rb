@@ -99,18 +99,29 @@ class Features::Service < ForemanMaintain::Feature
     %w[start stop restart status enable disable].include?(action)
   end
 
+  def socket_list(service_list)
+    service_list.map(&:socket).compact.select(&:exist?)
+  end
+
   def filter_services(service_list, options)
     service_list = include_unregistered_services(service_list, options[:include])
+
+    if options[:include_sockets] && options[:only].empty? && options[:exclude].empty?
+      service_list.concat(socket_list(service_list))
+    end
 
     if options[:only] && options[:only].any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }
       end
+
+      service_list.concat(socket_list(service_list)) if options[:include_sockets]
       service_list = include_unregistered_services(service_list, options[:only])
     end
 
     if options[:exclude] && options[:exclude].any?
       service_list = service_list.reject { |service| options[:exclude].include?(service.name) }
+      service_list.concat(socket_list(service_list)) if options[:include_sockets]
     end
     service_list.sort
   end

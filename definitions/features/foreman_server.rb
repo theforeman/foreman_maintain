@@ -10,14 +10,10 @@ module ForemanMaintain
 
       def services
         if foreman_service_installed?
-          [system_service('foreman', 30)]
+          [system_service('foreman', 30, :socket => 'foreman')]
         else
           [system_service('httpd', 30)]
         end
-      end
-
-      def socket_name
-        foreman_service_installed? ? 'foreman.socket' : nil
       end
 
       def plugins
