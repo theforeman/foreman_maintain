@@ -1,7 +1,7 @@
 class Checks::CheckEpelRepository < ForemanMaintain::Check
   metadata do
     label :check_epel_repository
-    description 'Check if EPEL repository enabled on system'
+    description 'Check to verify no any non Red Hat repositories(Eg: EPEL) enabled'
     tags :pre_upgrade
     confine do
       feature(:instance).downstream
@@ -9,8 +9,8 @@ class Checks::CheckEpelRepository < ForemanMaintain::Check
   end
 
   def run
-    with_spinner('Checking for presence of EPEL repository') do
-      assert(!epel_enabled?, 'System is subscribed to EPEL repository')
+    with_spinner('Checking if any non Red Hat repositories(Eg: EPEL) enabled on the system') do
+      assert(!epel_enabled?, 'System is subscribed to non Red Hat repositories(Eg: EPEL)')
     end
   end
 
