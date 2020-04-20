@@ -87,8 +87,7 @@ module ForemanMaintain
                  else
                    "rhel-#{rh_version_major}-server-#{package_name}-#{full_version}-rpms"
                  end
-
-        if current_minor_version == '6.3' && server_version.to_s != '6.4' && (
+        if current_minor_version == '6.3' && full_version.to_s != '6.4' && (
           feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
           # TODO: confirm repo for capsule. It might be same repo
           repos << "rhel-#{rh_version_major}-server-satellite-tools-6.3-puppet4-rpms"
