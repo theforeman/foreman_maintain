@@ -5,7 +5,7 @@ module ForemanMaintain::Scenarios
       return true if packages_list.length == 1
 
       fm_pkg = ForemanMaintain.main_package_name
-      puts "ERROR: Perform this action for '#{fm_pkg}' before any other packages."
+      puts "ERROR: install or update '#{fm_pkg}' package individually."
       exit 1
     end
 
