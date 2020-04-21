@@ -55,7 +55,7 @@ describe Checks::SystemRegistration do
         subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/rhsm_mismatch.conf')
         subject.stubs(:hostname).returns('sat.example.com')
         result = run_step(subject)
-
+        puts result.fail?.inspect
         refute result.fail?, msg
       end
 
@@ -64,7 +64,7 @@ describe Checks::SystemRegistration do
         subject.stubs(:rhsm_conf_file).returns(rhsm_conf_file_path + '/bad_rhsm.conf')
         subject.stubs(:hostname).returns('foreman.example.com')
         result = run_step(subject)
-
+        puts result.fail?.inspect
         refute result.fail?, msg
       end
     end

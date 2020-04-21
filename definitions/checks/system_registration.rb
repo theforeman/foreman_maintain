@@ -10,6 +10,7 @@ class Checks::SystemRegistration < ForemanMaintain::Check
   end
 
   def run
+    puts "TEST:: #{rhsm_hostname} -> #{hostname}"
     assert(
       rhsm_hostname.downcase != hostname.downcase,
       notification_message,
