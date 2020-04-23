@@ -27,7 +27,7 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def filtered_services(options)
-    service_list = existing_services
+    service_list = include_unregistered_services(existing_services, options[:include])
     service_list = filter_services(service_list, options)
     raise 'No services found matching your parameters' unless service_list.any?
 
@@ -102,9 +102,9 @@ class Features::Service < ForemanMaintain::Feature
   def extend_service_list_with_sockets(service_list, options)
     return service_list unless options[:include_sockets]
 
-    if ((options[:only].empty? && options[:exclude].empty?) ||
-        (options[:only] && options[:only].any?) ||
-        (options[:exclude] && options[:exclude].any?))
+    if (options[:only].empty? && options[:exclude].empty?) ||
+       (options[:only] && options[:only].any?) ||
+       (options[:exclude] && options[:exclude].any?)
       socket_list = service_list.map(&:socket).compact.select(&:exist?)
       service_list.concat(socket_list)
     end
@@ -112,8 +112,6 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def filter_services(service_list, options)
-    service_list = include_unregistered_services(service_list, options[:include])
-
     if options[:only] && options[:only].any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }

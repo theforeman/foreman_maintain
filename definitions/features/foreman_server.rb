@@ -9,7 +9,7 @@ module ForemanMaintain
       end
 
       def services
-        if foreman_service_installed?
+        if execute?('systemctl is-enabled foreman')
           [system_service('foreman', 30, :socket => 'foreman')]
         else
           [system_service('httpd', 30)]
