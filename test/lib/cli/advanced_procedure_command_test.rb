@@ -27,7 +27,6 @@ module ForemanMaintain
         Subcommands:
             procedure                     Run maintain procedures manually
             prebuild-bash-completion      Prepare map of options and subcommands for Bash completion
-            task-cleanup                  Perform task cleanup
 
         Options:
             -h, --help                    print help

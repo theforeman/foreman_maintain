@@ -95,17 +95,12 @@ module ForemanMaintain
       end
 
       def with_line_streaming(io)
-        output = if block_given?
-                   result = []
-                   io.each_line.lazy.each do |line|
-                     result << line
-                     yield line.strip
-                   end
-                   result.join
-                 else
-                   io.read
-                 end
-        output
+        return io.read unless block_given?
+
+        io.each_line.lazy.map do |line|
+          yield line.strip
+          line
+        end.join
       end
 
       def hide_strings(string)
