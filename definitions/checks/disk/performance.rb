@@ -5,7 +5,7 @@ module Checks
         label :disk_performance
         preparation_steps do
           if feature(:instance).downstream
-            [Checks::CheckEpelRepository.new,
+            [Checks::Repositories::CheckNonRhRepository.new,
              Procedures::Packages::Install.new(:packages => %w[fio])]
           else
             [Procedures::Packages::Install.new(:packages => %w[fio])]
