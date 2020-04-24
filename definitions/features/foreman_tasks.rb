@@ -121,13 +121,6 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     check_min_version('foreman', '1.17') ? 'dynflowd' : 'foreman-tasks'
   end
 
-  def task_cleanup(*args)
-    raise 'Task cleanup can be executed only on the Foreman server' unless server?
-    command = generate_task_cleanup_command(*args)
-
-    execute!(command) { |line| yield line if block_given? }
-  end
-
   # rubocop:disable Metrics/ParameterLists
   def generate_task_cleanup_command(rake_command, batch_size, states, after,
                                     search, backup, noop, verbose)

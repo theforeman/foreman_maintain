@@ -1,5 +1,3 @@
-puts "LOADING"
-
 module Procedures::ForemanTasks
   class Cleanup < ForemanMaintain::Procedure
     PERMITTED_STATES = %w[all pending scheduled planning planned running paused stopped].freeze
@@ -7,6 +5,9 @@ module Procedures::ForemanTasks
       for_feature :foreman_tasks
       description 'Perform task cleanup'
       preparation_steps { Checks::Foreman::DBUp.new }
+      confine do
+        feature(:foreman) && feature(:foreman_tasks)
+      end
 
       param :states,
             'Operate on tasks in STATES' \
@@ -29,13 +30,16 @@ module Procedures::ForemanTasks
 
     def run
       f = feature(:foreman_tasks)
+      @search = 'label != a_label' if !@states.empty? && @search.nil?
       args = [@rake_command, @batch_size, @states, @after, @search, @backup, @noop, @verbose]
+
+      cleanup_command = f.generate_task_cleanup_command(*args)
       if @generate
-        puts f.generate_task_cleanup_command(*args)
+        puts cleanup_command
       else
         message = 'Performing task cleanup'
         with_spinner(message) do |spinner|
-          f.task_cleanup(*args) { |update| spinner.update update }
+          execute!(cleanup_command) { |line| spinner.update line }
           spinner.update(message)
         end
       end

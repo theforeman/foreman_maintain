@@ -8,12 +8,6 @@ module ForemanMaintain
       subcommand 'prebuild-bash-completion',
                  'Prepare map of options and subcommands for Bash completion',
                  PrebuildBashCompletionCommand
-
-      if defined?(Procedures::ForemanTasks)
-        procedure = Procedures::ForemanTasks::Cleanup
-        klass = Class.new(Procedure::AbstractProcedureCommand) { params_to_options(procedure.params) }
-        subcommand(dashize(procedure.label), procedure.description, klass)
-      end
     end
   end
 end
