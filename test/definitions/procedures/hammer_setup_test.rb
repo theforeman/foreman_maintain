@@ -35,9 +35,7 @@ describe Procedures::HammerSetup do
   context 'there is a default configuration with valid credentials' do
     it 'uses the default config and sets the feature' do
       httpd_service = assume_service_running('httpd')
-      assume_feature_present(
-        :foreman_server, :foreman_service_installed? => false, :services => [httpd_service]
-      )
+      assume_feature_present(:foreman_server, :services => [httpd_service])
       hammer_ins.stubs(:_check_connection).returns(true)
       result = run_procedure(subject)
       assert result.success?, 'the procedure was expected to succeed'
@@ -48,9 +46,7 @@ describe Procedures::HammerSetup do
   context 'there is a configuration with invalid credentials' do
     it 'calls setup_admin_access and sets the feature' do
       httpd_service = assume_service_running('httpd')
-      assume_feature_present(
-        :foreman_server, :foreman_service_installed? => false, :services => [httpd_service]
-      )
+      assume_feature_present(:foreman_server, :services => [httpd_service])
       hammer_ins.stubs(:_check_connection).returns(false)
       hammer_ins.expects(:setup_admin_access).returns(true)
       result = run_procedure(subject)
@@ -60,9 +56,7 @@ describe Procedures::HammerSetup do
     it 'skips setup_admin_access if httpd is down' do
       httpd_service = assume_service_stopped('httpd')
       Features::Instance.any_instance.stubs(:product_name => 'Foreman')
-      assume_feature_present(
-        :foreman_server, :foreman_service_installed? => false, :services => [httpd_service]
-      )
+      assume_feature_present(:foreman_server, :services => [httpd_service])
       hammer_ins.stubs(:_check_connection).returns(false)
       hammer_ins.expects(:setup_admin_access).never
       result = run_procedure(subject)

@@ -102,12 +102,8 @@ class Features::Service < ForemanMaintain::Feature
   def extend_service_list_with_sockets(service_list, options)
     return service_list unless options[:include_sockets]
 
-    if (options[:only].empty? && options[:exclude].empty?) ||
-       (options[:only] && options[:only].any?) ||
-       (options[:exclude] && options[:exclude].any?)
-      socket_list = service_list.map(&:socket).compact.select(&:exist?)
-      service_list.concat(socket_list)
-    end
+    socket_list = service_list.map(&:socket).compact.select(&:exist?)
+    service_list.concat(socket_list)
     service_list
   end
 

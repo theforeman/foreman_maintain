@@ -47,12 +47,6 @@ module ForemanMaintain
       def services_running?
         services.all?(&:running?)
       end
-
-      private
-
-      def foreman_service_installed?
-        package_manager.installed?(['foreman-service']) && check_min_version('foreman', '2.1')
-      end
     end
   end
 end
