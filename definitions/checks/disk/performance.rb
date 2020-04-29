@@ -3,7 +3,6 @@ module Checks
     class Performance < ForemanMaintain::Check
       metadata do
         label :disk_performance
-        tags :pre_upgrade
         preparation_steps { Procedures::Packages::Install.new(:packages => %w[fio]) }
         confine do
           feature(:instance).pulp
