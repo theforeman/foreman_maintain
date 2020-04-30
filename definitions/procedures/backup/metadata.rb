@@ -6,7 +6,7 @@ module Procedures::Backup
       preparation_steps { Checks::Foreman::DBUp.new if feature(:foreman_server) }
       param :backup_dir, 'Directory where to backup to', :required => true
       param :incremental_dir, 'Changes since specified backup only'
-      param :online_backup, 'Selected online backup ?'
+      param :online_backup, 'Selected online backup ?', :flag => true, :default => false
     end
 
     def run
@@ -17,7 +17,7 @@ module Procedures::Backup
         metadata['proxy_features'] = proxy_feature_list(spinner) || []
         metadata['rpms'] = rpms(spinner)
         metadata['incremental'] = @incremental_dir || false
-        metadata['online'] = @online_backup || false
+        metadata['online'] = @online_backup
         save_metadata(metadata, spinner)
       end
     end

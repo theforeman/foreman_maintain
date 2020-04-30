@@ -1,7 +1,10 @@
 module Procedures::Restore
   class RegenerateQueues < ForemanMaintain::Procedure
     metadata do
-      description 'Regenerate required qpidd and activemq queues while restoring online backup'
+      description 'Regenerate required activemq and qpidd queues while restoring online backup'
+      confine do
+        feature(:pulp2)
+      end
     end
 
     def ssl_cert
@@ -28,6 +31,7 @@ module Procedures::Restore
       with_spinner('Resetting the queues') do |spinner|
         regenerate_activemq_queues(spinner)
         regenerate_qpidd_queues(spinner)
+        spinner.update('Queues created successfully')
       end
     end
 
@@ -50,7 +54,7 @@ module Procedures::Restore
       execute!('rm -rf /var/lib/qpidd/.qpidd/qls')
       spinner.update('Starting qpidd service')
       feature(:service).handle_services(spinner, 'start', :only => ['qpidd'])
-      spinner.update('Service qpidd started, waiting 60 seconds to start it completely.')
+      spinner.update('Service qpidd started, waiting 60 seconds to start it completely')
       sleep 60
       spinner.update('Recreating qpidd queues')
       run_qpid_command('add exchange topic event --durable')
