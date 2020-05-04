@@ -100,7 +100,7 @@ module ForemanMaintain::Scenarios
 
     def online_backup?
       metadata_file = YAML.load(File.read(context.get(:backup_dir) + 'metadata.yml'))
-      metadata_file['online']
+      metadata_file['online'] || false
     end
   end
 end
