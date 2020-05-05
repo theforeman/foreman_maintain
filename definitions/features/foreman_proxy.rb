@@ -66,7 +66,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
     configs.push('/var/lib/tftpboot') if backup_features.include?('tftp')
     configs += ['/var/named/', '/etc/named*'] if backup_features.include?('dns')
-    if backup_features.include?('dhcp')
+    if backup_features.include?('dhcp') && dhcp_provider == 'dhcp_isc'
       configs += ['/var/lib/dhcpd', File.dirname(dhcpd_config_file)]
     end
     configs.push('/usr/share/xml/scap') if backup_features.include?('openscap')
@@ -209,11 +209,23 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     dhcpd_config_file
   end
 
-  def lookup_using_dhcp_yml
-    dhcp_yml_path = lookup_into(FOREMAN_PROXY_DHCP_YML_PATHS)
-    raise "Couldn't find dhcp.yml file under foreman-proxy" unless dhcp_yml_path
+  def dhcp_yml_path
+    dhcp_path = lookup_into(FOREMAN_PROXY_DHCP_YML_PATHS)
+    raise "Couldn't find dhcp.yml file under foreman-proxy" unless dhcp_path
 
-    configs_from_dhcp_yml = yaml_load(dhcp_yml_path)
+    dhcp_path
+  end
+
+  def parse_dhcp_yml
+    yaml_load(dhcp_yml_path)
+  end
+
+  def dhcp_provider
+    parse_dhcp_yml[:use_provider]
+  end
+
+  def lookup_using_dhcp_yml
+    configs_from_dhcp_yml = parse_dhcp_yml
     if configs_from_dhcp_yml.key?(:dhcp_config)
       return configs_from_dhcp_yml[:dhcp_config]
     elsif configs_from_dhcp_yml.key?(:use_provider)
