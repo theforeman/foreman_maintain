@@ -103,8 +103,7 @@ class Features::Service < ForemanMaintain::Feature
     return service_list unless options[:include_sockets]
 
     socket_list = service_list.map(&:socket).compact.select(&:exist?)
-    service_list.concat(socket_list)
-    service_list
+    service_list + socket_list
   end
 
   def filter_services(service_list, options)
