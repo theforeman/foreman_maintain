@@ -91,11 +91,12 @@ module ForemanMaintain
 
       it 'invokes yum to install list of packages' do
         expect_sys_execute('yum install package1 package2', :via => :execute!)
-        subject.install(%w[package1 package2])
+        subject.install(%w[package1 package2], :assumeyes => false)
       end
 
       it 'invokes yum to install package with yes enforced' do
-        expect_sys_execute('yum -y install package', :via => :execute!)
+        expect_sys_execute('yum -y install package', :via => :execute!,
+                                                     :execute_options => { :interactive => false })
         subject.install('package', :assumeyes => true)
       end
     end
@@ -112,7 +113,8 @@ module ForemanMaintain
       end
 
       it 'invokes yum to update package with yes enforced' do
-        expect_sys_execute('yum -y update package', :via => :execute!)
+        expect_sys_execute('yum -y update package', :via => :execute!,
+                                                    :execute_options => { :interactive => false })
         subject.update('package', :assumeyes => true)
       end
 
@@ -124,8 +126,9 @@ module ForemanMaintain
 
     describe 'clean_cache' do
       it 'invokes yum to clean cache' do
-        expect_sys_execute('yum clean all', :via => :execute!)
-        subject.clean_cache
+        expect_sys_execute('yum -y clean all', :via => :execute!,
+                                               :execute_options => { :interactive => false })
+        subject.clean_cache(:assumeyes => true)
       end
     end
 

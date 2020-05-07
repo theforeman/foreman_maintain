@@ -10,7 +10,7 @@ module Procedures::Packages
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
-      package_manager.clean_cache
+      package_manager.clean_cache(:assumeyes => assumeyes_val)
       packages_action(:update, @packages, :assumeyes => assumeyes_val)
     rescue ForemanMaintain::Error::ExecutionError => e
       if @warn_on_errors

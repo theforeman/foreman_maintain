@@ -49,11 +49,15 @@ module Scenarios::Satellite_6_5
       tags :migrations
     end
 
+    def set_context_mapping
+      context.map(:assumeyes, Procedures::Installer::Upgrade => :assumeyes)
+    end
+
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => '6.5'))
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
-      add_step(Procedures::Installer::Upgrade.new)
+      add_step_with_context(Procedures::Installer::Upgrade)
     end
   end
 
