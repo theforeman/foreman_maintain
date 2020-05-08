@@ -10,7 +10,6 @@ module ForemanMaintain::PackageManager
     def dnf_action(action, packages, with_status: false, assumeyes: false)
       yum_options = []
       yum_options << '-y' if assumeyes
-      # If assumeyes selected we execute commands in non-interactive mode
       if with_status
         sys.execute_with_status("dnf #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
                                 :interactive => !assumeyes)

@@ -107,7 +107,6 @@ module ForemanMaintain::PackageManager
       yum_options << '-y' if assumeyes
       yum_options_s = yum_options.empty? ? '' : ' ' + yum_options.join(' ')
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
-      # If assumeyes selected we execute commands in non-interactive mode
       if with_status
         sys.execute_with_status("yum#{yum_options_s} #{action}#{packages_s}",
                                 :interactive => !assumeyes)
