@@ -14,10 +14,16 @@ describe Checks::Foreman::CheckCorruptedRoles do
   end
 
   it 'fails when some roles with corrupted filters detected' do
-    assume_feature_present(:foreman_database, :query => [{ 'role_id' => 5 }])
+    assume_feature_present(:foreman_database, :present? => true)
+    dups = [{ 'role_id' => '31', 'role_name' => 'demoRole', 'permission_name' => 'edit_hosts', \
+              'resource_type' => 'Host' },
+            { 'role_id' => '31', 'role_name' => 'demoRole', 'permission_name' => 'view_hosts', \
+              'resource_type' => 'xyz' }]
+    subject.stubs(:find_filter_permissions).returns(dups)
     result = run_check(subject)
     assert result.fail?, 'Check expected to fail'
-    assert_match 'There are user roles with inconsistent filters', result.output
+    assert_match 'Below are affected roles containing the filters with permission for which ' \
+                  "resource type has been changed.\ndemoRole", result.output
     assert_equal [Procedures::Foreman::FixCorruptedRoles],
                  subject.next_steps.map(&:class)
   end
