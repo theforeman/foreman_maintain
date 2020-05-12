@@ -12,6 +12,9 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   FOREMAN_PROXY_DHCP_YML_PATHS = ['/etc/foreman-proxy/settings.d/dhcp.yml',
                                   '/usr/local/etc/foreman-proxy/settings.d/dhcp.yml'].freeze
 
+  FOREMAN_PROXY_TFTP_YML_PATHS = ['/etc/foreman-proxy/settings.d/tftp.yml',
+                                  '/usr/local/etc/foreman-proxy/settings.d/tftp.yml'].freeze
+
   def valid_dhcp_configs?
     dhcp_req_pass? && !syntax_error_exists?
   end
@@ -111,6 +114,10 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
   def dhcpd_config_file
     @dhcpd_config_file ||= lookup_dhcpd_config_file
+  end
+
+  def tftp_root_directory
+    @tftp_root_directory ||= lookup_tftp_root_directory
   end
 
   private
@@ -234,6 +241,18 @@ class Features::ForemanProxy < ForemanMaintain::Feature
       return dhcp_provider_configs[:config] if dhcp_provider_configs.key?(:config)
     else
       raise "Couldn't find DHCP Configurations in #{dhcp_yml_path}"
+    end
+  end
+
+  def lookup_tftp_root_directory
+    tftp_yml_path = lookup_into(FOREMAN_PROXY_TFTP_YML_PATHS)
+    raise "Couldn't find tftp.yml file under foreman-proxy" unless tftp_yml_path
+
+    configs_from_tftp_yml = yaml_load(tftp_yml_path)
+    if configs_from_tftp_yml.key?(:tftproot)
+      return configs_from_tftp_yml[:tftproot]
+    else
+      raise "Couldn't find TFTP Configurations in #{tftp_yml_path}"
     end
   end
 
