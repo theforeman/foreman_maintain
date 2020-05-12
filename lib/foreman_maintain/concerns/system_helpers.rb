@@ -86,6 +86,10 @@ module ForemanMaintain
         File.exist?(filename) && !File.zero?(filename)
       end
 
+      def list_files_in_directory(directory_path)
+        Dir.entries(directory_path).select { |f| !File.directory? f }
+      end
+
       def find_package(name)
         package_manager.find_installed_package(name)
       end
