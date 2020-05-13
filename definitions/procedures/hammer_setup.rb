@@ -5,7 +5,7 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
   end
 
   def run
-    if feature(:foreman_server) && ForemanMaintain::Utils.system_service('httpd', 30).running?
+    if feature(:foreman_server) && feature(:foreman_server).services_running?
       puts 'Configuring Hammer CLI...'
       result = feature(:hammer).setup_admin_access
       logger.info 'Hammer was configured successfully.' if result

@@ -9,9 +9,11 @@ module ForemanMaintain
       end
 
       def services
-        [
-          system_service('httpd', 30)
-        ]
+        if execute?('systemctl is-enabled foreman')
+          [system_service('foreman', 30, :socket => 'foreman')]
+        else
+          [system_service('httpd', 30)]
+        end
       end
 
       def plugins
@@ -40,6 +42,10 @@ module ForemanMaintain
         [
           '/var/lib/foreman/public'
         ]
+      end
+
+      def services_running?
+        services.all?(&:running?)
       end
     end
   end

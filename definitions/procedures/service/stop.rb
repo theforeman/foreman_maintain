@@ -8,7 +8,7 @@ module Procedures::Service
     end
 
     def run
-      run_service_action('stop', common_options)
+      run_service_action('stop', common_options.merge(:include_sockets => true))
     end
   end
 end
