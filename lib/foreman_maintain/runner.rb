@@ -15,6 +15,7 @@ module ForemanMaintain
       @reporter = reporter
       @scenarios = Array(scenarios)
       @quit = false
+      @rescue = false
       @last_scenario = nil
       @last_scenario_continuation_confirmed = false
       @exit_code = 0
@@ -29,12 +30,17 @@ module ForemanMaintain
       @assumeyes
     end
 
+    def rescue?
+      @rescue
+    end
+
     def run
       @scenarios.each do |scenario|
         run_scenario(scenario)
         next unless @quit
 
         if @rescue_scenario
+          @rescue = true
           logger.debug('=== Rescue scenario found. Executing ===')
           execute_scenario_steps(@rescue_scenario, true)
         end
@@ -44,10 +50,10 @@ module ForemanMaintain
 
     def run_scenario(scenario)
       return if scenario.steps.empty?
-      raise 'The runner is already in quit state' if quit?
+      raise 'The runner is already in quit state' if quit? && !rescue?
 
       confirm_scenario(scenario)
-      return if quit?
+      return if quit? && !rescue?
 
       execute_scenario_steps(scenario)
     ensure
