@@ -1,6 +1,7 @@
 module Procedures::Restore
   class RegenerateQueues < ForemanMaintain::Procedure
     metadata do
+      advanced_run false
       description 'Regenerate required activemq and qpidd queues while restoring online backup'
       confine do
         feature(:pulp2)
