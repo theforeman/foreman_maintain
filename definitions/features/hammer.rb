@@ -27,6 +27,7 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def setup_admin_access
     return true if check_connection
+
     logger.info('Hammer setup is not valid. Fixing configuration.')
     custom_config = { :foreman => { :username => username } }
     custom_config = on_invalid_host(custom_config)
@@ -42,8 +43,8 @@ class Features::Hammer < ForemanMaintain::Feature
     @ready
   end
 
-  def check_connection
-    @ready = _check_connection
+  def check_connection(config = {})
+    @ready = config.empty? ? _check_connection : _check_connection(config)
   end
 
   def server_uri
@@ -55,8 +56,11 @@ class Features::Hammer < ForemanMaintain::Feature
     File.join(fm_config_dir, 'foreman-maintain-hammer.yml')
   end
 
-  def command_base
-    if File.exist?(custom_config_file)
+  def command_base(config = {})
+    if !config.empty?
+      %(RUBYOPT='-W0' LANG=en_US.utf-8 hammer --username "#{config[:foreman][:username]}" \
+        --password "#{config[:foreman][:password]}" --interactive=no)
+    elsif File.exist?(custom_config_file)
       %(RUBYOPT='-W0' LANG=en_US.utf-8 hammer -c "#{custom_config_file}" --interactive=no)
     else
       %(RUBYOPT='-W0' LANG=en_US.utf-8 hammer --interactive=no)
@@ -100,9 +104,7 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def config_error
     raise ForemanMaintain::HammerConfigurationError, 'Hammer configuration failed: '\
-                  'Is the admin credential from the file' \
-                  " #{custom_config_file} correct?\n" \
-                  'Is the server down?'
+                  "Incorrect credential for #{username} user."
   end
 
   def on_missing_password(custom_config)
@@ -131,6 +133,7 @@ class Features::Hammer < ForemanMaintain::Feature
     config_directories.reverse.each do |path|
       full_path = File.expand_path path
       next unless File.directory? full_path
+
       load_from_file(File.join(full_path, 'cli_config.yml'))
       load_from_file(File.join(full_path, 'defaults.yml'))
       # load config for modules
@@ -152,25 +155,28 @@ class Features::Hammer < ForemanMaintain::Feature
 
   def username
     return 'admin' unless feature(:installer)
+
     feature(:installer).initial_admin_username
   end
 
   def password_from_answers(config_username)
     return nil unless feature(:installer)
     return nil unless config_username == feature(:installer).initial_admin_username
+
     feature(:installer).initial_admin_password
   end
 
   def save_config_and_check(config)
-    save_config(config)
-    check_connection
+    config[:foreman][:password] ? check_connection(config) : check_connection
+    save_config(config) if ready?
   end
 
   def save_config(config)
     File.open(custom_config_file, 'w', 0o600) { |f| f.puts YAML.dump(config) }
   end
 
-  def _check_connection
-    `#{command_base} user list --per-page 1 2>&1` && $CHILD_STATUS.exitstatus == 0
+  def _check_connection(config = {})
+    cmd = "#{config.empty? ? command_base : command_base(config)} user list --per-page 1 2>&1"
+    `#{cmd}` && $CHILD_STATUS.exitstatus == 0
   end
 end

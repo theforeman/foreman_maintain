@@ -108,7 +108,6 @@ describe Features::Hammer do
                          ])
       stub_hostname
       stub_connection_check(false, false, true)
-      expect_custom_config(:foreman => { :username => 'admin' })
       expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
       subject.setup_admin_access.must_equal true
     end
@@ -131,7 +130,6 @@ describe Features::Hammer do
       stub_hostname
       stub_connection_check(false, false, true)
       log_reporter.input << 'manual'
-      expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
       expect_custom_config(:foreman => { :username => 'admin', :password => 'manual' })
       subject.setup_admin_access.must_equal true
       log_reporter.output.must_equal "Hammer admin password:\n"
@@ -144,8 +142,6 @@ describe Features::Hammer do
       stub_hostname
       stub_connection_check(false, false)
       log_reporter.input << 'manual'
-      expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
-      expect_custom_config(:foreman => { :username => 'admin', :password => 'manual' })
       proc { subject.setup_admin_access }.must_raise(ForemanMaintain::HammerConfigurationError)
       subject.ready?.must_equal false
     end
