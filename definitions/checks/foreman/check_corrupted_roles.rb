@@ -20,8 +20,8 @@ module Checks
 
       def error_message(items)
         roles = items.map { |item| item['role_name'] }.uniq
-        'Below are affected roles containing the filters with ' \
-        'permission for which resource type has been changed.' \
+        'There are filters having permissions with multiple resource types. ' \
+        'Roles with such filters are:' \
         "\n#{roles.join("\n")}"
       end
 

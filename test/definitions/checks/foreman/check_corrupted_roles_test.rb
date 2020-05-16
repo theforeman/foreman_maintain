@@ -22,8 +22,8 @@ describe Checks::Foreman::CheckCorruptedRoles do
     subject.stubs(:find_filter_permissions).returns(dups)
     result = run_check(subject)
     assert result.fail?, 'Check expected to fail'
-    assert_match 'Below are affected roles containing the filters with permission for which ' \
-                  "resource type has been changed.\ndemoRole", result.output
+    assert_match 'There are filters having permissions with multiple resource types. ' \
+                  "Roles with such filters are:\ndemoRole", result.output
     assert_equal [Procedures::Foreman::FixCorruptedRoles],
                  subject.next_steps.map(&:class)
   end
