@@ -46,6 +46,10 @@ module ForemanMaintain
       @assumeyes
     end
 
+    def disable_spinner?
+      @disable_spinner
+    end
+
     # simple yes/no question, returns :yes, :no or :quit
     # rubocop:disable Metrics/LineLength
     def ask_decision(message, actions_msg: 'y(yes), n(no), q(quit)', assumeyes: assumeyes?, run_strategy: :fail_fast)
@@ -63,6 +67,10 @@ module ForemanMaintain
 
     def assumeyes=(assume)
       @assumeyes = !!assume
+    end
+
+    def disable_spinner=(disable_spinner)
+      @disable_spinner = !!disable_spinner
     end
 
     private

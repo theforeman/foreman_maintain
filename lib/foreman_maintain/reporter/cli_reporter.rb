@@ -30,12 +30,13 @@ module ForemanMaintain
         end
 
         def activate
-          @mutex.synchronize { @active = true }
+          @mutex.synchronize { @active = true } unless @reporter.disable_spinner?
           spin
         end
 
         def deactivate
           return unless active?
+
           @mutex.synchronize do
             @active = false
           end
@@ -55,6 +56,7 @@ module ForemanMaintain
         def spin
           @mutex.synchronize do
             return unless @active
+
             print_current_line
             @spinner_index = (@spinner_index + 1) % @spinner_chars.size
           end
@@ -75,6 +77,7 @@ module ForemanMaintain
         @stdin = stdin
         options.validate_options!(:assumeyes)
         @assumeyes = options.fetch(:assumeyes, false)
+        @disable_spinner = options.fetch(:disable_spinner, false)
         @hl = HighLine.new(@stdin, @stdout)
         @max_length = 80
         @line_char = '-'
@@ -162,7 +165,11 @@ module ForemanMaintain
       end
 
       def clear_line
-        print "\r" + ' ' * @max_length + "\r"
+        if disable_spinner?
+          print "\n"
+        else
+          print "\r" + ' ' * @max_length + "\r"
+        end
       end
 
       def assumeyes?

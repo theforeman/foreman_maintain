@@ -138,6 +138,7 @@ module ForemanMaintain
                'Run only a specific check with a label. ' \
                  '(Use "list" command to see available labels)' do |label|
           raise ArgumentError, 'value not specified' if label.nil? || label.empty?
+
           underscorize(label).to_sym
         end
       end
@@ -148,6 +149,7 @@ module ForemanMaintain
                  '(Use list-tags command to see available tags)',
                :multivalued => true) do |tags|
           raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
+
           tags.map { |tag| underscorize(tag).to_sym }
         end
       end
@@ -163,11 +165,16 @@ module ForemanMaintain
         option(['-w', '--whitelist'], 'whitelist',
                'Comma-separated list of labels of steps to be skipped') do |whitelist|
           raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
+
           whitelist.split(',').map(&:strip)
         end
 
         option ['-f', '--force'], :flag,
                'Force steps that would be skipped as they were already run'
+
+        option '--disable-spinner', :flag, 'Disable the spinner' do |disable_spinner|
+          ForemanMaintain.reporter.disable_spinner = disable_spinner
+        end
       end
 
       def self.service_options
