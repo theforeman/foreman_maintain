@@ -30,7 +30,7 @@ module ForemanMaintain
         end
 
         def activate
-          @mutex.synchronize { @active = true }
+          @mutex.synchronize { @active = true } unless @reporter.plaintext?
           spin
         end
 
@@ -62,8 +62,11 @@ module ForemanMaintain
 
         def print_current_line
           @reporter.clear_line
-          line = "#{@spinner_chars[@spinner_index]} #{@current_line}"
-          @reporter.print(line)
+          if @reporter.plaintext?
+            @reporter.print(@current_line.to_s)
+          else
+            @reporter.print("#{@spinner_chars[@spinner_index]} #{@current_line}")
+          end
         end
       end
 
@@ -75,6 +78,7 @@ module ForemanMaintain
         @stdin = stdin
         options.validate_options!(:assumeyes)
         @assumeyes = options.fetch(:assumeyes, false)
+        @plaintext = options.fetch(:plaintext, false)
         @hl = HighLine.new(@stdin, @stdout)
         @max_length = 80
         @line_char = '-'
@@ -162,7 +166,11 @@ module ForemanMaintain
       end
 
       def clear_line
-        print "\r" + ' ' * @max_length + "\r"
+        if plaintext?
+          print "\n"
+        else
+          print "\r" + ' ' * @max_length + "\r"
+        end
       end
 
       def assumeyes?
@@ -271,7 +279,11 @@ module ForemanMaintain
                     :already_run => { :label => '[ALREADY RUN]', :color => :yellow },
                     :warning => { :label => '[WARNING]', :color => :yellow } }
         properties = mapping[status]
-        @hl.color(properties[:label], properties[:color], :bold)
+        if @plaintext
+          properties[:label]
+        else
+          @hl.color(properties[:label], properties[:color], :bold)
+        end
       end
 
       def hline(line_char = @line_char)

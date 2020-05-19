@@ -153,7 +153,7 @@ module ForemanMaintain
       end
 
       # rubocop:disable  Metrics/MethodLength
-      def self.interactive_option(opts = %w[assumeyes whitelist force])
+      def self.interactive_option(opts = %w[assumeyes whitelist force plaintext])
         delete_duplicate_assumeyes_if_any
 
         if opts.include?('assumeyes')
@@ -174,6 +174,13 @@ module ForemanMaintain
         if opts.include?('force')
           option ['-f', '--force'], :flag,
                  'Force steps that would be skipped as they were already run'
+        end
+
+        if opts.include?('plaintext')
+          option(['--plaintext'], :flag,
+                 'Print the output in plaintext and disable the spinner') do |plaintext|
+            ForemanMaintain.reporter.plaintext = plaintext
+          end
         end
       end
       # rubocop:enable  Metrics/MethodLength
