@@ -14,7 +14,6 @@ describe Checks::Foreman::CheckCorruptedRoles do
   end
 
   it 'fails when some roles with corrupted filters detected' do
-    assume_feature_present(:foreman_database, :present? => true)
     dups = [{ 'role_id' => '31', 'role_name' => 'demoRole', 'permission_name' => 'edit_hosts', \
               'resource_type' => 'Host' },
             { 'role_id' => '31', 'role_name' => 'demoRole', 'permission_name' => 'view_hosts', \
