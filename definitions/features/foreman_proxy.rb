@@ -237,12 +237,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     tftp_yml_path = lookup_into(FOREMAN_PROXY_TFTP_YML_PATHS)
     raise "Couldn't find tftp.yml file under foreman-proxy" unless tftp_yml_path
 
-    configs_from_tftp_yml = yaml_load(tftp_yml_path)
-    if configs_from_tftp_yml.key?(:tftproot)
-      return configs_from_tftp_yml[:tftproot]
-    else
-      raise "Couldn't find TFTP Configurations in #{tftp_yml_path}"
-    end
+    yaml_load(tftp_yml_path)[:tftproot]
   end
 
   def yaml_load(path)
