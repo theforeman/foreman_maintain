@@ -38,7 +38,7 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(Procedures::Pulp::Migrate,
                              Procedures::Pulpcore::Migrate)
 
-      add_steps_with_context(Procedures::Restore::RegenerateQueues) if online_backup?
+      add_steps_with_context(Procedures::Restore::RegenerateQueues) if backup.online_backup?
       add_steps_with_context(Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
     end
@@ -96,11 +96,6 @@ module ForemanMaintain::Scenarios
 
       context.map(:incremental_backup,
                   Procedures::Selinux::SetFileSecurity => :incremental_backup)
-    end
-
-    def online_backup?
-      metadata_file = YAML.load(File.read(context.get(:backup_dir) + 'metadata.yml'))
-      metadata_file['online'] || false
     end
   end
 end
