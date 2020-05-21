@@ -204,6 +204,10 @@ module ForemanMaintain
       def incremental?
         !!metadata.fetch('incremental', false)
       end
+
+      def online_backup?
+        !!metadata.fetch('online')
+      end
     end
   end
 end
