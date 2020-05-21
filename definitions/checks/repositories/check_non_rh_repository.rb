@@ -16,7 +16,8 @@ module Checks::Repositories
     end
 
     def epel_enabled?
-      system_repos = execute("yum repolist enabled -d 6 -e 0| grep -E 'Repo-baseurl|Repo-id'")
+      cmd = "grep -ir --no-filename --include=\*.repo -E 'baseurl|metalink' /etc/yum.repos.d/"
+      system_repos = execute(cmd)
       system_repos.to_s.match(/\bepel\b/i)
     end
   end
