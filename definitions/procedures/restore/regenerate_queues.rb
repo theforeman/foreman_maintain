@@ -8,16 +8,17 @@ module Procedures::Restore
       end
     end
 
-    def ssl_cert
-      "/etc/pki/katello/certs/#{hostname}-qpid-broker.crt"
+    def qpid_router_broker_port
+      @qpid_router_broker_port ||= feature(:installer).
+                                   answers['foreman_proxy_content']['qpid_router_broker_port']
     end
 
-    def ssl_key
-      "/etc/pki/katello/private/#{hostname}-qpid-broker.key"
-    end
-
-    def amqps_url
-      'amqps://localhost:5671'
+    def qpid_configs
+      @qpid_configs ||= {
+        'ssl_cert' => "/etc/pki/katello/certs/#{hostname}-qpid-broker.crt",
+        'ssl_key' => "/etc/pki/katello/private/#{hostname}-qpid-broker.key",
+        'amqps_url' => "amqps://localhost:#{qpid_router_broker_port}"
+      }
     end
 
     def katello_events
@@ -46,8 +47,8 @@ module Procedures::Restore
     end
 
     def run_qpid_command(opts)
-      execute!("qpid-config --ssl-certificate #{ssl_cert} \\
-                --ssl-key #{ssl_key} -b #{amqps_url} #{opts}")
+      execute!("qpid-config --ssl-certificate #{qpid_configs['ssl_cert']} \\
+                --ssl-key #{qpid_configs['ssl_key']} -b #{qpid_configs['amqps_url']} #{opts}")
     end
 
     def regenerate_qpidd_queues(spinner)
