@@ -11,21 +11,20 @@ module Checks::ForemanProxy
     end
 
     def run
-      tftp_boot_dir = feature(:foreman_proxy).tftp_root_directory + '/boot/'
-      if Dir.exist?(tftp_boot_dir)
-        files = old_files_from_tftp_boot(tftp_boot_dir)
+      if Dir.exist?(tftp_boot_directory)
+        files = old_files_from_tftp_boot
         assert(files.empty?,
                'There are old initrd and vmlinuz files present in tftp',
                :next_steps => Procedures::Files::Remove.new(:files => files))
       else
-        skip "TFTP root directory #{tftp_boot_dir} does not exist."
+        skip "TFTP #{tftp_boot_directory} directory doesn't exist."
       end
     end
 
-    def old_files_from_tftp_boot(tftp_boot_dir)
-      Dir.entries(tftp_boot_dir).map do |file|
+    def old_files_from_tftp_boot
+      Dir.entries(tftp_boot_directory).map do |file|
         unless File.directory?(file)
-          file_path =  tftp_boot_dir + file
+          file_path =  tftp_boot_directory + file
           file_path if File.mtime(file_path) + (token_duration * 60) < Time.now
         end
       end.compact
@@ -33,6 +32,10 @@ module Checks::ForemanProxy
 
     def self.non_zero_token_duration?
       lookup_token_duration != 0
+    end
+
+    def tftp_boot_directory
+      @tftp_boot_directory ||= "#{feature(:foreman_proxy).tftp_root_directory}/boot/"
     end
 
     def token_duration
