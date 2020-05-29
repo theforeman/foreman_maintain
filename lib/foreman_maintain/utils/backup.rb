@@ -206,7 +206,7 @@ module ForemanMaintain
       end
 
       def online_backup?
-        !!metadata.fetch('online')
+        !!metadata.fetch('online', false)
       end
     end
   end
