@@ -14,14 +14,22 @@ module Checks
       def run
         items = find_filter_permissions
         assert(items.empty?,
-               'There are user roles with inconsistent filters',
+               error_message(items),
                :next_steps => Procedures::Foreman::FixCorruptedRoles.new)
+      end
+
+      def error_message(items)
+        roles = items.map { |item| item['role_name'] }.uniq
+        'There are filters having permissions with multiple resource types. ' \
+        'Roles with such filters are:' \
+        "\n#{roles.join("\n")}"
       end
 
       def find_filter_permissions
         feature(:foreman_database).query(self.class.inconsistent_filter_perms)
       end
 
+      # rubocop:disable Metrics/MethodLength
       def self.inconsistent_filter_perms
         subquery = <<-SQL
           SELECT filters.id AS filter_id,
@@ -32,14 +40,17 @@ module Checks
                  filterings.id AS filtering_id,
                  permissions.id AS permission_id,
                  permissions.name AS permission_name,
-                 permissions.resource_type
+                 permissions.resource_type,
+                 roles.name AS role_name
           FROM filters INNER JOIN filterings ON filters.id = filterings.filter_id
                        INNER JOIN permissions ON permissions.id = filterings.permission_id
+                       INNER JOIN roles ON filters.role_id = roles.id
         SQL
 
         <<-SQL
           SELECT DISTINCT first.filter_id,
                           first.role_id,
+                          first.role_name,
                           first.filtering_id,
                           first.permission_id,
                           first.permission_name,
@@ -54,6 +65,7 @@ module Checks
                 OR (first.resource_type != second.resource_type))
         SQL
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end
