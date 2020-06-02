@@ -17,6 +17,7 @@ module ForemanMaintain::Scenarios
       param :snapshot_block_size, 'Snapshot block size'
       param :skip_pulp_content, 'Skip Pulp content during backup'
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
+      param :wait_time, 'Time to wait for foreman tasks to finish'
     end
 
     def compose
@@ -94,6 +95,8 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::Snapshot::MountPulp => :skip)
       context.map(:tar_volume_size,
                   Procedures::Backup::Pulp => :tar_volume_size)
+      context.map(:wait_time,
+                  Checks::ForemanTasks::NotRunning => :wait_time)
     end
     # rubocop:enable  Metrics/MethodLength
 
@@ -132,6 +135,7 @@ module ForemanMaintain::Scenarios
 
     def add_offline_backup_steps
       include_dumps if include_db_dumps?
+      add_step_with_context(Checks::ForemanTasks::NotRunning)
       add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
       add_steps_with_context(
         find_procedures(:maintenance_mode_on),

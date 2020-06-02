@@ -88,7 +88,8 @@ module ForemanMaintain
           :proxy_features => features,
           :tar_volume_size => split_pulp_tar,
           :skip_pulp_content => skip_pulp_content?,
-          :incremental_dir => incremental
+          :incremental_dir => incremental,
+          :wait_time => wait_time
         }.merge(options))
       end
 
@@ -120,6 +121,10 @@ module ForemanMaintain
       interactive_option
       common_backup_options
       option '--include-db-dumps', :flag, 'Also dump full database schema before offline backup'
+      option '--wait-time', 'WAIT_TIME',
+             'Time to wait in minutes for foreman tasks to finish' do |n|
+        Integer(n)
+      end
 
       def execute
         perform_backup(:offline,
