@@ -152,23 +152,31 @@ module ForemanMaintain
         end
       end
 
-      def self.interactive_option
+      # rubocop:disable  Metrics/MethodLength
+      def self.interactive_option(opts = %w[assumeyes whitelist force])
         delete_duplicate_assumeyes_if_any
 
-        option ['-y', '--assumeyes'], :flag,
-               'Automatically answer yes for all questions' do |assume|
-          ForemanMaintain.reporter.assumeyes = assume
+        if opts.include?('assumeyes')
+          option ['-y', '--assumeyes'], :flag,
+                 'Automatically answer yes for all questions' do |assume|
+            ForemanMaintain.reporter.assumeyes = assume
+          end
         end
 
-        option(['-w', '--whitelist'], 'whitelist',
-               'Comma-separated list of labels of steps to be skipped') do |whitelist|
-          raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
-          whitelist.split(',').map(&:strip)
+        if opts.include?('whitelist')
+          option(['-w', '--whitelist'], 'whitelist',
+                 'Comma-separated list of labels of steps to be skipped') do |whitelist|
+            raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
+            whitelist.split(',').map(&:strip)
+          end
         end
 
-        option ['-f', '--force'], :flag,
-               'Force steps that would be skipped as they were already run'
+        if opts.include?('force')
+          option ['-f', '--force'], :flag,
+                 'Force steps that would be skipped as they were already run'
+        end
       end
+      # rubocop:enable  Metrics/MethodLength
 
       def self.service_options
         option '--exclude', 'EXCLUDE', 'A comma-separated list of services to skip'
