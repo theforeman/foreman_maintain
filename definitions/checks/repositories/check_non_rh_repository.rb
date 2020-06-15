@@ -2,7 +2,7 @@ module Checks::Repositories
   class CheckNonRhRepository < ForemanMaintain::Check
     metadata do
       label :check_non_redhat_repository
-      description "Check whether system has any non Red Hat repositories (e.g.: EPEL) enabled"
+      description 'Check whether system has any non Red Hat repositories (e.g.: EPEL) enabled'
       tags :pre_upgrade
       confine do
         feature(:instance).downstream
