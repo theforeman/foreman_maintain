@@ -61,6 +61,10 @@ module ForemanMaintain::PackageManager
       yum_action('clean', 'all', :assumeyes => assumeyes)
     end
 
+    def check_update
+      yum_action('check-update', nil, :assumeyes => true, :valid_exit_statuses => [100])
+    end
+
     def update_available?(package)
       cmd_output = yum_action('check-update -q', package, :with_status => true, :assumeyes => false)
       cmd_output[0] == 100
@@ -109,10 +113,11 @@ module ForemanMaintain::PackageManager
       File.open(protector_config_file, 'w') { |file| file.puts config }
     end
 
-    def yum_action(action, packages, with_status: false, assumeyes: false)
+    def yum_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
       yum_options = []
       packages = [packages].flatten(1)
       yum_options << '-y' if assumeyes
+      yum_options << '--disableplugin=foreman-protector'
       yum_options_s = yum_options.empty? ? '' : ' ' + yum_options.join(' ')
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
       if with_status
@@ -120,7 +125,7 @@ module ForemanMaintain::PackageManager
                                 :interactive => !assumeyes)
       else
         sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
-                     :interactive => !assumeyes)
+                     :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
       end
     end
 

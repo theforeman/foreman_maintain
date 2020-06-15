@@ -5,7 +5,8 @@ require 'foreman_maintain/package_manager'
 module ForemanMaintain
   describe PackageManager::Yum do
     def expect_sys_execute(command, via: :execute,
-                           execute_options: { :interactive => true }, response: 'OK')
+                           execute_options: { :interactive => true, :valid_exit_statuses => [0] },
+                           response: 'OK')
       ForemanMaintain::Utils::SystemHelpers.expects(via).
         with(command, execute_options).returns(response)
     end
@@ -85,49 +86,57 @@ module ForemanMaintain
 
     describe 'install' do
       it 'invokes yum to install single package' do
-        expect_sys_execute('yum install package', :via => :execute!)
+        expect_sys_execute('yum --disableplugin=foreman-protector install package',
+                           :via => :execute!)
         subject.install('package')
       end
 
       it 'invokes yum to install list of packages' do
-        expect_sys_execute('yum install package1 package2', :via => :execute!)
+        expect_sys_execute('yum --disableplugin=foreman-protector install package1 package2',
+                           :via => :execute!)
         subject.install(%w[package1 package2], :assumeyes => false)
       end
 
       it 'invokes yum to install package with yes enforced' do
-        expect_sys_execute('yum -y install package', :via => :execute!,
-                                                     :execute_options => { :interactive => false })
+        expect_sys_execute('yum -y --disableplugin=foreman-protector install package',
+                           :via => :execute!, :execute_options => { :interactive => false,
+                                                                    :valid_exit_statuses => [0] })
         subject.install('package', :assumeyes => true)
       end
     end
 
     describe 'update' do
       it 'invokes yum to update single package' do
-        expect_sys_execute('yum update package', :via => :execute!)
+        expect_sys_execute('yum --disableplugin=foreman-protector update package',
+                           :via => :execute!)
         subject.update('package')
       end
 
       it 'invokes yum to update list of packages' do
-        expect_sys_execute('yum update package1 package2', :via => :execute!)
+        expect_sys_execute('yum --disableplugin=foreman-protector update package1 package2',
+                           :via => :execute!)
         subject.update(%w[package1 package2])
       end
 
       it 'invokes yum to update package with yes enforced' do
-        expect_sys_execute('yum -y update package', :via => :execute!,
-                                                    :execute_options => { :interactive => false })
+        expect_sys_execute('yum -y --disableplugin=foreman-protector update package',
+                           :via => :execute!, :execute_options => { :interactive => false,
+                                                                    :valid_exit_statuses => [0] })
         subject.update('package', :assumeyes => true)
       end
 
       it 'invokes yum to update all packages' do
-        expect_sys_execute('yum update', :via => :execute!)
+        expect_sys_execute('yum --disableplugin=foreman-protector update', :via => :execute!)
         subject.update
       end
     end
 
     describe 'clean_cache' do
       it 'invokes yum to clean cache' do
-        expect_sys_execute('yum -y clean all', :via => :execute!,
-                                               :execute_options => { :interactive => false })
+        expect_sys_execute('yum -y --disableplugin=foreman-protector clean all',
+                           :via => :execute!,
+                           :execute_options => { :interactive => false,
+                                                 :valid_exit_statuses => [0] })
         subject.clean_cache(:assumeyes => true)
       end
     end

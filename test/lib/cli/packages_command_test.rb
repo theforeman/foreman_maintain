@@ -23,6 +23,7 @@ module ForemanMaintain
             lock                          Prevent packages from automatic update
             unlock                        Enable packages for automatic update
             status                        Check if packages are protected against update
+            check-update                  Check for available package updates
             install                       Install packages in an unlocked session
             update                        Update packages in an unlocked session
             is-locked                     Check if update of packages is allowed
