@@ -50,6 +50,18 @@ module ForemanMaintain::Scenarios
       end
     end
 
+    class CheckUpdate < ForemanMaintain::Scenario
+      metadata do
+        label :packages_check_update
+        description 'Check for available package updates'
+        manual_detection
+      end
+
+      def compose
+        add_step(Procedures::Packages::CheckUpdate)
+      end
+    end
+
     class Install < ForemanMaintain::Scenario
       metadata do
         description 'install packages in unlocked session'

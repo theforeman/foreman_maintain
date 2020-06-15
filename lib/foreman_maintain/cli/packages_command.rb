@@ -22,6 +22,13 @@ module ForemanMaintain
         end
       end
 
+      subcommand 'check-update', 'Check for available package updates' do
+        interactive_option
+        def execute
+          run_scenarios_and_exit(Scenarios::Packages::CheckUpdate.new)
+        end
+      end
+
       subcommand 'install', 'Install packages in an unlocked session' do
         interactive_option(['assumeyes'])
         parameter 'PACKAGES ...', 'packages to install', :attribute_name => :packages
