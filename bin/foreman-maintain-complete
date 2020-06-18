@@ -13,7 +13,8 @@ require 'foreman_maintain/utils/bash'
 # rubocop:disable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
 def cache_file(config_file)
   config = YAML.load(File.open(config_file))
-  config[:completion_cache_file]
+  config.fetch(:completion_cache_file,
+               "#{ENV['HOME'] || '/root'}/.cache/foreman_maintain_completion.yml")
 rescue
 end
 # rubocop:enable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
@@ -23,7 +24,7 @@ config_file = if File.exist?(CONFIG_FILE)
               else
                 File.join(project_root, 'config/foreman_maintain.yml')
               end
-completion_cache_file = cache_file(config_file) || '~/.cache/foreman_maintain_completion.yml'
+completion_cache_file = cache_file(config_file)
 completion_cache_file = File.expand_path(completion_cache_file)
 
 # build the cache if it does not exist
