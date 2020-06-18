@@ -53,11 +53,17 @@ module ForemanMaintain
     }.freeze
 
     def setup(options = {})
+      set_home_environment
+
       # using a queue, we can log the messages which are generated before initializing logger
       self.config = Config.new(options)
       load_definitions
       init_logger
       update_path
+    end
+
+    def set_home_environment
+      ENV['HOME'] ||= '/root'
     end
 
     # Appending PATH with expected paths needed for commands we run
