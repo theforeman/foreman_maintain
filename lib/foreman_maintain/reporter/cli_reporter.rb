@@ -182,9 +182,10 @@ module ForemanMaintain
         steps.each_with_index do |step, index|
           puts "#{index + 1}) #{step.runtime_message}"
         end
-        ask_to_select('Select step to continue', steps, run_strategy, &:runtime_message)
+        ask_to_select('Select step to continue', steps, run_strategy)
       end
 
+      # rubocop:disable Metrics/LineLength
       def ask_decision(message, actions_msg: 'y(yes), n(no), q(quit)', ignore_assumeyes: false, run_strategy: :fail_fast)
         actions_msg = 'y(yes), n(no)' if run_strategy == :fail_slow
         if !ignore_assumeyes && assumeyes?
@@ -197,6 +198,7 @@ module ForemanMaintain
       ensure
         clear_line
       end
+      # rubocop:enable Metrics/LineLength
 
       def filter_decision(answer)
         decision = nil
@@ -281,7 +283,7 @@ module ForemanMaintain
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def scenario_failure_message(scenario)
         return if scenario.passed? && !scenario.warning?
-        
+
         message = []
         message << <<-MESSAGE.strip_heredoc
           Scenario [#{scenario.description}] failed.
