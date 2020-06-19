@@ -47,6 +47,7 @@ module ForemanMaintain
     end
 
     # simple yes/no question, returns :yes, :no or :quit
+    # rubocop:disable Metrics/LineLength
     def ask_decision(message, actions_msg: 'y(yes), n(no), q(quit)', assumeyes: assumeyes?, run_strategy: :fail_fast)
       actions_msg = 'y(yes), n(no)' if run_strategy == :fail_slow
       if assumeyes
@@ -58,6 +59,7 @@ module ForemanMaintain
         filter_decision(ask("#{message}, [#{actions_msg}]"))
       end
     end
+    # rubocop:enable Metrics/LineLength
 
     def assumeyes=(assume)
       @assumeyes = !!assume
@@ -79,7 +81,7 @@ module ForemanMaintain
       steps.each_with_index do |step, index|
         puts "#{index + 1}) #{step.description}"
       end
-      ask_to_select('Select step to continue', steps, run_strategy, &:description)
+      ask_to_select('Select step to continue', steps, run_strategy)
     end
 
     def filter_decision(answer)
