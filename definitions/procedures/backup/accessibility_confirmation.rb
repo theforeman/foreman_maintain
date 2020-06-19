@@ -7,7 +7,7 @@ module Procedures::Backup
 
     def run
       answer = ask_decision("WARNING: This script will stop your services.\n\n" \
-         'Do you want to proceed?', 'y(yes), q(quit)')
+         'Do you want to proceed?', actions_msg: 'y(yes), q(quit)')
       abort! unless answer == :yes
     end
   end
