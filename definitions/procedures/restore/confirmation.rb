@@ -10,7 +10,7 @@ module Procedures::Restore
                 "Your existing installation will be replaced with the backup database.\n" \
                 "Once this operation is complete there is no going back.\n" \
                 'Do you want to proceed?'
-      answer = ask_decision(warning, 'y(yes), q(quit)')
+      answer = ask_decision(warning, actions_msg: 'y(yes), q(quit)')
       abort! unless answer == :yes
     end
   end

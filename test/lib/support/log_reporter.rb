@@ -47,7 +47,7 @@ class Support
       yield || :no
     end
 
-    def on_next_steps(steps)
+    def on_next_steps(steps, _run_strategy)
       @log << [__method__.to_s].concat(stringified_args(*steps))
       next_answer = @assumeyes ? 'y' : @planned_next_steps_answers.shift
       case next_answer

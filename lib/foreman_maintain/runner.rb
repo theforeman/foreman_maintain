@@ -70,7 +70,8 @@ module ForemanMaintain
                    :quit
                  elsif @last_scenario.steps_with_warning(:whitelisted => false).any?
                    @last_scenario_continuation_confirmed = true
-                   reporter.ask_decision("Continue with [#{scenario.description}]")
+                   reporter.ask_decision("Continue with [#{scenario.description}]",
+                                         run_strategy: scenario.run_strategy)
                  end
 
       ask_to_quit if [:quit, :no].include?(decision)
@@ -131,7 +132,7 @@ module ForemanMaintain
       if execution.aborted?
         ask_to_quit
       else
-        next_steps_decision = ask_about_offered_steps(step)
+        next_steps_decision = ask_about_offered_steps(step, scenario)
         if next_steps_decision != :yes &&
            execution.fail? && !execution.whitelisted? &&
            scenario.run_strategy == :fail_fast
@@ -141,7 +142,7 @@ module ForemanMaintain
     end
 
     # rubocop:disable  Metrics/MethodLength
-    def ask_about_offered_steps(step)
+    def ask_about_offered_steps(step, scenario)
       if assumeyes? && rerun_check?(step)
         @reporter.puts 'Check still failing after attempt to fix. Skipping'
         return :no
@@ -149,7 +150,8 @@ module ForemanMaintain
       if step.next_steps && !step.next_steps.empty?
         @last_decision_step = step
         steps = step.next_steps.map(&:ensure_instance)
-        decision = @reporter.on_next_steps(steps)
+
+        decision = @reporter.on_next_steps(steps, scenario.run_strategy)
         case decision
         when :quit
           ask_to_quit

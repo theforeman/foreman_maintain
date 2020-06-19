@@ -16,7 +16,7 @@ module Procedures::Backup
           " If you wish to utilize the online backup\n" \
           '*** for production use you need to ensure that there are' \
           " no modifications occurring during\n" \
-          "*** your backup run.\n\nDo you want to proceed?", 'y(yes), q(quit)'
+          "*** your backup run.\n\nDo you want to proceed?", actions_msg: 'y(yes), q(quit)'
         )
         abort! unless answer == :yes
       end

@@ -16,7 +16,7 @@ module Procedures::Packages
           "NOTE: --assumeyes is not applicable for this check\n\n" \
           "Do you want to proceed with update of everything regardless\n" \
           'of the recommendations?'
-        answer = ask_decision(question, 'y(yes), q(quit)', ignore_assumeyes: true)
+        answer = ask_decision(question, actions_msg: 'y(yes), q(quit)', ignore_assumeyes: true)
         abort! unless answer == :yes
       end
     end

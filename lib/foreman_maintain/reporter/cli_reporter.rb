@@ -167,8 +167,9 @@ module ForemanMaintain
         @assumeyes
       end
 
-      def single_step_decision(step)
-        answer = ask_decision("Continue with step [#{step.runtime_message}]?")
+      def single_step_decision(step, run_strategy)
+        answer = ask_decision("Continue with step [#{step.runtime_message}]?",
+                              run_strategy: run_strategy)
         if answer == :yes
           step
         else
@@ -176,21 +177,22 @@ module ForemanMaintain
         end
       end
 
-      def multiple_steps_decision(steps)
+      def multiple_steps_decision(steps, run_strategy)
         puts 'There are multiple steps to proceed:'
         steps.each_with_index do |step, index|
           puts "#{index + 1}) #{step.runtime_message}"
         end
-        ask_to_select('Select step to continue', steps, &:runtime_message)
+        ask_to_select('Select step to continue', steps, run_strategy, &:runtime_message)
       end
 
-      def ask_decision(message, options = 'y(yes), n(no), q(quit)', ignore_assumeyes: false)
+      def ask_decision(message, actions_msg: 'y(yes), n(no), q(quit)', ignore_assumeyes: false, run_strategy: :fail_fast)
+        actions_msg = 'y(yes), n(no)' if run_strategy == :fail_slow
         if !ignore_assumeyes && assumeyes?
           print("#{message} (assuming yes)\n")
           return :yes
         end
         until_valid_decision do
-          filter_decision(ask("#{message}, [#{options}]"))
+          filter_decision(ask("#{message}, [#{actions_msg}]"))
         end
       ensure
         clear_line
@@ -206,13 +208,15 @@ module ForemanMaintain
       end
 
       # rubocop:disable Metrics/MethodLength
-      def ask_to_select(message, steps)
+      def ask_to_select(message, steps, run_strategy)
         if assumeyes?
           puts('(assuming first option)')
           return steps.first
         end
+
         until_valid_decision do
-          answer = ask("#{message}, [n(next), q(quit)]")
+          actions = run_strategy == :fail_slow ? 'n(next)' : 'n(next), q(quit)'
+          answer = ask("#{message}, [#{actions}]")
           if answer =~ /^\d+$/ && (answer.to_i - 1) < steps.size
             steps[answer.to_i - 1]
           else
@@ -277,6 +281,7 @@ module ForemanMaintain
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def scenario_failure_message(scenario)
         return if scenario.passed? && !scenario.warning?
+        
         message = []
         message << <<-MESSAGE.strip_heredoc
           Scenario [#{scenario.description}] failed.

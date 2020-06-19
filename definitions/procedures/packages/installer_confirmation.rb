@@ -11,7 +11,7 @@ module Procedures::Packages
         "is in a consistent state.\n" \
         "As a result some of your services may be restarted. \n\n" \
         'Do you want to proceed?'
-      answer = ask_decision(question, 'y(yes), q(quit)')
+      answer = ask_decision(question, actions_msg: 'y(yes), q(quit)')
       abort! unless answer == :yes
     end
   end
