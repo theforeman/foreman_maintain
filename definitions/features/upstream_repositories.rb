@@ -10,8 +10,7 @@ class Features::UpstreamRepositories < ForemanMaintain::Feature
   VERSION_MAPPING = {
     '2.1' => '3.16',
     '2.0' => '3.15',
-    '1.24' => '3.14',
-    '1.23' => '3.13'
+    '1.24' => '3.14'
   }.freeze
 
   def setup_repositories(version)
