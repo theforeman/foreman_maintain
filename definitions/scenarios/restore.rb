@@ -9,15 +9,19 @@ module ForemanMaintain::Scenarios
       manual_detection
     end
 
-    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/PerceivedComplexity
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
       add_steps(find_checks(:root_user))
       supported_version_check
-      add_steps_with_context(Checks::Restore::ValidateBackup,
-                             Procedures::Restore::Confirmation,
-                             Checks::Restore::ValidateHostname,
+      add_steps_with_context(Checks::Restore::ValidateBackup)
+      if backup.incremental?
+        add_steps_with_context(Procedures::Restore::IncrementalConfirmation)
+      else
+        add_steps_with_context(Procedures::Restore::Confirmation)
+      end
+      add_steps_with_context(Checks::Restore::ValidateHostname,
                              Procedures::Selinux::SetFileSecurity,
                              Procedures::Restore::Configs)
       unless backup.incremental?
@@ -26,7 +30,9 @@ module ForemanMaintain::Scenarios
       end
       add_step_with_context(Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
-      drop_dbs(backup)
+      unless backup.incremental?
+        drop_dbs(backup)
+      end
       if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
         add_step(Procedures::Service::Start.new(:only => ['postgresql']))
       end

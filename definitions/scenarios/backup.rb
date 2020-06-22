@@ -20,7 +20,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      check_valid_startegy
+      check_valid_strategy
       safety_confirmation
       accessibility_confirmation
       prepare_directory
@@ -124,7 +124,7 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    def check_valid_startegy
+    def check_valid_strategy
       unless [:online, :offline, :snapshot].include? strategy
         raise ArgumentError, "Unsupported strategy '#{strategy}'"
       end
