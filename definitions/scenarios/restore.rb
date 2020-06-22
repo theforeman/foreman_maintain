@@ -20,6 +20,7 @@ module ForemanMaintain::Scenarios
                              Checks::Restore::ValidateHostname,
                              Procedures::Selinux::SetFileSecurity,
                              Procedures::Restore::Configs)
+      add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
       unless backup.incremental?
         add_steps_with_context(Procedures::Restore::EnsureMongoEngineMatches,
                                Procedures::Restore::InstallerReset)
@@ -41,6 +42,7 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(Procedures::Restore::RegenerateQueues) if backup.online_backup?
       add_steps_with_context(Procedures::Service::Start,
                              Procedures::Service::DaemonReload)
+      add_step_with_context(Procedures::Crond::Start) if feature(:cron)
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
@@ -96,6 +98,17 @@ module ForemanMaintain::Scenarios
 
       context.map(:incremental_backup,
                   Procedures::Selinux::SetFileSecurity => :incremental_backup)
+    end
+  end
+
+  class RestoreRescue < ForemanMaintain::Scenario
+    metadata do
+      description 'Resuce Restore backup'
+      manual_detection
+    end
+
+    def compose
+      add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
     end
   end
 end
