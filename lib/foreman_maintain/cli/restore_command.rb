@@ -13,7 +13,8 @@ module ForemanMaintain
           :backup_dir => @backup_dir,
           :incremental_backup => @incremental || incremental_backup?
         )
-        run_scenario(scenario)
+        rescue_scenario = Scenarios::RestoreRescue.new
+        run_scenario(scenario, rescue_scenario)
         exit runner.exit_code
       end
 
