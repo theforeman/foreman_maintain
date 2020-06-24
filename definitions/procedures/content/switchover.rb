@@ -15,7 +15,8 @@ module Procedures::Content
       puts 'Re-running the installer to switch specified content over to pulp3'
       args = ['--foreman-proxy-content-proxy-pulp-isos-to-pulpcore=true',
               '--katello-use-pulp-2-for-file=false',
-              '--katello-use-pulp-2-for-docker=false']
+              '--katello-use-pulp-2-for-docker=false',
+              '--katello-use-pulp-2-for-yum=false']
       feature(:installer).run(args.join(' '))
     end
   end
