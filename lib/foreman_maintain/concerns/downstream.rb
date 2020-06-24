@@ -104,14 +104,13 @@ module ForemanMaintain
       end
 
       def common_repos_array(rh_version_major, full_version)
-        ["rhel-#{rh_version_major}-server-satellite-maintenance-6#{use_beta}-rpms",
-         "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}#{use_beta}-rpms"]
-      end
-
-      def use_beta
-        return '-beta' if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-
-        nil
+        if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
+          ["rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms",
+           "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"]
+        else
+          ["rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms",
+           "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}-rpms"]
+        end
       end
 
       def main_rh_repos(rh_version_major)
