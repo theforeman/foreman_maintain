@@ -1,7 +1,10 @@
 module ForemanMaintain::Scenarios
   module Packages
     def self.skip_installer_run?(packages_list)
-      packages_list = packages_list.split(',').map(&:strip) if packages_list.is_a?(String)
+      if packages_list.is_a?(String)
+        packages_list = packages_list.split(',').map(&:strip)
+      end
+      packages_list ||= []
 
       return false unless packages_list.any? { |p| p.include?('foreman_maintain') }
       return true if packages_list.length == 1
