@@ -2,7 +2,7 @@ class Checks::EnvProxy < ForemanMaintain::Check
   metadata do
     label :env_proxy
     tags :env_proxy
-    description 'Check if proxy is set in ENV which shouldn\'t be the case'
+    description 'Check to make sure no HTTP(S) proxy set in ENV'
   end
 
   def run
