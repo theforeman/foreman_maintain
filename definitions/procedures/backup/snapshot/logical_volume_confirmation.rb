@@ -12,7 +12,7 @@ module Procedures::Backup
         backup_lv = get_lv_info(@backup_dir)
 
         dbs = {}
-        dbs[:pulp] = 'Pulp' if feature(:pulp2) && !@skip_pulp
+        dbs[:pulp2] = 'Pulp' if feature(:pulp2) && !@skip_pulp
         dbs[:mongo] = 'Mongo' if db_local?(:mongo)
         dbs[:candlepin_database] = 'Candlepin' if db_local?(:candlepin_database)
         dbs[:foreman_database] = 'Foreman' if db_local?(:foreman_database)
