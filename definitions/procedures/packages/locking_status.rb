@@ -18,7 +18,7 @@ module Procedures::Packages
       else
         puts '  Packages are not locked.'
         puts "  WARNING: When locking is disabled there is a risk of unwanted update\n" \
-             "  of #{feature(:instance).product_name}' and its components and possible " \
+             "  of #{feature(:instance).product_name} and its components and possible " \
              'data inconsistency'
       end
     end
