@@ -101,7 +101,9 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def certs_tar
-    feature(:installer).answers[content_module][certs_param_name[:param_section]] if content_module
+    if content_module
+      feature(:installer).answers.fetch(content_module, {})[certs_param_name[:param_key]]
+    end
   end
 
   def settings_file
