@@ -8,6 +8,7 @@ module Procedures::Backup
       param :incremental_dir, 'Changes since specified backup only'
     end
 
+    # rubocop:disable Metrics/MethodLength
     def run
       puts "Creating backup folder #{@backup_dir}"
 
@@ -22,8 +23,14 @@ module Procedures::Backup
 
       FileUtils.rm(Dir.glob(File.join(@backup_dir, '.*.snar'))) if @preserve_dir
       if @incremental_dir
-        FileUtils.cp(Dir.glob(File.join(@incremental_dir, '.*.snar')), @backup_dir)
+        snar_files = Dir.glob(File.join(@incremental_dir, '.*.snar'))
+        if snar_files.empty?
+          raise 'No .snar files found in previous backup directory'
+        else
+          FileUtils.cp(snar_files, @backup_dir)
+        end
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
