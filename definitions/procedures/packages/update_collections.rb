@@ -5,8 +5,6 @@ module Procedures::Packages
                                                             :default => %w[centos-release-scl-rh
                                                                            foreman-release-scl]
       param :assumeyes, 'Do not ask for confirmation'
-      param :warn_on_errors, 'Do not interrupt scenario on failure',
-            :flag => true, :default => false
 
       confine do
         package_manager.class <= ForemanMaintain::PackageManager::Yum

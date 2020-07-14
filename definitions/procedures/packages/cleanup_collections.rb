@@ -3,8 +3,6 @@ module Procedures::Packages
     metadata do
       param :packages, 'List of packages to remove e.g. rh-ruby22\*', :array => true
       param :assumeyes, 'Do not ask for confirmation'
-      param :warn_on_errors, 'Do not interrupt scenario on failure',
-            :flag => true, :default => false
 
       confine do
         package_manager.class <= ForemanMaintain::PackageManager::Yum
