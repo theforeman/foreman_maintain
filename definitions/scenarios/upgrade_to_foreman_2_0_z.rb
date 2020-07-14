@@ -6,7 +6,7 @@ module Scenarios::Foreman_2_0_z
         confine do
           feature(:instance).upstream? && feature(:foreman_server) && \
             (feature(:foreman_server).current_version.major_minor == '2.0' || \
-                ForemanMaintain.upgrade_in_progress == '2.0.z')
+                ForemanMaintain.upgrade_in_progress == '2.0.z') && !feature(:katello)
         end
         instance_eval(&block)
       end
@@ -54,9 +54,6 @@ module Scenarios::Foreman_2_0_z
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::UpdateCollections.new(:assumeyes => true))
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
-      add_step(Procedures::Service::Start.new(:only => 'postgresql'))
-      add_step(Procedures::Foreman::DbMigrate.new)
-      add_step(Procedures::Foreman::DbSeed.new)
       add_step(Procedures::Installer::Upgrade.new)
     end
   end
@@ -91,6 +88,7 @@ module Scenarios::Foreman_2_0_z
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
+      add_step(Checks::Foreman::CheckForMysql.new)
     end
   end
 end

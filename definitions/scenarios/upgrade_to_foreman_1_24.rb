@@ -6,7 +6,7 @@ module Scenarios::Foreman_1_24
         confine do
           feature(:instance).upstream? && feature(:foreman_server) && \
             (feature(:foreman_server).current_version.major_minor == '1.23' || \
-                ForemanMaintain.upgrade_in_progress == '1.24')
+                ForemanMaintain.upgrade_in_progress == '1.24') && !feature(:katello)
         end
         instance_eval(&block)
       end
@@ -54,9 +54,6 @@ module Scenarios::Foreman_1_24
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::UpdateCollections.new(:assumeyes => true))
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
-      add_step(Procedures::Service::Start.new(:only => 'postgresql'))
-      add_step(Procedures::Foreman::DbMigrate.new)
-      add_step(Procedures::Foreman::DbSeed.new)
       add_step(Procedures::Installer::Upgrade.new)
     end
   end
