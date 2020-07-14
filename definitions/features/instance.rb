@@ -156,8 +156,8 @@ class Features::Instance < ForemanMaintain::Feature
       'pulp' => %w[pulp2 mongo],
       'pulpcore' => %w[pulpcore pulpcore_database],
       'foreman_tasks' => %w[foreman_tasks],
-      'candlepin_events' => %w[foreman_tasks],
-      'katello_events' => %w[foreman_tasks]
+      'candlepin_events' => %w[katello],
+      'katello_events' => %w[katello]
     }
   end
 
