@@ -27,7 +27,6 @@ module Scenarios::Satellite_6_7
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
-      add_step(Checks::RemoteExecution::VerifySettingsFileAlreadyExists.new)
       add_step(Checks::Repositories::Validate.new(:version => '6.7'))
     end
   end
