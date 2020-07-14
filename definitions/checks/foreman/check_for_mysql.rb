@@ -4,9 +4,9 @@ module Checks
       metadata do
         label :check_for_mysql_db
         for_feature :foreman_server
-        description 'Check if system is using Mysql database'
+        description 'Check if system is using MySQL database'
         confine do
-          check_min_version('foreman', '1.24') && feature(:foreman_database).mysql_db_in_use?
+          check_min_version('foreman', '1.24') && feature(:installer).answers['foreman-db-type'] == 'mysql'
         end
       end
 
