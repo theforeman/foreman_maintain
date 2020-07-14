@@ -80,6 +80,7 @@ module Scenarios::Katello_3_16
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
+      add_step(Checks::Foreman::CheckForMysql.new)
     end
   end
 end

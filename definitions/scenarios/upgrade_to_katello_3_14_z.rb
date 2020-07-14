@@ -13,7 +13,7 @@ module Scenarios::Katello_3_14_z
     end
 
     def target_version
-      '3.14_z'
+      '3.14.z'
     end
   end
 
