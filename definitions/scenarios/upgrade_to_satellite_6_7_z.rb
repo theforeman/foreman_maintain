@@ -55,7 +55,6 @@ module Scenarios::Satellite_6_7_z
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => '6.7'))
-      add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)
     end
