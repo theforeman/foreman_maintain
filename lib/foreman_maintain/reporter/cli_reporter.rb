@@ -276,7 +276,7 @@ module ForemanMaintain
 
       # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       def scenario_failure_message(scenario)
-        return if scenario.passed?
+        return if scenario.passed? && !scenario.warning?
         message = []
         message << <<-MESSAGE.strip_heredoc
           Scenario [#{scenario.description}] failed.
