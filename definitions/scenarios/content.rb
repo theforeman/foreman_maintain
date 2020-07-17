@@ -8,7 +8,10 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        add_step(Procedures::Content::Prepare)
+        # FIXME: remove this condition on next downstream upgrade scenario
+        if Procedures::Content::Prepare.present?
+          add_step(Procedures::Content::Prepare)
+        end
       end
     end
 
@@ -20,7 +23,10 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        add_step(Procedures::Content::Switchover)
+        # FIXME: remove this condition on next downstream upgrade scenario
+        if Procedures::Content::Switchover.present?
+          add_step(Procedures::Content::Switchover)
+        end
       end
     end
   end
