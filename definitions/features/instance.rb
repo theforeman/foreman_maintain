@@ -79,6 +79,10 @@ class Features::Instance < ForemanMaintain::Feature
     feature(:pulp2) || feature(:pulpcore)
   end
 
+  def os_major_release
+    @os_major_release ||= ForemanMaintain::Utils::Facter.os_major_release
+  end
+
   private
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize

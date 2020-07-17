@@ -61,13 +61,13 @@ class Features::Katello < ForemanMaintain::Feature
     ]
   end
 
-  def repos_rpm(version, os_release)
-    "https://fedorapeople.org/groups/katello/releases/yum/#{version}/katello/el#{os_release}"\
-    "/x86_64/#{KATELLO_RELEASE_PACKAGE}-latest.rpm"
+  def repos_rpm(version)
+    "https://fedorapeople.org/groups/katello/releases/yum/#{version}/katello"\
+    "/el#{feature(:instance).os_major_release}/x86_64/#{KATELLO_RELEASE_PACKAGE}-latest.rpm"
   end
 
   def update_repo(version)
-    repos_rpm = repos_rpm(version, ForemanMaintain::Utils::Facter.os_major_release)
+    repos_rpm = repos_rpm(version, feature(:instance).os_major_release)
     package_manager.update_or_install(KATELLO_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
   end
 

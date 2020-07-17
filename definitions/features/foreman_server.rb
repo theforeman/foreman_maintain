@@ -58,13 +58,13 @@ module ForemanMaintain
         execute!("foreman-rake #{command}")
       end
 
-      def repos_rpm(version, os_release)
-        "https://yum.theforeman.org/releases/#{version}/el#{os_release}"\
+      def repos_rpm(version)
+        "https://yum.theforeman.org/releases/#{version}/el#{feature(:instance).os_major_release}"\
         "/x86_64/#{FOREMAN_RELEASE_PACKAGE}.rpm"
       end
 
       def update_repos(version)
-        repos_rpm = repos_rpm(version, ForemanMaintain::Utils::Facter.os_major_release)
+        repos_rpm = repos_rpm(version, feature(:instance).os_major_release)
         package_manager.update_or_install(FOREMAN_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
         %w[foreman-release-scl centos-release-scl-rh].each do |package|
           package_manager.update(package, :assumeyes => true)
