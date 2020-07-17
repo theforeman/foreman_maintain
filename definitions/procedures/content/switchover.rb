@@ -3,6 +3,11 @@ module Procedures::Content
     metadata do
       description 'Switch support for certain content from Pulp 2 to Pulp 3'
       for_feature :pulpcore
+
+      confine do
+        # FIXME: remove this condition on next downstream upgrade scenario
+        !feature(:instance).downstream
+      end
     end
 
     def run
