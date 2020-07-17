@@ -3,6 +3,11 @@ module Procedures::Content
     metadata do
       description 'Prepare content for Pulp 3'
       for_feature :pulpcore
+
+      confine do
+        # FIXME: remove this condition on next downstream upgrade scenario
+        !feature(:instance).downstream
+      end
     end
 
     def run
