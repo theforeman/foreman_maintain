@@ -82,7 +82,7 @@ module ForemanMaintain
           tar_options = {
             :archive => backup_file,
             :command => 'create',
-            :transform => 's,^,var/lib/pgsql/data/,S',
+            :transform => "s,^,#{data_dir[1..-1]},S",
             :files => '*'
           }.merge(extra_tar_options)
           feature(:tar).run(tar_options)
