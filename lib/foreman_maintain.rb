@@ -168,7 +168,7 @@ module ForemanMaintain
         ForemanMaintain.package_manager.update(main_package_name, :assumeyes => true)
         puts "\nThe #{package_name} package successfully updated."\
              "\nRe-run #{command} with required options!"
-        exit 0
+        exit 75
       end
       puts "Nothing to update, can't find new version of #{package_name}."
     end
