@@ -54,7 +54,6 @@ module ForemanMaintain
         @last_scenario = scenario
         @last_scenario_continuation_confirmed = false
       end
-      @exit_code = 2 if scenario.warning?
       @exit_code = 1 if scenario.failed?
     end
 
