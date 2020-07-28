@@ -116,39 +116,39 @@ the *pre-upgrade check* phase. In case the upgrade failed before **migrations**
 phase made some modifying changes, the tool tries to rollback to the previous
 state of the system.
 
-The `foreman-maintain upgrade check` and `foreman-maintain upgrade run` commands execute
-the self update procedure. This tries to update `rubygem-foreman_maintain` package
-from repositories configured on system. If updade is available and successfully completed
-user is asked to re-run the upgrade to use new sources from updated package. With this
-successful upgrade also return status code as 75 which therotically means temporary
-failure and manual user intervetion is required. Below is example of self update,
+#### Self-upgrade for rubygem-foreman_maintain package
 
-```
-# foreman-maintain upgrade check --target-version TARGET_VERSION
-Checking for new version of foreman-maintain...
+**Note:** This feature is available from `rubygem-foreman_maintain` version 0.6.4 and newer.
 
-rubygem-foreman_maintain.noarch   repository
+When a user runs any `foreman-maintain upgrade` sub commands (e.g. `foreman-maintain upgrade check` or `foreman-maintain upgrade run`) then,
 
-Updating foreman-maintain package.
+  * If update available for `rubygem-foreman_maintain` package, the sub command tries to update this package. After successful package update, it returns the exit code 75 and requests user to re-run with the updated source code.
 
-The foreman-maintain package successfully updated.
-Re-run foreman-maintain with required options!
+    Here, exit code (value 75) is to indicate that it can not continue with further execution & needs re-run. e.g.,
 
-# echo $?
-75
-```
+    ~~~
+    # foreman-maintain upgrade check --target-version TARGET_VERSION
+    Checking for new version of foreman-maintain...
+    rubygem-foreman_maintain.noarch   repository
 
-If user wants to skip self update mechanism `--disable-self-upgrade` can be used with
-`upgrade check` and `upgrade run` commands, as example,
+    Updating foreman-maintain package.
 
-```
-# foreman-maintain upgrade check --target-version TARGET_VERSION --disable-self-upgrade
+    The foreman-maintain package successfully updated.
 
-# foreman-maintain upgrade run --target-version TARGET_VERSION --disable-self-upgrade
-```
+    Re-run foreman-maintain with required options!
 
-If there isn't any new version available for `rubygem-foreman_maintain` package the upgrade
-continues without halt.
+    # echo $?
+    75
+    ~~~
+
+  * If update is not available for `rubygem-foreman_maintain` package, then sub command simply executes the further steps without halt.
+
+  * If user wants to skip self-update mechanism then `--disable-self-upgrade` flag can be used with upgrade sub commands. e.g.,
+
+  ~~~
+  # foreman-maintain upgrade check --target-version TARGET_VERSION --disable-self-upgrade
+  # foreman-maintain upgrade run --target-version TARGET_VERSION --disable-self-upgrade
+  ~~~
 
 #### Satellite notes
 
