@@ -8,6 +8,6 @@ class Checks::EnvProxy < ForemanMaintain::Check
   def run
     variables = %w[http_proxy https_proxy HTTP_PROXY HTTPS_PROXY]
     has_proxy_set = true if variables.map { |variable| ENV[variable] }.compact.any?
-    assert(has_proxy_set, 'Global HTTP(S) proxy in environment (env) is set. Please unset first!')
+    assert(!has_proxy_set, 'Global HTTP(S) proxy in environment (env) is set. Please unset first!')
   end
 end
