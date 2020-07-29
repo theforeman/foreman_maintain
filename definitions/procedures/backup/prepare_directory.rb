@@ -24,7 +24,8 @@ module Procedures::Backup
       if @incremental_dir && !(snar_files = Dir.glob(File.join(@incremental_dir, '.*.snar'))).empty?
         FileUtils.cp(snar_files, @backup_dir)
       else
-        raise 'No .snar files found in previous backup directory'
+        raise "Either #{@incremental_dir} or #{@incremental_dir}/*.snar files unavailable. "\
+              'Provide a valid previous backup directory'
       end
     end
   end
