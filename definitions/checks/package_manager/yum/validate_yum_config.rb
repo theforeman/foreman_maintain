@@ -10,7 +10,7 @@ module Checks::PackageManager
       def run
         final_result = verify_config_options
         assert(
-          final_result.keys.empty?,
+          final_result[:matched_keys].empty?,
           failure_message(final_result)
         )
       end
@@ -18,33 +18,32 @@ module Checks::PackageManager
       private
 
       def failure_message(final_result)
-        verb_string = final_result.keys.length > 1 ? 'are' : 'is'
+        verb_string = final_result[:matched_keys].length > 1 ? 'are' : 'is'
 
-        "In /etc/yum.conf, #{final_result.keys.join(',')} #{verb_string} set as below:"\
-        "\n#{final_result.values.join("/\n")}"\
+        "#{final_result[:matched_keys].join(',')} #{verb_string} set in /etc/yum.conf as below:"\
+        "\n#{final_result[:grep_output]}"\
         "\nUnset this configuration as it is risky while yum update or upgrade!"
       end
 
       def verify_config_options
         result = {}
-        yum_config_options.each do |config_name, reg_ex|
-          grep_output = execute_grep_cmd(config_name)
-          if grep_output.downcase.match(reg_ex)
-            result[config_name] = grep_output
-          end
+        combined_regex = yum_config_options.values.join('|')
+        result[:grep_output] = execute_grep_cmd(combined_regex)
+        result[:matched_keys] = yum_config_options.keys.select do |key|
+          result[:grep_output].include?(key)
         end
         result
       end
 
-      def execute_grep_cmd(config_name)
-        execute_with_status("grep -iw #{config_name} /etc/yum.conf")[1]
+      def execute_grep_cmd(regex_string)
+        execute_with_status("grep -iE '#{regex_string}' /etc/yum.conf")[1]
       end
 
       def yum_config_options
         @yum_config_options ||= {
-          'exclude' => /^exclude\s*=\s*\S+.*$/,
+          'exclude' => '^exclude\s*=\s*\S+.*$',
           'clean_requirements_on_remove' =>
-            /^clean_requirements_on_remove\s*=\S*(1|yes|true)$/
+            '^clean_requirements_on_remove\s*=\S*(1|yes|true)$'
         }
       end
     end
