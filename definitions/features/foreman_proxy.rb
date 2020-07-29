@@ -122,6 +122,10 @@ class Features::ForemanProxy < ForemanMaintain::Feature
     @tftp_root_directory ||= lookup_tftp_root_directory
   end
 
+  def dhcp_isc_provider?
+    configs_from_dhcp_yml[:use_provider] == 'dhcp_isc'
+  end
+
   private
 
   def backup_features(for_features)
@@ -227,10 +231,6 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
   def configs_from_dhcp_yml
     @configs_from_dhcp_yml ||= yaml_load(dhcp_yml_path)
-  end
-
-  def dhcp_isc_provider?
-    configs_from_dhcp_yml[:use_provider] == 'dhcp_isc'
   end
 
   def lookup_using_dhcp_yml
