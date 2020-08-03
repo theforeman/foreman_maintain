@@ -26,7 +26,7 @@ def _load_whitelist():
                 continue
             _package_whitelist.add(line.rstrip().lower())
         llfile.close()
-    except urlgrabber.grabber.URLGrabError, e:
+    except urlgrabber.grabber.URLGrabError as e:
         raise PluginYumExit('Unable to read Foreman protector"s configuration: %s' % e)
 
 def _add_obsoletes(conduit):
