@@ -2,48 +2,51 @@ module Procedures::Foreman
   class RemoveDuplicatePermissions < ForemanMaintain::Procedure
     metadata do
       for_feature :foreman_database
-      description 'Remove duplicate permissions from DB'
+      description 'Remove duplicate permissions from database'
     end
 
     # rubocop:disable Metrics/MethodLength
     def run
       duplicate_permissions = feature(:foreman_database).query(
         Checks::Foreman::CheckDuplicatePermission.query_to_get_duplicate_permission
-      )
-      duplicate_permissions.each do |permission|
+      ).group_by { |permission| permission['name'] }
+      duplicate_permissions.each_value do |permissions|
         assigned_permissions = []
-        ids = feature(:foreman_database).query(query_to_get_permission_ids(permission)).
-              flat_map(&:values)
-        ids.each do |permission_id|
-          filterings = feature(:foreman_database).
-                       query(query_to_check_permission_assign_to_filter(permission_id))
-          if filterings.empty?
-            delete_permission(permission_id)
+        unassigned_permissions = []
+        permission_ids = permissions.map { |i| i['id'] }
+        filterings = check_permissions_assign_to_filter(permission_ids)
+
+        permission_ids.each do |permission_id|
+          if filterings[permission_id].nil?
+            unassigned_permissions << permission_id
           else
             assigned_permissions << permission_id
           end
         end
-        if assigned_permissions.length > 1
-          fix_permissions(assigned_permissions)
-        end
+        delete_permission(unassigned_permissions) unless unassigned_permissions.empty?
+        fix_permissions(assigned_permissions) if assigned_permissions.length > 1
       end
     end
     # rubocop:enable Metrics/MethodLength
 
     private
 
-    def fix_permissions(assigned_permissions)
-      persist_permission = assigned_permissions.shift
-      assigned_permissions.each do |permission|
-        update_filtering(permission, persist_permission)
-        delete_permission(permission)
-      end
+    def check_permissions_assign_to_filter(permission_ids)
+      feature(:foreman_database).
+        query(query_to_check_permission_assign_to_filter(permission_ids)).
+        group_by { |filtering| filtering['permission_id'] }
     end
 
-    def update_filtering(old_id, new_id)
+    def fix_permissions(assigned_permissions)
+      persist_permission = assigned_permissions.shift
+      update_filtering(assigned_permissions, persist_permission)
+      delete_permission(assigned_permissions)
+    end
+
+    def update_filtering(old_ids, new_id)
       sql = <<-SQL
       WITH rows AS (
-        UPDATE filterings SET permission_id = '#{new_id}' WHERE permission_id = '#{old_id}'
+        UPDATE filterings SET permission_id = '#{new_id}' WHERE permission_id IN (#{old_ids.join(',')})
         RETURNING id
       )
       SELECT id
@@ -53,10 +56,10 @@ module Procedures::Foreman
       feature(:foreman_database).query(sql)
     end
 
-    def delete_permission(permission_id)
+    def delete_permission(permission_ids)
       sql = <<-SQL
       WITH rows AS (
-        DELETE FROM permissions where id = '#{permission_id}' RETURNING id
+        DELETE FROM permissions where id IN (#{permission_ids.join(',')}) RETURNING id
       )
       SELECT id
       FROM rows
@@ -65,15 +68,9 @@ module Procedures::Foreman
       feature(:foreman_database).query(sql)
     end
 
-    def query_to_get_permission_ids(permission)
+    def query_to_check_permission_assign_to_filter(permission_ids)
       <<-SQL
-        SELECT id FROM permissions where name = '#{permission['name']}' and resource_type = '#{permission['resource_type']}'
-      SQL
-    end
-
-    def query_to_check_permission_assign_to_filter(permission_id)
-      <<-SQL
-        SELECT id, filter_id FROM filterings WHERE permission_id = '#{permission_id}'
+        SELECT id, filter_id, permission_id FROM filterings WHERE permission_id IN (#{permission_ids.join(',')})
       SQL
     end
   end

@@ -4,7 +4,7 @@ module Checks
       metadata do
         label :duplicate_permission
         for_feature :foreman_database
-        description 'Check for duplicate permission from DB'
+        description 'Check for duplicate permission from database'
         tags :default
       end
 
@@ -25,7 +25,7 @@ module Checks
 
       def self.query_to_get_duplicate_permission
         <<-SQL
-          SELECT count(*), name, resource_type  FROM permissions GROUP BY name, resource_type HAVING count(*) > 1
+          SELECT id,name FROM permissions p WHERE (SELECT count(name) FROM permissions pr WHERE p.name =pr.name) > 1
         SQL
       end
     end
