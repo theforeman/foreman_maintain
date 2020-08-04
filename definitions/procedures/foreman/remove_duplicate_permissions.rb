@@ -5,36 +5,28 @@ module Procedures::Foreman
       description 'Remove duplicate permissions from database'
     end
 
-    # rubocop:disable Metrics/MethodLength
     def run
       duplicate_permissions = feature(:foreman_database).query(
-        Checks::Foreman::CheckDuplicatePermission.query_to_get_duplicate_permission
+        Checks::Foreman::CheckDuplicatePermissions.query_to_get_duplicate_permission
       ).group_by { |permission| permission['name'] }
+      unassigned_permissions = []
       duplicate_permissions.each_value do |permissions|
-        assigned_permissions = []
-        unassigned_permissions = []
         permission_ids = permissions.map { |i| i['id'] }
         filterings = check_permissions_assign_to_filter(permission_ids)
-
-        permission_ids.each do |permission_id|
-          if filterings[permission_id].nil?
-            unassigned_permissions << permission_id
-          else
-            assigned_permissions << permission_id
-          end
-        end
-        delete_permission(unassigned_permissions) unless unassigned_permissions.empty?
+        assigned_permissions = filterings.keys
+        unassigned_permissions << permission_ids - assigned_permissions
         fix_permissions(assigned_permissions) if assigned_permissions.length > 1
       end
+      delete_permission(unassigned_permissions.flatten) unless unassigned_permissions.empty?
     end
-    # rubocop:enable Metrics/MethodLength
 
     private
 
     def check_permissions_assign_to_filter(permission_ids)
-      feature(:foreman_database).
-        query(query_to_check_permission_assign_to_filter(permission_ids)).
-        group_by { |filtering| filtering['permission_id'] }
+      sql = <<-SQL
+        SELECT id, filter_id, permission_id FROM filterings WHERE permission_id IN (#{permission_ids.join(',')})
+      SQL
+      feature(:foreman_database).query(sql).group_by { |filtering| filtering['permission_id'] }
     end
 
     def fix_permissions(assigned_permissions)

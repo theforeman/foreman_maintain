@@ -1,25 +1,25 @@
 module Checks
   module Foreman
-    class CheckDuplicatePermission < ForemanMaintain::Check
+    class CheckDuplicatePermissions < ForemanMaintain::Check
       metadata do
-        label :duplicate_permission
+        label :duplicate_permissions
         for_feature :foreman_database
-        description 'Check for duplicate permission from database'
+        description 'Check for duplicate permissions from database'
         tags :default
       end
 
       def run
-        duplicate_permissions = find_duplicate_permission
+        duplicate_permissions = find_duplicate_permissions
         assert(
           duplicate_permissions.empty?,
-          'Duplicate permissions in your DB',
+          'Duplicate permissions in your database',
           :next_steps => [
             Procedures::Foreman::RemoveDuplicatePermissions.new
           ]
         )
       end
 
-      def find_duplicate_permission
+      def find_duplicate_permissions
         feature(:foreman_database).query(self.class.query_to_get_duplicate_permission)
       end
 
