@@ -59,11 +59,5 @@ module Procedures::Foreman
 
       feature(:foreman_database).query(sql)
     end
-
-    def query_to_check_permission_assign_to_filter(permission_ids)
-      <<-SQL
-        SELECT id, filter_id, permission_id FROM filterings WHERE permission_id IN (#{permission_ids.join(',')})
-      SQL
-    end
   end
 end
