@@ -187,10 +187,10 @@ module ForemanMaintain
         assert_equal 0, runner.exit_code
       end
 
-      it 'is 0 if scenario has warnings' do
+      it 'is 78 if scenario has warnings' do
         runner = Runner.new(reporter, [warn_scenario])
         runner.run
-        assert_equal 0, runner.exit_code
+        assert_equal 78, runner.exit_code
       end
     end
   end
