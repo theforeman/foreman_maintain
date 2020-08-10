@@ -16,5 +16,6 @@ rdma-core
 boost-random
 boost-iostreams
 boost-thread
+yum-utils
 # foreman-maintain
 rubygem-foreman_maintain
