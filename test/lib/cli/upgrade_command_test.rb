@@ -35,7 +35,7 @@ module ForemanMaintain
 
     describe 'list-versions' do
       let :command do
-        %w[upgrade list-versions]
+        %w[upgrade list-versions --disable-self-upgrade]
       end
       it 'lists the available versions' do
         assert_cmd <<-OUTPUT.strip_heredoc

@@ -53,7 +53,10 @@ module ForemanMaintain
       end
 
       subcommand 'list-versions', 'List versions this system is upgradable to' do
+        disable_self_upgrade_option
+
         def execute
+          ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
           print_versions(UpgradeRunner.available_targets)
         end
       end
