@@ -6,7 +6,11 @@ module Procedures::Installer
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
-      feature(:installer).run(@arguments, :interactive => !assumeyes_val)
+      if package_version('foreman-installer').version >= '2.1'
+        feature(:installer).run(@arguments, :interactive => !assumeyes_val)
+      else
+        feature(:installer).upgrade(:interactive => !assumeyes_val)
+      end
     end
   end
 end
