@@ -22,9 +22,7 @@ module Checks::ForemanProxy
     end
 
     def old_files_from_tftp_boot
-      initrd = File.join(tftp_boot_directory, '/*-initrd.img')
-      vmlinuz = File.join(tftp_boot_directory, '/*-vmlinuz')
-      Dir.glob([initrd, vmlinuz]).map do |file|
+      Dir.glob("#{tftp_boot_directory}*-{vmlinuz,initrd.img}").map do |file|
         unless File.directory?(file)
           file if File.mtime(file) + (token_duration * 60) < Time.now
         end
