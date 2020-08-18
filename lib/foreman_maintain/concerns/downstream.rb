@@ -72,7 +72,9 @@ module ForemanMaintain
       end
 
       def ansible_repo(server_version, rh_version_major)
-        if server_version >= version('6.6')
+        if server_version >= version('6.8')
+          "rhel-#{rh_version_major}-server-ansible-2.9-rpms"
+        elsif server_version >= version('6.6')
           "rhel-#{rh_version_major}-server-ansible-2.8-rpms"
         elsif server_version >= version('6.4')
           "rhel-#{rh_version_major}-server-ansible-2.6-rpms"
@@ -105,7 +107,7 @@ module ForemanMaintain
                           "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}-rpms"]
                        end
 
-        return repos_arrary.first(1) if feature(:capsule)
+        return repos_arrary.first(1) if feature(:satellite)
 
         repos_arrary
       end
