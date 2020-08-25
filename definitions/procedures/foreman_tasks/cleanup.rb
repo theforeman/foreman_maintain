@@ -32,8 +32,9 @@ module Procedures::ForemanTasks
       f = feature(:foreman_tasks)
 
       # If states are provided, then a search must be provided as well
-      # We assume if the user didn't provide a search query, they want to match all tasks in given stat so we provide
-      # a bogus search value which matches all tasks
+      # We assume if the user didn't provide a search query, they want to match
+      # all tasks in given stat so we provide a bogus search value which matches
+      # all tasks
       @search = 'label != a_label' if !@states.empty? && @search.nil?
       args = [@rake_command, @batch_size, @states, @after, @search, @backup, @noop, @verbose]
 

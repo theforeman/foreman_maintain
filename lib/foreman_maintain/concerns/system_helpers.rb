@@ -56,7 +56,7 @@ module ForemanMaintain
       def execute_runner(command, options = {}, &block)
         command_runner = Utils::CommandRunner.new(logger, command, options)
         execution.puts '' if command_runner.interactive? && respond_to?(:execution)
-        command_runner.run &block
+        command_runner.run(&block)
         command_runner
       end
 
