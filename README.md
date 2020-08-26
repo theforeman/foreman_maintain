@@ -452,6 +452,13 @@ Here, 0=ON & 1=OFF.
 If User would like to check whether maintenance-mode is ON/OFF on system in their external script then
 they can use subcommand `foreman-maintain maintenance-mode is-enabled`.
 
+## Exit Codes -
+
+| Exit Code  | Description                        |
+| -----------| -----------------------------------|
+| 75         | Temporary failure and needs re-run |
+| 78         | Command executed with warning(s)   |
+
 ## How to contribute?
 
 Generally, follow the [Foreman guidelines](https://theforeman.org/contribute.html). For code-related contributions, fork this project and send a pull request with all changes. Some things to keep in mind:
