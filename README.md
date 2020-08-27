@@ -452,7 +452,9 @@ Here, 0=ON & 1=OFF.
 If User would like to check whether maintenance-mode is ON/OFF on system in their external script then
 they can use subcommand `foreman-maintain maintenance-mode is-enabled`.
 
-## Exit Codes -
+## Exit codes with special meanings -
+
+Every command returns an exit code. Any other exit status than 0 indicates a failure of some kind. Foreman Maintain uses following exit codes with special meaning.
 
 | Exit Code  | Description                        |
 | -----------| -----------------------------------|
