@@ -129,8 +129,11 @@ module ForemanMaintain
 
     def passed?
       (steps_with_abort(:whitelisted => false) +
-        steps_with_error(:whitelisted => false) +
-        steps_with_warning(:whitelisted => false)).empty?
+        steps_with_error(:whitelisted => false)).empty?
+    end
+
+    def warning?
+      !steps_with_warning(:whitelisted => false).empty?
     end
 
     def failed?
