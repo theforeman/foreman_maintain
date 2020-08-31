@@ -6,7 +6,7 @@ module Procedures::Installer
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
-      feature(:installer).run(@arguments, :interactive => !assumeyes_val)
+      feature(:installer).upgrade(:interactive => !assumeyes_val)
     end
   end
 end
