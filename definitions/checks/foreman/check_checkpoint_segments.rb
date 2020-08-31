@@ -2,15 +2,17 @@ module Checks
   module Foreman
     class CheckpointSegments < ForemanMaintain::Check
       metadata do
-        label :check_checkpoint_segments
-        description 'Check if checkpoint_segments parameter persent in custom hiera'
+        label :check_postgresql_checkpoint_segments
+        description 'Check if checkpoint_segments configuration exists on the system'
+        confine do
+          feature(:foreman)
+        end
       end
 
       def run
         files = []
         files << check_postgres_config
         files << check_custom_hiera
-        # Make sure array does not contain nil value
         unless files.compact.empty?
           failure_message = <<-MESSAGE.strip_heredoc
           ERROR: Tuning option 'checkpoint_segments' found.
@@ -24,10 +26,10 @@ module Checks
 
       def check_custom_hiera
         hiera_file = feature(:installer) ? feature(:installer).custom_hiera_file : nil
-        if File.exist?(hiera_file)
-          config = YAML.load(File.read(hiera_file))
-          if !config.nil? && config.key?('postgresql::server::config_entries') &&
-             !config['postgresql::server::config_entries'].nil? &&
+        return unless hiera_file
+        if File.exist?(hiera_file) && (config = YAML.load_file(hiera_file)) &&
+           config.key?('postgresql::server::config_entries')
+          if !config['postgresql::server::config_entries'].nil? &&
              config['postgresql::server::config_entries'].key?('checkpoint_segments')
             return hiera_file
           end
@@ -36,14 +38,13 @@ module Checks
 
       def check_postgres_config
         param = /(?<!#)checkpoint_segments/
-        config_file = postgres_config_files
-        if File.exist?(config_file)
-          file = File.read(config_file)
-          return config_file if file.match(param)
+        config_file = postgresql_config_file
+        if File.exist?(config_file) && (config = File.read(config_file))
+          return config_file if config.match(param)
         end
       end
 
-      def postgres_config_files
+      def postgresql_config_file
         if find_package('postgresql-server')
           '/var/lib/pgsql/data/postgresql.conf'
         else
