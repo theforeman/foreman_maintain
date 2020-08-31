@@ -4,45 +4,50 @@ module Checks
       metadata do
         label :check_checkpoint_segments
         description 'Check if checkpoint_segments parameter persent in custom hiera'
-        tags :pre_upgrade
       end
-
-      HIERA_FILE = '/etc/foreman-installer/custom-hiera.yaml'.freeze
 
       def run
         files = []
-        files << feature(:foreman_database).config_files[0] if check_postgres_config
-        files << HIERA_FILE if check_custom_hiera
-        unless files.empty?
-          message = ERB.new(<<-BLOCK.strip_heredoc).result(binding)
-          ERROR:
-            checkpoint_segments tuning found.
-            This tuning option is no longer valid in PostgreSQL 9.5+
-            Please remove this from the following locations and then re-run the foreman-maintain upgrade check:
-            <% files.each do |file| %>
-              - <%= file %>
-            <% end %>
-          BLOCK
-          fail! message
+        files << check_postgres_config
+        files << check_custom_hiera
+        # Make sure array does not contain nil value
+        unless files.compact.empty?
+          failure_message = <<-MESSAGE.strip_heredoc
+          ERROR: Tuning option 'checkpoint_segments' found.
+          This option is no longer valid for PostgreSQL 9.5 and onwards.
+          Please remove it from following files and re-run the command.
+          #{files.join("\n")}
+          MESSAGE
+          fail! failure_message
         end
       end
 
       def check_custom_hiera
-        if File.exist?(HIERA_FILE)
-          config = YAML.load(File.read(HIERA_FILE))
+        hiera_file = feature(:installer) ? feature(:installer).custom_hiera_file : nil
+        if File.exist?(hiera_file)
+          config = YAML.load(File.read(hiera_file))
           if !config.nil? && config.key?('postgresql::server::config_entries') &&
+             !config['postgresql::server::config_entries'].nil? &&
              config['postgresql::server::config_entries'].key?('checkpoint_segments')
-            return true
+            return hiera_file
           end
         end
       end
 
       def check_postgres_config
         param = /(?<!#)checkpoint_segments/
-        config_file = feature(:foreman_database).config_files[0]
+        config_file = postgres_config_files
         if File.exist?(config_file)
           file = File.read(config_file)
-          return file.match(param)
+          return config_file if file.match(param)
+        end
+      end
+
+      def postgres_config_files
+        if find_package('postgresql-server')
+          '/var/lib/pgsql/data/postgresql.conf'
+        else
+          '/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf'
         end
       end
     end
