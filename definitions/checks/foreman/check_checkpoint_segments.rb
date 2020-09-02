@@ -27,12 +27,21 @@ module Checks
             - #{hiera_file}
             MESSAGE
           elsif config['postgresql::server::config_entries'].key?('checkpoint_segments')
-            return <<-MESSAGE.strip_heredoc
+            message = <<-MESSAGE.strip_heredoc
             ERROR: Tuning option 'checkpoint_segments' found.
-            This option is no longer valid for PostgreSQL 9.5 and onwards.
+            This option is no longer valid for PostgreSQL 9.5 or newer.
             Please remove it from following file and re-run the command.
             - #{hiera_file}
             MESSAGE
+            if feature(:katello)
+              message += <<-MESSAGE.strip_heredoc
+              The presence of checkpoint_segments in #{hiera_file} indicates manual tuning.
+              Manual tuning can override values provided by the --tuning parameter.
+              Review #{hiera_file} for values that are already provided by the built in tuning profiles.
+              Built in tuning profiles also provide a supported upgrade path.
+              MESSAGE
+            end
+            return message
           end
         end
       end
