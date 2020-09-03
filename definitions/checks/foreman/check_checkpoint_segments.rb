@@ -5,7 +5,8 @@ module Checks
         label :check_postgresql_checkpoint_segments
         description 'Check if checkpoint_segments configuration exists on the system'
         confine do
-          feature(:foreman)
+          feature(:foreman) && feature(:installer) &&
+            File.exist?(feature(:installer).custom_hiera_file)
         end
       end
 
