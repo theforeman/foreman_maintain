@@ -5,7 +5,7 @@ module Checks
         label :duplicate_permissions
         for_feature :foreman_database
         description 'Check for duplicate permissions from database'
-        tags :default
+        tags :pre_upgrade
       end
 
       def run

@@ -31,33 +31,40 @@ module Procedures::Foreman
 
     def fix_permissions(assigned_permissions)
       persist_permission = assigned_permissions.shift
-      update_filtering(assigned_permissions, persist_permission)
+      filter_ids = filters_for_permission(persist_permission).map { |filter| filter['filter_id'] }
+      update_filtering(assigned_permissions, persist_permission, filter_ids)
+      delete_filtering(assigned_permissions)
       delete_permission(assigned_permissions)
     end
 
-    def update_filtering(old_ids, new_id)
+    def filters_for_permission(permission)
+      feature(:foreman_database).query(
+        "SELECT filter_id FROM filterings WHERE permission_id = #{permission.to_i}"
+      )
+    end
+
+    def update_filtering(old_ids, new_id, filter_ids)
       sql = <<-SQL
       WITH rows AS (
-        UPDATE filterings SET permission_id = '#{new_id}' WHERE permission_id IN (#{old_ids.join(',')})
+        UPDATE filterings SET permission_id = '#{new_id}' WHERE permission_id IN (#{old_ids.join(',')}) AND filter_id NOT IN (#{filter_ids.join(',')})
         RETURNING id
       )
       SELECT id
       FROM rows
       SQL
-
       feature(:foreman_database).query(sql)
     end
 
-    def delete_permission(permission_ids)
-      sql = <<-SQL
-      WITH rows AS (
-        DELETE FROM permissions where id IN (#{permission_ids.join(',')}) RETURNING id
+    def delete_filtering(permission_ids)
+      feature(:foreman_database).psql(
+        "DELETE FROM filterings where permission_id IN (#{permission_ids.join(',')})"
       )
-      SELECT id
-      FROM rows
-      SQL
+    end
 
-      feature(:foreman_database).query(sql)
+    def delete_permission(permission_ids)
+      feature(:foreman_database).psql(
+        "DELETE FROM permissions where id IN (#{permission_ids.join(',')})"
+      )
     end
   end
 end
