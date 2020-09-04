@@ -31,7 +31,7 @@ module Procedures::Foreman
 
     def fix_permissions(assigned_permissions)
       persist_permission = assigned_permissions.shift
-      filter_ids = filters_for_permission(persist_permission).map { |filter| filter['filter_id'] }
+      filter_ids = filters_for_permission(persist_permission)
       update_filtering(assigned_permissions, persist_permission, filter_ids)
       delete_filtering(assigned_permissions)
       delete_permission(assigned_permissions)
@@ -40,7 +40,7 @@ module Procedures::Foreman
     def filters_for_permission(permission)
       feature(:foreman_database).query(
         "SELECT filter_id FROM filterings WHERE permission_id = #{permission.to_i}"
-      )
+      ).map { |filter| filter['filter_id'] }
     end
 
     def update_filtering(old_ids, new_id, filter_ids)
