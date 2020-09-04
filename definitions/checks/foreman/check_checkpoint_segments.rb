@@ -17,9 +17,8 @@ module Checks
 
       # rubocop:disable Metrics/MethodLength
       def check_custom_hiera
-        hiera_file = feature(:installer) ? feature(:installer).custom_hiera_file : nil
-        return unless hiera_file
-        if File.exist?(hiera_file) && (config = YAML.load_file(hiera_file)) &&
+        hiera_file = feature(:installer).custom_hiera_file
+        if (config = YAML.load_file(hiera_file)) &&
            config.key?('postgresql::server::config_entries')
           if config['postgresql::server::config_entries'].nil?
             return <<-MESSAGE.strip_heredoc
