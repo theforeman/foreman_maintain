@@ -53,6 +53,10 @@ class Features::Installer < ForemanMaintain::Feature
     end
   end
 
+  def custom_hiera_file
+    @custom_hiera_file ||= File.join(config_directory, 'custom-hiera.yaml')
+  end
+
   def can_upgrade?
     @installer_type == :scenarios || @installer_type == :legacy_katello
   end

@@ -27,6 +27,7 @@ module Scenarios::Satellite_6_8
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
+      add_step(Checks::Foreman::CheckpointSegments)
       add_step(Checks::Repositories::Validate.new(:version => '6.8'))
     end
   end
