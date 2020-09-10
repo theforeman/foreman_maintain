@@ -57,7 +57,7 @@ module ForemanMaintain
           raise error
         end
 
-        puts error.message
+        $stderr.puts error.message
         logger.error(error)
 
         @exit_code = 1
@@ -65,7 +65,7 @@ module ForemanMaintain
 
       def process_usage_error(error)
         log_exit_code_info(1)
-        puts error.message
+        $stderr.puts error.message
         exit!
       end
     end
