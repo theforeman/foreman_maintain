@@ -163,7 +163,7 @@ module ForemanMaintain
       def validate_hostname?
         # make sure that the system hostname is the same as the backup
         config_tarball = file_map[:config_files][:path]
-        tar_cmd = "tar zxf #{config_tarball} etc/httpd/conf/httpd.conf --to-stdout"
+        tar_cmd = "tar zxf #{config_tarball} etc/httpd/conf/httpd.conf --to-stdout --occurrence=1"
         status, httpd_config = execute_with_status(tar_cmd)
 
         # Incremental backups sometimes don't include httpd.conf. Since a "base" backup
