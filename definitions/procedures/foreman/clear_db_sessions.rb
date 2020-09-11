@@ -1,5 +1,5 @@
 module Procedures::Foreman
-  class ClearSessions < ForemanMaintain::Procedure
+  class ClearDBSessions < ForemanMaintain::Procedure
     metadata do
       for_feature :foreman_server
       advanced_run false
