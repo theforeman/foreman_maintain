@@ -64,11 +64,9 @@ module ForemanMaintain
       end
 
       def update_repos(version)
-        repos_rpm = repos_rpm(version, feature(:instance).os_major_release)
+        repos_rpm = repos_rpm(version)
         package_manager.update_or_install(FOREMAN_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
-        %w[foreman-release-scl centos-release-scl-rh].each do |package|
-          package_manager.update(package, :assumeyes => true)
-        end
+        package_manager.update('foreman-release-scl', :assumeyes => true)
       end
     end
   end

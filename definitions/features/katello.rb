@@ -67,7 +67,7 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def update_repo(version)
-    repos_rpm = repos_rpm(version, feature(:instance).os_major_release)
+    repos_rpm = repos_rpm(version)
     package_manager.update_or_install(KATELLO_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
   end
 
