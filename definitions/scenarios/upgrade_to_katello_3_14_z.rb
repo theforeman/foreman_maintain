@@ -81,6 +81,9 @@ module Scenarios::Katello_3_14_z
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
       add_step(Checks::Foreman::CheckForMysql.new)
+      add_step(Procedures::Service::Stop.new(:exclude => 'postgresql'))
+      add_step(Procedures::Foreman::VacuumDatabase.new)
+      add_step(Checks::Foreman::CheckForMysql.new)
     end
   end
 end

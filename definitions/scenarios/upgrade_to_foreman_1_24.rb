@@ -68,9 +68,6 @@ module Scenarios::Foreman_1_24
       add_step(Procedures::Foreman::ClearCache.new)
       add_step(Procedures::Foreman::ClearSessions.new)
       add_step(Procedures::Foreman::ApipieCache.new)
-      add_step(Procedures::Service::Stop.new(:exclude => 'postgresql'))
-      add_step(Procedures::Foreman::VacuumDatabase.new)
-      add_step(Procedures::Service::Start.new)
       add_step(Procedures::Packages::CleanupCollections.new(
                  :packages => %w[rhscl-\* rh-ruby22\* rh-ror42\*]
       ))
@@ -89,6 +86,9 @@ module Scenarios::Foreman_1_24
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
       add_step(Checks::Foreman::CheckForMysql.new)
+      add_step(Procedures::Service::Stop.new(:exclude => 'postgresql'))
+      add_step(Procedures::Foreman::VacuumDatabase.new)
+      add_step(Procedures::Service::Start.new)
     end
   end
 end
