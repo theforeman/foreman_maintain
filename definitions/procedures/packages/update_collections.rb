@@ -2,8 +2,7 @@ module Procedures::Packages
   class UpdateCollections < ForemanMaintain::Procedure
     metadata do
       param :collections, 'List of collections to upgrade', :array => true,
-                                                            :default => %w[centos-release-scl-rh
-                                                                           foreman-release-scl]
+                                                            :default => %w[centos-release-scl-rh]
       param :assumeyes, 'Do not ask for confirmation'
 
       confine do
