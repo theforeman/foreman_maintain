@@ -7,7 +7,9 @@ module Procedures::Foreman
     end
 
     def run
-      execute("su - postgres -c 'vacuumdb --full --dbname=foreman'")
+      feature(:foreman_database).psql(<<-SQL)
+        vacuum full verbose
+      SQL
     end
   end
 end
