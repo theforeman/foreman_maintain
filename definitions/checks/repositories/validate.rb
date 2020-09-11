@@ -19,7 +19,7 @@ module Checks::Repositories
     end
 
     def run
-      if feature(:downstream)
+      if feature(:instance).downstream
         if feature(:instance).downstream.subscribed_using_activation_key?
           skip 'Your system is subscribed using custom activation key'
         else
@@ -29,7 +29,7 @@ module Checks::Repositories
         end
       else
         unless feature(:upstream_repositories).available?(@version)
-          fail!("Upstream repositories for version #{@version} are not available")
+          fail!("Repositories for version #{@version} are not available")
         end
       end
     end
