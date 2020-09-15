@@ -3,7 +3,7 @@ class Features::ForemanCockpit < ForemanMaintain::Feature
     label :foreman_cockpit
 
     confine do
-      find_package('tfm-rubygem-foreman_remote_execution-cockpit')
+      server? && find_package('tfm-rubygem-foreman_remote_execution-cockpit')
     end
   end
 
