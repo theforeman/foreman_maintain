@@ -54,6 +54,10 @@ module ForemanMaintain
         raise NotImplementedError
       end
 
+      def pkg_and_cmd_name
+        [main_package_name, 'foreman-maintain']
+      end
+
       private
 
       def rh_repos(server_version)

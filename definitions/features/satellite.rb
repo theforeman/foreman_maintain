@@ -17,6 +17,10 @@ class Features::Satellite < ForemanMaintain::Feature
     'satellite'
   end
 
+  def pkg_and_cmd_name
+    %w[satellite-maintain satellite-maintain]
+  end
+
   private
 
   def version_from_source
