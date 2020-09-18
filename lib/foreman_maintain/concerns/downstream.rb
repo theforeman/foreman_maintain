@@ -54,8 +54,8 @@ module ForemanMaintain
         raise NotImplementedError
       end
 
-      def pkg_and_cmd_name
-        [main_package_name, 'foreman-maintain']
+      def fm_pkg_and_cmd_name
+        %w[satellite-maintain satellite-maintain]
       end
 
       private

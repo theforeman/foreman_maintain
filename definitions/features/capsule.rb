@@ -18,8 +18,4 @@ class Features::Capsule < ForemanMaintain::Feature
   def package_name
     'satellite-capsule'
   end
-
-  def pkg_and_cmd_name
-    %w[satellite-maintain satellite-maintain]
-  end
 end
