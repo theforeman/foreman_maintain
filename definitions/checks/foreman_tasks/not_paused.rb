@@ -14,6 +14,7 @@ module Checks::ForemanTasks
              "There are currently #{paused_tasks_count} paused tasks in the system",
              :next_steps =>
                [Procedures::ForemanTasks::Resume.new,
+                Procedures::ForemanTasks::Delete.new(:state => :paused),
                 Procedures::ForemanTasks::UiInvestigate.new('search_query' => scoped_search_query)])
     end
 

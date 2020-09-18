@@ -18,6 +18,7 @@ module ForemanMaintain
       @last_scenario = nil
       @last_scenario_continuation_confirmed = false
       @exit_code = 0
+      @procedure_step_counter = 0
     end
 
     def quit?
@@ -143,14 +144,16 @@ module ForemanMaintain
 
     # rubocop:disable  Metrics/MethodLength
     def ask_about_offered_steps(step, scenario)
-      if assumeyes? && rerun_check?(step)
-        @reporter.puts 'Check still failing after attempt to fix. Skipping'
-        return :no
-      end
       if step.next_steps && !step.next_steps.empty?
         @last_decision_step = step
+        @procedure_step_counter += 1
         steps = step.next_steps.map(&:ensure_instance)
-
+        if assumeyes? && @procedure_step_counter > steps.length
+          @procedure_step_counter = 0
+          @reporter.select_option_counter = 0
+          @reporter.puts 'Check still failing after attempt to fix. Skipping'
+          return :no
+        end
         decision = @reporter.on_next_steps(steps, scenario.run_strategy)
         case decision
         when :quit

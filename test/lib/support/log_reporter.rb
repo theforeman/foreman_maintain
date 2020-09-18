@@ -1,7 +1,7 @@
 class Support
   class LogReporter < ForemanMaintain::Reporter
     attr_reader :log, :output, :input, :executions
-    attr_accessor :planned_next_steps_answers
+    attr_accessor :planned_next_steps_answers, :select_option_counter
 
     def initialize(options = {})
       options.validate_options!(:assumeyes)

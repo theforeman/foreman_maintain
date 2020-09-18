@@ -89,6 +89,8 @@ class Features::ForemanTasks < ForemanMaintain::Feature
 
     if state == :old
       old_tasks_condition
+    elsif state == :paused
+      paused_tasks_condition
     else
       tasks_condition(state)
     end
@@ -180,6 +182,10 @@ class Features::ForemanTasks < ForemanMaintain::Feature
        "foreman_tasks_tasks.started_at < CURRENT_DATE - INTERVAL '#{MIN_AGE} days'"
   end
 
+  def paused_tasks_condition(state = "'paused'")
+    "foreman_tasks_tasks.state IN (#{state})"
+  end
+
   def prepare_for_backup(state)
     dir = backup_dir(state)
     execute("mkdir -p #{dir}")
@@ -197,6 +203,6 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def valid(state)
-    %w[old planning pending].include?(state.to_s)
+    %w[old planning pending paused].include?(state.to_s)
   end
 end

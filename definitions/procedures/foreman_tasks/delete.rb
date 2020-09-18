@@ -1,6 +1,6 @@
 module Procedures::ForemanTasks
   class Delete < ForemanMaintain::Procedure
-    ALLOWED_STATES_VALUES = %w[old planning pending].freeze
+    ALLOWED_STATES_VALUES = %w[old planning pending paused].freeze
 
     metadata do
       param :state,
