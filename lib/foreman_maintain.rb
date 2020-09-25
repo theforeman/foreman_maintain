@@ -153,7 +153,7 @@ module ForemanMaintain
     def pkg_and_cmd_name
       instance_feature = ForemanMaintain.available_features(:label => :instance).first
       if instance_feature.downstream
-        return %w[satellite-maintain satellite-maintain]
+        return instance_feature.downstream.fm_pkg_and_cmd_name
       end
 
       [main_package_name, 'foreman-maintain']

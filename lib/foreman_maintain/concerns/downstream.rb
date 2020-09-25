@@ -54,6 +54,10 @@ module ForemanMaintain
         raise NotImplementedError
       end
 
+      def fm_pkg_and_cmd_name
+        %w[satellite-maintain satellite-maintain]
+      end
+
       private
 
       def rh_repos(server_version)
