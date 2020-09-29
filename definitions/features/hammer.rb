@@ -44,7 +44,7 @@ class Features::Hammer < ForemanMaintain::Feature
   end
 
   def check_connection(config = {})
-    @ready = config.empty? ? _check_connection : _check_connection(config)
+    @ready = _check_connection(config)
   end
 
   def server_uri
@@ -176,7 +176,7 @@ class Features::Hammer < ForemanMaintain::Feature
   end
 
   def _check_connection(config = {})
-    cmd = "#{config.empty? ? command_base : command_base(config)} user list --per-page 1 2>&1"
+    cmd = "#{command_base(config)} user list --per-page 1 2>&1"
     `#{cmd}` && $CHILD_STATUS.exitstatus == 0
   end
 end
