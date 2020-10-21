@@ -12,10 +12,17 @@ module Checks::ForemanTasks
       paused_tasks_count = feature(:foreman_tasks).paused_tasks_count(ignored_tasks)
       assert(paused_tasks_count == 0,
              "There are currently #{paused_tasks_count} paused tasks in the system",
-             :next_steps =>
-               [Procedures::ForemanTasks::Resume.new,
-                Procedures::ForemanTasks::Delete.new(:state => :paused),
-                Procedures::ForemanTasks::UiInvestigate.new('search_query' => scoped_search_query)])
+             :next_steps => next_procedures)
+    end
+
+    def next_procedures
+      if assumeyes?
+        [Procedures::ForemanTasks::Resume.new,
+         Procedures::ForemanTasks::Delete.new(:state => :paused)]
+      end
+      [Procedures::ForemanTasks::Resume.new,
+       Procedures::ForemanTasks::Delete.new(:state => :paused),
+       Procedures::ForemanTasks::UiInvestigate.new('search_query' => scoped_search_query)]
     end
 
     # Note: this is for UI link generation only: we are not using scoped search for querying
