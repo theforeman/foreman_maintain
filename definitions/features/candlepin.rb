@@ -7,6 +7,10 @@ class Features::Candlepin < ForemanMaintain::Feature
     end
   end
 
+  def work_dir
+    '/var/lib/candlepin'
+  end
+
   def services
     [
       system_service('tomcat', 20),
