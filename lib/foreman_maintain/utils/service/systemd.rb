@@ -50,10 +50,16 @@ module ForemanMaintain::Utils
 
       def exist?
         if @sys.systemd_installed?
-          systemd = @sys.execute("systemctl is-enabled #{@name} 2>&1 | tail -1").strip
+          systemd = service_enabled_status
           systemd == 'enabled' || systemd == 'disabled'
         else
           File.exist?("/etc/init.d/#{@name}")
+        end
+      end
+
+      def enabled?
+        if @sys.systemd_installed?
+          service_enabled_status == 'enabled'
         end
       end
 
@@ -61,6 +67,10 @@ module ForemanMaintain::Utils
 
       def execute(action, options = {})
         @sys.execute_with_status(command(action, options))
+      end
+
+      def service_enabled_status
+        @sys.execute("systemctl is-enabled #{@name} 2>&1 | tail -1").strip
       end
 
       def skip_enablement_message(action, name)
