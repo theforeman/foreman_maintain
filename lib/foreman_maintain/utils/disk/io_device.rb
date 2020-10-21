@@ -22,6 +22,10 @@ module ForemanMaintain
           convert_kb_to_mb(execute!("df #{dir}|awk {'print $4'}|tail -1").to_i)
         end
 
+        def space_used_in_percent
+          execute!("df #{dir}|awk {'print $5'}|tail -1").to_i
+        end
+
         private
 
         # In fio command, --direct option bypass the cache page
