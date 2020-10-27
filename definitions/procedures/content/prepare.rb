@@ -6,7 +6,7 @@ module Procedures::Content
 
       confine do
         # FIXME: remove this condition on next downstream upgrade scenario
-        !feature(:instance).downstream
+        !feature(:satellite) || feature(:satellite).at_least_version?('6.9')
       end
     end
 
