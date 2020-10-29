@@ -1,7 +1,5 @@
 class Features::ForemanTasks < ForemanMaintain::Feature
   MIN_AGE = 30
-  TIMEOUT_FOR_TASKS_STATUS = 300
-  RETRY_INTERVAL_FOR_TASKS_STATE = 10
 
   SAFE_TO_DELETE = %w[
     Actions::Katello::Host::GenerateApplicability
@@ -98,9 +96,10 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     feature(:hammer).run('task resume')
   end
 
-  def fetch_tasks_status(state, spinner)
-    Timeout.timeout(TIMEOUT_FOR_TASKS_STATUS) do
-      check_task_count(state, spinner)
+  def fetch_tasks_status(state, spinner, timeout_for_tasks_status = 300,
+                         retry_interval_for_tasks_state = 10)
+    Timeout.timeout(timeout_for_tasks_status) do
+      check_task_count(state, spinner, retry_interval_for_tasks_state)
     end
   rescue Timeout::Error => e
     logger.error e.message
@@ -117,14 +116,14 @@ class Features::ForemanTasks < ForemanMaintain::Feature
 
   private
 
-  def check_task_count(state, spinner)
+  def check_task_count(state, spinner, retry_interval_for_tasks_state)
     loop do
       spinner.update "Try checking status of #{state} task(s)"
       task_count = call_tasks_count_by_state(state)
       break if task_count == 0
       puts "\nThere are #{task_count} #{state} tasks."
-      spinner.update "Waiting #{RETRY_INTERVAL_FOR_TASKS_STATE} seconds before retry."
-      sleep RETRY_INTERVAL_FOR_TASKS_STATE
+      spinner.update "Waiting #{retry_interval_for_tasks_state} seconds before retry."
+      sleep retry_interval_for_tasks_state
     end
   rescue StandardError => e
     logger.error e.message

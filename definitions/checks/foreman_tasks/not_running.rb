@@ -6,17 +6,27 @@ module Checks::ForemanTasks
       tags :pre_upgrade
       after :foreman_tasks_not_paused
       before :check_old_foreman_tasks
+      param :wait_time, 'Time to wait in minutes for foreman tasks to finish'
     end
 
     def run
       task_count = feature(:foreman_tasks).running_tasks_count
       assert(task_count == 0,
              failure_message(task_count),
-             :next_steps =>
-               [Procedures::ForemanTasks::FetchTasksStatus.new(:state => 'running'),
-                Procedures::ForemanTasks::UiInvestigate.new(
-                  'search_query' => search_query_for_running_tasks
-                )])
+             :next_steps => next_steps)
+    end
+
+    def next_steps
+      procedure = [Procedures::ForemanTasks::UiInvestigate.new(
+        'search_query' => search_query_for_running_tasks
+      )]
+      if @wait_time
+        procedure.unshift(Procedures::ForemanTasks::FetchTasksStatus.new(
+                            :state => 'running', :wait_time => @wait_time
+        ))
+      else
+        procedure.unshift(Procedures::ForemanTasks::FetchTasksStatus.new(:state => 'running'))
+      end
     end
 
     private
