@@ -37,8 +37,8 @@ class Features::Pulpcore < ForemanMaintain::Feature
   def pulpcore_common_services
     [
       system_service('rh-redis5-redis', 5),
-      system_service('pulpcore-api', 10),
-      system_service('pulpcore-content', 10),
+      system_service('pulpcore-api', 10, :socket => 'pulpcore-api'),
+      system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
       system_service('pulpcore-resource-manager', 10)
     ]
   end
