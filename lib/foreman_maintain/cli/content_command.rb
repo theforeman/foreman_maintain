@@ -12,6 +12,12 @@ module ForemanMaintain
           run_scenarios_and_exit(Scenarios::Content::Switchover.new)
         end
       end
+
+      subcommand 'prepare-abort', 'Abort all running Pulp 2 to Pulp 3 migration tasks' do
+        def execute
+          run_scenarios_and_exit(Scenarios::Content::PrepareAbort.new)
+        end
+      end
     end
   end
 end
