@@ -27,6 +27,15 @@ module ForemanMaintain
       subcommand 'content', 'Content related commands', ContentCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
                  MaintenanceModeCommand
+      if ::Scenarios.const_defined?('Satellite_6_10') &&
+         ForemanMaintain.detector.feature('satellite') &&
+         ForemanMaintain.detector.feature('satellite').current_minor_version == '6.9'
+        subcommand 'prep-6.10-upgrade', 'Preparations for the Satellite 6.10 upgrade' do
+          def execute
+            run_scenarios_and_exit(Scenarios::Prep610Upgrade.new)
+          end
+        end
+      end
 
       def run(*arguments)
         logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")
