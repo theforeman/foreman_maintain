@@ -67,5 +67,20 @@ module ForemanMaintain::Scenarios
         end
       end
     end
+
+    class MigrationStats < ForemanMaintain::Scenario
+      metadata do
+        label :content_migration_stats
+        description 'Retrieve Pulp 2 to Pulp 3 migration statistics'
+        manual_detection
+      end
+
+      def compose
+        # FIXME: remove this condition on next downstream upgrade scenario
+        if Procedures::Content::MigrationStats.present?
+          add_step(Procedures::Content::MigrationStats)
+        end
+      end
+    end
   end
 end
