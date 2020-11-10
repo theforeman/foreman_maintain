@@ -49,6 +49,7 @@ module ForemanMaintain::Scenarios
         # FIXME: remove this condition on next downstream upgrade scenario
         if Procedures::Content::Switchover.present?
           add_step(Procedures::Content::Switchover)
+          add_step(Procedures::Foreman::ApipieCache)
         end
       end
     end
