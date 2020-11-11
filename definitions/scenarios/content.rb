@@ -46,7 +46,7 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        # FIXME: remove this condition on next downstream upgrade scenario
+        # FIXME: remove this condition for the 6.10 upgrade scenario
         if Procedures::Content::Switchover.present?
           add_step(Procedures::Content::Switchover)
           add_step(Procedures::Foreman::ApipieCache)

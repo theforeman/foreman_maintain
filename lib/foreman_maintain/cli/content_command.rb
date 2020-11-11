@@ -7,9 +7,12 @@ module ForemanMaintain
         end
       end
 
-      subcommand 'switchover', 'Switch support for certain content from Pulp 2 to Pulp 3' do
-        def execute
-          run_scenarios_and_exit(Scenarios::Content::Switchover.new)
+      unless ForemanMaintain.detector.feature(:satellite) ||
+             ForemanMaintain.detector.feature(:capsule)
+        subcommand 'switchover', 'Switch support for certain content from Pulp 2 to Pulp 3' do
+          def execute
+            run_scenarios_and_exit(Scenarios::Content::Switchover.new)
+          end
         end
       end
 
