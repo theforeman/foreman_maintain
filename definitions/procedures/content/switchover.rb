@@ -5,7 +5,7 @@ module Procedures::Content
       for_feature :pulpcore
 
       confine do
-        # FIXME: remove this condition on next downstream upgrade scenario
+        # FIXME: remove this condition for the 6.10 upgrade scenario
         !feature(:instance).downstream
       end
     end
