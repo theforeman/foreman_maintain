@@ -1,5 +1,5 @@
 name: Ruby Tests
-on: push
+on: pull_request
 
 jobs:
   Test_ruby_2_0_0:
