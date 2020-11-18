@@ -13,6 +13,12 @@ module ForemanMaintain
         end
       end
 
+      subcommand 'prepare-abort', 'Abort all running Pulp 2 to Pulp 3 migration tasks' do
+        def execute
+          run_scenarios_and_exit(Scenarios::Content::PrepareAbort.new)
+        end
+      end
+
       subcommand 'migration-stats', 'Retrieve Pulp 2 to Pulp 3 migration statistics' do
         def execute
           run_scenarios_and_exit(Scenarios::Content::MigrationStats.new)

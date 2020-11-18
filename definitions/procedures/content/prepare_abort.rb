@@ -1,7 +1,7 @@
 module Procedures::Content
-  class MigrationStats < ForemanMaintain::Procedure
+  class PrepareAbort < ForemanMaintain::Procedure
     metadata do
-      description 'Retrieve Pulp 2 to Pulp 3 migration statistics'
+      description 'Abort all running Pulp 2 to Pulp 3 migration tasks'
       for_feature :pulpcore
 
       confine do
@@ -11,7 +11,7 @@ module Procedures::Content
     end
 
     def run
-      puts execute!('foreman-rake katello:pulp3_migration_stats')
+      puts execute!('foreman-rake katello:pulp3_migration_abort')
     end
   end
 end

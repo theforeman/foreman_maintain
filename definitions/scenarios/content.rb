@@ -54,6 +54,21 @@ module ForemanMaintain::Scenarios
       end
     end
 
+    class PrepareAbort < ForemanMaintain::Scenario
+      metadata do
+        label :content_prepare_abort
+        description 'Abort all running Pulp 2 to Pulp 3 migration tasks'
+        manual_detection
+      end
+
+      def compose
+        # FIXME: remove this condition on next downstream upgrade scenario
+        if Procedures::Content::PrepareAbort.present?
+          add_step(Procedures::Content::PrepareAbort)
+        end
+      end
+    end
+
     class MigrationStats < ForemanMaintain::Scenario
       metadata do
         label :content_migration_stats
