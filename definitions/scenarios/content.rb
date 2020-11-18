@@ -8,12 +8,9 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        # FIXME: remove this condition on next downstream upgrade scenario
-        if Procedures::Content::Prepare.present?
-          enable_and_start_services
-          add_step(Procedures::Content::Prepare)
-          disable_and_stop_services
-        end
+        enable_and_start_services
+        add_step(Procedures::Content::Prepare)
+        disable_and_stop_services
       end
 
       private
@@ -62,10 +59,7 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        # FIXME: remove this condition on next downstream upgrade scenario
-        if Procedures::Content::PrepareAbort.present?
-          add_step(Procedures::Content::PrepareAbort)
-        end
+        add_step(Procedures::Content::PrepareAbort)
       end
     end
 
@@ -77,10 +71,7 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        # FIXME: remove this condition on next downstream upgrade scenario
-        if Procedures::Content::MigrationStats.present?
-          add_step(Procedures::Content::MigrationStats)
-        end
+        add_step(Procedures::Content::MigrationStats)
       end
     end
   end

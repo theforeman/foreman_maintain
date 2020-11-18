@@ -5,8 +5,7 @@ module Procedures::Content
       for_feature :pulpcore
 
       confine do
-        # FIXME: remove this condition on next downstream upgrade scenario
-        !feature(:satellite) || feature(:satellite).at_least_version?('6.9')
+        feature(:satellite) && feature(:satellite).at_least_version?('6.9')
       end
     end
 
