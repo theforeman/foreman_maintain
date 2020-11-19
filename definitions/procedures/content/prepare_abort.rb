@@ -3,10 +3,6 @@ module Procedures::Content
     metadata do
       description 'Abort all running Pulp 2 to Pulp 3 migration tasks'
       for_feature :pulpcore
-
-      confine do
-        feature(:satellite) && feature(:satellite).at_least_version?('6.9')
-      end
     end
 
     def run

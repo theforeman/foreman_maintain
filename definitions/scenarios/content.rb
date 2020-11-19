@@ -8,30 +8,28 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        enable_and_start_services
-        add_step(Procedures::Content::Prepare)
-        disable_and_stop_services
+        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+          enable_and_start_services
+          add_step(Procedures::Content::Prepare)
+          disable_and_stop_services
+        end
       end
 
       private
 
       def enable_and_start_services
         add_step(Procedures::Service::Start)
-        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
-          add_step(Procedures::Service::Enable.
-                   new(:only => feature(:pulpcore).pulpcore_migration_services))
-          add_step(Procedures::Service::Start.
-                   new(:only => feature(:pulpcore).pulpcore_migration_services))
-        end
+        add_step(Procedures::Service::Enable.
+                 new(:only => feature(:pulpcore).pulpcore_migration_services))
+        add_step(Procedures::Service::Start.
+                 new(:only => feature(:pulpcore).pulpcore_migration_services))
       end
 
       def disable_and_stop_services
-        if feature(:satellite) && feature(:satellite).current_minor_version == '6.9'
-          add_step(Procedures::Service::Stop.
-                   new(:only => feature(:pulpcore).pulpcore_migration_services))
-          add_step(Procedures::Service::Disable.
-                   new(:only => feature(:pulpcore).pulpcore_migration_services))
-        end
+        add_step(Procedures::Service::Stop.
+                 new(:only => feature(:pulpcore).pulpcore_migration_services))
+        add_step(Procedures::Service::Disable.
+                 new(:only => feature(:pulpcore).pulpcore_migration_services))
       end
     end
 
@@ -59,7 +57,9 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        add_step(Procedures::Content::PrepareAbort)
+        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+          add_step(Procedures::Content::PrepareAbort)
+        end
       end
     end
 
@@ -71,7 +71,9 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        add_step(Procedures::Content::MigrationStats)
+        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+          add_step(Procedures::Content::MigrationStats)
+        end
       end
     end
   end

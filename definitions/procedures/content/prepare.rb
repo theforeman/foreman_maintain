@@ -3,10 +3,6 @@ module Procedures::Content
     metadata do
       description 'Prepare content for Pulp 3'
       for_feature :pulpcore
-
-      confine do
-        feature(:satellite) && feature(:satellite).at_least_version?('6.9')
-      end
     end
 
     def run
