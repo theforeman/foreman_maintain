@@ -164,6 +164,14 @@ module ForemanMaintain
         execute("findmnt -n --target #{dir} -o SOURCE,FSTYPE").split
       end
 
+      def mounted?(dir)
+        status = execute_with_status("mountpoint -q #{dir}")[0]
+        if status == 0
+          return true
+        end
+        false
+      end
+
       def create_lv_snapshot(name, block_size, path)
         execute!("lvcreate -n#{name} -L#{block_size} -s #{path}")
       end
