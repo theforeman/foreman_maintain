@@ -19,8 +19,8 @@ module Checks
       def check_custom_hiera
         hiera_file = feature(:installer).custom_hiera_file
         begin
-          if (config = YAML.load_file(hiera_file)) && config.is_a?(Hash) &&
-             config.key?('postgresql::server::config_entries')
+          config = YAML.load_file(hiera_file)
+          if config.is_a?(Hash) && config.key?('postgresql::server::config_entries')
             if config['postgresql::server::config_entries'].nil?
               return <<-MESSAGE.strip_heredoc
               ERROR: 'postgresql::server::config_entries' cannot be null.
@@ -44,6 +44,9 @@ module Checks
               end
               return message
             end
+          elsif config.is_a?(String)
+            fail! "Error: File #{hiera_file} is not a yaml file."
+            exit 1
           end
         rescue Psych::SyntaxError
           fail! "Found syntax error in file: #{hiera_file}"
