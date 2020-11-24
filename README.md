@@ -1,4 +1,4 @@
-# Foreman Maintenance [![Build Status](https://travis-ci.org/theforeman/foreman_maintain.svg?branch=master)](https://travis-ci.org/theforeman/foreman_maintain) <a href="https://codeclimate.com/github/theforeman/foreman_maintain"><img src="https://codeclimate.com/github/theforeman/foreman_maintain/badges/gpa.svg" /></a>
+# Foreman Maintain [![Build Status](https://github.com/theforeman/foreman_maintain/workflows/Ruby%20Tests/badge.svg?event=pull_request)](https://github.com/theforeman/foreman_maintain/workflows/Ruby%20Tests/badge.svg?event=pull_request) <a href="https://codeclimate.com/github/theforeman/foreman_maintain"><img src="https://codeclimate.com/github/theforeman/foreman_maintain/badges/gpa.svg" /></a>
 
 The `foreman_maintain` aims to provide various features that helps keep the
 Foreman/Satellite up and running. It supports multiple versions and subparts
@@ -52,7 +52,7 @@ Subcommands:
       is-enabled                    Get maintenance-mode status code
 
     content                       Content related commands
-      prepare                       Prepare content for Pulp 3 
+      prepare                       Prepare content for Pulp 3
       switchover                    Switch support for certain content from Pulp 2 to Pulp 3
 ```
 
