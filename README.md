@@ -1,6 +1,5 @@
-# Foreman Maintenance [![Build Status](https://github.com/theforeman/foreman_maintain/workflows/Ruby%20Tests/badge.svg)](https://github.com/theforeman/foreman_maintain/workflows/Ruby%20Tests/badge.svg) <a href="https://codeclimate.com/github/theforeman/foreman_maintain"><img src="https://codeclimate.com/github/theforeman/foreman_maintain/badges/gpa.svg" /></a>
+# Foreman Maintain [![Build Status](https://github.com/theforeman/foreman_maintain/workflows/Ruby%20Tests/badge.svg?event=pull_request)](https://github.com/theforeman/foreman_maintain/workflows/Ruby%20Tests/badge.svg?event=pull_request) <a href="https://codeclimate.com/github/theforeman/foreman_maintain"><img src="https://codeclimate.com/github/theforeman/foreman_maintain/badges/gpa.svg" /></a>
 
-# Foreman Maintain
 The `foreman_maintain` aims to provide various features that helps keep the
 Foreman/Satellite up and running. It supports multiple versions and subparts
 of the Foreman infrastructure, including server or smart proxy and is smart
