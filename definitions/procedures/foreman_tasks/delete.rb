@@ -19,8 +19,7 @@ module Procedures::ForemanTasks
           feature(:foreman_tasks).backup_tasks(@state) do |backup_progress|
             spinner.update backup_progress
           end
-
-          spinner.update "Deleting #{@state} tasks [running]"
+          spinner.update "Deleting #{count_tasks_before} #{@state} tasks [running]"
           count_tasks_later = feature(:foreman_tasks).delete(@state)
           spinner.update "Deleting #{@state} tasks [DONE]"
           spinner.update(

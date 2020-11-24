@@ -8,8 +8,9 @@ module Procedures::ForemanTasks
 
     def run
       output << feature(:foreman_tasks).resume_task_using_hammer
-      puts '[ Waiting 30 seconds for resumed tasks to start. ]'
-      sleep 30
+      with_spinner('Waiting 30 seconds for resumed tasks to start.') do
+        sleep 30
+      end
     end
   end
 end
