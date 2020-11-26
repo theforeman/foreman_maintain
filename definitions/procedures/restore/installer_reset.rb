@@ -12,7 +12,7 @@ module Procedures::Restore
 
     def installer_cmd
       installer = "yes | #{feature(:installer).installer_command} "
-      installer << '-v --reset '
+      installer << reset_option
       if feature(:instance).foreman_proxy_with_content?
         installer << '--foreman-proxy-register-in-foreman false '
       end
@@ -26,6 +26,15 @@ module Procedures::Restore
         installer << '--disable-system-checks '
       end
       installer
+    end
+
+    def reset_option
+      if check_min_version('foreman', '2.2') || \
+         check_min_version('foreman-proxy', '2.2')
+        return '-v --reset-data '
+      end
+
+      '-v --reset '
     end
   end
 end
