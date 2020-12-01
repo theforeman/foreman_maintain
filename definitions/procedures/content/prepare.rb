@@ -6,7 +6,8 @@ module Procedures::Content
     end
 
     def run
-      puts execute!('foreman-rake katello:pulp3_migration')
+      # use interactive to get realtime output
+      puts execute!('foreman-rake katello:pulp3_migration', :interactive => true)
     end
   end
 end
