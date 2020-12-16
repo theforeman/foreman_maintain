@@ -10,7 +10,6 @@ module ForemanMaintain::Utils
         do_wait = options.fetch(:wait, true) # wait for service to start
         all = @options.fetch(:all, false)
         skip_enablement = @options.fetch(:skip_enablement, false)
-
         if skip_enablement && %w[enable disable].include?(action)
           return skip_enablement_message(action, @name)
         end
@@ -61,6 +60,14 @@ module ForemanMaintain::Utils
         if @sys.systemd_installed?
           service_enabled_status == 'enabled'
         end
+      end
+
+      def instance?
+        instance_parent_unit ? true : false
+      end
+
+      def instance_parent_unit
+        @options.fetch(:parent_unit, nil)
       end
 
       private

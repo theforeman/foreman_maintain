@@ -66,6 +66,14 @@ module ForemanMaintain::Utils
       def running?
         raise NotImplementedError
       end
+
+      def instance_parent_unit
+        raise NotImplementedError
+      end
+
+      def instance?
+        raise NotImplementedError
+      end
     end
   end
 end

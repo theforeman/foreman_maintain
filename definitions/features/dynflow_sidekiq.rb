@@ -7,10 +7,6 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
     end
   end
 
-  def services
-    service_names.map { |service| system_service service, instance_priority(service) }
-  end
-
   def config_files
     # Workaround until foreman-installer can deploy scaled workers
     service_symlinks = configured_instances.map do |service|
@@ -22,18 +18,11 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
     ].flatten
   end
 
-  private
-
-  def instance_priority(instance)
-    # Orchestrator should be started before the workers are
-    instance.end_with?('@orchestrator') ? 30 : 31
-  end
-
-  def service_names
-    configured_instances.map { |instance| "dynflow-sidekiq@#{instance}" }
-  end
-
-  def configured_instances
-    Dir['/etc/foreman/dynflow/*'].map { |config| File.basename(config, '.yml') }
+  def services
+    [
+      system_service('dynflow-sidekiq@orchestrator', 30, :parent_unit => 'dynflow-sidekiq@'),
+      system_service('dynflow-sidekiq@worker-hosts-queue', 31, :parent_unit => 'dynflow-sidekiq@'),
+      system_service('dynflow-sidekiq@worker', 31, :parent_unit => 'dynflow-sidekiq@')
+    ]
   end
 end

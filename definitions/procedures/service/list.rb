@@ -16,12 +16,22 @@ module Procedures::Service
 
     def unit_files_list(services)
       if systemd_installed?
-        regex = services.map { |service| "^#{service.name}.service" }.join('\|')
-        execute("systemctl list-unit-files | grep '#{regex}'")
+        execute("systemctl list-unit-files --type=service | \
+                 grep '#{systemd_service_names_regex(services)}'")
       else
         regex = services.map { |service| "^#{service.name} " }.join('\|')
         execute("chkconfig --list 2>&1 | grep '#{regex}'")
       end
+    end
+
+    def systemd_service_names_regex(services)
+      services.map do |service|
+        if service.instance?
+          "^#{service.instance_parent_unit}.service"
+        else
+          "^#{service.name}.service"
+        end
+      end.join('\|')
     end
   end
 end
