@@ -21,6 +21,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/base_database'
   require 'foreman_maintain/concerns/directory_marker'
   require 'foreman_maintain/concerns/downstream'
+  require 'foreman_maintain/concerns/primary_checks'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'
@@ -41,6 +42,7 @@ module ForemanMaintain
   require 'foreman_maintain/error'
 
   class << self
+    include ForemanMaintain::Concerns::PrimaryChecks
     attr_accessor :config, :logger
 
     LOGGER_LEVEL_MAPPING = {
