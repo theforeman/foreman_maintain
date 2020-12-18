@@ -67,6 +67,7 @@ module ForemanMaintain
         disable_self_upgrade_option
 
         def execute
+          ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
           upgrade_runner.run_phase(:pre_upgrade_checks)
           exit upgrade_runner.exit_code
@@ -86,6 +87,7 @@ module ForemanMaintain
         end
 
         def execute
+          ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
           if phase
             upgrade_runner.run_phase(phase.to_sym)
