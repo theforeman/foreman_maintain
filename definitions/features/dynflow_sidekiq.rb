@@ -20,9 +20,12 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
 
   def services
     [
-      system_service('dynflow-sidekiq@orchestrator', 30, :parent_unit => 'dynflow-sidekiq@'),
-      system_service('dynflow-sidekiq@worker-hosts-queue', 31, :parent_unit => 'dynflow-sidekiq@'),
-      system_service('dynflow-sidekiq@worker', 31, :parent_unit => 'dynflow-sidekiq@')
+      system_service('dynflow-sidekiq@orchestrator', 30,
+                     :instance_parent_unit => 'dynflow-sidekiq@'),
+      system_service('dynflow-sidekiq@worker-hosts-queue', 31,
+                     :instance_parent_unit => 'dynflow-sidekiq@'),
+      system_service('dynflow-sidekiq@worker', 31,
+                     :instance_parent_unit => 'dynflow-sidekiq@')
     ]
   end
 end

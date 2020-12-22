@@ -1,9 +1,11 @@
 module ForemanMaintain::Utils
   module Service
     class Systemd < Abstract
+      attr_reader :instance_parent_unit
       def initialize(name, priority, options = {})
         super
         @sys = SystemHelpers.new
+        @instance_parent_unit = options.fetch(:instance_parent_unit, nil)
       end
 
       def command(action, options = {})
@@ -64,10 +66,6 @@ module ForemanMaintain::Utils
 
       def instance?
         instance_parent_unit ? true : false
-      end
-
-      def instance_parent_unit
-        @options.fetch(:parent_unit, nil)
       end
 
       private
