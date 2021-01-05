@@ -19,13 +19,24 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
   end
 
   def services
-    [
-      system_service('dynflow-sidekiq@orchestrator', 30,
-                     :instance_parent_unit => 'dynflow-sidekiq@'),
-      system_service('dynflow-sidekiq@worker-hosts-queue', 31,
-                     :instance_parent_unit => 'dynflow-sidekiq@'),
-      system_service('dynflow-sidekiq@worker', 31,
-                     :instance_parent_unit => 'dynflow-sidekiq@')
-    ]
+    service_names.map do |service|
+      system_service service, instance_priority(service),
+                     :instance_parent_unit => 'dynflow-sidekiq@'
+    end
+  end
+
+  private
+
+  def instance_priority(instance)
+    # Orchestrator should be started before the workers are
+    instance.end_with?('@orchestrator') ? 30 : 31
+  end
+
+  def service_names
+    configured_instances.map { |instance| "dynflow-sidekiq@#{instance}" }
+  end
+
+  def configured_instances
+    Dir['/etc/foreman/dynflow/*'].map { |config| File.basename(config, '.yml') }
   end
 end
