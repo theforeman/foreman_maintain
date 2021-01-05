@@ -8,7 +8,7 @@ module Procedures::Backup
       end
 
       def run
-        answer = ask_decision(warning_message(@include_db_dumps), 'y(yes), q(quit)')
+        answer = ask_decision(warning_message(@include_db_dumps), actions_msg: 'y(yes), q(quit)')
         abort! unless answer == :yes
       end
 
