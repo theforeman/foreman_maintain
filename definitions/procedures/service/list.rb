@@ -26,7 +26,7 @@ module Procedures::Service
 
     def build_regex_for_services(services)
       services.map do |service|
-        if service.instance?
+        if service.respond_to?(:instance_parent_unit) && service.instance_parent_unit
           "^#{service.instance_parent_unit}.service"
         else
           "^#{service.name}.service"

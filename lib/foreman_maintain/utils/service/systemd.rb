@@ -64,10 +64,6 @@ module ForemanMaintain::Utils
         end
       end
 
-      def instance?
-        instance_parent_unit ? true : false
-      end
-
       private
 
       def execute(action, options = {})
