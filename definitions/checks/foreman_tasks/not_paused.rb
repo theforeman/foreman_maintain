@@ -22,18 +22,7 @@ module Checks::ForemanTasks
       end
       [Procedures::ForemanTasks::Resume.new,
        Procedures::ForemanTasks::Delete.new(:state => :paused),
-       Procedures::ForemanTasks::UiInvestigate.new('search_query' => scoped_search_query)]
-    end
-
-    # Note: this is for UI link generation only: we are not using scoped search for querying
-    # the tasks itself as we use direct SQL instead
-    def scoped_search_query
-      "state = paused AND label !^(#{ignored_tasks.join(' ')})"
-    end
-
-    def ignored_tasks
-      %w[Actions::Candlepin::ListenOnCandlepinEvents
-         Actions::Katello::EventQueue::Monitor]
+       Procedures::ForemanTasks::UiInvestigate.new('search_query' => 'state = paused')]
     end
   end
 end

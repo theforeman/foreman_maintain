@@ -23,7 +23,7 @@ module Procedures::ForemanTasks
           count_tasks_later = feature(:foreman_tasks).delete(@state)
           spinner.update "Deleting #{@state} tasks [DONE]"
           spinner.update(
-            "Deleted #{@state} stopped and paused tasks: #{count_tasks_before - count_tasks_later}"
+            "Deleted #{@state} paused tasks: #{count_tasks_before - count_tasks_later}"
           )
         end
       end
