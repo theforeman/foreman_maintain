@@ -1,16 +1,17 @@
 module ForemanMaintain::Utils
   module Service
     class Systemd < Abstract
+      attr_reader :instance_parent_unit
       def initialize(name, priority, options = {})
         super
         @sys = SystemHelpers.new
+        @instance_parent_unit = options.fetch(:instance_parent_unit, nil)
       end
 
       def command(action, options = {})
         do_wait = options.fetch(:wait, true) # wait for service to start
         all = @options.fetch(:all, false)
         skip_enablement = @options.fetch(:skip_enablement, false)
-
         if skip_enablement && %w[enable disable].include?(action)
           return skip_enablement_message(action, @name)
         end

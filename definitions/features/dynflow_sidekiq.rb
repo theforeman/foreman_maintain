@@ -7,10 +7,6 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
     end
   end
 
-  def services
-    service_names.map { |service| system_service service, instance_priority(service) }
-  end
-
   def config_files
     # Workaround until foreman-installer can deploy scaled workers
     service_symlinks = configured_instances.map do |service|
@@ -20,6 +16,13 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
       '/etc/foreman/dynflow',
       service_symlinks
     ].flatten
+  end
+
+  def services
+    service_names.map do |service|
+      system_service service, instance_priority(service),
+                     :instance_parent_unit => 'dynflow-sidekiq@'
+    end
   end
 
   private
