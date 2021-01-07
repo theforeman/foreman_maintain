@@ -20,16 +20,16 @@ module ForemanMaintain::Scenarios
       def enable_and_start_services
         add_step(Procedures::Service::Start)
         add_step(Procedures::Service::Enable.
-                 new(:only => feature(:pulpcore).pulpcore_migration_services))
+                 new(:only => Features::Pulpcore.pulpcore_migration_services))
         add_step(Procedures::Service::Start.
-                 new(:only => feature(:pulpcore).pulpcore_migration_services))
+                 new(:only => Features::Pulpcore.pulpcore_migration_services))
       end
 
       def disable_and_stop_services
         add_step(Procedures::Service::Stop.
-                 new(:only => feature(:pulpcore).pulpcore_migration_services))
+                 new(:only => Features::Pulpcore.pulpcore_migration_services))
         add_step(Procedures::Service::Disable.
-                 new(:only => feature(:pulpcore).pulpcore_migration_services))
+                 new(:only => Features::Pulpcore.pulpcore_migration_services))
       end
     end
 
