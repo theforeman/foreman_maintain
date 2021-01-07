@@ -17,8 +17,8 @@ module Checks::ForemanTasks
 
     def next_procedures
       if assumeyes?
-        [Procedures::ForemanTasks::Resume.new,
-         Procedures::ForemanTasks::Delete.new(:state => :paused)]
+        return [Procedures::ForemanTasks::Resume.new,
+                Procedures::ForemanTasks::Delete.new(:state => :paused)]
       end
       [Procedures::ForemanTasks::Resume.new,
        Procedures::ForemanTasks::Delete.new(:state => :paused),
