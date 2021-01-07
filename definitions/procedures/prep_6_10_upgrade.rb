@@ -3,8 +3,7 @@ class Procedures::Prep610Upgrade < ForemanMaintain::Procedure
     description 'Preparations for the Satellite 6.10 upgrade'
 
     confine do
-      ::Scenarios.const_defined?('Satellite_6_10') &&
-        feature(:satellite) &&
+      feature(:satellite) &&
         feature(:satellite).current_minor_version == '6.9'
     end
   end
@@ -18,7 +17,6 @@ class Procedures::Prep610Upgrade < ForemanMaintain::Procedure
       execute!('find /var/lib/pulp/content -type d -perm -g-s -exec chmod g+s {} \;')
       spinner.update('$ chown -R :pulp /var/lib/pulp/content')
       FileUtils.chown_R nil, 'pulp', '/var/lib/pulp/content'
-      # TODO: Install Pulp 3 without starting services?
     end
   end
 

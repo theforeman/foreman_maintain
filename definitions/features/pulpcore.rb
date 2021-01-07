@@ -11,18 +11,19 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def services
-    pulpcore_common_services + [
+    self.class.pulpcore_common_services + [
+      system_service('rh-redis5-redis', 5),
       system_service('pulpcore-worker@*', 20, :all => true, :skip_enablement => true),
       system_service('httpd', 30)
     ]
   end
 
-  def pulpcore_migration_services
+  def self.pulpcore_migration_services
     pulpcore_common_services + [
-      system_service('pulpcore-worker@1', 20),
-      system_service('pulpcore-worker@2', 20),
-      system_service('pulpcore-worker@3', 20),
-      system_service('pulpcore-worker@4', 20)
+      ForemanMaintain::Utils.system_service('pulpcore-worker@1', 20),
+      ForemanMaintain::Utils.system_service('pulpcore-worker@2', 20),
+      ForemanMaintain::Utils.system_service('pulpcore-worker@3', 20),
+      ForemanMaintain::Utils.system_service('pulpcore-worker@4', 20)
     ]
   end
 
@@ -32,14 +33,11 @@ class Features::Pulpcore < ForemanMaintain::Feature
     ]
   end
 
-  private
-
-  def pulpcore_common_services
+  def self.pulpcore_common_services
     [
-      system_service('rh-redis5-redis', 5),
-      system_service('pulpcore-api', 10, :socket => 'pulpcore-api'),
-      system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
-      system_service('pulpcore-resource-manager', 10)
+      ForemanMaintain::Utils.system_service('pulpcore-api', 10, :socket => 'pulpcore-api'),
+      ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
+      ForemanMaintain::Utils.system_service('pulpcore-resource-manager', 10)
     ]
   end
 end
