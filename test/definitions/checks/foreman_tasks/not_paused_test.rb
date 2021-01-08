@@ -18,7 +18,8 @@ describe Checks::ForemanTasks::NotPaused do
     result = run_check(subject)
     assert result.fail?, 'Check expected to fail'
     assert_match 'There are currently 5 paused tasks in the system', result.output
-    assert_equal [Procedures::ForemanTasks::Resume, Procedures::ForemanTasks::UiInvestigate],
+    assert_equal [Procedures::ForemanTasks::Resume, Procedures::ForemanTasks::Delete,
+                  Procedures::ForemanTasks::UiInvestigate],
                  subject.next_steps.map(&:class)
   end
 end

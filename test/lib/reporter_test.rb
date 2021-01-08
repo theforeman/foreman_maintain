@@ -184,7 +184,7 @@ module ForemanMaintain
         There are multiple steps to proceed:
         1) Start the present service
         2) Restart present service
-        (assuming first option)
+        (assuming option 1)
         STR
       end
     end

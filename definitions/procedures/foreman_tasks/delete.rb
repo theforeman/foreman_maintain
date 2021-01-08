@@ -1,6 +1,6 @@
 module Procedures::ForemanTasks
   class Delete < ForemanMaintain::Procedure
-    ALLOWED_STATES_VALUES = %w[old planning pending].freeze
+    ALLOWED_STATES_VALUES = %w[old planning pending paused].freeze
 
     metadata do
       param :state,
@@ -19,12 +19,11 @@ module Procedures::ForemanTasks
           feature(:foreman_tasks).backup_tasks(@state) do |backup_progress|
             spinner.update backup_progress
           end
-
-          spinner.update "Deleting #{@state} tasks [running]"
+          spinner.update "Deleting #{count_tasks_before} #{@state} tasks [running]"
           count_tasks_later = feature(:foreman_tasks).delete(@state)
           spinner.update "Deleting #{@state} tasks [DONE]"
           spinner.update(
-            "Deleted #{@state} stopped and paused tasks: #{count_tasks_before - count_tasks_later}"
+            "Deleted #{@state} tasks: #{count_tasks_before - count_tasks_later}"
           )
         end
       end

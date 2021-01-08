@@ -67,6 +67,7 @@ module ForemanMaintain
         end
       end
 
+      attr_accessor :select_option_counter
       attr_reader :last_line, :max_length
 
       def initialize(stdout = STDOUT, stdin = STDIN, options = {})
@@ -81,6 +82,7 @@ module ForemanMaintain
         @spinner = Spinner.new(self)
         @spinner.start_spinner if @stdout.tty?
         @last_line = ''
+        @select_option_counter = 0
       end
 
       def before_scenario_starts(scenario)
@@ -212,8 +214,10 @@ module ForemanMaintain
       # rubocop:disable Metrics/MethodLength
       def ask_to_select(message, steps, run_strategy)
         if assumeyes?
-          puts('(assuming first option)')
-          return steps.first
+          step = steps[@select_option_counter]
+          @select_option_counter += 1
+          puts("(assuming option #{@select_option_counter})")
+          return step
         end
 
         until_valid_decision do
