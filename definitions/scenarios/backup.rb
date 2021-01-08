@@ -94,6 +94,8 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::Snapshot::MountPulp => :skip)
       context.map(:tar_volume_size,
                   Procedures::Backup::Pulp => :tar_volume_size)
+      context.map(:include_db_dumps,
+                  Procedures::Backup::Online::SafetyConfirmation => :include_db_dumps)
     end
     # rubocop:enable  Metrics/MethodLength
 

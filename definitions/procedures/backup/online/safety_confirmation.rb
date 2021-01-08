@@ -4,7 +4,8 @@ module Procedures::Backup
       metadata do
         description 'Data consistency warning'
         tags :backup
-        param :include_db_dumps
+        param :include_db_dumps, 'Are database dumps included in backup', :flag => true,
+                                                                          :default => false
       end
 
       def run
