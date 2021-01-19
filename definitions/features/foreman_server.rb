@@ -8,7 +8,8 @@ module ForemanMaintain
         end
       end
 
-      FOREMAN_RELEASE_PACKAGE = 'foreman-release'.freeze
+      RELEASE_PACKAGE = 'foreman-release'.freeze
+      EL_REPO_URL = 'https://yum.theforeman.org/releases/'.freeze
 
       def services
         if execute?('systemctl is-enabled foreman')
@@ -56,17 +57,6 @@ module ForemanMaintain
 
       def rake!(command)
         execute!("foreman-rake #{command}")
-      end
-
-      def repos_rpm(version)
-        "https://yum.theforeman.org/releases/#{version}/el#{feature(:instance).os_major_release}"\
-        "/x86_64/#{FOREMAN_RELEASE_PACKAGE}.rpm"
-      end
-
-      def update_repos(version)
-        repos_rpm = repos_rpm(version)
-        package_manager.update_or_install(FOREMAN_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
-        package_manager.update('centos-release-scl-rh', :assumeyes => true)
       end
     end
   end

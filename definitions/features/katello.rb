@@ -7,7 +7,8 @@ class Features::Katello < ForemanMaintain::Feature
     end
   end
 
-  KATELLO_RELEASE_PACKAGE = 'katello-repos'.freeze
+  RELEASE_PACKAGE = 'katello-repos'.freeze
+  EL_REPO_URL = 'https://fedorapeople.org/groups/katello/releases/yum/'.freeze
 
   def data_dirs
     @dirs ||= ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql']
@@ -59,16 +60,6 @@ class Features::Katello < ForemanMaintain::Feature
       '/var/lib/qpidd',
       '/var/lib/candlepin/activemq-artemis'
     ]
-  end
-
-  def repos_rpm(version)
-    "https://fedorapeople.org/groups/katello/releases/yum/#{version}/katello"\
-    "/el#{feature(:instance).os_major_release}/x86_64/#{KATELLO_RELEASE_PACKAGE}-latest.rpm"
-  end
-
-  def update_repo(version)
-    repos_rpm = repos_rpm(version)
-    package_manager.update_or_install(KATELLO_RELEASE_PACKAGE, repos_rpm, :assumeyes => true)
   end
 
   private
