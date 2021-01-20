@@ -56,6 +56,7 @@ module ForemanMaintain
         disable_self_upgrade_option
 
         def execute
+          ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
           print_versions(UpgradeRunner.available_targets)
         end
