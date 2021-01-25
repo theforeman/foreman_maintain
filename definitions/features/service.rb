@@ -8,7 +8,6 @@ class Features::Service < ForemanMaintain::Feature
     # { :only => ["httpd"] }
     # { :exclude => ["pulp-workers", "tomcat"] }
     # { :include => ["crond"] }
-
     if feature(:instance).downstream && feature(:instance).downstream.less_than_version?('6.3')
       use_katello_service(action, options)
     else
@@ -27,11 +26,12 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def filtered_services(options)
-    service_list = include_unregistered_services(existing_services, options[:include])
-    service_list = filter_services(service_list, options)
-    raise 'No services found matching your parameters' unless service_list.any?
+    services = include_unregistered_services(existing_services, options[:include])
+    services = filter_services(services, options)
+    raise 'No services found matching your parameters' unless services.any?
+    return services unless options[:reverse]
 
-    options[:reverse] ? service_list.reverse : service_list
+    Hash[services.sort_by { |k, _| k.to_i }.reverse]
   end
 
   def action_noun(action)
@@ -61,38 +61,57 @@ class Features::Service < ForemanMaintain::Feature
   def run_action_on_services(action, options, spinner)
     status = 0
     failed_services = []
-
-    filtered_services(options).each do |service|
-      spinner.update("#{action_noun(action)} #{service}")
-      item_status, output = service.send(action.to_sym)
-
-      formatted = format_status(output, item_status, options)
-      puts formatted unless formatted.empty?
-
-      if item_status > 0
-        status = item_status
-        failed_services << service
+    filtered_services(options).each_value do |group|
+      systemctl_status, _output = execute_with_status('systemctl ' \
+        "#{action} #{group.map(&:name).join(' ')}")
+      display_status(group, options, action, spinner)
+      if systemctl_status > 0
+        status = systemctl_status
+        failed_services |= failed_services_by_status(action, group, spinner)
       end
     end
     [status, failed_services]
   end
 
-  def format_status(output, exit_code, options)
+  def display_status(services, options, action, spinner)
+    services.each do |service|
+      spinner.update("#{action_noun(action)} #{service}")
+      formatted = format_status(service.status, options, action)
+      puts formatted unless formatted.empty?
+    end
+  end
+
+  def format_status(service_status, options, action)
+    exit_code, output = service_status
     status = ''
     if !options[:failing] || exit_code > 0
       if options[:brief]
         status += format_brief_status(exit_code)
-      elsif !(output.nil? || output.empty?)
+      elsif include_output?(action, exit_code)
         status += "\n" + output
       end
     end
     status
   end
 
+  def include_output?(action, status)
+    (action == 'start' && status > 0) ||
+      action == 'status'
+  end
+
   def format_brief_status(exit_code)
     result = exit_code == 0 ? reporter.status_label(:success) : reporter.status_label(:fail)
     padding = reporter.max_length - reporter.last_line.to_s.length - 30
     "#{' ' * padding} #{result}"
+  end
+
+  def failed_services_by_status(action, services, spinner)
+    failed_services = []
+    services.each do |service|
+      spinner.update("#{action_noun(action)} #{service}")
+      failed_services << service unless service.running?
+    end
+    failed_services
   end
 
   def allowed_action?(action)
@@ -119,7 +138,7 @@ class Features::Service < ForemanMaintain::Feature
     end
 
     service_list = extend_service_list_with_sockets(service_list, options)
-    service_list.sort
+    service_list.group_by(&:priority).to_h
   end
 
   def include_unregistered_services(service_list, services_filter)

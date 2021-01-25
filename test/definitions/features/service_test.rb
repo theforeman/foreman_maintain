@@ -16,7 +16,7 @@ describe Features::Service do
   end
 
   def service_names_match?(filtered_services, services_to_compare)
-    filtered_services.map(&:name).must_equal services_to_compare.map(&:name)
+    filtered_services.values.flatten(1).map(&:name).must_equal services_to_compare.map(&:name)
   end
 
   def includes_available_feature_services?(filtered_services, feature_services)
@@ -94,7 +94,8 @@ describe Features::Service do
     end
 
     it 'returns the same set without any filters' do
-      subject.filtered_services({}).must_equal [remote_candlepin_db, remote_foreman_db, httpd]
+      services_array = subject.filtered_services({}).values.flatten(1)
+      services_array.must_equal [remote_candlepin_db, remote_foreman_db, httpd]
     end
 
     it 'applies the only filters which includes ungistered services as well' do
@@ -105,17 +106,19 @@ describe Features::Service do
     end
 
     it 'the :only filters all services regardless on component' do
-      remote_dbs = [remote_candlepin_db, remote_foreman_db]
+      remote_dbs = { 10 => [remote_candlepin_db], 20 => [remote_foreman_db] }
 
       subject.filtered_services(:only => ['postgresql']).must_equal remote_dbs
     end
 
     it 'the :only accepts also list of SystemServices and filter by component' do
-      subject.filtered_services(:only => [remote_candlepin_db]).must_equal [remote_candlepin_db]
+      remote_cpdb = { 10 => [remote_candlepin_db] }
+      subject.filtered_services(:only => [remote_candlepin_db]).must_equal remote_cpdb
     end
 
     it 'applies the exclude filters' do
-      subject.filtered_services(:exclude => ['postgresql']).must_equal [httpd]
+      httpd_service = { 30 => [httpd] }
+      subject.filtered_services(:exclude => ['postgresql']).must_equal httpd_service
     end
 
     it 'the :include accepts also list of SystemServices' do

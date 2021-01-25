@@ -9,6 +9,7 @@ module Procedures::Service
 
     def run
       services = feature(:service).filtered_services(common_options)
+      services = services.values.flatten(1)
       unit_files = unit_files_list(services)
       puts unit_files + "\n"
       puts 'All services listed'

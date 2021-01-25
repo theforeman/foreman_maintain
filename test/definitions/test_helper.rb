@@ -58,7 +58,7 @@ module DefinitionsTestHelper
   end
 
   def stub_systemctl_calls(services, action)
-    services.each do |service|
+    services.values.flatten(1).each do |service|
       service.stubs(action.to_sym).returns([0, "#{action} succeeded."])
     end
   end
