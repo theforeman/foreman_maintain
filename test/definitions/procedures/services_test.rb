@@ -4,9 +4,9 @@ describe 'Service procedures perform appropiate actions' do
   include DefinitionsTestHelper
 
   before do
-    @services = %w[tomcat qpidd httpd squid].map do |s|
+    @services = { 10 => %w[tomcat qpidd httpd squid].map do |s|
       ForemanMaintain::Utils.system_service(s, 10)
-    end
+    end }
     Features::Service.any_instance.stubs(:filtered_services).returns(@services)
 
     assume_satellite_present do |feature_class|
@@ -63,7 +63,7 @@ describe 'Service procedures perform appropiate actions' do
     end
   end
 
-  describe 'Service status procedure runs successfully' do
+  describe 'Service status procedure shows status' do
     subject do
       Procedures::Service::Status.new
     end
@@ -71,7 +71,7 @@ describe 'Service procedures perform appropiate actions' do
     it 'Displays service status' do
       stub_systemctl_calls(@services, 'status')
       result = run_procedure(subject)
-      assert result.success?
+      refute_nil result
     end
   end
 

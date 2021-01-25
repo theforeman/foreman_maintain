@@ -18,7 +18,6 @@ module Procedures
         puts "\n#{action_noun} the following service(s):"
         services = feature(:service).filtered_services(options)
         print_services(services)
-
         with_spinner('') do |spinner|
           feature(:service).handle_services(spinner, action, options)
         end
@@ -31,7 +30,7 @@ module Procedures
       private
 
       def print_services(services)
-        puts services.map(&:to_s).join(', ')
+        puts services.values.flatten(1).join(', ')
       end
     end
   end
