@@ -76,5 +76,17 @@ module ForemanMaintain::Scenarios
         end
       end
     end
+
+    class RemovePulp2 < ForemanMaintain::Scenario
+      metadata do
+        label :content_remove_pulp2
+        description 'Remove Pulp2 and mongodb packages and data'
+        manual_detection
+      end
+
+      def compose
+        add_step(Procedures::Pulp::Remove)
+      end
+    end
   end
 end
