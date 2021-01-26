@@ -27,6 +27,12 @@ module ForemanMaintain
           run_scenarios_and_exit(Scenarios::Content::MigrationStats.new)
         end
       end
+
+      subcommand 'remove-pulp2', 'Remove pulp2 and mongodb packages and data' do
+        def execute
+          run_scenarios_and_exit(Scenarios::Content::RemovePulp2.new)
+        end
+      end
     end
   end
 end
