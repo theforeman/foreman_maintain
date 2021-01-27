@@ -20,9 +20,14 @@ module Procedures::Pulp
     def run
       question = "\nWARNING: All pulp2 packages will be removed.\n" \
           "All pulp2 data will be removed.\n" \
-          "Do you want to proceed automatically?\n"
-      answer = ask_decision(question, actions_msg: 'y(yes), n(no), q(quit)')
-      abort! if answer == :quit
+          "Do you want to proceed automatically? "
+      answer_automatic = ask_decision(question, actions_msg: 'y(yes), n(no), q(quit)')
+      abort! if answer_automatic == :quit
+
+      assumeyes = true
+      if answer_automatic == :no
+        assumeyes = false
+      end
 
       with_spinner('Removing pulp') do |spinner|
         spinner.update('Stopping pulp2 services')
@@ -30,21 +35,16 @@ module Procedures::Pulp
         feature(:service).handle_services(spinner, 'stop', :only => pulp_services)
 
         spinner.update('Removing pulp2 packages')
-        packages_action(:remove, pulp_packages, :assumeyes => true)
-
       end
 
-      pulp_data_dir_path = feature(:pulp2).data_dir
-      if File.directory?(pulp_data_dir_path)
-        question = '\nProceed with removal of pulp2 data directory?\n'
-        rm_answer = ask_decision(question, actions_msg: 'y(yes), n(no), q(quit)')
-        abort! if answer == :quit
-        if rm_answer == :yes
-          with_spinner('Deleting pulp2 data directory') do |spinner|
-            execute!("rm -rf #{pulp_data_dir_path}")
-            spinner.update 'Done deleting pulp2 data directory'
-          end
+      pulp_packages.each do |package|
+        remove_answer = :yes
+        if answer_automatic == :no
+          remove_question = "Remove #{package}? "
+          remove_answer = ask_decision(remove_question, actions_msg: 'y(yes), n(no), q(quit)')
+          abort! if remove_answer == :quit
         end
+        packages_action(:remove, [package], :assumeyes => true) if remove_answer
       end
     end
   end
