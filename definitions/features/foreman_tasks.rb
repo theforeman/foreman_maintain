@@ -97,11 +97,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def resume_task_using_hammer
-    if check_min_version('satellite', '6.8')
-      feature(:hammer).run('task resume --search ""')
-    else
-      feature(:hammer).run('task resume')
-    end
+    feature(:hammer).run('task resume --fields="Total tasks resumed"')
   end
 
   def fetch_tasks_status(state, spinner)
