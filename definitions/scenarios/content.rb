@@ -12,6 +12,8 @@ module ForemanMaintain::Scenarios
           enable_and_start_services
           add_step(Procedures::Content::Prepare)
           disable_and_stop_services
+        elsif !feature(:satellite)
+          add_step(Procedures::Content::Prepare)
         end
       end
 
@@ -57,7 +59,7 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+        if !feature(:satellite) || feature(:satellite).at_least_version?('6.9')
           add_step(Procedures::Content::PrepareAbort)
         end
       end
@@ -71,7 +73,7 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+        if !feature(:satellite) || feature(:satellite).at_least_version?('6.9')
           add_step(Procedures::Content::MigrationStats)
         end
       end
