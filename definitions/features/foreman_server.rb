@@ -8,6 +8,9 @@ module ForemanMaintain
         end
       end
 
+      RELEASE_PACKAGE = 'foreman-release'.freeze
+      EL_REPO_URL = 'https://yum.theforeman.org/releases/'.freeze
+
       def services
         if execute?('systemctl is-enabled foreman')
           [system_service('foreman', 30, :socket => 'foreman')]
@@ -46,6 +49,14 @@ module ForemanMaintain
 
       def services_running?
         services.all?(&:running?)
+      end
+
+      def current_version
+        @current_version ||= rpm_version('foreman')
+      end
+
+      def rake!(command)
+        execute!("foreman-rake #{command}")
       end
     end
   end

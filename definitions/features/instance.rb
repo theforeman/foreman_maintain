@@ -50,6 +50,14 @@ class Features::Instance < ForemanMaintain::Feature
     @downstream ||= (feature(:satellite) || feature(:capsule))
   end
 
+  def downstream?
+    !!downstream
+  end
+
+  def upstream?
+    !downstream?
+  end
+
   def ping
     if feature(:katello)
       katello_ping
@@ -63,11 +71,16 @@ class Features::Instance < ForemanMaintain::Feature
   def server_connection
     net = Net::HTTP.new(ForemanMaintain.config.foreman_url, ForemanMaintain.config.foreman_port)
     net.use_ssl = true
+    net.verify_mode = OpenSSL::SSL::VERIFY_NONE
     net
   end
 
   def pulp
     feature(:pulp2) || feature(:pulpcore)
+  end
+
+  def os_major_release
+    @os_major_release ||= ForemanMaintain::Utils::Facter.os_major_release
   end
 
   private
@@ -146,7 +159,9 @@ class Features::Instance < ForemanMaintain::Feature
       'pulp_auth' => %w[pulp2 mongo],
       'pulp' => %w[pulp2 mongo],
       'pulpcore' => %w[pulpcore pulpcore_database],
-      'foreman_tasks' => %w[foreman_tasks]
+      'foreman_tasks' => %w[foreman_tasks],
+      'candlepin_events' => %w[katello],
+      'katello_events' => %w[katello]
     }
   end
 

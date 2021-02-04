@@ -7,6 +7,9 @@ class Features::Katello < ForemanMaintain::Feature
     end
   end
 
+  RELEASE_PACKAGE = 'katello-repos'.freeze
+  EL_REPO_URL = 'https://fedorapeople.org/groups/katello/releases/yum/'.freeze
+
   def data_dirs
     @dirs ||= ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql']
   end

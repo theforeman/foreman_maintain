@@ -23,6 +23,10 @@ module ForemanMaintain
           segments[1]
         end
 
+        def major_minor
+          "#{major}.#{minor}"
+        end
+
         def build
           segments[2]
         end
@@ -108,7 +112,7 @@ module ForemanMaintain
         when :remove
           package_manager.remove(packages, :assumeyes => options[:assumeyes])
         else
-          raise ArgumentError, "Unexpected action #{action} expected #{expected_actions.inspect}"
+          raise ArgumentError, "Unexpected action #{action}. Expected are install, update, remove."
         end
       end
 
