@@ -140,6 +140,16 @@ class Features::Mongo < ForemanMaintain::Feature
     end
   end
 
+  def mongo_cmd_available?
+    exit_status, _output = execute_with_status("which #{core.client_command}")
+    exit_status == 0
+  end
+
+  def raise_mongo_client_missing_error
+    raise ForemanMaintain::Error::Fail, "The #{core.client_command} command not found."\
+                                  " Make sure system has #{core.client_command} utility installed."
+  end
+
   private
 
   def load_mongo_core_default(version)

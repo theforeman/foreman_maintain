@@ -119,6 +119,7 @@ module ForemanMaintain
         SQL
         result = query(sql)
         return false if result.nil? || (result && result.empty?)
+
         result.first['exists'].eql?('t')
       end
 
@@ -159,6 +160,16 @@ module ForemanMaintain
         else
           raise_service_error
         end
+      end
+
+      def psql_cmd_available?
+        exit_status, _output = execute_with_status('which psql')
+        exit_status == 0
+      end
+
+      def raise_psql_missing_error
+        raise Error::Fail, 'The psql command not found.'\
+                ' Make sure system has psql utility installed.'
       end
 
       private

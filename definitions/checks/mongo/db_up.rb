@@ -9,15 +9,19 @@ module Checks
 
       def run
         status = false
-        with_spinner('Checking connection to the Mongo DB') do
-          status = feature(:mongo).ping
+        if feature(:mongo).mongo_cmd_available?
+          with_spinner('Checking connection to the Mongo DB') do
+            status = feature(:mongo).ping
+          end
+          assert(status, 'Mongo DB is not responding. ' \
+            'It needs to be up and running to perform the following steps.',
+                 :next_steps => start_mongodb)
+        else
+          feature(:mongo).raise_mongo_client_missing_error
         end
-        assert(status, 'Mongo DB is not responding. ' \
-          'It needs to be up and running to perform the following steps.',
-               :next_steps => next_steps)
       end
 
-      def next_steps
+      def start_mongodb
         if feature(:mongo).local?
           [Procedures::Service::Start.new(:only => feature(:mongo).services)]
         else
