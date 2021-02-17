@@ -103,7 +103,7 @@ module ForemanMaintain::Scenarios
 
   class RestoreRescue < ForemanMaintain::Scenario
     metadata do
-      description 'Resuce Restore backup'
+      description 'Rescue Restore backup'
       manual_detection
     end
 
