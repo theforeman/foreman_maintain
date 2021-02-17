@@ -79,6 +79,24 @@ module ForemanMaintain::Scenarios
       end
     end
 
+    class MigrationReset < ForemanMaintain::Scenario
+      metadata do
+        label :content_migration_reset
+        description 'Reset the Pulp 2 to Pulp 3 migration data (pre-switchover)'
+        manual_detection
+      end
+
+      def compose
+        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+          enable_and_start_services
+          add_step(Procedures::Content::MigrationReset)
+          disable_and_stop_services
+        elsif !feature(:satellite)
+          add_step(Procedures::Content::MigrationReset)
+        end
+      end
+    end
+
     class RemovePulp2 < ForemanMaintain::Scenario
       metadata do
         label :content_remove_pulp2
@@ -87,7 +105,7 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        add_step(Procedures::Pulp::Remove)
+        add_step_with_context(Procedures::Pulp::Remove)
       end
     end
   end

@@ -28,6 +28,12 @@ module ForemanMaintain
         end
       end
 
+      subcommand 'migration-reset', 'Reset the Pulp 2 to Pulp 3 migration data (pre-switchover)' do
+        def execute
+          run_scenarios_and_exit(Scenarios::Content::MigrationReset.new)
+        end
+      end
+
       subcommand 'remove-pulp2', 'Remove pulp2 and mongodb packages and data' do
         def execute
           run_scenarios_and_exit(Scenarios::Content::RemovePulp2.new)
