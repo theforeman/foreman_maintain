@@ -34,4 +34,10 @@ class Features::Pulp < ForemanMaintain::Feature
       '/etc/default/pulp_workers'
     ]
   end
+
+  def exclude_from_backup
+    # Exclude /var/lib/pulp/katello-export and /var/lib/pulp/cache
+    # since the tar is run from /var/lib/pulp, list subdir paths only
+    ['katello-export', 'cache']
+  end
 end
