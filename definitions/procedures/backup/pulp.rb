@@ -30,7 +30,7 @@ module Procedures::Backup
       feature(:tar).run(
         :archive => File.join(@backup_dir, 'pulp_data.tar'),
         :command => 'create',
-        :exclude => ['var/lib/pulp/katello-export'],
+        :exclude => feature(:pulp2).exclude_from_backup,
         :listed_incremental => File.join(@backup_dir, '.pulp.snar'),
         :transform => 's,^,var/lib/pulp/,S',
         :volume_size => @tar_volume_size,
