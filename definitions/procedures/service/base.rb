@@ -16,7 +16,7 @@ module Procedures
       def run_service_action(action, options)
         action_noun = feature(:service).action_noun(action).capitalize
         puts "\n#{action_noun} the following service(s):"
-        services = feature(:service).filtered_services(options)
+        services = feature(:service).filtered_services(options, action)
         print_services(services)
         with_spinner('') do |spinner|
           feature(:service).handle_services(spinner, action, options)

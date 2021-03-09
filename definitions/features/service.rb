@@ -25,9 +25,10 @@ class Features::Service < ForemanMaintain::Feature
       select(&:exist?)
   end
 
-  def filtered_services(options)
+  def filtered_services(options, action = '')
     services = include_unregistered_services(existing_services, options[:include])
-    services = filter_services(services, options)
+    services = filter_services(options, services, action)
+
     raise 'No services found matching your parameters' unless services.any?
     return services unless options[:reverse]
 
@@ -61,7 +62,7 @@ class Features::Service < ForemanMaintain::Feature
   def run_action_on_services(action, options, spinner)
     status = 0
     failed_services = []
-    filtered_services(options).each_value do |group|
+    filtered_services(options, action).each_value do |group|
       fork_threads_for_services(action, group, spinner).each do |service, status_and_output|
         spinner.update("#{action_noun(action)} #{service}") if action == 'status'
         item_status, output = status_and_output
@@ -115,7 +116,8 @@ class Features::Service < ForemanMaintain::Feature
     service_list + socket_list
   end
 
-  def filter_services(service_list, options)
+  # rubocop:disable Metrics/AbcSize
+  def filter_services(options, service_list, action)
     if options[:only] && options[:only].any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }
@@ -128,7 +130,16 @@ class Features::Service < ForemanMaintain::Feature
     end
 
     service_list = extend_service_list_with_sockets(service_list, options)
+    service_list = filter_disabled_services!(action, service_list)
     service_list.group_by(&:priority).to_h
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  def filter_disabled_services!(action, service_list)
+    if %w[start stop restart status].include?(action)
+      service_list.select!(&:enabled?)
+    end
+    service_list
   end
 
   def include_unregistered_services(service_list, services_filter)
