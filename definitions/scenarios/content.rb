@@ -1,24 +1,6 @@
 module ForemanMaintain::Scenarios
   module Content
-    class Prepare < ForemanMaintain::Scenario
-      metadata do
-        label :content_prepare
-        description 'Prepare content for Pulp 3'
-        manual_detection
-      end
-
-      def compose
-        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
-          enable_and_start_services
-          add_step(Procedures::Content::Prepare)
-          disable_and_stop_services
-        elsif !feature(:satellite)
-          add_step(Procedures::Content::Prepare)
-        end
-      end
-
-      private
-
+    class ContentBase < ForemanMaintain::Scenario
       def enable_and_start_services
         add_step(Procedures::Service::Start)
         add_step(Procedures::Service::Enable.
@@ -35,7 +17,25 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    class Switchover < ForemanMaintain::Scenario
+    class Prepare < ContentBase
+      metadata do
+        label :content_prepare
+        description 'Prepare content for Pulp 3'
+        manual_detection
+      end
+
+      def compose
+        if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
+          enable_and_start_services
+          add_step(Procedures::Content::Prepare)
+          disable_and_stop_services
+        elsif !feature(:satellite)
+          add_step(Procedures::Content::Prepare)
+        end
+      end
+    end
+
+    class Switchover < ContentBase
       metadata do
         label :content_switchover
         description 'Switch support for certain content from Pulp 2 to Pulp 3'
@@ -51,7 +51,7 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    class PrepareAbort < ForemanMaintain::Scenario
+    class PrepareAbort < ContentBase
       metadata do
         label :content_prepare_abort
         description 'Abort all running Pulp 2 to Pulp 3 migration tasks'
@@ -65,7 +65,7 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    class MigrationStats < ForemanMaintain::Scenario
+    class MigrationStats < ContentBase
       metadata do
         label :content_migration_stats
         description 'Retrieve Pulp 2 to Pulp 3 migration statistics'
@@ -79,7 +79,7 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    class MigrationReset < ForemanMaintain::Scenario
+    class MigrationReset < ContentBase
       metadata do
         label :content_migration_reset
         description 'Reset the Pulp 2 to Pulp 3 migration data (pre-switchover)'
@@ -97,7 +97,7 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    class RemovePulp2 < ForemanMaintain::Scenario
+    class RemovePulp2 < ContentBase
       metadata do
         label :content_remove_pulp2
         description 'Remove Pulp2 and mongodb packages and data'
