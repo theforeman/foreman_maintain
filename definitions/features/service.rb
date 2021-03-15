@@ -62,56 +62,46 @@ class Features::Service < ForemanMaintain::Feature
     status = 0
     failed_services = []
     filtered_services(options).each_value do |group|
-      systemctl_status, _output = execute_with_status('systemctl ' \
-        "#{action} #{group.map(&:name).join(' ')}")
-      display_status(group, options, action, spinner)
-      if systemctl_status > 0
-        status = systemctl_status
-        failed_services |= failed_services_by_status(action, group, spinner)
+      fork_threads_for_services(action, group, spinner).each do |service, status_and_output|
+        spinner.update("#{action_noun(action)} #{service}") if action == 'status'
+        item_status, output = status_and_output
+        formatted = format_status(output, item_status, options)
+        puts formatted unless formatted.empty?
+
+        if item_status > 0
+          status = item_status
+          failed_services << service
+        end
       end
     end
     [status, failed_services]
   end
 
-  def display_status(services, options, action, spinner)
+  def fork_threads_for_services(action, services, spinner)
+    services_and_statuses = []
     services.each do |service|
-      spinner.update("#{action_noun(action)} #{service}")
-      formatted = format_status(service.status, options, action)
-      puts formatted unless formatted.empty?
+      spinner.update("#{action_noun(action)} #{service}") if action != 'status'
+      services_and_statuses << [service, Thread.new { service.send(action.to_sym) }]
     end
+    services_and_statuses.map! { |service, status| [service, status.value] }
   end
 
-  def format_status(service_status, options, action)
-    exit_code, output = service_status
+  def format_status(output, exit_code, options)
     status = ''
     if !options[:failing] || exit_code > 0
       if options[:brief]
         status += format_brief_status(exit_code)
-      elsif include_output?(action, exit_code)
+      elsif !(output.nil? || output.empty?)
         status += "\n" + output
       end
     end
     status
   end
 
-  def include_output?(action, status)
-    (action == 'start' && status > 0) ||
-      action == 'status'
-  end
-
   def format_brief_status(exit_code)
     result = exit_code == 0 ? reporter.status_label(:success) : reporter.status_label(:fail)
     padding = reporter.max_length - reporter.last_line.to_s.length - 30
     "#{' ' * padding} #{result}"
-  end
-
-  def failed_services_by_status(action, services, spinner)
-    failed_services = []
-    services.each do |service|
-      spinner.update("#{action_noun(action)} #{service}")
-      failed_services << service unless service.running?
-    end
-    failed_services
   end
 
   def allowed_action?(action)
