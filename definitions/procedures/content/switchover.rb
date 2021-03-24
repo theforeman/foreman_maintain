@@ -19,8 +19,11 @@ module Procedures::Content
       puts execute!('foreman-rake katello:pulp3_content_switchover')
       puts 'Re-running the installer to switch specified content over to pulp3'
       args = ['--foreman-proxy-content-proxy-pulp-isos-to-pulpcore=true',
+              '--foreman-proxy-content-proxy-pulp-yum-to-pulpcore=true',
+              '--foreman-proxy-content-proxy-pulp-deb-to-pulpcore=true',
               '--katello-use-pulp-2-for-file=false',
               '--katello-use-pulp-2-for-docker=false',
+              '--katello-use-pulp-2-for-deb=false',
               '--katello-use-pulp-2-for-yum=false']
       feature(:installer).run(args.join(' '))
     end
