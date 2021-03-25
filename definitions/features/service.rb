@@ -27,7 +27,7 @@ class Features::Service < ForemanMaintain::Feature
 
   def filtered_services(options, action = '')
     services = include_unregistered_services(existing_services, options[:include])
-    services = filter_services(options, services, action)
+    services = filter_services(services, options, action)
 
     raise 'No services found matching your parameters' unless services.any?
     return services unless options[:reverse]
@@ -117,7 +117,7 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   # rubocop:disable Metrics/AbcSize
-  def filter_services(options, service_list, action)
+  def filter_services(service_list, options, action)
     if options[:only] && options[:only].any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }
