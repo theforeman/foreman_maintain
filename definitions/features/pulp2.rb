@@ -5,7 +5,7 @@ class Features::Pulp < ForemanMaintain::Feature
     label :pulp2
 
     confine do
-      find_package('pulp-server')
+      find_package('pulp-server') && !check_min_version('katello-common', '4.0')
     end
   end
 
