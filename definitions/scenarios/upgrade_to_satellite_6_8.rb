@@ -28,6 +28,7 @@ module Scenarios::Satellite_6_8
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
       add_step(Checks::Foreman::CheckpointSegments)
+      add_step(Checks::Disk::AvailableSpacePostgresql12)
       add_step(Checks::Repositories::Validate.new(:version => '6.8'))
     end
   end
