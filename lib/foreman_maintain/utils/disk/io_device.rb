@@ -26,6 +26,10 @@ module ForemanMaintain
           execute!("df #{dir}|awk {'print $5'}|tail -1").to_i
         end
 
+        def space_used
+          convert_kb_to_mb(execute!("du -ks #{dir} | awk {'print $1'}").to_i)
+        end
+
         private
 
         # In fio command, --direct option bypass the cache page
