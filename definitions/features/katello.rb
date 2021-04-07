@@ -16,9 +16,14 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def services
-    [
-      system_service('elasticsearch', 30)
-    ]
+    if feature(:pulp2)
+      []
+    else
+      [
+        system_service('qpidd', 10),
+        system_service('qdrouterd', 10)
+      ]
+    end
   end
 
   # rubocop:disable  Metrics/MethodLength
