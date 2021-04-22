@@ -2,7 +2,7 @@ module Procedures::Restore
   class RegenerateQueues < ForemanMaintain::Procedure
     metadata do
       advanced_run false
-      description 'Regenerate required activemq and qpidd queues while restoring online backup'
+      description 'Regenerate required activemq and/or qpidd queues while restoring online backup'
       confine do
         feature(:pulp2)
       end
@@ -31,7 +31,7 @@ module Procedures::Restore
 
     def run
       with_spinner('Resetting the queues') do |spinner|
-        regenerate_activemq_queues(spinner)
+        regenerate_activemq_queues(spinner) if feature(:candlepin)
         regenerate_qpidd_queues(spinner)
         spinner.update('Queues created successfully')
       end
