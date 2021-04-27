@@ -71,6 +71,14 @@ module ForemanMaintain::PackageManager
       sys.execute(find_cmd).split("\n")
     end
 
+    def list_installed_packages(queryfm = '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n')
+      # The queryfm should only include valid tag(s) as per `rpm --querytag` list.
+      # If any special formatting is required with querytag then it should be provided with tag i.e,
+      # querytag = "--%{VENDOR}"
+      # The queryfm string must end with '\n'
+      sys.execute!("rpm -qa --qf '#{queryfm}'").split("\n")
+    end
+
     private
 
     def protector_config
