@@ -15,7 +15,7 @@ class Procedures::Prep610Upgrade < ForemanMaintain::Procedure
       FileUtils.chmod_R 'g=rwX', '/var/lib/pulp/content'
       spinner.update("# find /var/lib/pulp/content -type d -perm -g-s -exec chmod g+s {} \;")
       execute!('find /var/lib/pulp/content -type d -perm -g-s -exec chmod g+s {} \;')
-      spinner.update('$ chown -R :pulp /var/lib/pulp/content')
+      spinner.update('# chgrp -R pulp /var/lib/pulp/content')
       FileUtils.chown_R nil, 'pulp', '/var/lib/pulp/content'
     end
   end
