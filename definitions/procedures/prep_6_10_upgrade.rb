@@ -11,9 +11,9 @@ class Procedures::Prep610Upgrade < ForemanMaintain::Procedure
   def run
     puts time_warning
     with_spinner('Updating filesystem permissions for Pulp 3') do |spinner|
-      spinner.update('$ chmod -R g+rwX /var/lib/pulp/content')
+      spinner.update('# chmod -R g+rwX /var/lib/pulp/content')
       FileUtils.chmod_R 'g=rwX', '/var/lib/pulp/content'
-      spinner.update("$ find /var/lib/pulp/content -type d -perm -g-s -exec chmod g+s {} \;")
+      spinner.update("# find /var/lib/pulp/content -type d -perm -g-s -exec chmod g+s {} \;")
       execute!('find /var/lib/pulp/content -type d -perm -g-s -exec chmod g+s {} \;')
       spinner.update('$ chown -R :pulp /var/lib/pulp/content')
       FileUtils.chown_R nil, 'pulp', '/var/lib/pulp/content'
