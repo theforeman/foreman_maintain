@@ -130,13 +130,13 @@ class Features::ForemanTasks < ForemanMaintain::Feature
       format_key_value('BATCH_SIZE', batch_size),
       # Somewhat counterintuitively, passing empty string into the rake
       #   causes it to match tasks in all states
-      format_key_value('STATES', states == %w[all] ? [] : states),
+      format_key_value('STATES', states.include?('all') ? [','] : states),
       format_key_value('AFTER', after),
       format_key_value('TASK_SEARCH', search),
-      format_key_value('TASK_BACKUP', backup),
-      format_key_value('NOOP', noop),
-      format_key_value('VERBOSE', verbose)
-    ].flatten.compact.shelljoin
+      format_key_value('TASK_BACKUP', backup || nil),
+      format_key_value('NOOP', noop || nil),
+      format_key_value('VERBOSE', verbose || nil)
+    ].flatten.compact.join(' ')
   end
   # rubocop:enable Metrics/ParameterLists
 
@@ -232,10 +232,10 @@ class Features::ForemanTasks < ForemanMaintain::Feature
                 when false
                   0
                 when Array
-                  value.join(',')
+                  value.empty? ? nil : value.join(',')
                 else
                   value
                 end
-    "#{key}=#{out_value}" if out_value
+    "#{key}=#{out_value.to_s.shellescape}" if out_value
   end
 end
