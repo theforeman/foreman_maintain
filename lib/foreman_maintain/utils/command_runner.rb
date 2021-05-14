@@ -97,7 +97,7 @@ module ForemanMaintain
       def with_line_streaming(io)
         return io.read unless block_given?
 
-        io.each_line.lazy.map do |line|
+        io.each_line.map do |line|
           yield line.strip
           line
         end.join
