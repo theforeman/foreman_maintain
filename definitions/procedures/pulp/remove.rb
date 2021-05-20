@@ -22,26 +22,38 @@ module Procedures::Pulp
       ]
     end
 
+    # rubocop:disable  Metrics/MethodLength
     def pulp_packages
-      [
-        'pulp-server', 'python-pulp-streamer', 'pulp-puppet-plugins',
-        'python-pulp-rpm-common', 'python-pulp-common',
-        'pulp-selinux', 'python-pulp-oid_validation',
-        'python-pulp-puppet-common', 'python-pulp-repoauth',
-        'pulp-rpm-plugins', 'python-blinker', 'python-celery',
-        'python-django', 'python-isodate', 'python-ldap',
-        'python-mongoengine', 'python-nectar', 'python-oauth2',
-        'python-pymongo'
-      ]
+      possible = %w[pulp-admin-client pulp-agent pulp-consumer-client pulp-deb-admin-extensions
+                    pulp-deb-plugins pulp-docker-admin-extensions pulp-docker-plugins
+                    pulp-nodes-admin-extensions pulp-nodes-child pulp-nodes-common
+                    pulp-nodes-consumer-extensions pulp-nodes-parent pulp-ostree-admin-extensions
+                    pulp-ostree-plugins pulp-puppet-admin-extensions
+                    pulp-puppet-consumer-extensions pulp-puppet-handlers pulp-puppet-plugins
+                    pulp-puppet-tools pulp-python-admin-extensions pulp-python-plugins
+                    pulp-rpm-admin-extensions pulp-rpm-consumer-extensions pulp-rpm-handlers
+                    pulp-rpm-plugins pulp-rpm-yumplugins pulp-selinux pulp-server python-bson
+                    python-crane python-isodate python-mongoengine python-nectar
+                    python-pulp-agent-lib python-pulp-bindings python-pulp-client-lib
+                    python-pulp-common python-pulp-deb-common python-pulp-devel
+                    python-pulp-docker-common python-pulp-integrity python-pulp-manifest
+                    python-pulp-oid_validation python-pulp-ostree-common python-pulp-puppet-common
+                    python-pulp-python-common python-pulp-repoauth python-pulp-rpm-common
+                    python-pulp-streamer python-pymongo python-pymongo-gridfs python2-amqp
+                    python2-billiard python2-celery python2-debpkgr python2-django python2-kombu
+                    python2-solv python2-vine pulp-katello]
+
+      @installed_pulp_packages ||= possible.select { |pkg| find_package(pkg) }
+      @installed_pulp_packages
     end
 
     def data_dir_removal_cmds
-      pulp_data_dirs.collect { |dir| "rm -rf #{dir}" }
+      pulp_data_dirs.select { |dir| File.directory?(dir) }.map { |dir| "rm -rf #{dir}" }
     end
 
     def ask_to_proceed(rm_cmds)
       question = "\nWARNING: All pulp2 packages will be removed with the following commands:\n" \
-        "\n# yum remove #{pulp_packages.join('  ')}" \
+        "\n# rpm -e #{pulp_packages.join('  ')}" \
         "\n# yum remove rh-mongodb34-*" \
         "\n\nAll pulp2 data will be removed.\n"
       question += rm_cmds.collect { |cmd| "\n# #{cmd}" }.join
@@ -52,18 +64,18 @@ module Procedures::Pulp
 
     def run
       rm_cmds = data_dir_removal_cmds
-      ask_to_proceed(rm_cmds)
+      ask_to_proceed(rm_cmds) if rm_cmds.any?
 
       remove_pulp
 
       remove_mongo
 
-      delete_pulp_data(rm_cmds)
+      delete_pulp_data(rm_cmds) if rm_cmds.any?
     end
 
     def remove_pulp
       with_spinner('Removing pulp2 packages') do
-        packages_action(:remove, pulp_packages, :assumeyes => true)
+        execute!("rpm -e #{pulp_packages.join('  ')}")
       end
     end
 
@@ -76,9 +88,7 @@ module Procedures::Pulp
     def delete_pulp_data(rm_cmds)
       with_spinner('Deleting pulp2 data directories') do |spinner|
         rm_cmds.each do |cmd|
-          if File.directory?(cmd.split[2])
-            execute!(cmd)
-          end
+          execute!(cmd)
         end
         spinner.update('Done deleting pulp2 data directories')
       end
