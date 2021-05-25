@@ -184,6 +184,18 @@ module ForemanMaintain
         ForemanMaintain.package_manager
       end
 
+      def find_scl_or_nonscl_package(name)
+        find_package(scl_or_nonscl_package(name))
+      end
+
+      def scl_or_nonscl_package(name)
+        if ForemanMaintain::Utils::Facter.os_major_release == '7'
+          return "tfm-#{name}"
+        end
+
+        name
+      end
+
       private
 
       def check_version(name)
