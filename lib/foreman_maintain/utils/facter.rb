@@ -13,9 +13,5 @@ module ForemanMaintain::Utils
     def self.path
       FACTER_FILES.find { |path| File.exist?(path) }
     end
-
-    def self.os_major_release
-      execute!("#{path} operatingsystemmajrelease")
-    end
   end
 end
