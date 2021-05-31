@@ -62,53 +62,51 @@ module ForemanMaintain
 
       def rh_repos(server_version)
         server_version = version(server_version)
-        rh_version_major = ForemanMaintain::Utils::Facter.os_major_release
-        rh_repos = main_rh_repos(rh_version_major)
-
+        rh_repos = main_rh_repos
         server_version_full = "#{server_version.major}.#{server_version.minor}"
-        rh_repos.concat(product_specific_repos(rh_version_major, server_version_full))
-
+        rh_repos.concat(product_specific_repos(server_version_full))
         if server_version > version('6.3')
-          rh_repos << ansible_repo(server_version, rh_version_major)
+          rh_repos << ansible_repo(server_version)
         end
 
         rh_repos
       end
 
-      def ansible_repo(server_version, rh_version_major)
+      def ansible_repo(server_version)
         if server_version >= version('6.8')
-          "rhel-#{rh_version_major}-server-ansible-2.9-rpms"
+          "rhel-#{el_major_version}-server-ansible-2.9-rpms"
         elsif server_version >= version('6.6')
-          "rhel-#{rh_version_major}-server-ansible-2.8-rpms"
+          "rhel-#{el_major_version}-server-ansible-2.8-rpms"
         elsif server_version >= version('6.4')
-          "rhel-#{rh_version_major}-server-ansible-2.6-rpms"
+          "rhel-#{el_major_version}-server-ansible-2.6-rpms"
         end
       end
 
-      # TODO: refactoring
-      def product_specific_repos(rh_version_major, full_version)
+      def product_specific_repos(full_version)
         repos = []
         repos << if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-                   "rhel-server-#{rh_version_major}-#{package_name}-6-beta-rpms"
+                   "rhel-server-#{el_major_version}-#{package_name}-6-beta-rpms"
                  else
-                   "rhel-#{rh_version_major}-server-#{package_name}-#{full_version}-rpms"
+                   "rhel-#{el_major_version}-server-#{package_name}-#{full_version}-rpms"
                  end
-        if current_minor_version == '6.3' && full_version.to_s != '6.4' && (
-          feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
-          # TODO: confirm repo for capsule. It might be same repo
-          repos << "rhel-#{rh_version_major}-server-satellite-tools-6.3-puppet4-rpms"
-        end
-
-        repos.concat(common_repos(rh_version_major, full_version))
+        repos << puppet4_repo(full_version) unless puppet4_repo(full_version).nil?
+        repos.concat(common_repos(full_version))
       end
 
-      def common_repos(rh_version_major, full_version)
+      def puppet4_repo(full_version)
+        if current_minor_version == '6.3' && full_version.to_s != '6.4' && (
+          feature(:puppet_server) && feature(:puppet_server).puppet_version.major == 4)
+          "rhel-#{el_major_version}-server-#{package_name}-tools-6.3-puppet4-rpms"
+        end
+      end
+
+      def common_repos(full_version)
         repos_arrary = if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-                         ["rhel-#{rh_version_major}-server-satellite-maintenance-6-beta-rpms",
-                          "rhel-#{rh_version_major}-server-satellite-tools-6-beta-rpms"]
+                         ["rhel-#{el_major_version}-server-satellite-maintenance-6-beta-rpms",
+                          "rhel-#{el_major_version}-server-satellite-tools-6-beta-rpms"]
                        else
-                         ["rhel-#{rh_version_major}-server-satellite-maintenance-6-rpms",
-                          "rhel-#{rh_version_major}-server-satellite-tools-#{full_version}-rpms"]
+                         ["rhel-#{el_major_version}-server-satellite-maintenance-6-rpms",
+                          "rhel-#{el_major_version}-server-satellite-tools-#{full_version}-rpms"]
                        end
 
         return repos_arrary.first(1) if feature(:satellite)
@@ -116,9 +114,9 @@ module ForemanMaintain
         repos_arrary
       end
 
-      def main_rh_repos(rh_version_major)
-        ["rhel-#{rh_version_major}-server-rpms",
-         "rhel-server-rhscl-#{rh_version_major}-rpms"]
+      def main_rh_repos
+        ["rhel-#{el_major_version}-server-rpms",
+         "rhel-server-rhscl-#{el_major_version}-rpms"]
       end
 
       def version_from_source
