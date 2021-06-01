@@ -3,7 +3,7 @@ class Features::ForemanCockpit < ForemanMaintain::Feature
     label :foreman_cockpit
 
     confine do
-      server? && find_scl_or_nonscl_package('rubygem-foreman_remote_execution-cockpit')
+      server? && plugin_package(:cockpit)
     end
   end
 

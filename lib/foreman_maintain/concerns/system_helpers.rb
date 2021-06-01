@@ -184,27 +184,6 @@ module ForemanMaintain
         ForemanMaintain.package_manager
       end
 
-      def find_scl_or_nonscl_package(name)
-        find_package(scl_or_nonscl_package(name))
-      end
-
-      def scl_or_nonscl_package(name)
-        if ForemanMaintain::Utils::Facter.os_major_release == '7'
-          return "tfm-#{name}"
-        end
-
-        name
-      end
-
-      private
-
-      def check_version(name)
-        current_version = package_version(name)
-        if current_version
-          yield current_version
-        end
-      end
-
       def os_facts
         facter = ForemanMaintain::Utils::Facter.path
         @os_facts ||= JSON.parse(execute("#{facter} -j os"))
@@ -228,6 +207,37 @@ module ForemanMaintain
 
       def el_major_version
         return os_facts['os']['release']['major'] if el?
+      end
+
+      def plugin_package(name)
+        package_names = \
+          { cockpit: 'rubygem-foreman_remote_execution-cockpit',
+            docker: 'rubygem-foreman_docker',
+            smart_proxy_dynflow_core: 'rubygem-smart_proxy_dynflow_core',
+            openscap: 'rubygem-foreman_openscap',
+            tasks: 'rubygem-foreman-tasks' }
+        if el7?
+          "tfm-#{package_names.fetch(name)}"
+        elsif el8? || debian?
+          package_names.fetch(name)
+        end
+      end
+
+      def hammer_package
+        if el7?
+          'tfm-rubygem-hammer_cli'
+        elsif el8? || debian?
+          'rubygem-hammer_cli'
+        end
+      end
+
+      private
+
+      def check_version(name)
+        current_version = package_version(name)
+        if current_version
+          yield current_version
+        end
       end
     end
   end
