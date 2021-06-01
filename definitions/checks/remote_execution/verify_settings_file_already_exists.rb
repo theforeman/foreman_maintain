@@ -6,7 +6,7 @@ module Checks::RemoteExecution
       confine do
         feature(:instance).downstream &&
           feature(:instance).downstream.current_minor_version == '6.2' &&
-          find_scl_or_nonscl_package('rubygem-smart_proxy_dynflow_core') &&
+          plugin_package(:smart_proxy_dynflow_core) &&
           file_exists?('/etc/smart_proxy_dynflow_core')
       end
     end

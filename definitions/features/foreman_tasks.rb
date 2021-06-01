@@ -23,9 +23,8 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     label :foreman_tasks
 
     confine do
-      package_name = scl_or_nonscl_package('rubygem-foreman-tasks')
       check_min_version('ruby193-rubygem-foreman-tasks', '0.6') ||
-        check_min_version(package_name, '0.7')
+        check_min_version(plugin_package(:tasks), '0.7')
     end
   end
 

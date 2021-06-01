@@ -3,8 +3,7 @@ class Features::ForemanOpenscap < ForemanMaintain::Feature
     label :foreman_openscap
 
     confine do
-      package_name = scl_or_nonscl_package('rubygem-foreman_openscap')
-      check_min_version(package_name, '0.5.3')
+      check_min_version(plugin_package(:openscap), '0.5.3')
     end
   end
 
