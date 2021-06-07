@@ -6,7 +6,9 @@ class Checks::ServicesUp < ForemanMaintain::Check
   end
 
   def run
-    failed_services = feature(:service).existing_services.reject(&:running?)
+    all_services = feature(:service).existing_services
+    failed_services = feature(:service).filter_disabled_services!('status', all_services).
+                      reject(&:running?)
     restart_procedure = Procedures::Service::Restart.new(
       :only => failed_services,
       :wait_for_server_response => true
