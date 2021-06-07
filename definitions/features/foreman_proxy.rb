@@ -28,10 +28,11 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def services
-    [
-      system_service('smart_proxy_dynflow_core', 20),
-      system_service('foreman-proxy', 40)
-    ]
+    services = [system_service('foreman-proxy', 40)]
+    if check_max_version('foreman-proxy', '2.4')
+      services << system_service('smart_proxy_dynflow_core', 20)
+    end
+    services
   end
 
   def features
