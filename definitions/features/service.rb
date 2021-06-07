@@ -43,6 +43,13 @@ class Features::Service < ForemanMaintain::Feature
     action_word_modified(action) + 'ed'
   end
 
+  def filter_disabled_services!(action, service_list)
+    if %w[start stop restart status].include?(action)
+      service_list.select!(&:enabled?)
+    end
+    service_list
+  end
+
   private
 
   def use_system_service(action, options, spinner)
@@ -134,13 +141,6 @@ class Features::Service < ForemanMaintain::Feature
     service_list.group_by(&:priority).to_h
   end
   # rubocop:enable Metrics/AbcSize
-
-  def filter_disabled_services!(action, service_list)
-    if %w[start stop restart status].include?(action)
-      service_list.select!(&:enabled?)
-    end
-    service_list
-  end
 
   def include_unregistered_services(service_list, services_filter)
     return service_list unless services_filter
