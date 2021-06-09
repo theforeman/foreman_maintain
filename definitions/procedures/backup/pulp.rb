@@ -3,12 +3,15 @@ module Procedures::Backup
     metadata do
       description 'Backup Pulp data'
       tags :backup
-      for_feature :pulp2
       param :backup_dir, 'Directory where to backup to', :required => true
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
       param :ensure_unchanged, 'Ensure the data did not change during backup'
       param :skip, 'Skip Pulp content during backup'
       param :mount_dir, 'Snapshot mount directory'
+
+      confine do
+        feature(:pulp) || feature(:pulpcore)
+      end
     end
 
     def run
@@ -26,11 +29,34 @@ module Procedures::Backup
 
     private
 
+    def current_pulp_feature
+      if feature(:pulp2) && feature(:pulpcore)
+        return choose_pulp2_pulp3
+      end
+
+      feature(:pulp2) || feature(:pulpcore)
+    end
+
+    def choose_pulp2_pulp3
+      question = "System has both Pulp 2 and Pulp 3 packages installed.\n"\
+      "This may mean system is yet to migrate on Pulp 3 or in midst of migration.\n"\
+      "Taking backup of Pulp 2(default) filesystem.\n"\
+      'Override to take Pulp 3 filesystem backup instead of Pulp 2?'
+
+      answer = ask_decision(question, actions_msg: 'y(yes), n(no)')
+
+      if answer == :yes
+        feature(:pulpcore)
+      else
+        feature(:pulp2)
+      end
+    end
+
     def pulp_backup
       feature(:tar).run(
         :archive => File.join(@backup_dir, 'pulp_data.tar'),
         :command => 'create',
-        :exclude => feature(:pulp2).exclude_from_backup,
+        :exclude => current_pulp_feature.exclude_from_backup,
         :listed_incremental => File.join(@backup_dir, '.pulp.snar'),
         :transform => 's,^,var/lib/pulp/,S',
         :volume_size => @tar_volume_size,
@@ -39,9 +65,10 @@ module Procedures::Backup
     end
 
     def pulp_dir
-      return feature(:pulp2).data_dir if @mount_dir.nil?
+      return current_pulp_feature.data_dir if @mount_dir.nil?
+
       mount_point = File.join(@mount_dir, 'pulp')
-      dir = feature(:pulp2).find_marked_directory(mount_point)
+      dir = current_pulp_feature.find_marked_directory(mount_point)
       unless dir
         raise ForemanMaintain::Error::Fail,
               "Pulp base directory not found in the mount point (#{mount_point})"

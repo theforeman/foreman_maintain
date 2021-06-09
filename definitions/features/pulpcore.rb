@@ -1,6 +1,8 @@
 require 'foreman_maintain/utils/service/systemd'
 
 class Features::Pulpcore < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::DirectoryMarker
+
   metadata do
     label :pulpcore
 
@@ -39,5 +41,15 @@ class Features::Pulpcore < ForemanMaintain::Feature
       ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
       ForemanMaintain::Utils.system_service('pulpcore-resource-manager', 10)
     ]
+  end
+
+  def data_dir
+    '/var/lib/pulp'
+  end
+
+  def exclude_from_backup
+    # Only need to backup media directory of /var/lib/pulp
+    # All below directories and their contents are regenerated on installer run
+    %w[assets exports imports sync_imports tmp]
   end
 end

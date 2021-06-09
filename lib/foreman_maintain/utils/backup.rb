@@ -11,20 +11,27 @@ module ForemanMaintain
                     :foreman_online_files, :foreman_offline_files, :fpc_offline_files,
                     :fpc_online_files
 
+      # rubocop:disable Metrics/MethodLength
       def initialize(backup_dir)
         # fpc stands for foreman proxy w/ content
         @backup_dir = backup_dir
         @standard_files = ['config_files.tar.gz']
-        @katello_online_files = ['mongo_dump', 'candlepin.dump', 'foreman.dump']
-        if feature(:pulpcore)
-          @katello_online_files << 'pulpcore.dump'
-        end
-        @katello_offline_files = ['mongo_data.tar.gz', 'pgsql_data.tar.gz']
         @foreman_online_files = ['foreman.dump']
         @foreman_offline_files = ['pgsql_data.tar.gz']
-        @fpc_online_files = ['mongo_dump']
-        @fpc_offline_files = ['mongo_data.tar.gz']
+        @katello_online_files = ['candlepin.dump', 'foreman.dump']
+        @katello_offline_files = ['pgsql_data.tar.gz']
+        if feature(:pulp2)
+          @katello_online_files  << 'mongo_dump'
+          @katello_offline_files << 'mongo_data.tar.gz'
+          @fpc_online_files = ['mongo_dump']
+          @fpc_offline_files = ['mongo_data.tar.gz']
+        elsif feature(:pulpcore)
+          @katello_online_files << 'foreman.dump'
+          @fpc_online_files = ['pulpcore.dump']
+          @fpc_offline_files = ['pgsql_data.tar.gz']
+        end
       end
+      # rubocop:enable Metrics/MethodLength
 
       def file_map
         @file_map ||= {
@@ -36,12 +43,9 @@ module ForemanMaintain
           :mongo_dump => map_file(@backup_dir, 'mongo_dump'),
           :config_files => map_file(@backup_dir, 'config_files.tar.gz'),
           :pg_globals => map_file(@backup_dir, 'pg_globals.dump'),
-          :metadata => map_file(@backup_dir, 'metadata.yml')
+          :metadata => map_file(@backup_dir, 'metadata.yml'),
+          :pulpcore_dump => map_file(@backup_dir, 'pulpcore.dump')
         }
-        if feature(:pulpcore)
-          @file_map[:pulpcore_dump] = map_file(@backup_dir, 'pulpcore.dump')
-        end
-        @file_map
       end
 
       def map_file(backup_dir, filename)
@@ -85,11 +89,6 @@ module ForemanMaintain
       end
 
       def check_file_existence(existence_map)
-        unless feature(:pulpcore)
-          existence_map[:present].delete(:pulpcore_dump)
-          existence_map[:absent].delete(:pulpcore_dump)
-        end
-
         existence_map[:present].each do |file|
           unless file_map[file][:present]
             return false
@@ -107,26 +106,42 @@ module ForemanMaintain
 
       # TODO: Need to check for pulpcore feature?
       def katello_standard_backup?
-        check_file_existence(:present => [:mongo_data, :pgsql_data],
+        present = [:pgsql_data]
+        if feature(:pulp2)
+          present << :mongo_data
+        end
+        check_file_existence(:present => present,
                              :absent => [:candlepin_dump, :foreman_dump,
                                          :pulpcore_dump, :mongo_dump])
       end
 
       def katello_online_backup?
-        check_file_existence(:present => [:candlepin_dump, :foreman_dump,
-                                          :pulpcore_dump, :mongo_dump],
+        present = [:candlepin_dump, :foreman_dump]
+        present << if feature(:pulp2)
+                     :mongo_dump
+                   else
+                     :pulpcore_dump
+                   end
+        check_file_existence(:present => present,
                              :absent => [:mongo_data, :pgsql_data])
       end
 
       def katello_logical_backup?
-        check_file_existence(:present => [:mongo_dump, :mongo_data, :pgsql_data,
-                                          :candlepin_dump, :pulpcore_dump, :foreman_dump],
+        present = [:pgsql_data, :candlepin_dump, :foreman_dump]
+        if feature(:pulp2)
+          present.concat([:mongo_dump, :mongo_data])
+        else
+          present << :pulpcore_dump
+        end
+        check_file_existence(:present => present,
                              :absent => [])
       end
 
       def fpc_standard_backup?
-        check_file_existence(:present => [:mongo_data],
-                             :absent => [:pgsql_data, :candlepin_dump,
+        present = []
+        present << feature(:pulp2) ? :mongo_data : :pgsql_data
+        check_file_existence(:present => present,
+                             :absent => [:candlepin_dump,
                                          :foreman_dump, :mongo_dump, :pulpcore_dump])
       end
 
