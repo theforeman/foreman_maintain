@@ -11,7 +11,8 @@ class Checks::NonRhPackages < ForemanMaintain::Check
   def run
     rpm_query_format = '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH} : %{VENDOR}\n'
     all_packages = package_manager.list_installed_packages(rpm_query_format)
-    non_rh_packages = all_packages - all_packages.grep(Regexp.union(rh_regexp_list))
+    non_rh_packages = all_packages - \
+                      all_packages.grep(Regexp.union(rh_regexp_list + ansible_runner_regexp_list))
     assert(non_rh_packages.empty?, error_msg(non_rh_packages), :warn => true)
   end
 
@@ -25,5 +26,9 @@ class Checks::NonRhPackages < ForemanMaintain::Check
      /-puppet-client/, /-qpid-broker/, /-qpid-client-cert/, /-qpid-router-client/,
      /-qpid-router-server/, /java-client/, /pulp-client/, /katello-default-ca/, /katello-server-ca/,
      /katello-ca-consumer/, /gpg-pubkey/, /-tomcat/]
+  end
+
+  def ansible_runner_regexp_list
+    [/ansible-runner/, /[python\d]+-ansible-runner/]
   end
 end
