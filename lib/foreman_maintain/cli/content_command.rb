@@ -35,8 +35,11 @@ module ForemanMaintain
       end
 
       subcommand 'remove-pulp2', 'Remove pulp2 and mongodb packages and data' do
+        interactive_option(%w[assumeyes plaintext])
         def execute
-          run_scenarios_and_exit(Scenarios::Content::RemovePulp2.new)
+          run_scenarios_and_exit(
+            Scenarios::Content::RemovePulp2.new(:assumeyes => assumeyes?)
+          )
         end
       end
     end
