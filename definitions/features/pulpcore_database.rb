@@ -7,7 +7,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
     label :pulpcore_database
 
     confine do
-      file_nonzero?(PULPCORE_DB_CONFIG)
+      file_nonzero?(PULPCORE_DB_CONFIG) && feature(:pulpcore)
     end
   end
 

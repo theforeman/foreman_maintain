@@ -30,26 +30,7 @@ module Procedures::Backup
     private
 
     def current_pulp_feature
-      if feature(:pulp2) && feature(:pulpcore)
-        return choose_pulp2_pulp3
-      end
-
       feature(:pulp2) || feature(:pulpcore)
-    end
-
-    def choose_pulp2_pulp3
-      question = "System has both Pulp 2 and Pulp 3 packages installed.\n"\
-      "This may mean system is yet to migrate on Pulp 3 or in midst of migration.\n"\
-      "Taking backup of Pulp 2(default) filesystem.\n"\
-      'Override to take Pulp 3 filesystem backup instead of Pulp 2?'
-
-      answer = ask_decision(question, actions_msg: 'y(yes), n(no)')
-
-      if answer == :yes
-        feature(:pulpcore)
-      else
-        feature(:pulp2)
-      end
     end
 
     def pulp_backup
