@@ -139,11 +139,13 @@ module ForemanMaintain
         present = [:pgsql_data, :candlepin_dump, :foreman_dump]
         absent = []
         if feature(:pulp2)
-          present.concat([:mongo_dump, :mongo_data])
+          present.concat [:mongo_dump, :mongo_data]
           absent.concat [:pulpcore_dump]
-        else
+        elsif feature(:pulpcore)
           present.concat [:pulpcore_dump]
           absent.concat [:mongo_dump, :mongo_data]
+        else
+          return false
         end
         check_file_existence(:present => present,
                              :absent => absent)
@@ -184,10 +186,10 @@ module ForemanMaintain
         present = []
         absent = [:candlepin_dump, :foreman_dump]
         if feature(:pulp2)
-          present.concat([:mongo_dump, :mongo_data])
+          present.concat [:mongo_dump, :mongo_data]
           absent.concat [:pulpcore_dump, :pgsql_data]
         elsif feature(:pulpcore)
-          present.concat([:pulpcore_dump, :pgsql_data])
+          present.concat [:pulpcore_dump, :pgsql_data]
           absent.concat [:mongo_dump, :mongo_data]
         else
           return false
