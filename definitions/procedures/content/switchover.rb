@@ -8,8 +8,11 @@ module Procedures::Content
         # FIXME: remove this condition for the 6.10 upgrade scenario
         !feature(:instance).downstream
       end
+
+      param :skip_deb, 'Do not run debian options in installer.'
     end
 
+    # rubocop:disable Metrics/MethodLength
     def run
       puts 'Performing final content migration before switching content'
       puts execute!('foreman-rake katello:pulp3_migration')
@@ -20,11 +23,15 @@ module Procedures::Content
       puts 'Re-running the installer to switch specified content over to pulp3'
       args = ['--foreman-proxy-content-proxy-pulp-isos-to-pulpcore=true',
               '--foreman-proxy-content-proxy-pulp-yum-to-pulpcore=true',
-              '--foreman-proxy-content-proxy-pulp-deb-to-pulpcore=true',
               '--katello-use-pulp-2-for-file=false',
               '--katello-use-pulp-2-for-docker=false',
-              '--katello-use-pulp-2-for-deb=false',
               '--katello-use-pulp-2-for-yum=false']
+
+      unless @skip_deb
+        args += ['--katello-use-pulp-2-for-deb=false',
+                 '--foreman-proxy-content-proxy-pulp-deb-to-pulpcore=true']
+      end
+
       feature(:installer).run(args.join(' '))
     end
   end

@@ -48,13 +48,29 @@ module Scenarios::Satellite_6_10
     upgrade_metadata do
       description 'Migration scripts to Satellite 6.10'
       tags :migrations
+      run_strategy :fail_fast
     end
 
     def set_context_mapping
       context.map(:assumeyes, Procedures::Installer::Upgrade => :assumeyes)
     end
 
+    def check_var_lib_pulp
+      group_id = File.stat('/var/lib/pulp/').gid
+      if Etc.getgrgid(group_id).name != 'pulp'
+        raise "Please run 'foreman-maintain prep-6.10-upgrade' prior to upgrading."
+      end
+    end
+
     def compose
+      check_var_lib_pulp
+
+      add_step(Procedures::Service::Start)
+      add_step(Procedures::Service::Enable.
+          new(:only => Features::Pulpcore.pulpcore_migration_services))
+      add_step(Procedures::Service::Start.
+          new(:only => Features::Pulpcore.pulpcore_migration_services))
+      add_step(Procedures::Content::Switchover.new(:skip_deb => true))
       add_step(Procedures::Repositories::Setup.new(:version => '6.10'))
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
@@ -86,6 +102,7 @@ module Scenarios::Satellite_6_10
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
+      add_step(Procedures::Pulp::PrintRemoveInstructions.new)
     end
   end
 end
