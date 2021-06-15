@@ -6,6 +6,7 @@ module Procedures::Content
     end
 
     def run
+      sleep(20) # in satellite 6.9 the services are still coming up
       # use interactive to get realtime output
       puts execute!('foreman-rake katello:pulp3_migration', :interactive => true)
     end

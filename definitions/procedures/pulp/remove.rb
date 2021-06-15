@@ -6,6 +6,8 @@ module Procedures::Pulp
       confine do
         check_min_version('katello-common', '4.0')
       end
+
+      param :assume_yes, 'Run the full removal without asking.'
     end
 
     def sys
@@ -41,7 +43,7 @@ module Procedures::Pulp
                     python-pulp-python-common python-pulp-repoauth python-pulp-rpm-common
                     python-pulp-streamer python-pymongo python-pymongo-gridfs python2-amqp
                     python2-billiard python2-celery python2-debpkgr python2-django python2-kombu
-                    python2-solv python2-vine pulp-katello]
+                    python2-solv python2-vine pulp-katello pulp-maintenance]
 
       @installed_pulp_packages ||= possible.select { |pkg| find_package(pkg) }
       @installed_pulp_packages
@@ -64,7 +66,7 @@ module Procedures::Pulp
 
     def run
       rm_cmds = data_dir_removal_cmds
-      ask_to_proceed(rm_cmds) if rm_cmds.any?
+      ask_to_proceed(rm_cmds) if rm_cmds.any? && !@assume_yes
 
       remove_pulp
 
