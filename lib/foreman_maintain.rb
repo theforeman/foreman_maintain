@@ -101,6 +101,10 @@ module ForemanMaintain
       @detector ||= Detector.new
     end
 
+    def refresh_features
+      @detector = Detector.new
+    end
+
     def reporter
       @reporter ||= ForemanMaintain::Reporter::CLIReporter.new
     end
