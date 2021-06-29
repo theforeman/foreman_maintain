@@ -3,14 +3,14 @@ on: pull_request
 
 jobs:
   Test_ruby_2_0_0:
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     strategy:
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
       - name: Install RVM
         run: |
-          gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+          gpg --keyserver hkps://keys.openpgp.org --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
           \curl -sSL https://get.rvm.io | bash -s stable --ruby
           source $HOME/.rvm/scripts/rvm
           rvm install 2.0.0
