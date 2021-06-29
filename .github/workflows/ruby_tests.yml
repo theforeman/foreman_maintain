@@ -11,7 +11,7 @@ jobs:
       - name: Install RVM
         run: |
           gpg --keyserver hkps://keys.openpgp.org --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-          \curl -sSL https://get.rvm.io | bash -s stable --ruby
+          \curl -sSL https://get.rvm.io | bash -s stable
           source $HOME/.rvm/scripts/rvm
           rvm install 2.0.0
       - name: Setup
