@@ -68,6 +68,7 @@ module Scenarios::Capsule_6_10
     end
 
     def compose
+      add_step(Procedures::RefreshFeatures)
       add_step(Procedures::Service::Start.new)
       add_steps(find_procedures(:post_migrations))
     end
