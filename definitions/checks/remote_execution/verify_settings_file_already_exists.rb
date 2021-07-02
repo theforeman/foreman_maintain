@@ -6,7 +6,7 @@ module Checks::RemoteExecution
       confine do
         feature(:instance).downstream &&
           feature(:instance).downstream.current_minor_version == '6.2' &&
-          plugin_package(:smart_proxy_dynflow_core) &&
+          plugin_package_name('dynflow_core', 'smart_proxy') &&
           file_exists?('/etc/smart_proxy_dynflow_core')
       end
     end
