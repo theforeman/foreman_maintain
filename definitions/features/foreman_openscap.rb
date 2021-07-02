@@ -3,7 +3,7 @@ class Features::ForemanOpenscap < ForemanMaintain::Feature
     label :foreman_openscap
 
     confine do
-      check_min_version(plugin_package(:openscap), '0.5.3')
+      plugin_package_name('openscap', 'foreman')
     end
   end
 

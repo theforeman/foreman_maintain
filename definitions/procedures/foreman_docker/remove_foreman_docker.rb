@@ -6,7 +6,7 @@ module Procedures::ForemanDocker
     end
 
     def docker_package
-      scl_or_nonscl_package('rubygem-foreman_docker')
+      plugin_package_name('docker', 'foreman')
     end
 
     def run

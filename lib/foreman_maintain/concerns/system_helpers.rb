@@ -209,25 +209,48 @@ module ForemanMaintain
         return os_facts['os']['release']['major'] if el?
       end
 
-      def plugin_package(name)
-        package_names = \
-          { cockpit: 'rubygem-foreman_remote_execution-cockpit',
-            docker: 'rubygem-foreman_docker',
-            smart_proxy_dynflow_core: 'rubygem-smart_proxy_dynflow_core',
-            openscap: 'rubygem-foreman_openscap',
-            tasks: 'rubygem-foreman-tasks' }
+      def foreman_plugin_prefix
         if el7?
-          "tfm-#{package_names.fetch(name)}"
-        elsif el8? || debian?
-          package_names.fetch(name)
+          'tfm-rubygem-foreman_'
+        elsif el8?
+          'rubygem-foreman_'
+        elsif debian?
+          'ruby-foreman-'
+        end
+      end
+
+      def smart_proxy_plugin_prefix
+        if el7?
+          'tfm-rubygem-smart_proxy_'
+        else
+          'rubygem-smart_proxy_'
+        end
+      end
+
+      def plugin_package_name(name, plugin_of)
+        case plugin_of
+        when 'foreman'
+          if el?
+            foreman_plugin_prefix + name
+          elsif debian?
+            foreman_plugin_prefix + name.tr('_', '-')
+          end
+        when 'smart_proxy'
+          if el?
+            smart_proxy_plugin_prefix + name
+          elsif debian?
+            (smart_proxy_plugin_prefix + name).tr('_', '-')
+          end
         end
       end
 
       def hammer_package
         if el7?
           'tfm-rubygem-hammer_cli'
-        elsif el8? || debian?
+        elsif el8?
           'rubygem-hammer_cli'
+        elsif debian?
+          'rubygem-hammer-cli'
         end
       end
 
