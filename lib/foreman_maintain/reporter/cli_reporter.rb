@@ -162,7 +162,7 @@ module ForemanMaintain
       end
 
       def clear_line
-        print "\r" + ' ' * @max_length + "\r"
+        print "\r" + ' ' * [@last_line.length, @max_length].max + "\r"
       end
 
       def assumeyes?

@@ -20,14 +20,14 @@ module ForemanMaintain
         raise ArgumentError, 'Can not pass stdin for interactive command' if @interactive && @stdin
       end
 
-      def run
+      def run(&block)
         if logger
           logger.debug(hide_strings("Running command #{@command} with stdin #{@stdin.inspect}"))
         end
         if @interactive
           run_interactively
         else
-          run_non_interactively
+          run_non_interactively(&block)
         end
         logger.debug("output of the command:\n #{hide_strings(output)}") if logger
       end
@@ -79,19 +79,28 @@ module ForemanMaintain
         exit_file.close
       end
 
-      def run_non_interactively
+      def run_non_interactively(&block)
         IO.popen(full_command, 'r+') do |f|
           if @stdin
             f.puts(@stdin)
             f.close_write
           end
-          @output = f.read.strip
+          @output = with_line_streaming(f, &block).strip
         end
         @exit_status = $CHILD_STATUS.exitstatus
       end
 
       def full_command
         "#{@command} 2>&1"
+      end
+
+      def with_line_streaming(io)
+        return io.read unless block_given?
+
+        io.each_line.map do |line|
+          yield line.strip
+          line
+        end.join
       end
 
       def hide_strings(string)
