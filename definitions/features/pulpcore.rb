@@ -34,10 +34,22 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def self.pulpcore_common_services
-    [
+    common_services = [
       ForemanMaintain::Utils.system_service('pulpcore-api', 10, :socket => 'pulpcore-api'),
-      ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
-      ForemanMaintain::Utils.system_service('pulpcore-resource-manager', 10)
+      ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content')
     ]
+    common_services + pulpcore_resource_manager_service
+  end
+
+  def pulpcore_resource_manager_service
+    # The pulpcore_resource_manager is only required on 3.14+
+    # if the old tasking system is being used
+    # The foreman-installer does not create unit file for this service,
+    # if the new tasking system is being used
+    if feature(:service).unit_file_available?('pulpcore-resource-manager.service')
+      return [ForemanMaintain::Utils.system_service('pulpcore-resource-manager', 10)]
+    end
+
+    []
   end
 end
