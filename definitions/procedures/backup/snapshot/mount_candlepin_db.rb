@@ -29,20 +29,27 @@ module Procedures::Backup
         end
       end
 
+      # rubocop:disable Metrics/MethodLength
       def snapshot
         mount_point = mount_location('pgsql')
         FileUtils.mkdir_p(mount_point) unless File.directory?(mount_point)
-        if directory_empty?(mount_point)
-          with_spinner('Creating snapshot of Postgres') do |spinner|
-            lv_info = get_lv_info(feature(:candlepin_database).data_dir)
-            create_lv_snapshot('pgsql-snap', @block_size, lv_info[0])
-            spinner.update("Mounting snapshot of Postgres on #{mount_point}")
-            mount_snapshot('pgsql', lv_info[1])
+        if !mounted?(mount_point)
+          if directory_empty?(dir)
+            with_spinner('Creating snapshot of Postgres') do |spinner|
+              lv_info = get_lv_info(feature(:candlepin_database).data_dir)
+              create_lv_snapshot('pgsql-snap', @block_size, lv_info[0])
+              spinner.update("Mounting snapshot of Postgres on #{mount_point}")
+              mount_snapshot('pgsql', lv_info[1])
+            end
+          else
+            puts "Error: #{mount_point} is not empty."
+            exit 1
           end
         else
           puts 'Snapshot of Postgres is already mounted'
         end
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end
