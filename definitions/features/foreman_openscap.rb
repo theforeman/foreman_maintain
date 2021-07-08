@@ -3,7 +3,7 @@ class Features::ForemanOpenscap < ForemanMaintain::Feature
     label :foreman_openscap
 
     confine do
-      plugin_package_name('openscap', 'foreman')
+      find_package(foreman_plugin_name('foreman_openscap'))
     end
   end
 

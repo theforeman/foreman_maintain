@@ -209,39 +209,32 @@ module ForemanMaintain
         return os_facts['os']['release']['major'] if el?
       end
 
-      def foreman_plugin_prefix
-        if el7?
-          'tfm-rubygem-foreman_'
-        elsif el8?
-          'rubygem-foreman_'
+      def ruby_prefix(scl = true)
+        if el7? && scl
+          'tfm-rubygem-'
+        elsif el7? || el8?
+          'rubygem-'
         elsif debian?
-          'ruby-foreman-'
+          'ruby-'
         end
       end
 
-      def smart_proxy_plugin_prefix
-        if el7?
-          'tfm-rubygem-smart_proxy_'
+      def foreman_plugin_name(plugin)
+        if debian?
+          plugin.tr!('_', '-')
+        end
+        ruby_prefix + plugin
+      end
+
+      def proxy_plugin_name(plugin)
+        if debian?
+          plugin.tr!('_', '-')
+          proxy_plugin_prefix = 'smart-proxy-'
         else
-          'rubygem-smart_proxy_'
+          proxy_plugin_prefix = 'smart_proxy_'
         end
-      end
-
-      def plugin_package_name(name, plugin_of)
-        case plugin_of
-        when 'foreman'
-          if el?
-            foreman_plugin_prefix + name
-          elsif debian?
-            foreman_plugin_prefix + name.tr('_', '-')
-          end
-        when 'smart_proxy'
-          if el?
-            smart_proxy_plugin_prefix + name
-          elsif debian?
-            (smart_proxy_plugin_prefix + name).tr('_', '-')
-          end
-        end
+        scl = check_min_version('foreman', '2.0')
+        ruby_prefix(scl) + proxy_plugin_prefix + plugin
       end
 
       def hammer_package

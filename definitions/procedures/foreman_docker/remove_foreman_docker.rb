@@ -6,7 +6,7 @@ module Procedures::ForemanDocker
     end
 
     def docker_package
-      plugin_package_name('docker', 'foreman')
+      find_package(foreman_plugin_name('foreman_docker'))
     end
 
     def run

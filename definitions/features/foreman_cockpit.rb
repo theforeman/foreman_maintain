@@ -3,7 +3,7 @@ class Features::ForemanCockpit < ForemanMaintain::Feature
     label :foreman_cockpit
 
     confine do
-      server? && plugin_package_name('remote_execution-cockpit', 'foreman')
+      server? && find_package(foreman_plugin_name('foreman_remote_execution-cockpit'))
     end
   end
 

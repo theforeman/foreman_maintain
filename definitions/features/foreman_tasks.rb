@@ -23,7 +23,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     label :foreman_tasks
 
     confine do
-      plugin_package_name('tasks', 'foreman')
+      find_package(foreman_plugin_name('foreman-tasks'))
     end
   end
 
