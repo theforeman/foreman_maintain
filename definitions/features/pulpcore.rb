@@ -41,7 +41,7 @@ class Features::Pulpcore < ForemanMaintain::Feature
     common_services + pulpcore_resource_manager_service
   end
 
-  def pulpcore_resource_manager_service
+  def self.pulpcore_resource_manager_service
     # The pulpcore_resource_manager is only required on 3.14+
     # if the old tasking system is being used
     # The foreman-installer does not create unit file for this service,
