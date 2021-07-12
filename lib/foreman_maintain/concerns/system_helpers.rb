@@ -207,11 +207,11 @@ module ForemanMaintain
       end
 
       def el7?
-        os_facts['os']['release']['major'] = '7' && el?
+        os_facts['os']['release']['major'] == '7' && el?
       end
 
       def el8?
-        os_facts['os']['release']['major'] = '8' && el?
+        os_facts['os']['release']['major'] == '8' && el?
       end
 
       def el_major_version
