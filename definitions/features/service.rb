@@ -45,7 +45,7 @@ class Features::Service < ForemanMaintain::Feature
 
   def filter_disabled_services!(action, service_list)
     if %w[start stop restart status].include?(action)
-      service_list.select!(&:enabled?)
+      service_list.select! { |service| !service.respond_to?(:enabled?) || service.enabled? }
     end
     service_list
   end
