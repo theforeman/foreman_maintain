@@ -101,7 +101,12 @@ module ForemanMaintain::Scenarios
       metadata do
         label :content_remove_pulp2
         description 'Remove Pulp2 and mongodb packages and data'
+        param :assumeyes, 'Do not ask for confirmation'
         manual_detection
+      end
+
+      def set_context_mapping
+        context.map(:assumeyes, Procedures::Pulp::Remove => :assumeyes)
       end
 
       def compose
