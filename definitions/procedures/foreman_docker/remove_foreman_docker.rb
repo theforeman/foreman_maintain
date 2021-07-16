@@ -6,11 +6,12 @@ module Procedures::ForemanDocker
     end
 
     def docker_package
-      'tfm-rubygem-foreman_docker'
+      plugin_package_name('docker', 'foreman')
     end
 
     def run
       return unless execute?("rpm -q #{docker_package}")
+
       execute!('foreman-rake foreman_docker:cleanup')
       packages_action(:remove, [docker_package], :assumeyes => true)
     end

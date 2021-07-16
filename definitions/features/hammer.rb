@@ -7,7 +7,7 @@ class Features::Hammer < ForemanMaintain::Feature
     label :hammer
     confine do
       # FIXME: How does this run on proxy?
-      find_package('rubygem-hammer_cli') || find_package('tfm-rubygem-hammer_cli')
+      hammer_package
     end
   end
 
