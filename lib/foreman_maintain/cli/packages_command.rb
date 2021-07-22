@@ -58,7 +58,7 @@ module ForemanMaintain
       end
 
       subcommand 'is-locked', 'Check if update of packages is allowed' do
-        interactive_option([])
+        interactive_option(['assumeyes'])
         def execute
           locked = ForemanMaintain.package_manager.versions_locked?
           puts "Packages are#{locked ? '' : ' not'} locked"
