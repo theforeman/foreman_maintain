@@ -10,7 +10,7 @@ module Procedures::Backup
       param :mount_dir, 'Snapshot mount directory'
 
       confine do
-        feature(:pulp2) || feature(:pulpcore)
+        feature(:pulp2) || feature(:pulpcore_database)
       end
     end
 
@@ -29,15 +29,15 @@ module Procedures::Backup
 
     private
 
-    def current_pulp_feature
-      feature(:pulp2) || feature(:pulpcore)
+    def any_pulp_feature
+      feature(:pulp2) || feature(:pulpcore_database)
     end
 
     def pulp_backup
       feature(:tar).run(
         :archive => File.join(@backup_dir, 'pulp_data.tar'),
         :command => 'create',
-        :exclude => current_pulp_feature.exclude_from_backup,
+        :exclude => any_pulp_feature.exclude_from_backup,
         :listed_incremental => File.join(@backup_dir, '.pulp.snar'),
         :transform => 's,^,var/lib/pulp/,S',
         :volume_size => @tar_volume_size,
@@ -46,10 +46,10 @@ module Procedures::Backup
     end
 
     def pulp_dir
-      return current_pulp_feature.data_dir if @mount_dir.nil?
+      return any_pulp_feature.data_dir if @mount_dir.nil?
 
       mount_point = File.join(@mount_dir, 'pulp')
-      dir = current_pulp_feature.find_marked_directory(mount_point)
+      dir = any_pulp_feature.find_marked_directory(mount_point)
       unless dir
         raise ForemanMaintain::Error::Fail,
               "Pulp base directory not found in the mount point (#{mount_point})"

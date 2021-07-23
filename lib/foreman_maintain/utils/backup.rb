@@ -25,7 +25,7 @@ module ForemanMaintain
           @katello_offline_files << 'mongo_data.tar.gz'
           @fpc_online_files = ['mongo_dump']
           @fpc_offline_files = ['mongo_data.tar.gz']
-        elsif feature(:pulpcore)
+        elsif feature(:pulpcore_database)
           @katello_online_files << 'foreman.dump'
           @fpc_online_files = ['pulpcore.dump']
           @fpc_offline_files = ['pgsql_data.tar.gz']
@@ -108,10 +108,10 @@ module ForemanMaintain
       def katello_standard_backup?
         present = [:pgsql_data]
         absent = [:candlepin_dump, :foreman_dump, :pulpcore_dump, :mongo_dump]
-        if feature(:pulp2)
-          present.concat [:mongo_data]
-        elsif feature(:pulpcore)
+        if feature(:pulpcore_database) && !feature(:pulp2)
           absent.concat [:mongo_data]
+        elsif feature(:pulp2)
+          present.concat [:mongo_data]
         else
           return false
         end
@@ -122,12 +122,14 @@ module ForemanMaintain
       def katello_online_backup?
         present = [:candlepin_dump, :foreman_dump]
         absent = [:mongo_data, :pgsql_data]
-        if feature(:pulp2)
-          present.concat [:mongo_dump]
-          absent.concat [:pulpcore_dump]
-        elsif feature(:pulpcore)
+        if feature(:pulpcore_database) && !feature(:pulp2)
           present.concat [:pulpcore_dump]
           absent.concat [:mongo_dump]
+        elsif feature(:pulp2) && feature(:pulpcore_database)
+          present.concat [:mongo_dump, :pulpcore_dump]
+        elsif feature(:pulp2)
+          present.concat [:mongo_dump]
+          absent.concat [:pulpcore_dump]
         else
           return false
         end
@@ -138,12 +140,14 @@ module ForemanMaintain
       def katello_logical_backup?
         present = [:pgsql_data, :candlepin_dump, :foreman_dump]
         absent = []
-        if feature(:pulp2)
-          present.concat [:mongo_dump, :mongo_data]
-          absent.concat [:pulpcore_dump]
-        elsif feature(:pulpcore)
+        if feature(:pulpcore_database) && !feature(:pulp2)
           present.concat [:pulpcore_dump]
           absent.concat [:mongo_dump, :mongo_data]
+        elsif feature(:pulp2) && feature(:pulpcore_database)
+          present.concat [:mongo_dump, :mongo_data, :pulpcore_dump]
+        elsif feature(:pulp2)
+          present.concat [:mongo_dump, :mongo_data]
+          absent.concat [:pulpcore_dump]
         else
           return false
         end
@@ -154,12 +158,14 @@ module ForemanMaintain
       def fpc_standard_backup?
         present = []
         absent = [:candlepin_dump, :foreman_dump, :pulpcore_dump, :mongo_dump]
-        if feature(:pulp2)
-          present.concat [:mongo_data]
-          absent.concat [:pgsql_data]
-        elsif feature(:pulpcore)
+        if feature(:pulpcore_database) && !feature(:pulp2)
           present.concat [:pgsql_data]
           absent.concat [:mongo_data]
+        elsif feature(:pulp2) && feature(:pulpcore_database)
+          present.concat [:mongo_data, :pgsql_data]
+        elsif feature(:pulp2)
+          present.concat [:mongo_data]
+          absent.concat [:pgsql_data]
         else
           return false
         end
@@ -170,12 +176,14 @@ module ForemanMaintain
       def fpc_online_backup?
         present = []
         absent = [:mongo_data, :pgsql_data, :candlepin_dump, :foreman_dump]
-        if feature(:pulp2)
-          present.concat [:mongo_dump]
-          absent.concat [:pulpcore_dump]
-        elsif feature(:pulpcore)
+        if feature(:pulpcore_database) && !feature(:pulp2)
           present.concat [:pulpcore_dump]
           absent.concat [:mongo_dump]
+        elsif feature(:pulp2) && feature(:pulpcore_database)
+          present.concat [:mongo_dump, :pulpcore_dump]
+        elsif feature(:pulp2)
+          present.concat [:mongo_dump]
+          absent.concat [:pulpcore_dump]
         else
           return false
         end
@@ -185,12 +193,14 @@ module ForemanMaintain
       def fpc_logical_backup?
         present = []
         absent = [:candlepin_dump, :foreman_dump]
-        if feature(:pulp2)
-          present.concat [:mongo_dump, :mongo_data]
-          absent.concat [:pulpcore_dump, :pgsql_data]
-        elsif feature(:pulpcore)
+        if feature(:pulpcore_database) && !feature(:pulp2)
           present.concat [:pulpcore_dump, :pgsql_data]
           absent.concat [:mongo_dump, :mongo_data]
+        elsif feature(:pulp2) && feature(:pulpcore_database)
+          present.concat [:mongo_dump, :mongo_data, :pulpcore_dump, :pgsql_data]
+        elsif feature(:pulp2)
+          present.concat [:mongo_dump, :mongo_data]
+          absent.concat [:pulpcore_dump, :pgsql_data]
         else
           return false
         end
@@ -252,7 +262,7 @@ module ForemanMaintain
       def sql_dump_files_exist?
         file_map[:foreman_dump][:present] ||
           file_map[:candlepin_dump][:present] ||
-          (feature(:pulpcore) && file_map[:pulpcore_dump][:present])
+          (feature(:pulpcore_database) && file_map[:pulpcore_dump][:present])
       end
 
       def incremental?
