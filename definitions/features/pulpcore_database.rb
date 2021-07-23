@@ -2,12 +2,13 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
   PULPCORE_DB_CONFIG = '/etc/pulp/settings.py'.freeze
 
   include ForemanMaintain::Concerns::BaseDatabase
+  include ForemanMaintain::Concerns::PulpCommon
 
   metadata do
     label :pulpcore_database
 
     confine do
-      file_nonzero?(PULPCORE_DB_CONFIG) && feature(:pulpcore)
+      file_nonzero?(PULPCORE_DB_CONFIG) && check_min_version('katello-common', '3.18')
     end
   end
 

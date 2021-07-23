@@ -2,6 +2,7 @@ require 'foreman_maintain/utils/service/systemd'
 
 class Features::Pulpcore < ForemanMaintain::Feature
   include ForemanMaintain::Concerns::DirectoryMarker
+  include ForemanMaintain::Concerns::PulpCommon
 
   metadata do
     label :pulpcore
@@ -53,15 +54,5 @@ class Features::Pulpcore < ForemanMaintain::Feature
     end
 
     []
-  end
-
-  def data_dir
-    '/var/lib/pulp'
-  end
-
-  def exclude_from_backup
-    # Only need to backup media directory of /var/lib/pulp
-    # All below directories and their contents are regenerated on installer run
-    %w[assets exports imports sync_imports tmp]
   end
 end

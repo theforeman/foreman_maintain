@@ -1,5 +1,6 @@
 class Features::Pulp < ForemanMaintain::Feature
   include ForemanMaintain::Concerns::DirectoryMarker
+  include ForemanMaintain::Concerns::PulpCommon
 
   metadata do
     label :pulp2
@@ -24,10 +25,6 @@ class Features::Pulp < ForemanMaintain::Feature
     ]
   end
 
-  def data_dir
-    '/var/lib/pulp'
-  end
-
   def config_files
     [
       '/etc/pki/pulp',
@@ -35,11 +32,5 @@ class Features::Pulp < ForemanMaintain::Feature
       '/etc/crane.conf',
       '/etc/default/pulp_workers'
     ]
-  end
-
-  def exclude_from_backup
-    # Exclude /var/lib/pulp/katello-export and /var/lib/pulp/cache
-    # since the tar is run from /var/lib/pulp, list subdir paths only
-    ['katello-export', 'cache']
   end
 end
