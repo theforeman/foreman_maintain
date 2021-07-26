@@ -2,6 +2,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
   PULPCORE_DB_CONFIG = '/etc/pulp/settings.py'.freeze
 
   include ForemanMaintain::Concerns::BaseDatabase
+  include ForemanMaintain::Concerns::DirectoryMarker
   include ForemanMaintain::Concerns::PulpCommon
 
   metadata do

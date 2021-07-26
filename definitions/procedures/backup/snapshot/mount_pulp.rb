@@ -8,7 +8,7 @@ module Procedures::Backup
         MountBase.common_params(self)
         param :skip, 'Skip Pulp content during backup'
         confine do
-          feature(:pulp2) || feature(:pulpcore)
+          feature(:pulp2) || feature(:pulpcore_database)
         end
       end
 
@@ -25,7 +25,7 @@ module Procedures::Backup
       end
 
       def current_pulp_feature
-        feature(:pulp2) || feature(:pulpcore)
+        feature(:pulp2) || feature(:pulpcore_database)
       end
     end
   end

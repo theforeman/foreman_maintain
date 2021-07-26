@@ -1,9 +1,6 @@
 require 'foreman_maintain/utils/service/systemd'
 
 class Features::Pulpcore < ForemanMaintain::Feature
-  include ForemanMaintain::Concerns::DirectoryMarker
-  include ForemanMaintain::Concerns::PulpCommon
-
   metadata do
     label :pulpcore
 
