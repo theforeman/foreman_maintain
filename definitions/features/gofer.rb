@@ -3,7 +3,9 @@ class Features::Gofer < ForemanMaintain::Feature
     label :gofer
 
     confine do
-      find_package('gofer')
+      find_package('gofer') &&
+        ForemanMaintain::Utils::Service::Systemd.new('goferd', 0).exist? &&
+        ForemanMaintain::Utils::Service::Systemd.new('goferd', 0).enabled?
     end
   end
 
