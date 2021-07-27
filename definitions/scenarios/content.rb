@@ -61,6 +61,7 @@ module ForemanMaintain::Scenarios
       def compose
         if !feature(:satellite) || feature(:satellite).at_least_version?('6.9')
           add_step(Procedures::Content::PrepareAbort)
+          disable_and_stop_services if feature(:satellite)
         end
       end
     end
