@@ -11,11 +11,19 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def services
-    self.class.pulpcore_common_services + [
+    self.class.pulpcore_common_services + configured_workers + [
       system_service('rh-redis5-redis', 5),
-      system_service('pulpcore-worker@*', 20, :all => true, :skip_enablement => true),
       system_service('httpd', 30)
     ]
+  end
+
+  def configured_workers
+    names = Dir['/etc/systemd/system/multi-user.target.wants/pulpcore-worker@*.service']
+    names = names.map { |f| File.basename(f) }
+    names.map do |name|
+      system_service(name, 20, :skip_enablement => true,
+                               :instance_parent_unit => 'pulpcore-worker@')
+    end
   end
 
   def self.pulpcore_migration_services
