@@ -25,6 +25,7 @@ module Scenarios::Satellite_6_10
     end
 
     def compose
+      add_step(Checks::Puppet::WarnAboutPuppetRemoval)
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
       add_step(Checks::Foreman::CheckpointSegments)
