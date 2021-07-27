@@ -16,16 +16,18 @@ module Procedures::Pulp
 
     def run
       return unless File.directory?(PULP_METADATA_DIR)
-      puts 'Locating repository metadata (this may take a while):'
       found = []
-      Find.find(PULP_METADATA_DIR) do |path|
-        next if File.basename(path) != REPOMD_FILE
-        found << path
-        print '.'
-        $stdout.flush
+
+      puts 'Warning: This command may cause reduced performance related to content operations.'
+      message = 'Locating repository metadata (this may take a while)'
+      with_spinner(message) do |spinner|
+        Find.find(PULP_METADATA_DIR) do |path|
+          next if File.basename(path) != REPOMD_FILE
+          found << path
+          spinner.update("#{message}: Found #{found.count} repos.")
+        end
       end
 
-      puts "Found #{found.length} repositories to scan."
       found.each do |repo_md_path|
         handle(repo_md_path, @remove_files)
       end
