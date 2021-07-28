@@ -58,7 +58,8 @@ module Procedures::Pulp
     def ask_to_proceed(rm_cmds)
       question = "\nWARNING: All pulp2 packages will be removed with the following commands:\n"
       question += "\n# rpm -e #{pulp_packages.join('  ')}" if pulp_packages.any?
-      question += "\n# yum remove rh-mongodb34-*" \
+      question += "\n# yum remove rh-mongodb34-*"
+      question += "\n# yum remove squid mod_wsgi" \
         "\n\nAll pulp2 data will be removed.\n"
       question += rm_cmds.collect { |cmd| "\n# #{cmd}" }.join
       question += "\n\nDo you want to proceed?"
@@ -77,6 +78,8 @@ module Procedures::Pulp
 
       remove_mongo
 
+      remove_other_packages
+
       drop_migration_tables
 
       drop_migrations
@@ -93,6 +96,12 @@ module Procedures::Pulp
     def remove_mongo
       with_spinner('Removing mongo packages') do
         packages_action(:remove, ['rh-mongodb34-*'], :assumeyes => true)
+      end
+    end
+
+    def remove_other_packages
+      with_spinner('Removing additional packages') do
+        packages_action(:remove, %w[squid mod_wsgi], :assumeyes => true)
       end
     end
 
