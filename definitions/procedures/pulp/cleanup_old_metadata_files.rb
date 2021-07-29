@@ -1,5 +1,5 @@
 require 'find'
-require 'nokogiri'
+require 'rexml/document'
 
 module Procedures::Pulp
   class CleanupOldMetadataFiles < ForemanMaintain::Procedure
@@ -40,20 +40,28 @@ module Procedures::Pulp
       if to_remove.empty?
         "Skipping #{base_path}, no files to remove."
       elsif remove_files
+        puts '================================================================================'
         puts "Removing #{to_remove.count} files from #{base_path}"
         to_remove.each { |file| File.delete(File.join(base_path, file)) }
       else
-        puts '============================================='
+        puts '================================================================================'
         puts "For #{base_path} would remove, but --remove-files was not specified:"
         to_remove.each { |file| puts "   #{file}" }
       end
     end
 
     def list_repomd_files(repo_md_path)
-      content = File.read(repo_md_path)
-      doc = Nokogiri::XML(content)
-      filenames = doc.css('location').map { |e| e.attributes['href'].value }
-      base_names(filenames)
+      doc = REXML::Document.new(File.new(repo_md_path))
+      filenames = []
+      doc.root.elements.each do |data|
+        locations = data.elements['location']
+        next unless locations
+
+        if locations.attributes
+          filenames << locations.attributes['href']
+        end
+      end
+      base_names(filenames.flatten)
     end
 
     def list_existing_files(repo_md_path)

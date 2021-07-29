@@ -23,7 +23,6 @@ the Foreman/Satellite up and running."
 
   s.add_dependency 'clamp'
   s.add_dependency 'highline'
-  s.add_dependency 'nokogiri'
 
   s.add_development_dependency 'bundler', '>= 1.17'
   s.add_development_dependency 'minitest'
