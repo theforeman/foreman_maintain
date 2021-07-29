@@ -59,12 +59,15 @@ module ForemanMaintain
 
       private
 
+      # rubocop:disable Metrics/MethodLength
       def run_interactively
         # use tmp files to capture output and exit status of the command when
         # running interactively
         log_file = Tempfile.open('captured-output')
         exit_file = Tempfile.open('captured-exit-code')
-        Kernel.system("script -qc '#{full_command}; echo $? > #{exit_file.path}' #{log_file.path}")
+        Kernel.system(
+          "bash -c '#{full_command}; echo $? > #{exit_file.path}' | tee -i #{log_file.path}"
+        )
         File.open(log_file.path) { |f| @output = f.read }
         File.open(exit_file.path) do |f|
           exit_status = f.read.strip
@@ -78,6 +81,7 @@ module ForemanMaintain
         log_file.close
         exit_file.close
       end
+      # rubocop:enable Metrics/MethodLength
 
       def run_non_interactively
         IO.popen(full_command, 'r+') do |f|
