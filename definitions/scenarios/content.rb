@@ -98,6 +98,24 @@ module ForemanMaintain::Scenarios
       end
     end
 
+    class CleanupRepositoryMetadata < ContentBase
+      metadata do
+        label :cleanup_repository_metadata
+        description 'Remove old leftover repository metadata'
+        param :remove_files, 'Actually remove the files? Otherwise a dryrun is performed.'
+
+        manual_detection
+      end
+
+      def compose
+        add_step_with_context(Procedures::Pulp::CleanupOldMetadataFiles)
+      end
+
+      def set_context_mapping
+        context.map(:remove_files, Procedures::Pulp::CleanupOldMetadataFiles => :remove_files)
+      end
+    end
+
     class RemovePulp2 < ContentBase
       metadata do
         label :content_remove_pulp2

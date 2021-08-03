@@ -34,6 +34,17 @@ module ForemanMaintain
         end
       end
 
+      subcommand 'cleanup-repository-metadata', 'Cleanup old repository metadata under Pulp 2' do
+        option ['-r', '--remove-files'], :flag, 'Remove the files instead of just listing them.',
+               :attribute_name => :remove_files
+
+        def execute
+          run_scenarios_and_exit(
+            Scenarios::Content::CleanupRepositoryMetadata.new(:remove_files => @remove_files)
+          )
+        end
+      end
+
       subcommand 'remove-pulp2', 'Remove pulp2 and mongodb packages and data' do
         interactive_option(%w[assumeyes plaintext])
         def execute
