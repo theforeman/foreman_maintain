@@ -16,11 +16,11 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   end
 
   def config_files
-    if el7? && check_min_version('foreman', '2.0')
-      ['/var/opt/rh/rh-postgresql12/lib/pgsql/data/postgresql.conf']
-    else
-      ['/var/lib/pgsql/data/postgresql.conf']
-    end
+    [postgresql_conf]
+  end
+
+  def postgresql_conf
+    "#{data_dir}/postgresql.conf"
   end
 
   def services
