@@ -9,7 +9,7 @@ class Features::Redis < ForemanMaintain::Feature
   end
 
   def services
-    [system_service(self.class.service_name, 10)]
+    [system_service(self.class.service_name, 5)]
   end
 
   def config_files
@@ -20,11 +20,17 @@ class Features::Redis < ForemanMaintain::Feature
     SCL_NAME = 'rh-redis5'.freeze
 
     def etc_prefix
-      "/etc/opt/rh/#{SCL_NAME}"
+      if el7?
+        "/etc/opt/rh/#{SCL_NAME}"
+      else
+        '/etc'
+      end
     end
 
     def scl_prefix
-      "#{SCL_NAME}-"
+      if el7?
+        "#{SCL_NAME}-"
+      end
     end
 
     def service_name
