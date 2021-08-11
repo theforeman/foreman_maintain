@@ -9,6 +9,13 @@ module ForemanMaintain
         end
       end
 
+      def restore_transform
+        if el8?
+          # this allows to transform an EL7 backup to EL8 paths
+          's,^var/opt/rh/rh-postgresql12/,var/,S'
+        end
+      end
+
       def configuration
         raise NotImplementedError
       end
