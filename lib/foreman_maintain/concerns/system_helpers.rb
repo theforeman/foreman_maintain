@@ -238,13 +238,12 @@ module ForemanMaintain
       end
 
       def hammer_package
-        if el7?
-          'tfm-rubygem-hammer_cli'
-        elsif el8?
-          'rubygem-hammer_cli'
-        elsif debian?
-          'rubygem-hammer-cli'
-        end
+        hammer_prefix = if debian?
+                          'hammer-cli'
+                        else
+                          'hammer_cli'
+                        end
+        ruby_prefix + hammer_prefix
       end
 
       private
