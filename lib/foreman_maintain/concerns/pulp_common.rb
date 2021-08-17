@@ -1,7 +1,7 @@
 module ForemanMaintain
   module Concerns
     module PulpCommon
-      def data_dir
+      def pulp_data_dir
         '/var/lib/pulp'
       end
 

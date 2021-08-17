@@ -46,7 +46,7 @@ module Procedures::Backup
     end
 
     def pulp_dir
-      return any_pulp_feature.data_dir if @mount_dir.nil?
+      return any_pulp_feature.pulp_data_dir if @mount_dir.nil?
 
       mount_point = File.join(@mount_dir, 'pulp')
       dir = any_pulp_feature.find_marked_directory(mount_point)

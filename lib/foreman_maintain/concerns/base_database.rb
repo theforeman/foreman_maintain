@@ -2,7 +2,7 @@ module ForemanMaintain
   module Concerns
     module BaseDatabase
       def data_dir
-        if el7? && check_min_version('foreman', '2.0')
+        if el7? && package_manager.installed?('rh-postgresql12-postgresql-server-syspaths')
           '/var/opt/rh/rh-postgresql12/lib/pgsql/data/'
         else
           '/var/lib/pgsql/data/'
