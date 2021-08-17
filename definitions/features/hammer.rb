@@ -6,7 +6,6 @@ class Features::Hammer < ForemanMaintain::Feature
   metadata do
     label :hammer
     confine do
-      # FIXME: How does this run on proxy?
       find_package(hammer_package)
     end
   end
