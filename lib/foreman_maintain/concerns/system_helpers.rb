@@ -233,7 +233,7 @@ module ForemanMaintain
         else
           proxy_plugin_prefix = 'smart_proxy_'
         end
-        scl = check_min_version('foreman', '2.0')
+        scl = check_min_version('foreman-proxy', '2.0')
         ruby_prefix(scl) + proxy_plugin_prefix + plugin
       end
 
