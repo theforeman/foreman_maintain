@@ -23,8 +23,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     label :foreman_tasks
 
     confine do
-      check_min_version('ruby193-rubygem-foreman-tasks', '0.6') ||
-        check_min_version('tfm-rubygem-foreman-tasks', '0.7')
+      find_package(foreman_plugin_name('foreman-tasks'))
     end
   end
 

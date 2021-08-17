@@ -184,15 +184,6 @@ module ForemanMaintain
         ForemanMaintain.package_manager
       end
 
-      private
-
-      def check_version(name)
-        current_version = package_version(name)
-        if current_version
-          yield current_version
-        end
-      end
-
       def os_facts
         facter = ForemanMaintain::Utils::Facter.path
         @os_facts ||= JSON.parse(execute("#{facter} -j os"))
@@ -216,6 +207,52 @@ module ForemanMaintain
 
       def el_major_version
         return os_facts['os']['release']['major'] if el?
+      end
+
+      def ruby_prefix(scl = true)
+        if el7? && scl
+          'tfm-rubygem-'
+        elsif el7? || el8?
+          'rubygem-'
+        elsif debian?
+          'ruby-'
+        end
+      end
+
+      def foreman_plugin_name(plugin)
+        if debian?
+          plugin.tr!('_', '-')
+        end
+        ruby_prefix + plugin
+      end
+
+      def proxy_plugin_name(plugin)
+        if debian?
+          plugin.tr!('_', '-')
+          proxy_plugin_prefix = 'smart-proxy-'
+        else
+          proxy_plugin_prefix = 'smart_proxy_'
+        end
+        scl = check_min_version('foreman', '2.0')
+        ruby_prefix(scl) + proxy_plugin_prefix + plugin
+      end
+
+      def hammer_package
+        hammer_prefix = if debian?
+                          'hammer-cli'
+                        else
+                          'hammer_cli'
+                        end
+        ruby_prefix + hammer_prefix
+      end
+
+      private
+
+      def check_version(name)
+        current_version = package_version(name)
+        if current_version
+          yield current_version
+        end
       end
     end
   end
