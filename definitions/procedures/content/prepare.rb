@@ -3,12 +3,14 @@ module Procedures::Content
     metadata do
       description 'Prepare content for Pulp 3'
       for_feature :pulpcore
+      param :quiet, 'Keep the output on a single line', :flag => true, :default => false
     end
 
     def run
       sleep(20) # in satellite 6.9 the services are still coming up
       # use interactive to get realtime output
-      puts execute!('foreman-rake katello:pulp3_migration', :interactive => true)
+      env_vars = @quiet ? '' : 'preserve_output=true '
+      puts execute!("#{env_vars}foreman-rake katello:pulp3_migration", :interactive => true)
     end
   end
 end
