@@ -2,11 +2,10 @@ module ForemanMaintain::Scenarios
   module Content
     class ContentBase < ForemanMaintain::Scenario
       def enable_and_start_services
-        add_step(Procedures::Service::Start)
         add_step(Procedures::Service::Enable.
                  new(:only => Features::Pulpcore.pulpcore_migration_services))
         add_step(Procedures::Service::Start.
-                 new(:only => Features::Pulpcore.pulpcore_migration_services))
+                 new(:include => Features::Pulpcore.pulpcore_migration_services))
       end
 
       def disable_and_stop_services
@@ -27,11 +26,17 @@ module ForemanMaintain::Scenarios
       def compose
         if feature(:satellite) && feature(:satellite).at_least_version?('6.9')
           enable_and_start_services
-          add_step(Procedures::Content::Prepare)
+          add_step(Procedures::Content::Prepare.new(quiet: quiet?))
           disable_and_stop_services
         elsif !feature(:satellite)
-          add_step(Procedures::Content::Prepare)
+          add_step(Procedures::Content::Prepare.new(quiet: quiet?))
         end
+      end
+
+      private
+
+      def quiet?
+        !!context.get(:quiet)
       end
     end
 
@@ -60,6 +65,7 @@ module ForemanMaintain::Scenarios
 
       def compose
         if !feature(:satellite) || feature(:satellite).at_least_version?('6.9')
+          enable_and_start_services if feature(:satellite)
           add_step(Procedures::Content::PrepareAbort)
         end
       end
