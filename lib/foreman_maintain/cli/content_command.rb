@@ -2,8 +2,9 @@ module ForemanMaintain
   module Cli
     class ContentCommand < Base
       subcommand 'prepare', 'Prepare content for Pulp 3' do
+        option ['-q', '--quiet'], :flag, 'Keep the output on a single line'
         def execute
-          run_scenarios_and_exit(Scenarios::Content::Prepare.new)
+          run_scenarios_and_exit(Scenarios::Content::Prepare.new(:quiet => quiet?))
         end
       end
 
