@@ -12,6 +12,8 @@ require 'foreman_maintain/cli/maintenance_mode_command'
 require 'foreman_maintain/cli/packages_command'
 require 'foreman_maintain/cli/content_command'
 
+Clamp.allow_options_after_parameters = true
+
 module ForemanMaintain
   module Cli
     class MainCommand < Base
