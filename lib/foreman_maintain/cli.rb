@@ -13,6 +13,8 @@ require 'foreman_maintain/cli/packages_command'
 require 'foreman_maintain/cli/plugin_command'
 require 'foreman_maintain/cli/self_upgrade_command'
 
+Clamp.allow_options_after_parameters = true
+
 module ForemanMaintain
   module Cli
     class MainCommand < Base
