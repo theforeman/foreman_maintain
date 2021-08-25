@@ -5,8 +5,7 @@ module Procedures::Content
       for_feature :pulpcore
 
       confine do
-        # FIXME: remove this condition for the 6.10 upgrade scenario
-        !feature(:instance).downstream
+        !check_min_version(foreman_plugin_name('katello'), '4.0')
       end
 
       param :skip_deb, 'Do not run debian options in installer.'
