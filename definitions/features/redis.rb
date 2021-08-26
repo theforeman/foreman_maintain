@@ -4,7 +4,7 @@ class Features::Redis < ForemanMaintain::Feature
 
     confine do
       # Luckily, the service name is the same as the package providing it
-      server? && find_package(service_name)
+      find_package(service_name)
     end
   end
 
