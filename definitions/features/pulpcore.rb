@@ -11,8 +11,10 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def services
+    redis_services = feature(:redis) ? feature(:redis).services : []
+
     self.class.pulpcore_common_services + configured_workers +
-      feature(:redis).services + feature(:apache).services
+      redis_services + feature(:apache).services
   end
 
   def configured_workers
