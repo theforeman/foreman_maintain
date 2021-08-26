@@ -9,6 +9,10 @@ module ForemanMaintain
         end
       end
 
+      def postgresql_conf
+        "#{data_dir}/postgresql.conf"
+      end
+
       def restore_transform
         if el8?
           # this allows to transform an EL7 backup to EL8 paths
