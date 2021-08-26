@@ -2,12 +2,10 @@ module ForemanMaintain::Utils
   module Facter
     include ForemanMaintain::Concerns::SystemHelpers
 
-    FACTER_FILES = %w[/usr/bin/facter /opt/puppetlabs/bin/facter].freeze
+    FACTER_FILES = %w[/opt/puppetlabs/bin/facter /usr/bin/facter].freeze
 
     def self.package
-      puppet_version = version(execute!('/opt/puppetlabs/bin/puppet --version'))
-
-      puppet_version.major >= 4 ? 'puppet-agent' : 'facter'
+      File.exist?('/opt/puppetlabs/bin/facter') ? 'puppet-agent' : 'facter'
     end
 
     def self.path
