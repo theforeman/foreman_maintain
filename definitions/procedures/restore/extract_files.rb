@@ -60,15 +60,19 @@ module Procedures::Restore
       feature(:tar).run(mongo_data_tar)
     end
 
+    def any_database
+      feature(:foreman_database) || feature(:candlepin_database) || feature(:pulpcore_database)
+    end
+
     def extract_pgsql_data(backup)
       pgsql_data_tar = base_tar.merge(
         :archive => backup.file_map[:pgsql_data][:path],
         :gzip => true,
-        :transform => feature(:foreman_database).restore_transform
+        :transform => any_database.restore_transform
       )
       feature(:tar).run(pgsql_data_tar)
       # workaround for https://tickets.puppetlabs.com/browse/MODULES-11160
-      execute("sed -i '/data_directory/d' #{feature(:foreman_database).postgresql_conf}")
+      execute("sed -i '/data_directory/d' #{any_database.postgresql_conf}")
     end
   end
 end

@@ -19,10 +19,6 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
     [postgresql_conf]
   end
 
-  def postgresql_conf
-    "#{data_dir}/postgresql.conf"
-  end
-
   def services
     [
       system_service('postgresql', 10, :component => 'foreman',
