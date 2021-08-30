@@ -145,7 +145,7 @@ class Features::Instance < ForemanMaintain::Feature
       'candlepin' => %w[candlepin candlepin_database],
       'pulp_auth' => %w[pulp2 mongo],
       'pulp' => %w[pulp2 mongo],
-      'pulpcore' => %w[pulpcore pulpcore_database],
+      'pulp3' => %w[pulpcore pulpcore_database],
       'foreman_tasks' => %w[foreman_tasks]
     }
   end
@@ -156,6 +156,9 @@ class Features::Instance < ForemanMaintain::Feature
     # map ping components to features
     features = components.map { |component| cf_map[component] }.flatten.uniq
     # map features to existing services
-    features.map { |name| feature(name.to_sym).services }.flatten.uniq.select(&:exist?)
+    services_of_features = features.map do |name|
+      feature(name.to_sym) ? feature(name.to_sym).services : []
+    end
+    services_of_features.flatten.uniq.select(&:exist?)
   end
 end
