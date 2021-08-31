@@ -10,20 +10,29 @@ module Procedures::Backup
 
       def run
         backup_lv = get_lv_info(@backup_dir)
-
-        dbs = {}
-        dbs[:pulp2] = 'Pulp' if feature(:pulp2) && !@skip_pulp
-        dbs[:mongo] = 'Mongo' if db_local?(:mongo)
-        dbs[:candlepin_database] = 'Candlepin' if db_local?(:candlepin_database)
-        dbs[:foreman_database] = 'Foreman' if db_local?(:foreman_database)
-        dbs[:pulpcore_database] = 'Pulpcore' if db_local?(:pulpcore_database)
-
         shared_lv = dbs.inject([]) do |list, (db_label, db_name)|
           db_lv = get_lv_info(feature(db_label).data_dir)
           list << db_name if db_lv == backup_lv
           list
         end
+
+        pulp_data_lv = get_lv_info(current_pulp_feature.pulp_data_dir)
+        shared_lv << 'Pulp' if pulp_data_lv == backup_lv && !@skip_pulp
+
         confirm(shared_lv) if shared_lv.any?
+      end
+
+      def current_pulp_feature
+        feature(:pulp2) || feature(:pulpcore_database)
+      end
+
+      def dbs
+        dbs = {}
+        dbs[:mongo] = 'Mongo' if db_local?(:mongo)
+        dbs[:candlepin_database] = 'Candlepin' if db_local?(:candlepin_database)
+        dbs[:foreman_database] = 'Foreman' if db_local?(:foreman_database)
+        dbs[:pulpcore_database] = 'Pulpcore' if db_local?(:pulpcore_database)
+        dbs
       end
 
       private

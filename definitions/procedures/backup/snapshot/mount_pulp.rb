@@ -15,8 +15,8 @@ module Procedures::Backup
       def run
         skip if @skip
         with_spinner('Creating snapshot of Pulp') do |spinner|
-          current_pulp_feature.with_marked_directory(current_pulp_feature.data_dir) do
-            lv_info = get_lv_info(current_pulp_feature.data_dir)
+          current_pulp_feature.with_marked_directory(current_pulp_feature.pulp_data_dir) do
+            lv_info = get_lv_info(current_pulp_feature.pulp_data_dir)
             create_lv_snapshot('pulp-snap', @block_size, lv_info[0])
             spinner.update("Mounting snapshot of Pulp on #{mount_location('pulp')}")
             mount_snapshot('pulp', lv_info[1])
