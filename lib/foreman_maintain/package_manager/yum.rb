@@ -61,8 +61,9 @@ module ForemanMaintain::PackageManager
       yum_action('clean', 'all', :assumeyes => assumeyes)
     end
 
-    def check_update
-      yum_action('check-update', nil, :assumeyes => true, :valid_exit_statuses => [100])
+    def check_update(packages: nil, with_status: false)
+      yum_action('check-update', packages, :assumeyes => true, :valid_exit_statuses => [100],
+                                           :with_status => with_status)
     end
 
     def update_available?(package)
