@@ -26,8 +26,12 @@ module Scenarios::Satellite_6_10
 
     def compose
       add_step(Checks::Puppet::WarnAboutPuppetRemoval)
+      add_step(Checks::CheckForNewerPackages.new(:packages => [foreman_plugin_name('katello'),
+                                                               'python3-pulp-2to3-migration'],
+                                                 :manual_confirmation_version => '6.9'))
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
+
       add_step(Checks::Foreman::CheckpointSegments)
       add_step(Checks::Repositories::Validate.new(:version => '6.10'))
     end
