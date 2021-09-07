@@ -78,7 +78,9 @@ module Scenarios::Satellite_6_10
 
     def compose
       check_var_lib_pulp
-      pulp3_switchover_steps
+      unless check_min_version(foreman_plugin_name('katello'), '4.0')
+        pulp3_switchover_steps
+      end
       add_step(Procedures::Repositories::Setup.new(:version => '6.10'))
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
