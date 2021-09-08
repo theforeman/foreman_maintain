@@ -185,28 +185,31 @@ module ForemanMaintain
       end
 
       def os_facts
-        facter = ForemanMaintain::Utils::Facter.path
-        @os_facts ||= JSON.parse(execute("#{facter} -j os"))
+        @os_facts ||= ForemanMaintain::Utils::OsFacts
       end
 
       def el?
-        os_facts['os']['family'] == 'RedHat'
+        ids = ['rhel', 'rhel fedora']
+        ids.include?(os_facts.id_like) ||
+          ids.include?(os_facts.id)
       end
 
       def debian?
-        os_facts['os']['family'] == 'Debian'
+        ids = %w[debian ubuntu]
+        ids.include?(os_facts.id_like) ||
+          ids.include?(os_facts.id)
       end
 
       def el7?
-        os_facts['os']['release']['major'] == '7' && el?
+        os_facts.version_id.to_i == 7 && el?
       end
 
       def el8?
-        os_facts['os']['release']['major'] == '8' && el?
+        os_facts.version_id.to_i == 8 && el?
       end
 
       def el_major_version
-        return os_facts['os']['release']['major'] if el?
+        return os_facts.version_id.to_i if el?
       end
 
       def ruby_prefix(scl = true)

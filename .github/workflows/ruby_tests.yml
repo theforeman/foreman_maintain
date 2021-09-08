@@ -8,9 +8,6 @@ jobs:
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
-      - name: Install facter package
-        run: |
-          sudo apt-get install facter
       - name: Install RVM
         run: |
           gpg --keyserver hkps://keys.openpgp.org --recv-keys 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
@@ -36,9 +33,6 @@ jobs:
         ruby-version: [2.3.3, 2.4.5, 2.5.3, 2.6.5]
     steps:
       - uses: actions/checkout@v2
-      - name: Install facter package
-        run: |
-          sudo apt-get install facter
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
