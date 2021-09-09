@@ -11,7 +11,6 @@ module Procedures::Content
       param :skip_deb, 'Do not run debian options in installer.'
     end
 
-    # rubocop:disable Metrics/MethodLength
     def run
       puts 'Performing final content migration before switching content'
       puts execute!('foreman-rake katello:pulp3_migration')
@@ -19,6 +18,10 @@ module Procedures::Content
       puts execute!('foreman-rake katello:pulp3_post_migration_check')
       puts 'Switching specified content over to pulp 3'
       puts execute!('foreman-rake katello:pulp3_content_switchover')
+      run_installer if feature(:upstream)
+    end
+
+    def run_installer
       puts 'Re-running the installer to switch specified content over to pulp3'
       args = ['--foreman-proxy-content-proxy-pulp-isos-to-pulpcore=true',
               '--foreman-proxy-content-proxy-pulp-yum-to-pulpcore=true',
