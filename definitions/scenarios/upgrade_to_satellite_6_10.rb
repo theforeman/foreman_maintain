@@ -66,6 +66,7 @@ module Scenarios::Satellite_6_10
     def pulp3_switchover_steps
       add_step(Procedures::Service::Enable.
           new(:only => Features::Pulpcore.pulpcore_migration_services))
+      add_step(Procedures::RefreshFeatures)
       add_step(Procedures::Service::Start)
       add_step(Procedures::Content::Switchover.new)
       add_step(Procedures::Service::Stop.
