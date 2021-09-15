@@ -56,7 +56,11 @@ module Procedures::Restore
     def reset_qpid_jrnls
       # on restore without pulp data qpid fails to start
       # https://access.redhat.com/solutions/4645231
-      execute('rm -rf /var/lib/qpidd/.qpidd/qls/dat2/__db.00*')
+      ['/var/lib/qpidd/.qpidd/', '/var/lib/qpidd/'].each do |qpidd_path|
+        if Dir.exist?("#{qpidd_path}/qls/dat2/")
+          execute("rm -rf #{qpidd_path}/qls/dat2/__db.00*")
+        end
+      end
     end
   end
 end
