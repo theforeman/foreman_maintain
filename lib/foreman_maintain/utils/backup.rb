@@ -282,6 +282,26 @@ module ForemanMaintain
         end
       end
 
+      def validate_interfaces
+        # I wanted to do `Socket.getifaddrs.map(&:name).uniq`,
+        # but this has to work with Ruby 2.0, and Socket.getifaddrs is 2.1+
+        errors = {}
+        system_interfaces = Dir.children('/sys/class/net')
+
+        proxy_config = metadata.fetch('proxy_config', {})
+
+        %w[dns dhcp].each do |feature|
+          next unless proxy_config.fetch(feature, false)
+
+          wanted_interface = proxy_config.fetch("#{feature}_interface", 'lo')
+          unless system_interfaces.include?(wanted_interface)
+            errors[feature] = { 'configured' => wanted_interface, 'available' => system_interfaces }
+          end
+        end
+
+        return errors
+      end
+
       def metadata
         if file_map[:metadata][:present]
           YAML.load_file(file_map[:metadata][:path])

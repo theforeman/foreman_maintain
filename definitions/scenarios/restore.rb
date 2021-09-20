@@ -18,6 +18,7 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(Checks::Restore::ValidateBackup,
                              Procedures::Restore::Confirmation,
                              Checks::Restore::ValidateHostname,
+                             Checks::Restore::ValidateInterfaces,
                              Procedures::Selinux::SetFileSecurity,
                              Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
@@ -87,6 +88,7 @@ module ForemanMaintain::Scenarios
       context.map(:backup_dir,
                   Checks::Restore::ValidateBackup => :backup_dir,
                   Checks::Restore::ValidateHostname => :backup_dir,
+                  Checks::Restore::ValidateInterfaces => :backup_dir,
                   Procedures::Restore::Configs => :backup_dir,
                   Procedures::Restore::DropDatabases => :backup_dir,
                   Procedures::Restore::PgGlobalObjects => :backup_dir,

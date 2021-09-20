@@ -336,5 +336,46 @@ module ForemanMaintain
       kat_stand_backup.stubs(:hostname).returns('sat-6.example.com')
       assert kat_stand_backup.validate_hostname?
     end
+
+    it 'accepts backup without proxy config in the metadata' do
+      backup = subject.new(katello_standard_pulp2)
+      Dir.stubs(:children).returns(%w[lo eth0])
+      assert backup.validate_interfaces.empty?
+    end
+
+    it 'accepts backup with proxy config and disabled DHCP/DNS in the metadata' do
+      backup = subject.new(katello_standard_pulp2)
+      Dir.stubs(:children).returns(%w[lo eth0])
+      backup.stubs(:metadata).returns('proxy_config' =>
+                                      { 'dhcp' => false,
+                                        'dhcp_interface' => 'eth0',
+                                        'dns' => false,
+                                        'dns_interface' => 'eth0' })
+      assert backup.validate_interfaces.empty?
+    end
+
+    it 'accepts backup when DHCP/DNS configured interfaces are found on system' do
+      backup = subject.new(katello_standard_pulp2)
+      Dir.stubs(:children).returns(%w[lo eth0])
+      backup.stubs(:metadata).returns('proxy_config' =>
+                                      { 'dhcp' => true,
+                                        'dhcp_interface' => 'eth0',
+                                        'dns' => true,
+                                        'dns_interface' => 'eth0' })
+      assert backup.validate_interfaces.empty?
+    end
+
+    it 'rejects backup when DHCP/DNS configured interfaces are not found on system' do
+      backup = subject.new(katello_standard_pulp2)
+      Dir.stubs(:children).returns(%w[lo eth1])
+      backup.stubs(:metadata).returns('proxy_config' =>
+                                      { 'dhcp' => true,
+                                        'dhcp_interface' => 'eth0',
+                                        'dns' => true,
+                                        'dns_interface' => 'eth0' })
+      refute backup.validate_interfaces.empty?
+      assert backup.validate_interfaces['dns']['configured'] = 'eth0'
+      assert backup.validate_interfaces['dhcp']['configured'] = 'eth0'
+    end
   end
 end
