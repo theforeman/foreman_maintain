@@ -9,6 +9,8 @@ module Procedures::Backup
       param :online_backup, 'Select for online backup', :flag => true, :default => false
     end
 
+    PROXY_CONFIG_ENTRIES = %w[dns dns_interface dhcp dhcp_interface].freeze
+
     def run
       with_spinner('Collecting metadata') do |spinner|
         metadata = {}
@@ -18,6 +20,8 @@ module Procedures::Backup
         metadata['rpms'] = rpms(spinner)
         metadata['incremental'] = @incremental_dir || false
         metadata['online'] = @online_backup
+        metadata['hostname'] = hostname
+        metadata['proxy_config'] = proxy_config(spinner)
         save_metadata(metadata, spinner)
       end
     end
@@ -52,6 +56,13 @@ module Procedures::Backup
       if feature(:foreman_proxy)
         spinner.update('Collecting list of proxy features')
         feature(:foreman_proxy).features
+      end
+    end
+
+    def proxy_config(spinner)
+      spinner.update('Collecting proxy configuration')
+      feature(:installer).answers['foreman_proxy'].select do |key, _|
+        PROXY_CONFIG_ENTRIES.include?(key)
       end
     end
   end
