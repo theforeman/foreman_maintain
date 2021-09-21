@@ -210,12 +210,12 @@ module ForemanMaintain
       end
 
       def ruby_prefix(scl = true)
-        if el7? && scl
-          'tfm-rubygem-'
-        elsif el7? || el8?
-          'rubygem-'
-        elsif debian?
+        if debian?
           'ruby-'
+        elsif el7? && scl
+          'tfm-rubygem-'
+        else
+          'rubygem-'
         end
       end
 
