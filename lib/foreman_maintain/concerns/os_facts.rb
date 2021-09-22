@@ -4,15 +4,18 @@ module ForemanMaintain
       OS_RELEASE_FILE = '/etc/os-release'.freeze
 
       def facts
-        facts = {}
-        tr_map = { '"' => '', "\n" => '' }
-        rexp = Regexp.union(tr_map.keys)
-        file = File.open(OS_RELEASE_FILE)
-        file.readlines.each do |line|
-          key, value = line.gsub(rexp, tr_map).split('=')
-          facts[key] = value unless key.nil?
+        unless defined?(@facts)
+          @facts = {}
+          tr_map = { /^#.*/ => '', '"' => '', "\n" => '' }
+          rexp = Regexp.union(tr_map.keys)
+          File.open(OS_RELEASE_FILE) do |file|
+            file.readlines.each do |line|
+              key, value = line.gsub(rexp, tr_map).split('=')
+              @facts[key] = value unless key.nil?
+            end
+          end
         end
-        facts
+        @facts
       end
 
       def os_version_id
@@ -24,22 +27,15 @@ module ForemanMaintain
       end
 
       def os_id_like_list
-        return facts.fetch('ID_LIKE').split(' ') if facts.key?('ID_LIKE')
-
-        []
+        facts.fetch('ID_LIKE', '').split
       end
 
       def el?
-        ids = %w[rhel fedora]
-        File.exist?('/etc/redhat-release') ||
-          ids.include?(os_id) ||
-          (ids & os_id_like_list).any?
+        File.exist?('/etc/redhat-release')
       end
 
       def debian?
-        File.exist?('/etc/debian_version') ||
-          os_id == 'debian' ||
-          os_id_like_list.include?('debian')
+        File.exist?('/etc/debian_version')
       end
 
       def el7?
