@@ -223,7 +223,7 @@ module ForemanMaintain
         all_dbs[:pgsql_data] << 'pulpcore' if feature(:pulpcore_database)
         all_dbs[:mongo_data] << 'mongo' if feature(:mongo)
         present, absent = dumps_for_hybrid_db_setup(all_dbs)
-        absent.merge [:candlepin_dump, :foreman_dump]
+        absent.concat [:candlepin_dump, :foreman_dump]
         check_file_existence(:present => present, :absent => absent)
       end
 
@@ -254,9 +254,9 @@ module ForemanMaintain
             dump_file = "#{db}_dump"
             if feature(feature_label.to_sym).local?
               present |= [data_file]
-              absent.concat [dump_file.to_sym]
+              absent << dump_file.to_sym
             else
-              present.concat [dump_file.to_sym]
+              present << dump_file.to_sym
             end
           end
           absent |= [data_file] unless present.include?(data_file)
