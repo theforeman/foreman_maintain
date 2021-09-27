@@ -2,11 +2,24 @@ module ForemanMaintain
   module Concerns
     module OsFacts
       OS_RELEASE_FILE = '/etc/os-release'.freeze
+      FALLBACK_OS_RELEASE_FILE = '/usr/lib/os-release'.freeze
+
+      def os_release_file
+        if File.file?(OS_RELEASE_FILE)
+          return OS_RELEASE_FILE
+        elsif File.file?(FALLBACK_OS_RELEASE_FILE)
+          return FALLBACK_OS_RELEASE_FILE
+        else
+          puts "The #{OS_RELEASE_FILE} and #{FALLBACK_OS_RELEASE_FILE} files are missing! "\
+               "Can't continue the execution without Operating System's facts!"
+          exit 1
+        end
+      end
 
       def facts
         unless defined?(@facts)
           @facts = {}
-          File.open(OS_RELEASE_FILE) do |file|
+          File.open(os_release_file) do |file|
             file.readlines.each do |line|
               line.strip! # drop any whitespace, including newlines from start and end of the line
               next if line.start_with?('#') # ignore comments
