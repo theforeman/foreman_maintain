@@ -6,12 +6,13 @@ module ForemanMaintain
       def facts
         unless defined?(@facts)
           @facts = {}
-          tr_map = { /^#.*/ => '', '"' => '', "\n" => '' }
-          rexp = Regexp.union(tr_map.keys)
           File.open(OS_RELEASE_FILE) do |file|
             file.readlines.each do |line|
-              key, value = line.gsub(rexp, tr_map).split('=')
-              @facts[key] = value unless key.nil?
+              line.strip! # drop any whitespace, including newlines from start and end of the line
+              next if line.start_with?('#') # ignore comments
+              # split at most into 2 items, if the value ever contains an =
+              key, value = line.split('=', 2)
+              @facts[key] = value.delete('"') unless key.nil?
             end
           end
         end
