@@ -21,7 +21,8 @@ module Procedures::Pulp
         '/var/lib/pulp/content',
         '/var/lib/pulp/importers',
         '/var/lib/pulp/uploads',
-        '/var/lib/mongodb/'
+        '/var/lib/mongodb/',
+        '/var/cache/pulp'
       ]
     end
 
