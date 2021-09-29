@@ -60,5 +60,22 @@ module ForemanMaintain
         refute system.check_max_version('katello', '3.18')
       end
     end
+
+    describe 'format_shell_args options' do
+      it 'returns the string without single or double quotes' do
+        config = { 'user' => 'foo', 'password' => 'foopassword1!' }
+        escaped_string = ' user foo password foopassword1\\!'
+        assert_match escaped_string, system.format_shell_args(config)
+      end
+    end
+
+    describe 'shellescape string' do
+      it 'escapes quotes' do
+        password_one = "foo'bar"
+        password_two = 'foo"bar'
+        assert_match "foo\\'bar", system.shellescape(password_one)
+        assert_match 'foo\\"bar', system.shellescape(password_two)
+      end
+    end
   end
 end
