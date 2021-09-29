@@ -147,7 +147,7 @@ module ForemanMaintain
       end
 
       def format_shell_args(options = {})
-        options.map { |shell_optn, val| " #{shell_optn} '#{shellescape(val)}'" }.join
+        options.map { |shell_optn, val| " #{shell_optn} #{shellescape(val)}" }.join
       end
 
       def find_symlinks(dir_path)
