@@ -41,13 +41,12 @@ class Checks::CheckForNewerPackages < ForemanMaintain::Check
   def packages_and_versions(output)
     pkgs_versions = {}
     pkg_details = output.split("\n\n")[1].split
-    iterator = 0
-    while iterator < pkg_details.length
-      break if pkg_details[iterator].nil?
-      pkg_name = pkg_details[iterator].split('.').first
-      pkg_version = version(pkg_details[iterator + 1].split('-').first)
-      pkgs_versions[pkg_name] = pkg_version
-      iterator += 3
+    @packages.each do |pkg|
+      pkg_details.each_with_index do |ele, index|
+        next unless ele.start_with?(pkg)
+        pkgs_versions[pkg] = version(pkg_details[index + 1].split('-').first)
+        break
+      end
     end
     pkgs_versions
   end
