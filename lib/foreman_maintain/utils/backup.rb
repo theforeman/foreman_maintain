@@ -77,11 +77,15 @@ module ForemanMaintain
       end
 
       def valid_fpc_backup?
-        fpc_online_backup? || fpc_standard_backup? || fpc_logical_backup?
+        fpc_online_backup? || fpc_standard_backup? || fpc_logical_backup? || \
+          # fpc can have setup where mongo or pulpcore db is external but not both
+          fpc_hybrid_db_backup?
       end
 
       def valid_katello_backup?
-        katello_online_backup? || katello_standard_backup? || katello_logical_backup?
+        katello_online_backup? || katello_standard_backup? || katello_logical_backup? || \
+          # Katello can have setup where some of dbs are external but not all
+          katello_hybrid_db_backup?
       end
 
       def valid_foreman_backup?
@@ -104,7 +108,6 @@ module ForemanMaintain
         true
       end
 
-      # TODO: Need to check for pulpcore feature?
       def katello_standard_backup?
         present = [:pgsql_data]
         absent = [:candlepin_dump, :foreman_dump, :pulpcore_dump, :mongo_dump]
@@ -153,6 +156,14 @@ module ForemanMaintain
         end
         check_file_existence(:present => present,
                              :absent => absent)
+      end
+
+      def katello_hybrid_db_backup?
+        all_dbs = { :pgsql_data => %w[candlepin foreman], :mongo_data => [] }
+        all_dbs[:pgsql_data] << 'pulpcore' if feature(:pulpcore_database)
+        all_dbs[:mongo_data] << 'mongo' if feature(:mongo)
+        present, absent = dumps_for_hybrid_db_setup(all_dbs)
+        check_file_existence(:present => present, :absent => absent)
       end
 
       def fpc_standard_backup?
@@ -207,6 +218,15 @@ module ForemanMaintain
         check_file_existence(:present => present, :absent => absent)
       end
 
+      def fpc_hybrid_db_backup?
+        all_dbs = { :pgsql_data => [], :mongo_data => [] }
+        all_dbs[:pgsql_data] << 'pulpcore' if feature(:pulpcore_database)
+        all_dbs[:mongo_data] << 'mongo' if feature(:mongo)
+        present, absent = dumps_for_hybrid_db_setup(all_dbs)
+        absent.concat [:candlepin_dump, :foreman_dump]
+        check_file_existence(:present => present, :absent => absent)
+      end
+
       def foreman_standard_backup?
         check_file_existence(:present => [:pgsql_data],
                              :absent => [:candlepin_dump, :foreman_dump, :pulpcore_dump,
@@ -223,6 +243,27 @@ module ForemanMaintain
         check_file_existence(:present => [:pgsql_data, :foreman_dump],
                              :absent => [:candlepin_dump, :mongo_data, :mongo_dump, :pulpcore_dump])
       end
+
+      # rubocop:disable Metrics/MethodLength
+      def dumps_for_hybrid_db_setup(dbs_hash)
+        present = []
+        absent = []
+        dbs_hash.each do |data_file, dbs|
+          dbs.each do |db|
+            feature_label = db == 'mongo' ? db : "#{db}_database"
+            dump_file = "#{db}_dump"
+            if feature(feature_label.to_sym).local?
+              present |= [data_file]
+              absent << dump_file.to_sym
+            else
+              present << dump_file.to_sym
+            end
+          end
+          absent |= [data_file] unless present.include?(data_file)
+        end
+        [present, absent]
+      end
+      # rubocop:enable Metrics/MethodLength
 
       def validate_hostname?
         # make sure that the system hostname is the same as the backup

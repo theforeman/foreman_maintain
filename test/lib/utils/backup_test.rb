@@ -38,6 +38,10 @@ module ForemanMaintain
       file_path = '../../files/backups/katello_logical_pulp2_pulpcore_database'
       File.expand_path(file_path, File.dirname(__FILE__))
     end
+    let(:katello_hybrid_db_backup) do
+      file_path = '../../files/backups/katello_hybrid_db_backup/'
+      File.expand_path(file_path, File.dirname(__FILE__))
+    end
     let(:foreman_standard) do
       File.expand_path('../../files/backups/foreman_standard', File.dirname(__FILE__))
     end
@@ -77,6 +81,10 @@ module ForemanMaintain
       file_path = '../../files/backups/fpc_logical_pulp2_pulpcore_database'
       File.expand_path(file_path, File.dirname(__FILE__))
     end
+    let(:fpc_hybrid_pulp2_pulpcore_database_backup) do
+      file_path = '../../files/backups/fpc_hybrid_pulp2_pulpcore_database_backup'
+      File.expand_path(file_path, File.dirname(__FILE__))
+    end
     let(:no_configs) do
       File.expand_path('../../files/backups/no_configs', File.dirname(__FILE__))
     end
@@ -100,6 +108,13 @@ module ForemanMaintain
 
     def assume_feature_absent(label)
       ForemanMaintain.detector.stubs(:feature).with(label).returns(false)
+    end
+
+    def feature_with_local_method(label, return_value)
+      feature = MiniTest::Mock.new
+      feature.expect(:configuration, 'host' => 'abc.example.com')
+      feature.expect(:local?, return_value)
+      ForemanMaintain.detector.stubs(:feature).with(label).returns(feature)
     end
 
     it 'Validates katello standard backup' do
@@ -158,6 +173,27 @@ module ForemanMaintain
         assert !kat_logical_backup.fpc_online_backup?
         assert !kat_logical_backup.fpc_logical_backup?
       end
+    end
+
+    it 'Validates katello hybrid db backup' do
+      assume_features([:pulpcore_database])
+      assume_feature_absent(:mongo)
+      assume_feature_present(:candlepin_database)
+      assume_feature_present(:foreman_database)
+      feature_with_local_method(:pulpcore_database, true)
+      feature_with_local_method(:candlepin_database, false)
+      feature_with_local_method(:foreman_database, false)
+      kat_hybrid_db_backup = subject.new(katello_hybrid_db_backup)
+      assert !kat_hybrid_db_backup.katello_standard_backup?
+      assert !kat_hybrid_db_backup.katello_online_backup?
+      assert !kat_hybrid_db_backup.katello_logical_backup?
+      assert kat_hybrid_db_backup.katello_hybrid_db_backup?
+      assert !kat_hybrid_db_backup.foreman_standard_backup?
+      assert !kat_hybrid_db_backup.foreman_online_backup?
+      assert !kat_hybrid_db_backup.foreman_logical_backup?
+      assert !kat_hybrid_db_backup.fpc_standard_backup?
+      assert !kat_hybrid_db_backup.fpc_online_backup?
+      assert !kat_hybrid_db_backup.fpc_logical_backup?
     end
 
     it 'Validates foreman standard backup' do
@@ -264,6 +300,25 @@ module ForemanMaintain
         assert !fpc_logical_backup.fpc_online_backup?
         assert fpc_logical_backup.fpc_logical_backup?
       end
+    end
+
+    it 'Validates fpc hybrid db backup' do
+      assume_feature_present(:pulp2)
+      assume_feature_present(:mongo)
+      assume_feature_present(:pulpcore_database)
+      feature_with_local_method(:pulpcore_database, true)
+      feature_with_local_method(:mongo, false)
+      fpc_hybrid_db_backup = subject.new(fpc_hybrid_pulp2_pulpcore_database_backup)
+      assert !fpc_hybrid_db_backup.katello_standard_backup?
+      assert !fpc_hybrid_db_backup.katello_online_backup?
+      assert !fpc_hybrid_db_backup.katello_logical_backup?
+      assert !fpc_hybrid_db_backup.foreman_standard_backup?
+      assert !fpc_hybrid_db_backup.foreman_online_backup?
+      assert !fpc_hybrid_db_backup.foreman_logical_backup?
+      assert !fpc_hybrid_db_backup.fpc_standard_backup?
+      assert !fpc_hybrid_db_backup.fpc_online_backup?
+      assert !fpc_hybrid_db_backup.fpc_logical_backup?
+      assert fpc_hybrid_db_backup.fpc_hybrid_db_backup?
     end
 
     it 'does not validate backup without config_files.tar.gz' do
