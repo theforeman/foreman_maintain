@@ -18,6 +18,11 @@ describe ForemanMaintain do
       subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Dnf
     end
 
+    it 'instantiates correct apt manager implementation' do
+      subject.stubs(:`).with('command -v apt').returns('/bin/apt')
+      subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Apt
+    end
+
     it 'fail on unknown manager type' do
       err = proc { subject.package_manager }.must_raise Exception
       err.message.must_equal 'No supported package manager was found'

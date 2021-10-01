@@ -76,11 +76,15 @@ module ForemanMaintain::Scenarios
                                 :force => true, :warn_on_errors => true)
         else
           add_step_with_context(Procedures::Packages::InstallerConfirmation)
-          add_step_with_context(Procedures::Packages::UnlockVersions)
+          if el?
+            add_step_with_context(Procedures::Packages::UnlockVersions)
+          end
           add_step_with_context(Procedures::Packages::Install,
                                 :force => true, :warn_on_errors => true)
           add_step_with_context(Procedures::Installer::Upgrade)
-          add_step(Procedures::Packages::LockingStatus)
+          if el?
+            add_step(Procedures::Packages::LockingStatus)
+          end
         end
       end
 
