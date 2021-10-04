@@ -21,12 +21,20 @@ class Features::SystemRepos < ForemanMaintain::Feature
     Hash[*repos.delete!(' ').split("\n")]
   end
 
+  def enabled_repos_ids
+    trim_repoids(enabled_repos_hash.keys)
+  end
+
   def upstream_repos_ids
     trim_repoids(upstream_repos.keys)
   end
 
   def disable_repos(repo_ids)
     execute!("yum-config-manager --disable #{repo_ids.join(',')}")
+  end
+
+  def enable_repos(repo_ids)
+    execute!("yum-config-manager --enable #{repo_ids.join(',')}")
   end
 
   private
