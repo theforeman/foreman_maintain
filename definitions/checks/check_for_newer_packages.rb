@@ -9,6 +9,7 @@ class Checks::CheckForNewerPackages < ForemanMaintain::Check
     param :manual_confirmation_version,
           'Version of satellite (6.9) to ask the user if they are on the latest minor release of.',
           :required => false
+    manual_detection
   end
 
   def run
