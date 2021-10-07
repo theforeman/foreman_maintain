@@ -19,13 +19,15 @@ module ForemanMaintain
       def facts
         unless defined?(@facts)
           @facts = {}
+          regex = /^(["'])(.*)(\1)$/
           File.open(os_release_file) do |file|
             file.readlines.each do |line|
               line.strip! # drop any whitespace, including newlines from start and end of the line
               next if line.start_with?('#') # ignore comments
               # split at most into 2 items, if the value ever contains an =
               key, value = line.split('=', 2)
-              @facts[key] = value.delete('"') unless key.nil?
+              next unless key && value
+              @facts[key] = value.gsub(regex, '\2').delete('\\')
             end
           end
         end
