@@ -15,6 +15,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/finders'
   require 'foreman_maintain/concerns/metadata'
   require 'foreman_maintain/concerns/scenario_metadata'
+  require 'foreman_maintain/concerns/os_facts'
   require 'foreman_maintain/concerns/system_helpers'
   require 'foreman_maintain/concerns/system_service'
   require 'foreman_maintain/concerns/hammer'

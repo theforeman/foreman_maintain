@@ -3,8 +3,7 @@ module Checks::Repositories
     metadata do
       description 'Validate availability of repositories'
       preparation_steps do
-        [Checks::Repositories::CheckNonRhRepository.new,
-         Procedures::Packages::Install.new(:packages => [ForemanMaintain::Utils::Facter.package])]
+        Checks::Repositories::CheckNonRhRepository.new
       end
 
       confine do

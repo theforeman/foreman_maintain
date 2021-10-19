@@ -2,10 +2,6 @@ module Procedures::Repositories
   class Setup < ForemanMaintain::Procedure
     metadata do
       description 'Setup repositories'
-      preparation_steps do
-        Procedures::Packages::Install.new(:packages => [ForemanMaintain::Utils::Facter.package])
-      end
-
       confine do
         feature(:instance).downstream || feature(:upstream)
       end

@@ -8,6 +8,7 @@ module ForemanMaintain
     module SystemHelpers
       include Logger
       include Concerns::Finders
+      include ForemanMaintain::Concerns::OsFacts
 
       def self.included(klass)
         klass.extend(self)
@@ -182,31 +183,6 @@ module ForemanMaintain
 
       def package_manager
         ForemanMaintain.package_manager
-      end
-
-      def os_facts
-        facter = ForemanMaintain::Utils::Facter.path
-        @os_facts ||= JSON.parse(execute("#{facter} -j os"))
-      end
-
-      def el?
-        os_facts['os']['family'] == 'RedHat'
-      end
-
-      def debian?
-        os_facts['os']['family'] == 'Debian'
-      end
-
-      def el7?
-        os_facts['os']['release']['major'] == '7' && el?
-      end
-
-      def el8?
-        os_facts['os']['release']['major'] == '8' && el?
-      end
-
-      def el_major_version
-        return os_facts['os']['release']['major'] if el?
       end
 
       def ruby_prefix(scl = true)
