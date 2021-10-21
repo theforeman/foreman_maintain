@@ -291,7 +291,7 @@ module ForemanMaintain
         # I wanted to do `Socket.getifaddrs.map(&:name).uniq`,
         # but this has to work with Ruby 2.0, and Socket.getifaddrs is 2.1+
         errors = {}
-        system_interfaces = Dir.children('/sys/class/net')
+        system_interfaces = Dir.entries('/sys/class/net') - ['.', '..']
 
         proxy_config = metadata.fetch('proxy_config', {})
 

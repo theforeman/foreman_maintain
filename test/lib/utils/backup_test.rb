@@ -339,13 +339,13 @@ module ForemanMaintain
 
     it 'accepts backup without proxy config in the metadata' do
       backup = subject.new(katello_standard_pulp2)
-      Dir.stubs(:children).returns(%w[lo eth0])
+      Dir.stubs(:entries).returns(%w[. .. lo eth0])
       assert backup.validate_interfaces.empty?
     end
 
     it 'accepts backup with proxy config and disabled DHCP/DNS in the metadata' do
       backup = subject.new(katello_standard_pulp2)
-      Dir.stubs(:children).returns(%w[lo eth0])
+      Dir.stubs(:entries).returns(%w[. .. lo eth0])
       backup.stubs(:metadata).returns('proxy_config' =>
                                       { 'dhcp' => false,
                                         'dhcp_interface' => 'eth0',
@@ -356,7 +356,7 @@ module ForemanMaintain
 
     it 'accepts backup when DHCP/DNS configured interfaces are found on system' do
       backup = subject.new(katello_standard_pulp2)
-      Dir.stubs(:children).returns(%w[lo eth0])
+      Dir.stubs(:entries).returns(%w[. .. lo eth0])
       backup.stubs(:metadata).returns('proxy_config' =>
                                       { 'dhcp' => true,
                                         'dhcp_interface' => 'eth0',
@@ -367,7 +367,7 @@ module ForemanMaintain
 
     it 'rejects backup when DHCP/DNS configured interfaces are not found on system' do
       backup = subject.new(katello_standard_pulp2)
-      Dir.stubs(:children).returns(%w[lo eth1])
+      Dir.stubs(:entries).returns(%w[. .. lo eth1])
       backup.stubs(:metadata).returns('proxy_config' =>
                                       { 'dhcp' => true,
                                         'dhcp_interface' => 'eth0',
