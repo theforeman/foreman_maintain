@@ -3,13 +3,18 @@ module ForemanMaintain
     class SelfUpgradeCommand < Base
       option ['--target-version'], 'TARGET_VERSION', 'Major version of the Satellite or Capsule'\
       														 ', e.g 7.0', :required => true
+      # Need to remove this before merging
+      option ['--skip-repo-enablement'], :flag, 'Dont enable next major version repo'
+
       def execute
         allow_major_version_upgrade_only
         run_scenario(upgrade_scenario, upgrade_rescue_scenario)
       end
 
       def upgrade_scenario
-        Scenarios::SelfUpgrade.new(target_version: target_version)
+        # Need to remove this before merging
+        Scenarios::SelfUpgrade.new(target_version: target_version,
+                                   skip_repo_enablement: skip_repo_enablement?)
       end
 
       def upgrade_rescue_scenario
@@ -26,8 +31,7 @@ module ForemanMaintain
         rescue ArgumentError => err
           raise Error::UsageError, "Invalid version! #{err}"
         end
-        output = current_downstream_version.<=>(next_version)
-        unless output.negative?
+        if current_downstream_version >= next_version
           message = "The target-version #{target_version} should be "\
                     "greater than existing version #{current_downstream_version}!"
           raise Error::UsageError, message

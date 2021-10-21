@@ -21,16 +21,19 @@ module ForemanMaintain::Scenarios
     end
 
     def maintenance_repo(version)
-      @maintenance_repo ||= "rhel-#{el_major_version}-server-satellite-maintenance-#{version}-rpms"
+      "rhel-#{el_major_version}-server-satellite-maintenance-#{version}-rpms"
+    end
+
+    # Need to remove this before merging
+    def skip_repo_enablement?
+      !!context.get(:skip_repo_enablement)
     end
 
     def stored_enabled_repos_ids
       unless defined?(@stored_enabled_repos_ids)
         @stored_enabled_repos_ids = []
-        backup_dir = File.expand_path(ForemanMaintain.config.backup_dir)
-        File.open(File.join(backup_dir, 'enabled_repos.yml'), 'r') do |repos_file|
-          @stored_enabled_repos_ids = YAML.load(repos_file.read)
-        end
+        path = File.expand_path('enabled_repos.yml', ForemanMaintain.config.backup_dir)
+        @stored_enabled_repos_ids = File.file?(path) ? YAML.load(File.read(path)) : []
       end
       @stored_enabled_repos_ids
     end
@@ -68,7 +71,10 @@ module ForemanMaintain::Scenarios
       pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
       add_step(Procedures::Repositories::BackupEnabledRepos.new)
       disable_repos
-      add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo(target_version)]))
+      # Need to remove this before merging
+      unless skip_repo_enablement?
+        add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo(target_version)]))
+      end
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
       enable_repos(repos_ids_to_reenable)
     end
