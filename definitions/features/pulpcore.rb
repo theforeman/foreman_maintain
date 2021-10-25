@@ -37,7 +37,8 @@ class Features::Pulpcore < ForemanMaintain::Feature
 
   def config_files
     [
-      '/etc/pulp/settings.py'
+      '/etc/pulp/settings.py',
+      '/etc/pulp/certs/database_fields.symmetric.key'
     ]
   end
 
