@@ -1,20 +1,16 @@
 module ForemanMaintain
   module Cli
     class SelfUpgradeCommand < Base
-      option ['--target-version'], 'TARGET_VERSION', 'Major version of the Satellite or Capsule'\
-      														 ', e.g 7.0', :required => true
-      # Need to remove this before merging
-      option ['--skip-repo-enablement'], :flag, 'Dont enable next major version repo'
-
+      option ['--target-version'], 'TARGET_VERSION',\
+             'Major version of the Satellite or Capsule'\
+           	', e.g 7.0', :required => true
       def execute
         allow_major_version_upgrade_only
         run_scenario(upgrade_scenario, upgrade_rescue_scenario)
       end
 
       def upgrade_scenario
-        # Need to remove this before merging
-        Scenarios::SelfUpgrade.new(target_version: target_version,
-                                   skip_repo_enablement: skip_repo_enablement?)
+        Scenarios::SelfUpgrade.new(target_version: target_version)
       end
 
       def upgrade_rescue_scenario

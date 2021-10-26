@@ -20,42 +20,37 @@ module ForemanMaintain::Scenarios
       feature(:instance).downstream.current_minor_version
     end
 
+    def maintenance_repo_id(version)
+      return ENV['maintenance_repo'] unless ENV['maintenance_repo'].empty?
+
+      maintenance_repo(version)
+    end
+
     def maintenance_repo(version)
       "rhel-#{el_major_version}-server-satellite-maintenance-#{version}-rpms"
     end
 
-    # Need to remove this before merging
-    def skip_repo_enablement?
-      !!context.get(:skip_repo_enablement)
+    def maintenance_repo_version
+      return '6' if current_version == '6.10'
+
+      current_version
     end
 
     def stored_enabled_repos_ids
-      unless defined?(@stored_enabled_repos_ids)
-        @stored_enabled_repos_ids = []
+      @stored_enabled_repos_ids ||= begin
         path = File.expand_path('enabled_repos.yml', ForemanMaintain.config.backup_dir)
         @stored_enabled_repos_ids = File.file?(path) ? YAML.load(File.read(path)) : []
       end
-      @stored_enabled_repos_ids
     end
 
     def all_maintenance_repos
-      search_id = "rhel-#{el_major_version}-server-satellite-maintenance-"
-      all_maintenance_repos = []
-      stored_enabled_repos_ids.each do |id|
-        next unless id.start_with?(search_id)
-        all_maintenance_repos << id
-      end
-      all_maintenance_repos
+      repo_prefix = "rhel-#{el_major_version}-server-satellite-maintenance-"
+      stored_enabled_repos_ids.select { |id| id.start_with?(repo_prefix) }
     end
 
     def repos_ids_to_reenable
       repos_ids_to_reenable = stored_enabled_repos_ids - all_maintenance_repos
-      repos_ids_to_reenable << if current_version == '6.10'
-                                 maintenance_repo(6)
-                               else
-                                 maintenance_repo(current_version)
-                               end
-      repos_ids_to_reenable
+      repos_ids_to_reenable << maintenance_repo(maintenance_repo_version)
     end
   end
 
@@ -71,10 +66,7 @@ module ForemanMaintain::Scenarios
       pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
       add_step(Procedures::Repositories::BackupEnabledRepos.new)
       disable_repos
-      # Need to remove this before merging
-      unless skip_repo_enablement?
-        add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo(target_version)]))
-      end
+      add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo_id(target_version)]))
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
       enable_repos(repos_ids_to_reenable)
     end
@@ -83,7 +75,7 @@ module ForemanMaintain::Scenarios
   class SelfUpgradeRescue < SelfUpgradeBase
     metadata do
       label :rescue_self_upgrade
-      description 'Disables all version specific maintenance repo and,'\
+      description 'Disables all version specific maintenance repos and,'\
   		' enables the repositories which were configured prior to self upgrade'
       manual_detection
       run_strategy :fail_slow
