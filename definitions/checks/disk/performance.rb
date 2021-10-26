@@ -6,9 +6,9 @@ module Checks
         preparation_steps do
           if feature(:instance).downstream
             [Checks::Repositories::CheckNonRhRepository.new,
-             Procedures::Packages::Install.new(:packages => %w[fio], :assumeyes => true)]
+             Procedures::Packages::Install.new(:packages => %w[fio])]
           else
-            [Procedures::Packages::Install.new(:packages => %w[fio], :assumeyes => true)]
+            [Procedures::Packages::Install.new(:packages => %w[fio])]
           end
         end
 
@@ -49,12 +49,10 @@ module Checks
       end
 
       def pulp_dir
-        @pulp_dir = {}
-        pulp_feature = feature(:pulp2) || feature(:pulpcore_database)
-        if File.directory?(pulp_feature.pulp_data_dir)
-          @pulp_dir[pulp_feature.label_dashed] = pulp_feature.pulp_data_dir
+        @pulp_dir ||= begin
+          pulp_feature = feature(:pulp2) || feature(:pulpcore_database)
+          { pulp_feature.label_dashed => pulp_feature.pulp_data_dir }
         end
-        @pulp_dir
       end
 
       def description
