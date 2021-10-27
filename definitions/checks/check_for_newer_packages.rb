@@ -33,9 +33,11 @@ class Checks::CheckForNewerPackages < ForemanMaintain::Check
     end
 
     unless packages_with_updates.empty?
-      failure_message = 'An update is available for package(s): '\
-                        "#{packages_with_updates.join(',')}. Please update before proceeding!"
-      fail! failure_message
+      command = ForemanMaintain.pkg_and_cmd_name[1]
+      fail! 'Required updates for some packages detected.'\
+        "\nPlease update to the latest #{@manual_confirmation_version}.z release "\
+        'before proceeding, using:'\
+        "\n# #{command} upgrade run --target-version #{@manual_confirmation_version}.z"
     end
   end
 
