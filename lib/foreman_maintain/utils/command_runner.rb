@@ -66,7 +66,8 @@ module ForemanMaintain
         log_file = Tempfile.open('captured-output')
         exit_file = Tempfile.open('captured-exit-code')
         Kernel.system(
-          "bash -c '#{full_command}; echo $? > #{exit_file.path}' | tee -i #{log_file.path}"
+          "stdbuf -oL -eL bash -c '#{full_command}; echo $? > #{exit_file.path}'"\
+          "| tee -i #{log_file.path}"
         )
         File.open(log_file.path) { |f| @output = f.read }
         File.open(exit_file.path) do |f|
