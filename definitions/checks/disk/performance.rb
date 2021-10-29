@@ -39,8 +39,8 @@ module Checks
         end
       end
 
-      def default_dirs
-        @default_dirs ||= %i[pulp2 pulpcore_database mongo foreman_database].inject({}) do |dirs, f|
+      def data_dirs
+        @data_dirs ||= %i[pulpcore_database mongo foreman_database].inject({}) do |dirs, f|
           if feature(f) && File.directory?(feature(f).data_dir)
             dirs[feature(f).label_dashed] = feature(f).data_dir
           end
@@ -48,20 +48,32 @@ module Checks
         end
       end
 
+      def pulp_dir
+        @pulp_dir ||= begin
+          pulp_feature = feature(:pulp2) || feature(:pulpcore_database)
+          { pulp_feature.label_dashed => pulp_feature.pulp_data_dir }
+        end
+      end
+
       def description
-        "Check recommended disk speed for #{default_dirs.keys.join(', ')} directories."
+        'Check recommended disk speed for '\
+        "#{[data_dirs.keys | pulp_dir.keys].join(', ')} directories."
+      end
+
+      def all_dirs
+        data_dirs.values | pulp_dir.values
       end
 
       def check_only_single_device?
-        default_dirs.values do |dir|
+        all_dirs.each do |dir|
           ForemanMaintain::Utils::Disk::Device.new(dir).name
         end.uniq.length <= 1
       end
 
       def dirs_to_check
-        return default_dirs.values.first(1) if check_only_single_device?
+        return all_dirs.first(1) if check_only_single_device?
 
-        default_dirs.values
+        all_dirs
       end
 
       private
@@ -74,11 +86,10 @@ module Checks
       def compute_disk_speed(spinner)
         success = true
         io_obj = ForemanMaintain::Utils::Disk::NilDevice.new
-
         dirs_to_check.each do |dir|
           io_obj = ForemanMaintain::Utils::Disk::Device.new(dir)
 
-          spinner.update("[Speed check In-Progress] device: #{io_obj.name}")
+          spinner.update("[Speed check In-Progress] device:#{io_obj.name}")
           stats << io_obj
 
           next if io_obj.read_speed >= EXPECTED_IO
