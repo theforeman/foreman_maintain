@@ -1,0 +1,11 @@
+# foreman-answers-default.yaml
+# scenario: foreman
+# This is what foreman-installer ships out of the box, stripped of unrelated entries
+---
+foreman: {}
+foreman::cli: true
+foreman::cli::puppet: true
+foreman::plugin::puppet: true
+foreman_proxy: {}
+puppet:
+  server: true

@@ -1,0 +1,14 @@
+# foreman-proxy-content-answers-with-puppet.yaml
+# scenario: foreman-proxy-content
+# This is where a user enabled puppet
+---
+foreman_proxy:
+  puppet: true
+  puppetca: true
+foreman_proxy_content:
+  puppet: true
+puppet:
+  server: true
+  puppet_server_foreman_ssl_ca: /etc/pki/katello/puppet/puppet_client_ca.crt
+  puppet_server_foreman_ssl_cert: /etc/pki/katello/puppet/puppet_client.crt
+  puppet_server_foreman_ssl_key: /etc/pki/katello/puppet/puppet_client.key
