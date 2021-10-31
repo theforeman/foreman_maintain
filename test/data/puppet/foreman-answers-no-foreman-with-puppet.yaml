@@ -1,0 +1,11 @@
+# foreman-answers-no-foreman-with-puppet.yaml
+# scenario: foreman
+# This is only a foreman-proxy with Puppet enabled
+---
+foreman: false
+foreman::cli: false
+foreman::cli::puppet: false
+foreman::plugin::puppet: false
+foreman_proxy: {}
+puppet:
+  server: true

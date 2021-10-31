@@ -196,21 +196,24 @@ module ForemanMaintain
       end
 
       def foreman_plugin_name(plugin)
-        if debian?
-          plugin.tr!('_', '-')
-        end
+        plugin = plugin.tr('_', '-') if debian?
         ruby_prefix + plugin
       end
 
       def proxy_plugin_name(plugin)
         if debian?
-          plugin.tr!('_', '-')
+          plugin = plugin.tr('_', '-')
           proxy_plugin_prefix = 'smart-proxy-'
         else
           proxy_plugin_prefix = 'smart_proxy_'
         end
         scl = check_min_version('foreman-proxy', '2.0')
         ruby_prefix(scl) + proxy_plugin_prefix + plugin
+      end
+
+      def hammer_plugin_name(plugin)
+        plugin = plugin.tr('_', '-') if debian?
+        [hammer_package, plugin].join(debian? ? '-' : '_')
       end
 
       def hammer_package
