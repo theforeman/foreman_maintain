@@ -17,6 +17,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     Actions::Candlepin::ListenOnCandlepinEvents
     Actions::Katello::EventQueue::Monitor
     Actions::Insights::EmailPoller
+    ForemanInventoryUpload::Async::GenerateReportJob
   ].freeze
 
   metadata do
