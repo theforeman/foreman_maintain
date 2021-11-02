@@ -10,7 +10,7 @@ module Procedures::Content
       sleep(20) # in satellite 6.9 the services are still coming up
       # use interactive to get realtime output
       env_vars = @quiet ? '' : 'preserve_output=true '
-      puts execute!("#{env_vars}foreman-rake katello:pulp3_migration", :interactive => true)
+      execute!("#{env_vars}foreman-rake katello:pulp3_migration", :interactive => true)
     end
   end
 end
