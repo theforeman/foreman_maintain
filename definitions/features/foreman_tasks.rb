@@ -17,6 +17,17 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     Actions::Candlepin::ListenOnCandlepinEvents
     Actions::Katello::EventQueue::Monitor
     Actions::Insights::EmailPoller
+    ForemanInventoryUpload::Async::GenerateReportJob
+    ForemanInventoryUpload::Async::QueueForUploadJob
+    ForemanInventoryUpload::Async::UploadReportJob
+    InsightsCloud::Async::InsightsClientStatusAging
+    InsightsCloud::Async::InsightsFullSync
+    InsightsCloud::Async::InsightsResolutionsSync
+    InsightsCloud::Async::InsightsRulesSync
+    InventorySync::Async::InventoryFullSync
+    InventorySync::Async::InventoryHostsSync
+    InventorySync::Async::InventoryScheduledSync
+    InventorySync::Async::InventorySelfHostSync
   ].freeze
 
   metadata do
