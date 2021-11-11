@@ -18,7 +18,7 @@ module Procedures::Pulpcore
         spinner.update('Migrating pulpcore database')
         execute!('sudo PULP_SETTINGS=/etc/pulp/settings.py '\
           'DJANGO_SETTINGS_MODULE=pulpcore.app.settings '\
-          'python3-django-admin migrate --noinput')
+          'pulpcore-manager migrate --noinput')
       end
     end
   end
