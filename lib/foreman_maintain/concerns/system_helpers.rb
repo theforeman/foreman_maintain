@@ -185,6 +185,10 @@ module ForemanMaintain
         ForemanMaintain.package_manager
       end
 
+      def repos_manager
+        ForemanMaintain.repos_manager
+      end
+
       def ruby_prefix(scl = true)
         if debian?
           'ruby-'

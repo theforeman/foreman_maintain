@@ -6,7 +6,7 @@ module Procedures::Repositories
     end
     def run
       with_spinner('Disabling repositories') do
-        feature(:system_repos).disable_repos(@repos)
+        repos_manager.disable_repos(@repos)
       end
     end
   end
