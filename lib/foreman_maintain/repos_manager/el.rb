@@ -4,18 +4,18 @@ module ForemanMaintain::ReposManager
     include ForemanMaintain::Concerns::SystemHelpers
 
     def disable_repos(repo_ids)
-      if el8?
-        execute!("dnf config-manager --set-disabled #{repo_ids.join(',')}")
-      elsif el7?
+      if el7?
         execute!("yum-config-manager --disable #{repo_ids.join(',')}")
+      else
+        execute!("dnf config-manager --set-disabled #{repo_ids.join(',')}")
       end
     end
 
     def enable_repos(repo_ids)
-      if el8?
-        execute!("dnf config-manager --set-enabled #{repo_ids.join(',')}")
-      elsif el7?
+      if el7?
         execute!("yum-config-manager --enable #{repo_ids.join(',')}")
+      else
+        execute!("dnf config-manager --set-enabled #{repo_ids.join(',')}")
       end
     end
 
