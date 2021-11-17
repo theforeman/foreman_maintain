@@ -99,6 +99,16 @@ module DefinitionsTestHelper
     refute scenario, "Expected the scenario #{filter} to be absent"
   end
 
+  def assert_scenario_has_step(scenario, scenario_step)
+    assert(scenario.steps.find { |step| step.is_a? scenario_step },
+           "Expected scenario to have #{scenario_step}")
+  end
+
+  def refute_scenario_has_step(scenario, scenario_step)
+    refute(scenario.steps.find { |step| step.is_a? scenario_step },
+           "Expected scenario not to have #{scenario_step}")
+  end
+
   def hammer_config_dirs(dirs)
     Features::Hammer.any_instance.stubs(:config_directories).returns(dirs)
   end
