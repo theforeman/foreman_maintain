@@ -6,10 +6,12 @@ module ForemanMaintain::Scenarios
       description 'Restore backup'
       param :backup_dir, 'Path to backup directory'
       param :incremental_backup, 'Is the backup incremental?'
+      param :dry_run, 'Check if backup could be restored, without performing the restore'
       manual_detection
     end
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
@@ -17,8 +19,14 @@ module ForemanMaintain::Scenarios
       supported_version_check
       add_steps_with_context(Checks::Restore::ValidateBackup,
                              Checks::Restore::ValidateHostname,
-                             Checks::Restore::ValidateInterfaces,
-                             Procedures::Restore::Confirmation,
+                             Checks::Restore::ValidateInterfaces)
+
+      if context.get(:dry_run)
+        self.class.metadata[:run_strategy] = :fail_slow
+        return
+      end
+
+      add_steps_with_context(Procedures::Restore::Confirmation,
                              Procedures::Selinux::SetFileSecurity,
                              Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
@@ -48,6 +56,7 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Crond::Start) if feature(:cron)
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
 
     def drop_dbs(backup)
       if backup.file_map[:candlepin_dump][:present] ||
