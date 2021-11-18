@@ -21,7 +21,9 @@ module ForemanMaintain::Scenarios
     end
 
     def maintenance_repo_id(version)
-      return ENV['maintenance_repo'] unless ENV['maintenance_repo'].empty?
+      if (repo = ENV['maintenance_repo'])
+        return repo unless repo.empty?
+      end
 
       maintenance_repo(version)
     end
@@ -53,7 +55,7 @@ module ForemanMaintain::Scenarios
                    else
                      /satellite-maintenance-\d.\d-for-rhel-\d-x86_64-rpms/
                    end
-      stored_enabled_repos_ids.select { |id| id.match?(repo_regex) }
+      stored_enabled_repos_ids.select { |id| !id.match(repo_regex).nil? }
     end
 
     def repos_ids_to_reenable
@@ -71,12 +73,14 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
-      add_step(Procedures::Repositories::BackupEnabledRepos.new)
-      disable_repos
-      add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo_id(target_version)]))
-      add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
-      enable_repos(repos_ids_to_reenable)
+      if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
+        pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
+        add_step(Procedures::Repositories::BackupEnabledRepos.new)
+        disable_repos
+        add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo_id(target_version)]))
+        add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
+        enable_repos(repos_ids_to_reenable)
+      end
     end
   end
 
@@ -90,7 +94,9 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      enable_repos(repos_ids_to_reenable)
+      if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
+        enable_repos(repos_ids_to_reenable)
+      end
     end
   end
 end
