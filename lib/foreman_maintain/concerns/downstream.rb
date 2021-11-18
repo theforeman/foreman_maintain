@@ -74,21 +74,36 @@ module ForemanMaintain
 
       def ansible_repo(server_version)
         if server_version >= version('6.8')
-          "rhel-#{el_major_version}-server-ansible-2.9-rpms"
+          ansible_version = '2.9'
         elsif server_version >= version('6.6')
-          "rhel-#{el_major_version}-server-ansible-2.8-rpms"
+          ansible_version = '2.8'
         elsif server_version >= version('6.4')
-          "rhel-#{el_major_version}-server-ansible-2.6-rpms"
+          ansible_version = '2.6'
+        end
+
+        if el7?
+          "rhel-#{el_major_version}-server-ansible-#{ansible_version}-rpms"
+        else
+          "ansible-#{ansible_version}-for-rhel-#{el_major_version}-x86_64-rpms"
         end
       end
 
+      def use_beta_repos?
+        ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
+      end
+
       def product_specific_repos(full_version)
-        repos = []
-        repos << if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-                   "rhel-server-#{el_major_version}-#{package_name}-6-beta-rpms"
-                 else
-                   "rhel-#{el_major_version}-server-#{package_name}-#{full_version}-rpms"
-                 end
+        maj_version = full_version[0]
+        repos = if el7? && use_beta_repos?
+                  ["rhel-server-#{el_major_version}-#{package_name}-#{maj_version}-beta-rpms"]
+                elsif el7?
+                  ["rhel-#{el_major_version}-server-#{package_name}-#{full_version}-rpms"]
+                elsif use_beta_repos?
+                  ["#{package_name}-#{maj_version}-beta-for-rhel-#{el_major_version}-x86_64-rpms"]
+                else
+                  ["#{package_name}-#{full_version}-for-rhel-#{el_major_version}-x86_64-rpms"]
+                end
+
         repos << puppet4_repo(full_version) unless puppet4_repo(full_version).nil?
         repos.concat(common_repos(full_version))
       end
@@ -101,22 +116,35 @@ module ForemanMaintain
       end
 
       def common_repos(full_version)
-        repos_arrary = if ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-                         ["rhel-#{el_major_version}-server-satellite-maintenance-6-beta-rpms",
-                          "rhel-#{el_major_version}-server-satellite-tools-6-beta-rpms"]
-                       else
-                         ["rhel-#{el_major_version}-server-satellite-maintenance-6-rpms",
-                          "rhel-#{el_major_version}-server-satellite-tools-#{full_version}-rpms"]
-                       end
+        sat_maint_version = if version(full_version) >= version('7.0') && !use_beta_repos?
+                              full_version
+                            else
+                              full_version[0]
+                            end
 
-        return repos_arrary.first(1) if feature(:satellite)
+        # rubocop:disable Metrics/LineLength
+        repos = if el7? && use_beta_repos?
+                  ["rhel-#{el_major_version}-server-satellite-maintenance-#{sat_maint_version}-beta-rpms"]
+                elsif el7?
+                  ["rhel-#{el_major_version}-server-satellite-maintenance-#{sat_maint_version}-rpms"]
+                elsif use_beta_repos?
+                  ["satellite-maintenance-#{sat_maint_version}-beta-for-rhel-#{el_major_version}-x86_64-rpms"]
+                else
+                  ["satellite-maintenance-#{sat_maint_version}-for-rhel-#{el_major_version}-x86_64-rpms"]
+                end
+        # rubocop:enable Metrics/LineLength
 
-        repos_arrary
+        repos
       end
 
       def main_rh_repos
-        ["rhel-#{el_major_version}-server-rpms",
-         "rhel-server-rhscl-#{el_major_version}-rpms"]
+        if el7?
+          ["rhel-#{el_major_version}-server-rpms",
+           "rhel-server-rhscl-#{el_major_version}-rpms"]
+        else
+          ["rhel-#{el_major_version}-for-x86_64-baseos-rpms",
+           "rhel-#{el_major_version}-for-x86_64-appstream-rpms"]
+        end
       end
 
       def version_from_source
