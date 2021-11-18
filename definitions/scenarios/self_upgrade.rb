@@ -27,7 +27,11 @@ module ForemanMaintain::Scenarios
     end
 
     def maintenance_repo(version)
-      "rhel-#{el_major_version}-server-satellite-maintenance-#{version}-rpms"
+      if el7?
+        "rhel-#{el_major_version}-server-satellite-maintenance-#{version}-rpms"
+      else
+        "satellite-maintenance-#{version}-for-rhel-#{el_major_version}-x86_64-rpms"
+      end
     end
 
     def maintenance_repo_version
@@ -44,8 +48,12 @@ module ForemanMaintain::Scenarios
     end
 
     def all_maintenance_repos
-      repo_prefix = "rhel-#{el_major_version}-server-satellite-maintenance-"
-      stored_enabled_repos_ids.select { |id| id.start_with?(repo_prefix) }
+      repo_regex = if el7?
+                     /rhel-\d-server-satellite-maintenance-\d.\d-rpms/
+                   else
+                     /satellite-maintenance-\d.\d-for-rhel-\d-x86_64-rpms/
+                   end
+      stored_enabled_repos_ids.select { |id| id.match?(repo_regex) }
     end
 
     def repos_ids_to_reenable
