@@ -13,8 +13,7 @@ class Features::Candlepin < ForemanMaintain::Feature
 
   def services
     [
-      system_service('tomcat', 20),
-      system_service('tomcat6', 20)
+      system_service('tomcat', 20)
     ]
   end
 end
