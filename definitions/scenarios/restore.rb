@@ -16,9 +16,9 @@ module ForemanMaintain::Scenarios
       add_steps(find_checks(:root_user))
       supported_version_check
       add_steps_with_context(Checks::Restore::ValidateBackup,
-                             Procedures::Restore::Confirmation,
                              Checks::Restore::ValidateHostname,
                              Checks::Restore::ValidateInterfaces,
+                             Procedures::Restore::Confirmation,
                              Procedures::Selinux::SetFileSecurity,
                              Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
