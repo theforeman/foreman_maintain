@@ -185,8 +185,8 @@ module ForemanMaintain
         ForemanMaintain.package_manager
       end
 
-      def repos_manager
-        ForemanMaintain.repos_manager
+      def repository_manager
+        ForemanMaintain.repository_manager
       end
 
       def ruby_prefix(scl = true)

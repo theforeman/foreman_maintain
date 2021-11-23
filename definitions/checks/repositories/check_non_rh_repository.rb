@@ -16,9 +16,9 @@ module Checks::Repositories
     end
 
     def epel_not_enabled?
-      system_repos = repos_manager.enabled_repos_hash
+      system_repos = repository_manager.enabled_repos_hash
       system_repos.each do |repoid, repourl|
-        if repoid.match?(/\bepel\b/i) || repourl.match?(/\bepel\b/i)
+        unless repoid.match(/\bepel\b/i).nil? || repourl.match(/\bepel\b/i).nil?
           return false
         end
       end

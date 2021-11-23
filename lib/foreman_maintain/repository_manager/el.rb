@@ -1,4 +1,4 @@
-module ForemanMaintain::ReposManager
+module ForemanMaintain::RepositoryManager
   class El
     include ForemanMaintain::Concerns::OsFacts
     include ForemanMaintain::Concerns::SystemHelpers
@@ -20,16 +20,24 @@ module ForemanMaintain::ReposManager
     end
 
     def enabled_repos_hash
-      yum_cmd = 'yum repolist enabled -d 6 -e 0 2> /dev/null'\
-                "| grep -E 'Repo-id|Repo-baseurl'"
+      yum_cmd = 'yum repolist enabled -d 6 -e 0 2> /dev/null'
       repos = execute(yum_cmd)
       return {} if repos.empty?
 
-      Hash[*repos.delete!(' ').split("\n")]
+      repo_hash = Hash[*repos.delete!(' ').split("\n").grep(/Repo-id|Repo-baseurl/)]
+      trim_repos(repo_hash)
     end
 
-    def trim_repoids(repos)
-      repos.map { |r| r.gsub(%r{Repo-id:|\/+\w*}, '') }
+    private
+
+    def trim_repos(repo_hash)
+      trimmed_repos = {}
+      repo_hash.each do |repoid, repourl|
+        trimmed_id = repoid.gsub(%r{Repo-id:|\/+\w*}, '')
+        trimmed_url = repourl.gsub(/(^Repo-baseurl:)(.*)/, '\2')
+        trimmed_repos[trimmed_id] = trimmed_url
+      end
+      trimmed_repos
     end
   end
 end
