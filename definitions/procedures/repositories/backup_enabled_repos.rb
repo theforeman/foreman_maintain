@@ -6,7 +6,7 @@ module Procedures::Repositories
     end
 
     def run
-      enabled_repos_ids = feature(:system_repos).enabled_repos_ids
+      enabled_repos_ids = repository_manager.enabled_repos_hash.keys
       unless enabled_repos_ids.empty?
         backup_dir = File.expand_path(ForemanMaintain.config.backup_dir)
         File.write(File.join(backup_dir, 'enabled_repos.yml'), enabled_repos_ids.to_yaml)

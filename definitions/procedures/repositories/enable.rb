@@ -6,7 +6,7 @@ module Procedures::Repositories
     end
     def run
       with_spinner('Enabling repositories') do
-        feature(:system_repos).enable_repos(@repos)
+        repository_manager.enable_repos(@repos)
       end
     end
   end
