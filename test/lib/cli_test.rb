@@ -29,6 +29,7 @@ module ForemanMaintain
             advanced                      Advanced tools for server maintenance
             content                       Content related commands
             plugin                        Manage optional plugins on your server
+            self-upgrade                  Perform major version self upgrade
             maintenance-mode              Control maintenance-mode for application
 
         Options:
