@@ -11,6 +11,7 @@ require 'foreman_maintain/cli/restore_command'
 require 'foreman_maintain/cli/maintenance_mode_command'
 require 'foreman_maintain/cli/packages_command'
 require 'foreman_maintain/cli/content_command'
+require 'foreman_maintain/cli/self_upgrade_command'
 
 module ForemanMaintain
   module Cli
@@ -25,6 +26,7 @@ module ForemanMaintain
       subcommand 'packages', 'Lock/Unlock package protection, install, update', PackagesCommand
       subcommand 'advanced', 'Advanced tools for server maintenance', AdvancedCommand
       subcommand 'content', 'Content related commands', ContentCommand
+      subcommand 'self-upgrade', 'Perform major version self upgrade', SelfUpgradeCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
                  MaintenanceModeCommand
       if ForemanMaintain.detector.feature(:satellite) &&
