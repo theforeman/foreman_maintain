@@ -28,6 +28,7 @@ module ForemanMaintain
             packages                      Lock/Unlock package protection, install, update
             advanced                      Advanced tools for server maintenance
             content                       Content related commands
+            self-upgrade                  Perform major version self upgrade
             maintenance-mode              Control maintenance-mode for application
 
         Options:
