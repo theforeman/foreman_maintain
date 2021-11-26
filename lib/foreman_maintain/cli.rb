@@ -10,7 +10,6 @@ require 'foreman_maintain/cli/service_command'
 require 'foreman_maintain/cli/restore_command'
 require 'foreman_maintain/cli/maintenance_mode_command'
 require 'foreman_maintain/cli/packages_command'
-require 'foreman_maintain/cli/content_command'
 require 'foreman_maintain/cli/plugin_command'
 require 'foreman_maintain/cli/self_upgrade_command'
 
@@ -26,19 +25,10 @@ module ForemanMaintain
       subcommand 'restore', 'Restore a backup', RestoreCommand
       subcommand 'packages', 'Lock/Unlock package protection, install, update', PackagesCommand
       subcommand 'advanced', 'Advanced tools for server maintenance', AdvancedCommand
-      subcommand 'content', 'Content related commands', ContentCommand
       subcommand 'plugin', 'Manage optional plugins on your server', PluginCommand
       subcommand 'self-upgrade', 'Perform major version self upgrade', SelfUpgradeCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
                  MaintenanceModeCommand
-      if ForemanMaintain.detector.feature(:satellite) &&
-         ForemanMaintain.detector.feature(:satellite).current_minor_version == '6.9'
-        subcommand 'prep-6.10-upgrade', 'Preparations for the Satellite 6.10 upgrade' do
-          def execute
-            run_scenarios_and_exit(Scenarios::Prep610Upgrade.new)
-          end
-        end
-      end
 
       def run(*arguments)
         logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")

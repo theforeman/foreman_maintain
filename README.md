@@ -50,10 +50,6 @@ Subcommands:
       stop                          Stop maintenance-mode
       status                        Get maintenance-mode status
       is-enabled                    Get maintenance-mode status code
-
-    content                       Content related commands
-      prepare                       Prepare content for Pulp 3
-      switchover                    Switch support for certain content from Pulp 2 to Pulp 3
 ```
 
 ### Upgrades
