@@ -25,6 +25,7 @@ module Scenarios::Satellite_6_10
     end
 
     def compose
+      add_step(Checks::Pulpcore::GroupOwnershipCheck)
       add_step(Checks::Puppet::WarnAboutPuppetRemoval)
       add_step(Checks::CheckForNewerPackages.new(:packages => [foreman_plugin_name('katello'),
                                                                'python3-pulp-2to3-migration'],
@@ -61,13 +62,6 @@ module Scenarios::Satellite_6_10
       context.map(:assumeyes, Procedures::Installer::Upgrade => :assumeyes)
     end
 
-    def check_var_lib_pulp
-      group_id = File.stat('/var/lib/pulp/').gid
-      if Etc.getgrgid(group_id).name != 'pulp'
-        raise "Please run 'foreman-maintain prep-6.10-upgrade' prior to upgrading."
-      end
-    end
-
     def pulp3_switchover_steps
       add_step(Procedures::Service::Enable.
           new(:only => Features::Pulpcore.pulpcore_migration_services))
@@ -79,7 +73,6 @@ module Scenarios::Satellite_6_10
     end
 
     def compose
-      check_var_lib_pulp
       unless check_min_version(foreman_plugin_name('katello'), '4.0')
         pulp3_switchover_steps
       end
