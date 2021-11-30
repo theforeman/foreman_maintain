@@ -86,6 +86,8 @@ module Procedures::Pulp
       drop_migrations
 
       delete_pulp_data(rm_cmds) if rm_cmds.any?
+
+      restart_pulpcore_services
     end
 
     def remove_pulp
@@ -166,6 +168,16 @@ module Procedures::Pulp
           execute!(cmd)
         end
         spinner.update('Done deleting pulp2 data directories')
+      end
+    end
+
+    def restart_pulpcore_services
+      with_spinner('Restarting pulpcore services') do |spinner|
+        pulp_services = feature(:pulpcore).services
+
+        feature(:service).handle_services(spinner, 'stop', :only => pulp_services)
+        feature(:service).handle_services(spinner, 'start', :only => pulp_services)
+        spinner.update('Done restarting pulpcore services')
       end
     end
   end
