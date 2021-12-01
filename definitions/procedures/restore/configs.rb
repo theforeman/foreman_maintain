@@ -14,8 +14,6 @@ module Procedures::Restore
         spinner.update('Restoring configs')
         clean_conflicting_data
         restore_configs(backup)
-        reset_qpid_jrnls
-        reload_configs
       end
     end
 
@@ -42,25 +40,11 @@ module Procedures::Restore
     end
     # rubocop:enable  Metrics/MethodLength
 
-    def reload_configs
-      feature(:mongo).reload_db_config if feature(:mongo)
-    end
-
     private
 
     def clean_conflicting_data
       # tar is unable to --overwrite dir with symlink
       execute('rm -rf /usr/share/foreman-proxy/.ssh')
-    end
-
-    def reset_qpid_jrnls
-      # on restore without pulp data qpid fails to start
-      # https://access.redhat.com/solutions/4645231
-      ['/var/lib/qpidd/.qpidd/', '/var/lib/qpidd/'].each do |qpidd_path|
-        if Dir.exist?("#{qpidd_path}/qls/dat2/")
-          execute("rm -rf #{qpidd_path}/qls/dat2/__db.00*")
-        end
-      end
     end
   end
 end
