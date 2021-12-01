@@ -8,7 +8,7 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def data_dirs
-    @dirs ||= ['/var/lib/pulp', '/var/lib/mongodb', '/var/lib/pgsql']
+    @dirs ||= ['/var/lib/pulp', '/var/lib/pgsql']
   end
 
   def current_version
@@ -16,14 +16,10 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def services
-    if feature(:pulp2)
-      []
-    else
       [
         system_service('qpidd', 10),
         system_service('qdrouterd', 10)
       ]
-    end
   end
 
   # rubocop:disable  Metrics/MethodLength

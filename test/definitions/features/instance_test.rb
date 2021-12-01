@@ -48,14 +48,11 @@ describe Features::Instance do
   end
 
   describe '.database_local?' do
-    %w[candlepin_database foreman_database mongo].each do |feature|
+    %w[candlepin_database foreman_database].each do |feature|
       describe feature do
         it "is true when the #{feature} is present and local" do
           assume_feature_present(feature.to_sym) do |db|
             db.any_instance.stubs(:local?).returns(true)
-            if feature == 'mongo'
-              db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
-            end
           end
           subject.database_local?(feature.to_sym).must_equal(true)
         end
@@ -68,9 +65,6 @@ describe Features::Instance do
         it "is false when the #{feature} is present and remote" do
           assume_feature_present(feature.to_sym) do |db|
             db.any_instance.stubs(:local?).returns(false)
-            if feature == 'mongo'
-              db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
-            end
           end
           subject.database_local?(feature.to_sym).must_equal(false)
         end
@@ -79,14 +73,11 @@ describe Features::Instance do
   end
 
   describe '.database_remote?' do
-    %w[candlepin_database foreman_database mongo].each do |feature|
+    %w[candlepin_database foreman_database].each do |feature|
       describe feature do
         it "is false when the #{feature} is present and local" do
           assume_feature_present(feature.to_sym) do |db|
             db.any_instance.stubs(:local?).returns(true)
-            if feature == 'mongo'
-              db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
-            end
           end
           subject.database_remote?(feature.to_sym).must_equal(false)
         end
@@ -99,9 +90,6 @@ describe Features::Instance do
         it "is true when the #{feature} is present and remote" do
           assume_feature_present(feature.to_sym) do |db|
             db.any_instance.stubs(:local?).returns(false)
-            if feature == 'mongo'
-              db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
-            end
           end
           subject.database_remote?(feature.to_sym).must_equal(true)
         end
@@ -114,8 +102,6 @@ describe Features::Instance do
 
     context 'katello' do
       let(:existing_httpd) { existing_system_service('httpd', 10) }
-      let(:existing_mongod) { existing_system_service('mongod', 5) }
-      let(:missing_mongod) { missing_system_service('mongo38d', 5) }
       let(:success_response_body) do
         {
           'status' => 'ok',
@@ -167,11 +153,6 @@ describe Features::Instance do
         assume_feature_present(:pulp2) do |feature_class|
           feature_class.any_instance.stubs(:services).returns(existing_httpd)
         end
-        assume_feature_present(:mongo) do |feature_class|
-          feature_class.any_instance.stubs(:services).returns([existing_mongod, missing_mongod])
-          server_conf = "#{data_dir}/mongo/default_server.conf"
-          feature_class.any_instance.stubs(:config_file).returns(server_conf)
-        end
         connection.expects(:get).with('/katello/api/ping').
           returns(mock_net_http_response('200', failing_response_body))
         subject.stubs(:server_connection).returns(connection)
@@ -179,7 +160,6 @@ describe Features::Instance do
         ping = subject.ping
         ping.success?.must_equal false
         ping.message.must_equal 'Some components are failing: pulp'
-        ping.data[:failing_services].must_equal [existing_httpd, existing_mongod]
       end
     end
 

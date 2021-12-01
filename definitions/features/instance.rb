@@ -67,7 +67,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def pulp
-    feature(:pulp2) || feature(:pulpcore)
+    feature(:pulpcore)
   end
 
   private
@@ -143,8 +143,6 @@ class Features::Instance < ForemanMaintain::Feature
     {
       'candlepin_auth' => %w[candlepin candlepin_database],
       'candlepin' => %w[candlepin candlepin_database],
-      'pulp_auth' => %w[pulp2 mongo],
-      'pulp' => %w[pulp2 mongo],
       'pulp3' => %w[pulpcore pulpcore_database],
       'foreman_tasks' => %w[foreman_tasks]
     }
