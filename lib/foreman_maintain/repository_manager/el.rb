@@ -19,9 +19,13 @@ module ForemanMaintain::RepositoryManager
       end
     end
 
+    def pkg_manager
+      package_manager.class.name.split('::').last.downcase
+    end
+
     def enabled_repos_hash
-      yum_cmd = 'yum repolist enabled -d 6 -e 0 2> /dev/null'
-      repos = execute(yum_cmd)
+      cmd = "#{pkg_manager} repolist enabled -d 6 -e 0 2> /dev/null"
+      repos = execute(cmd)
       return {} if repos.empty?
 
       repo_hash = Hash[*repos.delete!(' ').split("\n").grep(/Repo-id|Repo-baseurl/)]
