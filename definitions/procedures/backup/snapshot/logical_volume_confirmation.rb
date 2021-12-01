@@ -16,19 +16,14 @@ module Procedures::Backup
           list
         end
 
-        pulp_data_lv = get_lv_info(current_pulp_feature.pulp_data_dir)
+        pulp_data_lv = get_lv_info(feature(:pulpcore_database).pulp_data_dir)
         shared_lv << 'Pulp' if pulp_data_lv == backup_lv && !@skip_pulp
 
         confirm(shared_lv) if shared_lv.any?
       end
 
-      def current_pulp_feature
-        feature(:pulp2) || feature(:pulpcore_database)
-      end
-
       def dbs
         dbs = {}
-        dbs[:mongo] = 'Mongo' if db_local?(:mongo)
         dbs[:candlepin_database] = 'Candlepin' if db_local?(:candlepin_database)
         dbs[:foreman_database] = 'Foreman' if db_local?(:foreman_database)
         dbs[:pulpcore_database] = 'Pulpcore' if db_local?(:pulpcore_database)

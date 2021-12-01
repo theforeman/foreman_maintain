@@ -47,7 +47,6 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::ConfigFiles => :backup_dir,
                   Procedures::Backup::CompressData => :backup_dir,
                   Procedures::Backup::Pulp => :backup_dir,
-                  Procedures::Backup::Online::Mongo => :backup_dir,
                   Procedures::Backup::Online::PgGlobalObjects => :backup_dir,
                   Procedures::Backup::Online::CandlepinDB => :backup_dir,
                   Procedures::Backup::Online::ForemanDB => :backup_dir,
@@ -55,12 +54,10 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::Offline::CandlepinDB => :backup_dir,
                   Procedures::Backup::Offline::ForemanDB => :backup_dir,
                   Procedures::Backup::Offline::PulpcoreDB => :backup_dir,
-                  Procedures::Backup::Offline::Mongo => :backup_dir,
                   Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :backup_dir,
                   Procedures::Backup::Snapshot::MountCandlepinDB => :backup_dir,
                   Procedures::Backup::Snapshot::MountForemanDB => :backup_dir,
                   Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir,
-                  Procedures::Backup::Snapshot::MountMongo => :backup_dir)
       context.map(:preserve_dir,
                   Checks::Backup::DirectoryReady => :preserve_dir,
                   Procedures::Backup::PrepareDirectory => :preserve_dir)
@@ -71,19 +68,16 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::ConfigFiles => :proxy_features)
       context.map(:snapshot_mount_dir,
                   Procedures::Backup::Snapshot::PrepareMount => :mount_dir,
-                  Procedures::Backup::Snapshot::MountMongo => :mount_dir,
                   Procedures::Backup::Snapshot::MountPulp => :mount_dir,
                   Procedures::Backup::Snapshot::CleanMount => :mount_dir,
                   Procedures::Backup::Snapshot::MountCandlepinDB => :mount_dir,
                   Procedures::Backup::Snapshot::MountForemanDB => :mount_dir,
                   Procedures::Backup::Snapshot::MountPulpcoreDB => :mount_dir,
-                  Procedures::Backup::Offline::Mongo => :mount_dir,
                   Procedures::Backup::Pulp => :mount_dir,
                   Procedures::Backup::Offline::CandlepinDB => :mount_dir,
                   Procedures::Backup::Offline::ForemanDB => :mount_dir,
                   Procedures::Backup::Offline::PulpcoreDB => :mount_dir)
       context.map(:snapshot_block_size,
-                  Procedures::Backup::Snapshot::MountMongo => :block_size,
                   Procedures::Backup::Snapshot::MountPulp => :block_size,
                   Procedures::Backup::Snapshot::MountForemanDB => :block_size,
                   Procedures::Backup::Snapshot::MountCandlepinDB => :block_size,
@@ -140,7 +134,6 @@ module ForemanMaintain::Scenarios
         Procedures::Service::Stop,
         Procedures::Backup::ConfigFiles,
         Procedures::Backup::Pulp,
-        Procedures::Backup::Offline::Mongo,
         Procedures::Backup::Offline::CandlepinDB,
         Procedures::Backup::Offline::ForemanDB,
         Procedures::Backup::Offline::PulpcoreDB,
@@ -162,9 +155,6 @@ module ForemanMaintain::Scenarios
       if feature(:instance).database_local?(:pulpcore_database)
         add_step_with_context(Procedures::Backup::Online::PulpcoreDB)
       end
-      if feature(:instance).database_local?(:mongo)
-        add_step_with_context(Procedures::Backup::Online::Mongo)
-      end
     end
 
     # rubocop:disable  Metrics/MethodLength
@@ -176,7 +166,6 @@ module ForemanMaintain::Scenarios
         find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
         Procedures::Backup::ConfigFiles,
-        Procedures::Backup::Snapshot::MountMongo,
         Procedures::Backup::Snapshot::MountPulp,
         Procedures::Backup::Snapshot::MountCandlepinDB,
         Procedures::Backup::Snapshot::MountForemanDB,
@@ -194,9 +183,6 @@ module ForemanMaintain::Scenarios
       if feature(:instance).database_local?(:pulpcore_database)
         add_step_with_context(Procedures::Backup::Offline::PulpcoreDB)
       end
-      if feature(:instance).database_local?(:mongo)
-        add_step_with_context(Procedures::Backup::Offline::Mongo)
-      end
       add_step_with_context(Procedures::Backup::Snapshot::CleanMount)
     end
     # rubocop:enable  Metrics/MethodLength
@@ -206,7 +192,6 @@ module ForemanMaintain::Scenarios
                                                              :online_backup => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
       add_steps_with_context(
-        Procedures::Backup::Online::Mongo,
         Procedures::Backup::Online::PgGlobalObjects,
         Procedures::Backup::Online::CandlepinDB,
         Procedures::Backup::Online::ForemanDB,
