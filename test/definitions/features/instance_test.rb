@@ -150,7 +150,7 @@ describe Features::Instance do
       end
 
       it 'fails when some of the components fail' do
-        assume_feature_present(:pulp2) do |feature_class|
+        assume_feature_present(:pulpcore_database) do |feature_class|
           feature_class.any_instance.stubs(:services).returns(existing_httpd)
         end
         connection.expects(:get).with('/katello/api/ping').

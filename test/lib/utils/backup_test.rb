@@ -6,9 +6,6 @@ module ForemanMaintain
   describe Utils::Backup do
     subject { Utils::Backup }
 
-    let(:katello_standard_pulp2) do
-      File.expand_path('../../files/backups/katello_standard_pulp2', File.dirname(__FILE__))
-    end
     let(:katello_standard_pulpcore_database) do
       file_path = '../../files/backups/katello_standard_pulpcore_database'
       File.expand_path(file_path, File.dirname(__FILE__))
@@ -16,26 +13,12 @@ module ForemanMaintain
     let(:katello_standard_incremental) do
       File.expand_path('../../files/backups/katello_standard_incremental', File.dirname(__FILE__))
     end
-    let(:katello_online_pulp2) do
-      File.expand_path('../../files/backups/katello_online_pulp2', File.dirname(__FILE__))
-    end
     let(:katello_online_pulpcore_database) do
       file_path = '../../files/backups/katello_online_pulpcore_database'
       File.expand_path(file_path, File.dirname(__FILE__))
     end
-    let(:katello_online_pulp2_pulpcore_database) do
-      file_path = '../../files/backups/katello_online_pulp2_pulpcore_database'
-      File.expand_path(file_path, File.dirname(__FILE__))
-    end
-    let(:katello_logical_pulp2) do
-      File.expand_path('../../files/backups/katello_logical_pulp2', File.dirname(__FILE__))
-    end
     let(:katello_logical_pulpcore_database) do
       file_path = '../../files/backups/katello_logical_pulpcore_database'
-      File.expand_path(file_path, File.dirname(__FILE__))
-    end
-    let(:katello_logical_pulp2_pulpcore_database) do
-      file_path = '../../files/backups/katello_logical_pulp2_pulpcore_database'
       File.expand_path(file_path, File.dirname(__FILE__))
     end
     let(:katello_hybrid_db_backup) do
@@ -51,54 +34,22 @@ module ForemanMaintain
     let(:foreman_logical) do
       File.expand_path('../../files/backups/foreman_logical', File.dirname(__FILE__))
     end
-    let(:fpc_standard_pulp2) do
-      File.expand_path('../../files/backups/fpc_standard_pulp2', File.dirname(__FILE__))
-    end
     let(:fpc_standard_pulpcore_database) do
       File.expand_path('../../files/backups/fpc_standard_pulpcore_database', File.dirname(__FILE__))
-    end
-    let(:fpc_standard_pulp2_pulpcore_database) do
-      file_path = '../../files/backups/fpc_standard_pulp2_pulpcore_database'
-      File.expand_path(file_path, File.dirname(__FILE__))
-    end
-    let(:fpc_online_pulp2) do
-      File.expand_path('../../files/backups/fpc_online_pulp2', File.dirname(__FILE__))
     end
     let(:fpc_online_pulpcore_database) do
       File.expand_path('../../files/backups/fpc_online_pulpcore_database', File.dirname(__FILE__))
     end
-    let(:fpc_online_pulp2_pulpcore_database) do
-      file_path = '../../files/backups/fpc_online_pulp2_pulpcore_database'
-      File.expand_path(file_path, File.dirname(__FILE__))
-    end
-    let(:fpc_logical_pulp2) do
-      File.expand_path('../../files/backups/fpc_logical_pulp2', File.dirname(__FILE__))
-    end
     let(:fpc_logical_pulpcore_database) do
       File.expand_path('../../files/backups/fpc_logical_pulpcore_database', File.dirname(__FILE__))
-    end
-    let(:fpc_logical_pulp2_pulpcore_database) do
-      file_path = '../../files/backups/fpc_logical_pulp2_pulpcore_database'
-      File.expand_path(file_path, File.dirname(__FILE__))
-    end
-    let(:fpc_hybrid_pulp2_pulpcore_database_backup) do
-      file_path = '../../files/backups/fpc_hybrid_pulp2_pulpcore_database_backup'
-      File.expand_path(file_path, File.dirname(__FILE__))
     end
     let(:no_configs) do
       File.expand_path('../../files/backups/no_configs', File.dirname(__FILE__))
     end
 
     def assume_features(opts)
-      if opts.include?(:pulpcore_database) && !opts.include?(:pulp2)
+      if opts.include?(:pulpcore_database)
         assume_feature_present(:pulpcore_database)
-        assume_feature_absent(:pulp2)
-      elsif opts.include?(:pulp2) && opts.include?(:pulpcore_database)
-        assume_feature_present(:pulpcore_database)
-        assume_feature_present(:pulp2)
-      elsif opts.include?(:pulp2)
-        assume_feature_present(:pulp2)
-        assume_feature_absent(:pulpcore_database)
       end
     end
 
@@ -118,7 +69,7 @@ module ForemanMaintain
     end
 
     it 'Validates katello standard backup' do
-      [[:pulp2], [:pulpcore_database]].each do |f|
+      [[:pulpcore_database]].each do |f|
         assume_features(f)
         kat_stand_backup = subject.new(send("katello_standard_#{f.first}"))
         assert kat_stand_backup.katello_standard_backup?
@@ -128,21 +79,13 @@ module ForemanMaintain
         assert !kat_stand_backup.foreman_logical_backup?
         assert !kat_stand_backup.fpc_online_backup?
         assert !kat_stand_backup.fpc_logical_backup?
-        if f == :pulp2
-          assert !kat_stand_backup.foreman_standard_backup?
-          assert !kat_stand_backup.fpc_standard_backup?
-        end
       end
     end
 
     it 'Validates katello online backup' do
-      [[:pulp2], [:pulpcore_database], [:pulp2, :pulpcore_database]].each do |f|
+      [[:pulpcore_database]].each do |f|
         assume_features(f)
-        kat_online_backup = if f.is_a?(Array)
-                              subject.new(send("katello_online_#{f.join('_')}"))
-                            else
-                              subject.new(send("katello_online_#{f.first}"))
-                            end
+        kat_online_backup = subject.new(send("katello_online_#{f.first}"))
         assert !kat_online_backup.katello_standard_backup?
         assert kat_online_backup.katello_online_backup?
         assert !kat_online_backup.katello_logical_backup?
@@ -156,13 +99,9 @@ module ForemanMaintain
     end
 
     it 'Validates katello logical backup' do
-      [[:pulp2], [:pulpcore_database], [:pulp2, :pulpcore_database]].each do |f|
+      [[:pulpcore_database]].each do |f|
         assume_features(f)
-        kat_logical_backup = if f.is_a?(Array)
-                               subject.new(send("katello_logical_#{f.join('_')}"))
-                             else
-                               subject.new(send("katello_logical_#{f.first}"))
-                             end
+        kat_logical_backup = subject.new(send("katello_logical_#{f.first}"))
         assert !kat_logical_backup.katello_standard_backup?
         assert !kat_logical_backup.katello_online_backup?
         assert kat_logical_backup.katello_logical_backup?
@@ -177,7 +116,6 @@ module ForemanMaintain
 
     it 'Validates katello hybrid db backup' do
       assume_features([:pulpcore_database])
-      assume_feature_absent(:mongo)
       assume_feature_present(:candlepin_database)
       assume_feature_present(:foreman_database)
       feature_with_local_method(:pulpcore_database, true)
@@ -197,7 +135,6 @@ module ForemanMaintain
     end
 
     it 'Validates foreman standard backup' do
-      assume_feature_absent(:pulp2)
       assume_feature_absent(:pulpcore_database)
       foreman_standard_backup = subject.new(foreman_standard)
       assert !foreman_standard_backup.katello_standard_backup?
@@ -212,7 +149,6 @@ module ForemanMaintain
     end
 
     it 'Validates foreman online backup' do
-      assume_feature_absent(:pulp2)
       assume_feature_absent(:pulpcore_database)
       foreman_online_backup = subject.new(foreman_online)
       assert !foreman_online_backup.katello_standard_backup?
@@ -227,7 +163,6 @@ module ForemanMaintain
     end
 
     it 'Validates foreman logical backup' do
-      assume_feature_absent(:pulp2)
       assume_feature_absent(:pulpcore_database)
       foreman_logical_backup = subject.new(foreman_logical)
       assert !foreman_logical_backup.katello_standard_backup?
@@ -242,13 +177,9 @@ module ForemanMaintain
     end
 
     it 'Validates fpc standard backup' do
-      [[:pulp2], [:pulpcore_database], [:pulp2, :pulpcore_database]].each do |f|
+      [[:pulpcore_database]].each do |f|
         assume_features(f)
-        fpc_standard_backup = if f.is_a?(Array)
-                                subject.new(send("fpc_standard_#{f.join('_')}"))
-                              else
-                                subject.new(send("fpc_standard_#{f.first}"))
-                              end
+        fpc_standard_backup = subject.new(send("fpc_standard_#{f.first}"))
         assert !fpc_standard_backup.katello_online_backup?
         assert !fpc_standard_backup.katello_logical_backup?
         assert !fpc_standard_backup.foreman_online_backup?
@@ -256,20 +187,13 @@ module ForemanMaintain
         assert fpc_standard_backup.fpc_standard_backup?
         assert !fpc_standard_backup.fpc_online_backup?
         assert !fpc_standard_backup.fpc_logical_backup?
-        if f == :pulp2
-          assert !fpc_standard_backup.foreman_standard_backup?
-        end
       end
     end
 
     it 'Validates fpc online backup' do
-      [[:pulp2], [:pulpcore_database], [:pulp2, :pulpcore_database]].each do |f|
+      [[:pulpcore_database]].each do |f|
         assume_features(f)
-        fpc_online_backup = if f.is_a?(Array)
-                              subject.new(send("fpc_online_#{f.join('_')}"))
-                            else
-                              subject.new(send("fpc_online_#{f.first}"))
-                            end
+        fpc_online_backup = subject.new(send("fpc_online_#{f.join('_')}"))
         assert !fpc_online_backup.katello_standard_backup?
         assert !fpc_online_backup.katello_online_backup?
         assert !fpc_online_backup.katello_logical_backup?
@@ -283,13 +207,9 @@ module ForemanMaintain
     end
 
     it 'Validates fpc logical backup' do
-      [[:pulp2], [:pulpcore_database], [:pulp2, :pulpcore_database]].each do |f|
+      [[:pulpcore_database]].each do |f|
         assume_features(f)
-        fpc_logical_backup = if f.is_a?(Array)
-                               subject.new(send("fpc_logical_#{f.join('_')}"))
-                             else
-                               subject.new(send("fpc_logical_#{f.first}"))
-                             end
+        fpc_logical_backup = subject.new(send("fpc_logical_#{f.first}"))
         assert !fpc_logical_backup.katello_standard_backup?
         assert !fpc_logical_backup.katello_online_backup?
         assert !fpc_logical_backup.katello_logical_backup?
@@ -300,25 +220,6 @@ module ForemanMaintain
         assert !fpc_logical_backup.fpc_online_backup?
         assert fpc_logical_backup.fpc_logical_backup?
       end
-    end
-
-    it 'Validates fpc hybrid db backup' do
-      assume_feature_present(:pulp2)
-      assume_feature_present(:mongo)
-      assume_feature_present(:pulpcore_database)
-      feature_with_local_method(:pulpcore_database, true)
-      feature_with_local_method(:mongo, false)
-      fpc_hybrid_db_backup = subject.new(fpc_hybrid_pulp2_pulpcore_database_backup)
-      assert !fpc_hybrid_db_backup.katello_standard_backup?
-      assert !fpc_hybrid_db_backup.katello_online_backup?
-      assert !fpc_hybrid_db_backup.katello_logical_backup?
-      assert !fpc_hybrid_db_backup.foreman_standard_backup?
-      assert !fpc_hybrid_db_backup.foreman_online_backup?
-      assert !fpc_hybrid_db_backup.foreman_logical_backup?
-      assert !fpc_hybrid_db_backup.fpc_standard_backup?
-      assert !fpc_hybrid_db_backup.fpc_online_backup?
-      assert !fpc_hybrid_db_backup.fpc_logical_backup?
-      assert fpc_hybrid_db_backup.fpc_hybrid_db_backup?
     end
 
     it 'does not validate backup without config_files.tar.gz' do
@@ -332,19 +233,19 @@ module ForemanMaintain
     end
 
     it 'Validates hostname from the backup' do
-      kat_stand_backup = subject.new(katello_standard_pulp2)
+      kat_stand_backup = subject.new(katello_standard_pulpcore_database)
       kat_stand_backup.stubs(:hostname).returns('sat-6.example.com')
       assert kat_stand_backup.validate_hostname?
     end
 
     it 'accepts backup without proxy config in the metadata' do
-      backup = subject.new(katello_standard_pulp2)
+      backup = subject.new(katello_standard_pulpcore_database)
       Dir.stubs(:entries).returns(%w[. .. lo eth0])
       assert backup.validate_interfaces.empty?
     end
 
     it 'accepts backup with proxy config and disabled DHCP/DNS in the metadata' do
-      backup = subject.new(katello_standard_pulp2)
+      backup = subject.new(katello_standard_pulpcore_database)
       Dir.stubs(:entries).returns(%w[. .. lo eth0])
       backup.stubs(:metadata).returns('proxy_config' =>
                                       { 'dhcp' => false,
@@ -355,7 +256,7 @@ module ForemanMaintain
     end
 
     it 'accepts backup when DHCP/DNS configured interfaces are found on system' do
-      backup = subject.new(katello_standard_pulp2)
+      backup = subject.new(katello_standard_pulpcore_database)
       Dir.stubs(:entries).returns(%w[. .. lo eth0])
       backup.stubs(:metadata).returns('proxy_config' =>
                                       { 'dhcp' => true,
@@ -366,7 +267,7 @@ module ForemanMaintain
     end
 
     it 'rejects backup when DHCP/DNS configured interfaces are not found on system' do
-      backup = subject.new(katello_standard_pulp2)
+      backup = subject.new(katello_standard_pulpcore_database)
       Dir.stubs(:entries).returns(%w[. .. lo eth1])
       backup.stubs(:metadata).returns('proxy_config' =>
                                       { 'dhcp' => true,
