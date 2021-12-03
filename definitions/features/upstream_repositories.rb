@@ -6,7 +6,7 @@ class Features::UpstreamRepositories < ForemanMaintain::Feature
 
   def repoids_and_urls
     repoids_and_urls = {}
-    repository_manager.enabled_repos_hash.each do |repo, url|
+    repository_manager.enabled_repos.each do |repo, url|
       repo_urls.each do |regex|
         repoids_and_urls[repo] = url if url =~ regex
       end

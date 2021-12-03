@@ -17,6 +17,10 @@ module ForemanMaintain
         current_version.to_s[/^\d+\.\d+/]
       end
 
+      def repository_manager
+        ForemanMaintain.repository_manager
+      end
+
       # TODO: Modify activation_key changes as per server
       def setup_repositories(version)
         activation_key = ENV['EXTERNAL_SAT_ACTIVATION_KEY']
@@ -26,18 +30,14 @@ module ForemanMaintain
           execute!(%(subscription-manager register #{org_options}\
                       --activationkey #{shellescape(activation_key)} --force))
         else
-          execute!(%(subscription-manager repos --disable '*'))
-          enable_options = rh_repos(version).map { |r| "--enable=#{r}" }.join(' ')
-          execute!(%(subscription-manager repos #{enable_options}))
+          repository_manager.rhsm_disable_repos('*')
+          repository_manager.rhsm_enable_repos(rh_repos(version))
         end
       end
 
       def absent_repos(version)
-        all_repo_lines = execute(%(LANG=en_US.utf-8 subscription-manager repos --list 2>&1 | ) +
-                                  %(grep '^Repo ID:')).split("\n")
-        all_repos = all_repo_lines.map { |line| line.split(/\s+/).last }
         repos_required = rh_repos(version)
-        repos_found = repos_required & all_repos
+        repos_found = repos_required & repository_manager.rhsm_list_all_repos.keys
         repos_required - repos_found
       end
 
