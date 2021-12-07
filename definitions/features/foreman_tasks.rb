@@ -88,6 +88,9 @@ class Features::ForemanTasks < ForemanMaintain::Feature
        DELETE FROM dynflow_actions USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_actions.execution_plan_uuid::varchar) AND #{tasks_condition};
        DELETE FROM dynflow_execution_plans USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_execution_plans.uuid::varchar) AND #{tasks_condition};
        DELETE FROM foreman_tasks_tasks WHERE #{tasks_condition};
+       -- Delete locks and links which may now be orphaned
+       DELETE FROM foreman_tasks_locks as ftl where ftl.id NOT IN (SELECT id FROM foreman_tasks_tasks);
+       DELETE FROM foreman_tasks_links as ftl where ftl.id NOT IN (SELECT id FROM foreman_tasks_tasks);
      COMMIT;
     SQL
 
