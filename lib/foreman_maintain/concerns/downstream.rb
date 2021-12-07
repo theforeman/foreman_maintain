@@ -37,7 +37,7 @@ module ForemanMaintain
 
       def absent_repos(version)
         repos_required = rh_repos(version)
-        repos_found = repos_required & repository_manager.rhsm_list_all_repos.keys
+        repos_found = repos_required & repository_manager.rhsm_list_repos.keys
         repos_required - repos_found
       end
 

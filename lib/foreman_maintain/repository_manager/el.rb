@@ -39,28 +39,25 @@ module ForemanMaintain::RepositoryManager
       end
     end
 
-    def rhsm_options(repo_ids, option)
-      repo_ids.map { |r| "--#{option}=#{r}" }.join(' ')
+    def rhsm_options(repo_ids, options)
+      repo_ids.map { |r| "--#{options}=#{r}" }.join(' ')
     end
 
-    def config_manager_options(repo_ids, option)
-      if repo_ids.is_a?(String)
-        if repo_ids == '*'
-          return format_shell_args("--#{option}" => repo_ids.to_s)
-        end
-
-        "--#{option}=#{repo_ids}"
-      elsif repo_ids.is_a?(Array)
-        "--#{option} #{repo_ids.join(',')}"
-      end
+    def config_manager_options(repo_ids, options)
+      repo_ids_string = if repo_ids.is_a?(Array)
+                          repo_ids.join(',')
+                        else
+                          repo_ids
+                        end
+      format_shell_args("--#{options}" => repo_ids_string)
     end
 
     def rhsm_available?
       @rhsm_available ||= find_package('subscription-manager')
     end
 
-    def rhsm_list_all_repos
-      repos = execute(%(LANG=en_US.utf-8 subscription-manager repos --list 2>&1))
+    def rhsm_list_repos(list_option = '--list')
+      repos = execute(%(LANG=en_US.utf-8 subscription-manager repos #{list_option} 2>&1))
       return {} if repos.empty?
 
       hash_of_repoids_urls(repos, /Repo ID|Repo URL/)
