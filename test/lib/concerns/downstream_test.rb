@@ -121,6 +121,12 @@ module ForemanMaintain
                      system.send(:common_repos, '6.10')
       end
 
+      it 'returns correct maintenance repo for 7.0 on el7' do
+        system.stubs(:el_major_version).returns(7)
+        assert_equal ['rhel-7-server-satellite-maintenance-7.0-rpms'],
+                     system.send(:common_repos, '7.0')
+      end
+
       it 'returns correct maintenance repo for 7.0 on el8' do
         system.stubs(:el_major_version).returns(8)
         assert_equal ['satellite-maintenance-7.0-for-rhel-8-x86_64-rpms'],
@@ -132,6 +138,13 @@ module ForemanMaintain
         system.stubs(:el_major_version).returns(7)
         assert_equal ['rhel-7-server-satellite-maintenance-6-beta-rpms'],
                      system.send(:common_repos, '6.10')
+      end
+
+      it 'returns correct beta maintenance repo for 7.0 on el7' do
+        system.stubs(:use_beta_repos?).returns(true)
+        system.stubs(:el_major_version).returns(7)
+        assert_equal ['rhel-7-server-satellite-maintenance-7-beta-rpms'],
+                     system.send(:common_repos, '7.0')
       end
 
       it 'returns correct beta maintenance repo for 7.0 on el8' do
