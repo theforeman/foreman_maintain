@@ -18,6 +18,6 @@ class Features::UpstreamRepositories < ForemanMaintain::Feature
 
   def repo_urls
     [%r{yum.theforeman.org\/*},
-     %r{yum.puppetlabs.com\/el\/[\w|\/|\.]*\/x86_64}]
+     %r{yum.puppetlabs.com\/*}]
   end
 end

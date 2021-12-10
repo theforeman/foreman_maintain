@@ -7,7 +7,7 @@ module ForemanMaintain
                             elsif debian?
                               raise 'Not implemented!'
                             else
-                              raise 'No supported repos manager was found'
+                              raise 'No supported repository manager was found'
                             end
   end
 end
