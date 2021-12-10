@@ -11,13 +11,18 @@ module Checks::Repositories
 
     def run
       with_spinner('Checking repositories enabled on the system') do
-        assert(!epel_enabled?, 'System is subscribed to non Red Hat repositories')
+        assert(epel_not_enabled?, 'System is subscribed to non Red Hat repositories')
       end
     end
 
-    def epel_enabled?
-      system_repos = execute("yum repolist enabled -d 6 -e 0| grep -E 'Repo-baseurl|Repo-id'")
-      system_repos.to_s.match(/\bepel\b/i)
+    def epel_not_enabled?
+      system_repos = repository_manager.enabled_repos
+      system_repos.each do |repoid, repourl|
+        unless repoid.match(/\bepel\b/i).nil? || repourl.match(/\bepel\b/i).nil?
+          return false
+        end
+      end
+      true
     end
   end
 end

@@ -14,10 +14,10 @@ class Checks::CheckUpstreamRepository < ForemanMaintain::Check
 
   def run
     with_spinner('Checking for presence of upstream repositories') do
-      enabled_upstream_repos = feature(:system_repos).upstream_repos_ids
-      assert(enabled_upstream_repos.empty?,
-             "System has upstream #{enabled_upstream_repos.join(',')} repositories enabled",
-             :next_steps => Procedures::Repositories::Disable.new(:repos => enabled_upstream_repos))
+      enabled_repo_ids = feature(:upstream_repositories).repoids_and_urls.keys
+      assert(enabled_repo_ids.empty?,
+             "System has upstream #{enabled_repo_ids.join(',')} repositories enabled",
+             :next_steps => Procedures::Repositories::Disable.new(:repos => enabled_repo_ids))
     end
   end
 end
