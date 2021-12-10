@@ -1,7 +1,7 @@
 module ForemanMaintain::Scenarios
   class SelfUpgradeBase < ForemanMaintain::Scenario
     def enabled_system_repos_id
-      feature(:system_repos).enabled_repos_ids
+      repository_manager.enabled_repos.keys
     end
 
     def enable_repos(repo_ids = stored_enabled_repos_ids)
