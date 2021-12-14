@@ -61,10 +61,14 @@ module ForemanMaintain::Utils
         msg = " #{msg}" if msg
         if @db_feature.ping
           [0, "#{self} is remote and is UP.#{msg}"]
-        else
+        elsif @db_feature.psql_cmd_available?
           [1, "#{self} is remote and is DOWN.#{msg}" \
-            "\n  Unable to connect to the remote database." \
-            "\n  See the log (#{ForemanMaintain.config.log_filename}) for more details.#{msg}"]
+          "\nUnable to connect to the remote database." \
+          "\nSee the log " \
+          "(#{ForemanMaintain.config.log_filename}) for more details.#{msg}"]
+        else
+          [1, 'The psql command not found.'\
+          "\nMake sure system has psql utility installed."]
         end
       end
     end

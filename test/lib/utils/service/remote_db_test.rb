@@ -45,6 +45,14 @@ module ForemanMaintain
       )
     end
 
+    def stub_psql_cmd_available?(kclass, ret_value)
+      kclass.any_instance.stubs(:psql_cmd_available?).returns(ret_value)
+    end
+
+    def stub_ping(kclass, ret_value)
+      kclass.any_instance.stubs(:ping).returns(ret_value)
+    end
+
     it 'has component' do
       remote_db_service_no_comp.component.must_be_nil
       remote_db_service.component.must_equal 'Pulp'
@@ -80,10 +88,13 @@ module ForemanMaintain
 
     it 'can tell if the remote db is running' do
       remote_db_service.running?.must_equal true
+      stub_psql_cmd_available?(RemoteStoppedDBFeature, true)
       remote_stopped_db_service.running?.must_equal false
     end
 
     it 'can handle remote db start' do
+      stub_psql_cmd_available?(RemoteStoppedDBFeature, true)
+      stub_psql_cmd_available?(RemoteDBFeature, true)
       remote_db_service.start.must_equal [0, 'mongod (Pulp) is remote and is UP.']
       result = remote_stopped_db_service.start
       result[0].must_equal 1
@@ -93,12 +104,34 @@ module ForemanMaintain
     end
 
     it 'can handle remote db stop' do
+      stub_psql_cmd_available?(RemoteDBFeature, true)
+      stub_psql_cmd_available?(RemoteStoppedDBFeature, true)
       remote_db_service.stop.must_equal [0, 'mongod (Pulp) is remote and is UP.']
       result = remote_stopped_db_service.stop
       result[0].must_equal 0
       result[1].must_match 'mongod (Pulp) is remote and is DOWN'
       result[1].must_match 'Unable to connect to the remote database'
       result[1].must_match(/See the log \(.*\) for more details/)
+    end
+
+    it 'shows error if psql is unavailable for stop,enable and disable actions' do
+      stub_psql_cmd_available?(RemoteDBFeature, false)
+      stub_ping(RemoteDBFeature, false)
+      message = "The psql command not found.\nMake sure system has psql utility installed."
+      return_status = [0, message]
+      %w[stop enable disable].each do |action|
+        remote_db_service.send(action.to_sym).must_equal return_status
+      end
+    end
+
+    it 'shows error with exit code 1 if psql is unavailable for start and status action' do
+      stub_psql_cmd_available?(RemoteStoppedDBFeature, false)
+      stub_ping(RemoteStoppedDBFeature, false)
+      message = "The psql command not found.\nMake sure system has psql utility installed."
+      return_status = [1, message]
+      %w[start status].each do |action|
+        remote_stopped_db_service.send(action.to_sym).must_equal return_status
+      end
     end
 
     describe 'matches?' do
