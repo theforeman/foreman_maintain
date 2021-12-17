@@ -26,16 +26,6 @@ module ForemanMaintain
     end
 
     it 'can generate the system command' do
-      File.stubs(:exist?).with('/usr/sbin/service-wait').returns(true)
-      httpd_service.command('status').must_equal 'service-wait httpd status'
-    end
-
-    it 'can generate the system command without waiting' do
-      httpd_service.command('status', :wait => false).must_equal 'systemctl status httpd'
-    end
-
-    it 'can generate the system command when service-wait is not present' do
-      File.stubs(:exist?).with('/usr/sbin/service-wait').returns(false)
       httpd_service.command('status').must_equal 'systemctl status httpd'
     end
 
@@ -43,7 +33,7 @@ module ForemanMaintain
       status_response = [0, 'systemctl status output']
       ForemanMaintain::Utils::SystemHelpers.any_instance.expects(:execute_with_status).
         with('systemctl status httpd').returns(status_response)
-      httpd_service.send(:execute, 'status', :wait => false).must_equal status_response
+      httpd_service.send(:execute, 'status').must_equal status_response
     end
 
     it 'can tell if it is running' do
@@ -89,13 +79,13 @@ module ForemanMaintain
 
     it 'enables the service' do
       enable_response = [0, '']
-      httpd_service.stubs(:execute).with('enable', :wait => false).returns(enable_response)
+      httpd_service.stubs(:execute).with('enable').returns(enable_response)
       httpd_service.enable.must_equal enable_response
     end
 
     it 'disables the service' do
       disable_response = [0, '']
-      httpd_service.stubs(:execute).with('disable', :wait => false).returns(disable_response)
+      httpd_service.stubs(:execute).with('disable').returns(disable_response)
       httpd_service.disable.must_equal disable_response
     end
 

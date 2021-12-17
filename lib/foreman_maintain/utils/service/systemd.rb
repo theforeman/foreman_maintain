@@ -8,21 +8,16 @@ module ForemanMaintain::Utils
         @instance_parent_unit = options.fetch(:instance_parent_unit, nil)
       end
 
-      def command(action, options = {})
-        do_wait = options.fetch(:wait, true) # wait for service to start
+      def command(action)
         all = @options.fetch(:all, false)
         skip_enablement = @options.fetch(:skip_enablement, false)
         if skip_enablement && %w[enable disable].include?(action)
           return skip_enablement_message(action, @name)
         end
 
-        if do_wait && File.exist?('/usr/sbin/service-wait')
-          "service-wait #{@name} #{action}"
-        else
-          cmd = "systemctl #{action} #{@name}"
-          cmd += ' --all' if all
-          cmd
-        end
+        cmd = "systemctl #{action} #{@name}"
+        cmd += ' --all' if all
+        cmd
       end
 
       def status
@@ -38,11 +33,11 @@ module ForemanMaintain::Utils
       end
 
       def enable
-        execute('enable', :wait => false)
+        execute('enable')
       end
 
       def disable
-        execute('disable', :wait => false)
+        execute('disable')
       end
 
       def running?
@@ -66,8 +61,8 @@ module ForemanMaintain::Utils
 
       private
 
-      def execute(action, options = {})
-        @sys.execute_with_status(command(action, options))
+      def execute(action)
+        @sys.execute_with_status(command(action))
       end
 
       def service_enabled_status
