@@ -102,7 +102,9 @@ module ForemanMaintain
     end
 
     describe 'matches?' do
-      let(:pulpcore_database) { ForemanMaintain::Utils::Service::Systemd.new('pulpcore_database', 10) }
+      let(:pulpcore_database) do
+        ForemanMaintain::Utils::Service::Systemd.new('pulpcore_database', 10)
+      end
 
       it 'can compare by name' do
         remote_db_service.matches?('pulpcore_database').must_equal true

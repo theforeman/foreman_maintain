@@ -57,7 +57,7 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :backup_dir,
                   Procedures::Backup::Snapshot::MountCandlepinDB => :backup_dir,
                   Procedures::Backup::Snapshot::MountForemanDB => :backup_dir,
-                  Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir,
+                  Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir)
       context.map(:preserve_dir,
                   Checks::Backup::DirectoryReady => :preserve_dir,
                   Procedures::Backup::PrepareDirectory => :preserve_dir)

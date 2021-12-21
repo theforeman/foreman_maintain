@@ -16,10 +16,10 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def services
-      [
-        system_service('qpidd', 10),
-        system_service('qdrouterd', 10)
-      ]
+    [
+      system_service('qpidd', 10),
+      system_service('qdrouterd', 10)
+    ]
   end
 
   # rubocop:disable  Metrics/MethodLength

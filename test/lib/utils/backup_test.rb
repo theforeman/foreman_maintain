@@ -137,7 +137,6 @@ module ForemanMaintain
     it 'Validates foreman standard backup' do
       assume_feature_absent(:pulpcore_database)
       foreman_standard_backup = subject.new(foreman_standard)
-      assert !foreman_standard_backup.katello_standard_backup?
       assert !foreman_standard_backup.katello_online_backup?
       assert !foreman_standard_backup.katello_logical_backup?
       assert foreman_standard_backup.foreman_standard_backup?

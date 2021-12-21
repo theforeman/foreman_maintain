@@ -115,7 +115,7 @@ describe Features::Instance do
         {
           'status' => 'ok',
           'services' => {
-            'pulp' => { 'status' => 'FAIL', 'duration_ms' => '44' },
+            'pulp3' => { 'status' => 'FAIL', 'duration_ms' => '44' },
             'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' }
           }
         }
@@ -150,16 +150,15 @@ describe Features::Instance do
       end
 
       it 'fails when some of the components fail' do
-        assume_feature_present(:pulpcore_database) do |feature_class|
+        assume_feature_present(:pulpcore) do |feature_class|
           feature_class.any_instance.stubs(:services).returns(existing_httpd)
         end
         connection.expects(:get).with('/katello/api/ping').
           returns(mock_net_http_response('200', failing_response_body))
         subject.stubs(:server_connection).returns(connection)
-
         ping = subject.ping
         ping.success?.must_equal false
-        ping.message.must_equal 'Some components are failing: pulp'
+        ping.message.must_equal 'Some components are failing: pulp3'
       end
     end
 

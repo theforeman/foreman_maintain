@@ -10,8 +10,6 @@ module ForemanMaintain
       attr_accessor :standard_files, :katello_online_files, :katello_offline_files,
                     :foreman_online_files, :foreman_offline_files, :fpc_offline_files,
                     :fpc_online_files
-
-      # rubocop:disable Metrics/MethodLength
       def initialize(backup_dir)
         # fpc stands for foreman proxy w/ content
         @backup_dir = backup_dir
@@ -262,7 +260,7 @@ module ForemanMaintain
       end
 
       def tar_backups_exist?
-          file_map[:pulp_data][:present] ||
+        file_map[:pulp_data][:present] ||
           file_map[:pgsql_data][:present]
       end
 

@@ -43,8 +43,7 @@ module ForemanMaintain::Scenarios
       if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
         add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
-      add_steps_with_context(Procedures::Pulp::Migrate,
-                             Procedures::Pulpcore::Migrate)
+      add_steps_with_context(Procedures::Pulpcore::Migrate)
 
       add_steps_with_context(Procedures::Restore::RegenerateQueues) if backup.online_backup?
       add_steps_with_context(Procedures::Service::Start,
