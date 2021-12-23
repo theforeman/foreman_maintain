@@ -63,7 +63,7 @@ class FakePackageManager < ForemanMaintain::PackageManager::Base
     [packages].flatten(1).all? { |p| @packages.include?(p) }
   end
 
-  def find_installed_package(name)
+  def find_installed_package(name, _queryfm = '')
     @packages.find { |package| package =~ /^#{name}/ }
   end
 end

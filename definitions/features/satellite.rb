@@ -10,7 +10,7 @@ class Features::Satellite < ForemanMaintain::Feature
   end
 
   def current_version
-    @current_version ||= rpm_version(package_name) || version_from_source
+    @current_version ||= package_version(package_name) || version_from_source
   end
 
   def package_name

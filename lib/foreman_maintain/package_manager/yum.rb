@@ -38,8 +38,12 @@ module ForemanMaintain::PackageManager
       sys.execute?(%(rpm -q #{packages_list}))
     end
 
-    def find_installed_package(name)
-      status, result = sys.execute_with_status(%(rpm -q '#{name}'))
+    def find_installed_package(name, queryfm = '')
+      rpm_cmd = "rpm -q '#{name}'"
+      unless queryfm.empty?
+        rpm_cmd += " --qf '#{queryfm}'"
+      end
+      status, result = sys.execute_with_status(rpm_cmd)
       if status == 0
         result
       end
