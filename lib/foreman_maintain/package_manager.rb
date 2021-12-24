@@ -4,8 +4,14 @@ require 'foreman_maintain/package_manager/dnf'
 require 'foreman_maintain/package_manager/apt'
 
 module ForemanMaintain
+  def self.find_pkg_manager
+    %w[dnf yum apt].find do |manager|
+      system('which', "#{manager}", [:out, :err] => File::NULL)
+    end
+  end
+
   def self.package_manager
-    @package_manager ||= case (%w[dnf yum apt].find { |manager| !`which #{manager}`.empty? })
+    @package_manager ||= case self.find_pkg_manager
                          when 'dnf'
                            ForemanMaintain::PackageManager::Dnf.new
                          when 'yum'
