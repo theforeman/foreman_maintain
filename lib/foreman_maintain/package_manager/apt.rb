@@ -37,6 +37,14 @@ module ForemanMaintain::PackageManager
       apt_action('list --upgradable -a', packages, :with_status => with_status)
     end
 
+    def list_installed_packages(queryfm = '${binary:Package}-${VERSION}\n')
+      # The queryfm should only include valid tag(s) as per `dpkg-query` man page.
+      # If any special formatting is required with querytag then it should be provided with tag i.e,
+      # querytag = "--%{VERSION}"
+      # The queryfm string must end with '\n'
+      sys.execute!("dpkg-query --showformat='#{queryfm}' -W").split("\n")
+    end
+
     def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
       apt_options = []
       packages = [packages].flatten(1)
