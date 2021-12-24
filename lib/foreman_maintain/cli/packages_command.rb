@@ -4,21 +4,27 @@ module ForemanMaintain
       subcommand 'lock', 'Prevent packages from automatic update' do
         interactive_option(['assumeyes'])
         def execute
-          run_scenarios_and_exit(Scenarios::Packages::Lock.new)
+          run_scenario_or_rescue do
+            run_scenarios_and_exit(Scenarios::Packages::Lock.new)
+          end
         end
       end
 
       subcommand 'unlock', 'Enable packages for automatic update' do
         interactive_option(['assumeyes'])
         def execute
-          run_scenarios_and_exit(Scenarios::Packages::Unlock.new)
+          run_scenario_or_rescue do
+            run_scenarios_and_exit(Scenarios::Packages::Unlock.new)
+          end
         end
       end
 
       subcommand 'status', 'Check if packages are protected against update' do
         interactive_option(['assumeyes'])
         def execute
-          run_scenarios_and_exit(Scenarios::Packages::Status.new)
+          run_scenario_or_rescue do
+            run_scenarios_and_exit(Scenarios::Packages::Status.new)
+          end
         end
       end
 
@@ -60,11 +66,20 @@ module ForemanMaintain
       subcommand 'is-locked', 'Check if update of packages is allowed' do
         interactive_option(['assumeyes'])
         def execute
-          locked = ForemanMaintain.package_manager.versions_locked?
-          puts "Packages are#{locked ? '' : ' not'} locked"
-          exit_code = locked ? 0 : 1
-          exit exit_code
+          run_scenario_or_rescue do
+            locked = ForemanMaintain.package_manager.versions_locked?
+            puts "Packages are#{locked ? '' : ' not'} locked"
+            exit_code = locked ? 0 : 1
+            exit exit_code
+          end
         end
+      end
+
+      def run_scenario_or_rescue
+        yield
+      rescue NotImplementedError
+        puts 'Command is not implemented for Debian based operating systems!'
+        exit 0
       end
     end
   end
