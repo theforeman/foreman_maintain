@@ -33,6 +33,10 @@ module ForemanMaintain::PackageManager
       end
     end
 
+    def check_update(packages: nil, with_status: false)
+      apt_action('list --upgradable -a', packages, :with_status => with_status)
+    end
+
     def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
       apt_options = []
       packages = [packages].flatten(1)
