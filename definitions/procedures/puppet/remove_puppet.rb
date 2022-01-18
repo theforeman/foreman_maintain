@@ -10,14 +10,20 @@ module Procedures::Puppet
     end
 
     def run
-      services = feature(:foreman_server).services + feature(:dynflow_sidekiq).services
-      Procedures::Service::Stop.new(:only => services)
+      stop_applicable_services
       execute!('foreman-rake db:migrate VERSION=0 SCOPE=foreman_puppet') if server_with_puppet?
       feature(:installer).run(installer_arguments_disabling_puppet.join(' '), :interactive => false)
       packages_action(:remove, packages_to_remove, :assumeyes => true)
     end
 
     private
+
+    def stop_applicable_services
+      services = []
+      services = feature(:foreman_server).services if feature(:foreman_server)
+      services << feature(:dynflow_sidekiq).services if feature(:dynflow_sidekiq)
+      Procedures::Service::Stop.new(:only => services) unless services.empty?
+    end
 
     def server_with_puppet?
       find_package(foreman_plugin_name('foreman_puppet'))
