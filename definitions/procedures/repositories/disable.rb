@@ -1,7 +1,7 @@
 module Procedures::Repositories
   class Disable < ForemanMaintain::Procedure
     metadata do
-      param :repos, 'List of repositories to disable'
+      param :repos, 'Array of repositories to disable'
       description 'Disable repositories'
     end
     def run
