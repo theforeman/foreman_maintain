@@ -1,7 +1,7 @@
 module Procedures::Repositories
   class Enable < ForemanMaintain::Procedure
     metadata do
-      param :repos, 'List of repositories to enable'
+      param :repos, 'Array of repositories to enable'
       description 'Enable repositories'
     end
     def run
