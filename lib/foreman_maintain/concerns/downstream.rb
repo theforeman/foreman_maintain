@@ -30,7 +30,7 @@ module ForemanMaintain
           execute!(%(subscription-manager register #{org_options}\
                       --activationkey #{shellescape(activation_key)} --force))
         else
-          repository_manager.rhsm_disable_repos('*')
+          repository_manager.rhsm_disable_repos(['*'])
           repository_manager.rhsm_enable_repos(rh_repos(version))
         end
       end
