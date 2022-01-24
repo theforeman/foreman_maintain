@@ -11,7 +11,9 @@ module Procedures::Puppet
 
     def run
       stop_applicable_services
-      execute!('foreman-rake db:migrate VERSION=0 SCOPE=foreman_puppet') if server_with_puppet?
+      if server_with_puppet? && feature(:foreman_server)
+        execute!('foreman-rake db:migrate VERSION=0 SCOPE=foreman_puppet')
+      end
       feature(:installer).run(installer_arguments_disabling_puppet.join(' '), :interactive => false)
       packages_action(:remove, packages_to_remove, :assumeyes => true)
     end
