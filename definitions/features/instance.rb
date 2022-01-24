@@ -70,6 +70,10 @@ class Features::Instance < ForemanMaintain::Feature
     feature(:pulp2) || feature(:pulpcore)
   end
 
+  def firewall
+    feature(:nftables) || feature(:iptables)
+  end
+
   private
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize

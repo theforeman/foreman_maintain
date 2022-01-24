@@ -38,12 +38,12 @@ class Features::Iptables < ForemanMaintain::Feature
     remove_chain(custom_chain_name)
   end
 
-  def maintenance_mode_chain_exist?
+  def maintenance_mode_status?
     chain_exist?(custom_chain_name)
   end
 
   def status_for_maintenance_mode
-    if maintenance_mode_chain_exist?
+    if maintenance_mode_status?
       ['Iptables chain: present', []]
     else
       ['Iptables chain: absent', []]

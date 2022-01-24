@@ -25,8 +25,8 @@ module Checks::MaintenanceMode
     def verify_with_features
       procedure_arr = []
       feature_status_msgs = []
-      is_mode_on = feature(:iptables).maintenance_mode_chain_exist?
-      [:iptables, :sync_plans, :cron].each do |feature_name|
+      is_mode_on = feature(:instance).firewall.maintenance_mode_status?
+      [feature(:instance).firewall.label, :sync_plans, :cron].each do |feature_name|
         msg, procedures_to_run = send("check_for_#{feature_name}", is_mode_on)
         feature_status_msgs << msg
         procedure_arr.concat(procedures_to_run)
@@ -53,6 +53,10 @@ module Checks::MaintenanceMode
 
     def check_for_iptables(_is_mode_on)
       feature(:iptables).status_for_maintenance_mode
+    end
+
+    def check_for_nftables(_is_mode_on)
+      feature(:nftables).status_for_maintenance_mode
     end
 
     def check_for_sync_plans(is_mode_on)
