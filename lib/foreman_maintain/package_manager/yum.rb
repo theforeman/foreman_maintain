@@ -38,10 +38,10 @@ module ForemanMaintain::PackageManager
       sys.execute?(%(rpm -q #{packages_list}))
     end
 
-    def find_installed_package(name, queryfm = '')
+    def find_installed_package(name, queryformat = '')
       rpm_cmd = "rpm -q '#{name}'"
-      unless queryfm.empty?
-        rpm_cmd += " --qf '#{queryfm}'"
+      unless queryformat.empty?
+        rpm_cmd += " --qf '#{queryformat}'"
       end
       status, result = sys.execute_with_status(rpm_cmd)
       if status == 0
@@ -80,12 +80,12 @@ module ForemanMaintain::PackageManager
       sys.execute(find_cmd).split("\n")
     end
 
-    def list_installed_packages(queryfm = '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n')
-      # The queryfm should only include valid tag(s) as per `rpm --querytag` list.
+    def list_installed_packages(queryformat = '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n')
+      # The queryformat should only include valid tag(s) as per `rpm --querytag` list.
       # If any special formatting is required with querytag then it should be provided with tag i.e,
       # querytag = "--%{VENDOR}"
-      # The queryfm string must end with '\n'
-      sys.execute!("rpm -qa --qf '#{queryfm}'").split("\n")
+      # The queryformat string must end with '\n'
+      sys.execute!("rpm -qa --qf '#{queryformat}'").split("\n")
     end
 
     private
