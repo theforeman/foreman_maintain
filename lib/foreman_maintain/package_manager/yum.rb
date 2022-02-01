@@ -81,9 +81,9 @@ module ForemanMaintain::PackageManager
     end
 
     def list_installed_packages(queryformat = '%{NAME}-%{VERSION}-%{RELEASE}.%{ARCH}\n')
-      # The queryformat should only include valid tag(s) as per `rpm --querytag` list.
+      # The queryformat should only include valid tag(s) as per `rpm --querytags` list.
       # If any special formatting is required with querytag then it should be provided with tag i.e,
-      # querytag = "--%{VENDOR}"
+      # "--%{VENDOR}"
       # The queryformat string must end with '\n'
       sys.execute!("rpm -qa --qf '#{queryformat}'").split("\n")
     end
