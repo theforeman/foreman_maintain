@@ -1,4 +1,5 @@
 class Features::Nftables < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::Firewall::NftablesMaintenanceMode
   metadata do
     label :nftables
     confine do
@@ -30,18 +31,6 @@ class Features::Nftables < ForemanMaintain::Feature
     chain = options.fetch(:chain, chain_name)
     rule = options.fetch(:rule) # needs validation
     execute!("nft add rule #{family} #{table} #{chain} #{rule}")
-  end
-
-  def maintenance_mode_status?
-    table_exist?
-  end
-
-  def status_for_maintenance_mode
-    if table_exist?
-      ['Nftables table: present', []]
-    else
-      ['Nftables table: absent', []]
-    end
   end
 
   def table_exist?(name = table_name)

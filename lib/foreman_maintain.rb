@@ -24,6 +24,8 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/downstream'
   require 'foreman_maintain/concerns/primary_checks'
   require 'foreman_maintain/concerns/pulp_common'
+  require 'foreman_maintain/concerns/firewall/iptables_maintenance_mode'
+  require 'foreman_maintain/concerns/firewall/nftables_maintenance_mode'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'
