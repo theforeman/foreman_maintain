@@ -12,7 +12,7 @@ class Features::Katello < ForemanMaintain::Feature
   end
 
   def current_version
-    @current_version ||= rpm_version('katello')
+    @current_version ||= package_version('katello')
   end
 
   def services

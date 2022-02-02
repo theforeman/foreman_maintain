@@ -115,7 +115,8 @@ module ForemanMaintain
 
       def package_version(name)
         # space for extension to support non-rpm distributions
-        rpm_version(name)
+        pkg = package_manager.find_installed_package(name, '%{VERSION}')
+        version(pkg) unless pkg.nil?
       end
 
       def parse_csv(data)
@@ -130,13 +131,6 @@ module ForemanMaintain
         JSON.parse(json_string)
       rescue StandardError
         nil
-      end
-
-      def rpm_version(name)
-        rpm_version = execute(%(rpm -q '#{name}' --queryformat="%{VERSION}"))
-        if $CHILD_STATUS.success?
-          version(rpm_version)
-        end
       end
 
       def shellescape(string)

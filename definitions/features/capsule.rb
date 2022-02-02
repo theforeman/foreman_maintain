@@ -12,7 +12,7 @@ class Features::Capsule < ForemanMaintain::Feature
   end
 
   def current_version
-    @current_version ||= rpm_version(package_name)
+    @current_version ||= package_version(package_name)
   end
 
   def package_name
