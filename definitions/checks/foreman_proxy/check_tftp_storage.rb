@@ -6,12 +6,12 @@ module Checks::ForemanProxy
       tags :default
       confine do
         feature(:satellite) && feature(:foreman_proxy) &&
-          feature(:foreman_proxy).features.include?('tftp') && non_zero_token_duration?
+          feature(:foreman_proxy).features.include?('tftp')
       end
     end
 
     def run
-      if Dir.exist?(tftp_boot_directory)
+      if non_zero_token_duration? && Dir.exist?(tftp_boot_directory)
         files = old_files_from_tftp_boot
         assert(files.empty?,
                'There are old initrd and vmlinuz files present in tftp',
@@ -29,7 +29,7 @@ module Checks::ForemanProxy
       end.compact
     end
 
-    def self.non_zero_token_duration?
+    def non_zero_token_duration?
       lookup_token_duration != 0
     end
 
@@ -38,10 +38,10 @@ module Checks::ForemanProxy
     end
 
     def token_duration
-      @token_duration ||= self.class.lookup_token_duration
+      @token_duration ||= lookup_token_duration
     end
 
-    def self.lookup_token_duration
+    def lookup_token_duration
       data = feature(:foreman_database). \
              query("select s.value, s.default from settings s \
                     where category IN ('Setting::Provisioning','Setting') \
