@@ -46,9 +46,11 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
   def installed_packages
     packages = []
     repoquery_cmd = execute!('which repoquery')
-    IO.popen([repoquery_cmd, '-a', '--installed', '--qf', '%{ui_from_repo} %{nvra}']) do |io|
+    query_format = '%{ui_from_repo} %{name}-%{evr}.%{arch}'
+    IO.popen([repoquery_cmd, '-a', '--installed', '--qf', query_format]) do |io|
       io.each do |line|
         repo, pkg = line.chomp.split
+        next if repo.nil? || pkg.nil?
         packages << pkg if /satellite|rhscl/ =~ repo[1..-1].downcase
       end
     end
