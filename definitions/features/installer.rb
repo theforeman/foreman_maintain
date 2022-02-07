@@ -100,7 +100,13 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def installer_arguments
-    installer_args = ' --disable-system-checks'
+    installer_args = ''
+
+    if feature(:foreman_proxy) &&
+       feature(:foreman_proxy).with_content?
+      installer_args += ' --disable-system-checks'
+    end
+
     unless check_min_version('foreman', '2.1') || check_min_version('foreman-proxy', '2.1')
       installer_args += ' --upgrade' if can_upgrade?
     end
