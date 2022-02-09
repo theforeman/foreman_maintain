@@ -5,7 +5,9 @@ module Procedures::Puppet
     end
 
     def run
-      execute!('foreman-rake purge:puppet')
+      if feature(:foreman_server)
+        execute!('foreman-rake purge:puppet')
+      end
       execute!('rm -r ' + files_to_purge.join(' '))
     end
 
