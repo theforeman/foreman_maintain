@@ -45,7 +45,6 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
 
   def installed_packages
     packages = []
-    query_format = '%{ui_from_repo} %{name}-%{evr}.%{arch}'
     IO.popen(['repoquery', '-a', '--installed', '--qf', query_format]) do |io|
       io.each do |line|
         repo, pkg = line.chomp.split
@@ -54,6 +53,14 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
       end
     end
     packages
+  end
+
+  def query_format
+    if el7?
+      return '%{ui_from_repo} %{name}-%{evr}.%{arch}'
+    end
+
+    '%{from_repo} %{name}-%{evr}.%{arch}'
   end
 
   def find_hotfix_packages
