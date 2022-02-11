@@ -142,11 +142,15 @@ class Features::Instance < ForemanMaintain::Feature
   def component_features_map
     {
       'candlepin_auth' => %w[candlepin candlepin_database],
+      'candlepin_events' => %w[candlepin candlepin_database],
       'candlepin' => %w[candlepin candlepin_database],
       'pulp_auth' => %w[pulp2 mongo],
       'pulp' => %w[pulp2 mongo],
       'pulp3' => %w[pulpcore pulpcore_database],
-      'foreman_tasks' => %w[foreman_tasks]
+      'pulp3_content' => %w[pulpcore pulpcore_database],
+      'foreman_tasks' => %w[foreman_tasks],
+      'katello_agent' => %w[katello],
+      'katello_events' => %w[katello]
     }
   end
 
@@ -154,7 +158,7 @@ class Features::Instance < ForemanMaintain::Feature
     components = Array(components)
     cf_map = component_features_map
     # map ping components to features
-    features = components.map { |component| cf_map[component] }.flatten.uniq
+    features = components.map { |component| cf_map[component] }.flatten.uniq.compact
     # map features to existing services
     services_of_features = features.map do |name|
       feature(name.to_sym) ? feature(name.to_sym).services : []
