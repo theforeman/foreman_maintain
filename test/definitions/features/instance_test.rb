@@ -242,4 +242,35 @@ describe Features::Instance do
       end
     end
   end
+
+  describe '.component_services' do
+    let(:existing_pulpcore_api) { existing_system_service('pulpcore-api', 10) }
+    let(:existing_postgresql) { existing_system_service('postgresql', 10) }
+    let(:existing_qpidd) { existing_system_service('qpidd', 10) }
+    let(:existing_qdrouterd) { existing_system_service('qdrouterd', 10) }
+
+    it 'succeed with unknown service' do
+      subject.send(:component_services, ['unknown']).must_equal []
+    end
+
+    it 'succeed with pulp3' do
+      assume_feature_present(:pulpcore) do |feature_class|
+        feature_class.any_instance.stubs(:services).returns(existing_pulpcore_api)
+      end
+      assume_feature_present(:pulpcore_database) do |feature_class|
+        feature_class.any_instance.stubs(:services).returns(existing_postgresql)
+      end
+
+      subject.send(:component_services, ['pulp3']).
+        must_equal [existing_pulpcore_api, existing_postgresql]
+    end
+    it 'succeed with katello_agent' do
+      assume_feature_present(:katello) do |feature_class|
+        feature_class.any_instance.stubs(:services).returns([existing_qpidd, existing_qdrouterd])
+      end
+
+      subject.send(:component_services, ['katello_agent']).
+        must_equal [existing_qpidd, existing_qdrouterd]
+    end
+  end
 end
