@@ -41,6 +41,7 @@ module Scenarios::Satellite_7_0
 
     def compose
       add_steps(find_procedures(:pre_migrations))
+      add_step(Procedures::Pulp::Remove.new(:assumeyes => true))
       add_step(Procedures::Service::Stop.new)
     end
   end
