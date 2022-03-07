@@ -67,8 +67,8 @@ module ForemanMaintain::Scenarios
   class SelfUpgrade < SelfUpgradeBase
     metadata do
       label :self_upgrade_foreman_maintain
-      description "Enables the specified version's maintenance repository and, "\
-  								'updates the foreman-maintain packages'
+      description "Enables the specified version's maintenance repository and,"\
+  								"\nupdates the satellite-maintain packages"
       manual_detection
     end
 
@@ -87,8 +87,8 @@ module ForemanMaintain::Scenarios
   class SelfUpgradeRescue < SelfUpgradeBase
     metadata do
       label :rescue_self_upgrade
-      description 'Disables all version specific maintenance repos and,'\
-  		' enables the repositories which were configured prior to self upgrade'
+      description 'Disables all version specific maintenance repositories and,'\
+  		 "\nenables the repositories which were configured prior to self upgrade"
       manual_detection
       run_strategy :fail_slow
     end
