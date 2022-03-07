@@ -62,6 +62,14 @@ module ForemanMaintain::Scenarios
       repos_ids_to_reenable = stored_enabled_repos_ids - all_maintenance_repos
       repos_ids_to_reenable << maintenance_repo(maintenance_repo_version)
     end
+
+    def use_rhsm?
+      if (repo = ENV['maintenance_repo'])
+        return false unless repo.empty?
+      end
+
+      true
+    end
   end
 
   class SelfUpgrade < SelfUpgradeBase
@@ -77,7 +85,8 @@ module ForemanMaintain::Scenarios
         pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
         add_step(Procedures::Repositories::BackupEnabledRepos.new)
         disable_repos
-        add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo_id(target_version)]))
+        add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo_id(target_version)],
+                                                      use_rhsm: use_rhsm?))
         add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
         enable_repos(repos_ids_to_reenable)
       end
