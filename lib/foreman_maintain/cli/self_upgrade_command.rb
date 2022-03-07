@@ -29,7 +29,8 @@ module ForemanMaintain
         end
         if current_downstream_version >= next_version
           message = "The target-version #{target_version} should be "\
-                    "greater than existing version #{current_downstream_version}!"
+                    "greater than existing version #{current_downstream_version},"\
+                    "\nand self-upgrade should be used for major version upgrades only!"
           raise Error::UsageError, message
         end
       end
