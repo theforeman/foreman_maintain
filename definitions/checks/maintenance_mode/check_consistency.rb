@@ -22,11 +22,15 @@ module Checks::MaintenanceMode
 
     private
 
+    def firewall
+      @firewall ||= feature(:instance).firewall
+    end
+
     def verify_with_features
       procedure_arr = []
       feature_status_msgs = []
-      is_mode_on = feature(:instance).firewall.maintenance_mode_status?
-      [feature(:instance).firewall.label, :sync_plans, :cron].each do |feature_name|
+      is_mode_on = firewall.maintenance_mode_status?
+      [firewall.label, :sync_plans, :cron].each do |feature_name|
         msg, procedures_to_run = send("check_for_#{feature_name}", is_mode_on)
         feature_status_msgs << msg
         procedure_arr.concat(procedures_to_run)
