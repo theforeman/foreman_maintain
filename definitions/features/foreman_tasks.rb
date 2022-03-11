@@ -82,17 +82,21 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   def delete(state)
     tasks_condition = condition(state)
 
-    feature(:foreman_database).psql(<<-SQL)
-     BEGIN;
-       DELETE FROM dynflow_steps USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_steps.execution_plan_uuid::varchar) AND #{tasks_condition};
-       DELETE FROM dynflow_actions USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_actions.execution_plan_uuid::varchar) AND #{tasks_condition};
-       DELETE FROM dynflow_execution_plans USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_execution_plans.uuid::varchar) AND #{tasks_condition};
-       DELETE FROM foreman_tasks_tasks WHERE #{tasks_condition};
-       -- Delete locks and links which may now be orphaned
-       DELETE FROM foreman_tasks_locks as ftl where ftl.id NOT IN (SELECT id FROM foreman_tasks_tasks);
-       DELETE FROM foreman_tasks_links as ftl where ftl.id NOT IN (SELECT id FROM foreman_tasks_tasks);
-     COMMIT;
+    sql = <<-SQL
+      DELETE FROM dynflow_steps USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_steps.execution_plan_uuid::varchar) AND #{tasks_condition};
+      DELETE FROM dynflow_actions USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_actions.execution_plan_uuid::varchar) AND #{tasks_condition};
+      DELETE FROM dynflow_execution_plans USING foreman_tasks_tasks WHERE (foreman_tasks_tasks.external_id = dynflow_execution_plans.uuid::varchar) AND #{tasks_condition};
+      DELETE FROM foreman_tasks_tasks WHERE #{tasks_condition};
+      -- Delete locks and links which may now be orphaned
+      DELETE FROM foreman_tasks_locks as ftl where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);
     SQL
+
+    if check_min_version(foreman_plugin_name('foreman-tasks'), '4.0.0')
+      sql += 'DELETE FROM foreman_tasks_links as ftl ' \
+             'where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);'
+    end
+
+    feature(:foreman_database).psql("BEGIN; #{sql}; COMMIT;")
 
     count(state)
   end
