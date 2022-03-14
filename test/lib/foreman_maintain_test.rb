@@ -9,18 +9,18 @@ describe ForemanMaintain do
 
     it 'instantiates correct yum manager implementation' do
       subject.stubs(:`).with('command -v yum').returns('/bin/yum')
-      subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Yum
+      _(subject.package_manager).must_be_instance_of ForemanMaintain::PackageManager::Yum
     end
 
     it 'instantiates correct dnf manager implementation' do
       subject.stubs(:`).with('command -v yum').returns('/bin/yum')
       subject.stubs(:`).with('command -v dnf').returns('/bin/dnf')
-      subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Dnf
+      _(subject.package_manager).must_be_instance_of ForemanMaintain::PackageManager::Dnf
     end
 
     it 'fail on unknown manager type' do
-      err = proc { subject.package_manager }.must_raise Exception
-      err.message.must_equal 'No supported package manager was found'
+      err = _ { subject.package_manager }.must_raise Exception
+      _(err.message).must_equal 'No supported package manager was found'
     end
   end
 end

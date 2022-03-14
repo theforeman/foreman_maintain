@@ -30,7 +30,7 @@ module ForemanMaintain
           lock_conf.rewind
           subject.lock_versions
           lock_conf.rewind
-          subject.versions_locked?.must_equal true
+          _(subject.versions_locked?).must_equal true
         end
       end
 
@@ -40,7 +40,7 @@ module ForemanMaintain
           lock_conf.rewind
           subject.lock_versions
           lock_conf.rewind
-          subject.versions_locked?.must_equal true
+          _(subject.versions_locked?).must_equal true
         end
       end
     end
@@ -52,7 +52,7 @@ module ForemanMaintain
           lock_conf.rewind
           subject.unlock_versions
           lock_conf.rewind
-          subject.versions_locked?.must_equal false
+          _(subject.versions_locked?).must_equal false
         end
       end
 
@@ -62,7 +62,7 @@ module ForemanMaintain
           lock_conf.rewind
           subject.unlock_versions
           lock_conf.rewind
-          subject.versions_locked?.must_equal false
+          _(subject.versions_locked?).must_equal false
         end
       end
     end
@@ -71,7 +71,7 @@ module ForemanMaintain
       it 'checks if packages were locked by lock_versions' do
         with_lock_config(:protector_enabled => true) do |lock_conf|
           subject.stubs(:protector_config_file).returns(lock_conf.path)
-          subject.versions_locked?.must_equal true
+          _(subject.versions_locked?).must_equal true
         end
       end
 
@@ -79,7 +79,7 @@ module ForemanMaintain
         with_lock_config(:protector_enabled => false) do |lock_conf|
           subject.stubs(:protector_config_file).returns(lock_conf.path)
           lock_conf.rewind
-          subject.versions_locked?.must_equal false
+          _(subject.versions_locked?).must_equal false
         end
       end
     end
@@ -145,19 +145,19 @@ module ForemanMaintain
       it 'returns true if all packages listed are installed' do
         expect_sys_execute("rpm -q 'package1' 'package2'",
                            :via => :execute?, :execute_options => nil, :response => true)
-        subject.installed?(%w[package1 package2]).must_equal true
+        _(subject.installed?(%w[package1 package2])).must_equal true
       end
 
       it 'returns false if any of the packages is not installed' do
         expect_sys_execute("rpm -q 'missing' 'package'",
                            :via => :execute?, :execute_options => nil, :response => false)
-        subject.installed?(%w[missing package]).must_equal false
+        _(subject.installed?(%w[missing package])).must_equal false
       end
 
       it 'handles single package too' do
         expect_sys_execute("rpm -q 'package'", :via => :execute?, :execute_options => nil,
                                                :response => true)
-        subject.installed?('package').must_equal true
+        _(subject.installed?('package')).must_equal true
       end
     end
 
@@ -167,7 +167,7 @@ module ForemanMaintain
                            :via => :execute_with_status,
                            :execute_options => nil,
                            :response => [0, 'package-3.4.3-161.el7.noarch'])
-        subject.find_installed_package('package').must_equal 'package-3.4.3-161.el7.noarch'
+        _(subject.find_installed_package('package')).must_equal 'package-3.4.3-161.el7.noarch'
       end
 
       it 'invokes rpm to lookup the package and returns nil if not found' do

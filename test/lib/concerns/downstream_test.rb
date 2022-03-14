@@ -26,7 +26,7 @@ module ForemanMaintain
 
     describe '.current_minor_version' do
       it 'returns correct minor version' do
-        assert system.current_minor_version == '6.10'
+        assert_equal system.current_minor_version, '6.10'
       end
     end
 

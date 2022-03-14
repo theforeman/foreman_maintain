@@ -24,7 +24,7 @@ module ForemanMaintain
     it 'Empty hash for key which is not present' do
       details = ForemanMaintain.storage(:test_upgrade)
       assert_equal(:test_upgrade, details.sub_key, 'expected sub_key should be match')
-      assert_equal({}, details.data, 'expected empty hash')
+      assert_empty(details.data, 'expected empty hash')
     end
 
     it 'saves data to file using save method' do
@@ -43,8 +43,8 @@ module ForemanMaintain
                                         :post_upgrade => { :key => 'test data' })
       yml_storage_obj = YamlStorage.load(:post_upgrade)
       assert_equal storage_sample.class, yml_storage_obj.class
-      storage_sample.sub_key.must_equal yml_storage_obj.sub_key
-      storage_sample.data.must_equal yml_storage_obj.data
+      _(storage_sample.sub_key).must_equal yml_storage_obj.sub_key
+      _(storage_sample.data).must_equal yml_storage_obj.data
     end
   end
 end

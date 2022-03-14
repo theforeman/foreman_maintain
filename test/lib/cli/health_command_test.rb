@@ -67,21 +67,21 @@ module ForemanMaintain
 
       it 'runs the checks by label' do
         Cli::HealthCommand.any_instance.expects(:run_scenario).with do |scenario|
-          scenario.filter_label.must_equal :present_service_is_running
+          _(scenario.filter_label).must_equal :present_service_is_running
         end
         run_cmd(['--label=present-service-is-running'])
       end
 
       it 'runs the default checks' do
         Cli::HealthCommand.any_instance.expects(:run_scenario).with do |scenario|
-          scenario.filter_tags.must_equal [:default]
+          _(scenario.filter_tags).must_equal [:default]
         end
         run_cmd
       end
 
       it 'runs the checks by tags' do
         Cli::HealthCommand.any_instance.expects(:run_scenario).with do |scenario|
-          scenario.filter_tags.must_equal [:pre_upgrade_check]
+          _(scenario.filter_tags).must_equal [:pre_upgrade_check]
         end
         run_cmd(['--tags=pre-upgrade-check'])
       end

@@ -9,8 +9,8 @@ module ForemanMaintain
       command = Utils::CommandRunner.new(logger, 'echo "Password is secret"',
                                          :hidden_patterns => [nil, 'secret'])
       command.run
-      log.string.must_match "output of the command:\n Password is [FILTERED]\n"
-      log.string.must_match 'Running command echo "Password is [FILTERED]" with stdin nil'
+      _(log.string).must_match "output of the command:\n Password is [FILTERED]\n"
+      _(log.string).must_match 'Running command echo "Password is [FILTERED]" with stdin nil'
     end
   end
 end

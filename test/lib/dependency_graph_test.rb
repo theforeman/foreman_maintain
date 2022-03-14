@@ -12,7 +12,7 @@ module ForemanMaintain
 
     it 'preserves the order the steps were added' do
       ordered_steps = DependencyGraph.sort(steps)
-      ordered_steps.map(&:label).must_equal(
+      _(ordered_steps.map(&:label)).must_equal(
         [:external_service_is_accessible, :present_service_restart, :present_service_start]
       )
     end
@@ -20,7 +20,7 @@ module ForemanMaintain
     it 'should satisfy order requirements' do
       step_2.class.stubs(:before => [step_1.label])
       ordered_steps = DependencyGraph.sort(steps)
-      ordered_steps.map(&:label).must_equal(
+      _(ordered_steps.map(&:label)).must_equal(
         [:present_service_restart, :external_service_is_accessible, :present_service_start]
       )
     end
