@@ -17,6 +17,7 @@ module Procedures::Pulp
 
     def pulp_data_dirs
       [
+        '/etc/pki/pulp/content',
         '/var/lib/pulp/published',
         '/var/lib/pulp/content',
         '/var/lib/pulp/importers',
