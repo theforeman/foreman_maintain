@@ -54,6 +54,16 @@ module ForemanMaintain
           )
         end
       end
+
+      subcommand 'fix-pulpcore-artifact-ownership',
+                 'Update filesystem ownership for Pulpcore artifacts' do
+        interactive_option(%w[assumeyes plaintext])
+        def execute
+          run_scenarios_and_exit(
+            Scenarios::Content::FixPulpcoreArtifactOwnership.new(:assumeyes => assumeyes?)
+          )
+        end
+      end
     end
   end
 end
