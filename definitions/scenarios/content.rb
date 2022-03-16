@@ -129,10 +129,29 @@ module ForemanMaintain::Scenarios
 
       def set_context_mapping
         context.map(:assumeyes, Procedures::Pulp::Remove => :assumeyes)
+        context.map(:assumeyes, Procedures::Content::FixPulpcoreArtifactOwnership => :assumeyes)
       end
 
       def compose
         add_step_with_context(Procedures::Pulp::Remove)
+        add_step_with_context(Procedures::Content::FixPulpcoreArtifactOwnership)
+      end
+    end
+
+    class FixPulpcoreArtifactOwnership < ContentBase
+      metadata do
+        label :content_fix_pulpcore_artifact_ownership
+        description 'Fix Pulpcore artifact ownership to be pulp:pulp'
+        param :assumeyes, 'Do not ask for confirmation'
+        manual_detection
+      end
+
+      def set_context_mapping
+        context.map(:assumeyes, Procedures::Content::FixPulpcoreArtifactOwnership => :assumeyes)
+      end
+
+      def compose
+        add_step_with_context(Procedures::Content::FixPulpcoreArtifactOwnership)
       end
     end
   end
