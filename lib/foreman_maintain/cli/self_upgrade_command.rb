@@ -3,7 +3,7 @@ module ForemanMaintain
     class SelfUpgradeCommand < Base
       option ['--target-version'], 'TARGET_VERSION',\
              'Major version of the Satellite or Capsule'\
-           	', e.g 7.0', :required => true
+             ', e.g 6.11', :required => true
       def execute
         allow_major_version_upgrade_only
         run_scenario(upgrade_scenario, upgrade_rescue_scenario)
