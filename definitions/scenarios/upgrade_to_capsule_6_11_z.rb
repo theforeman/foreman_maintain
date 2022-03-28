@@ -1,25 +1,25 @@
-module Scenarios::Satellite_7_0_z
+module Scenarios::Capsule_6_11_z
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:satellite) &&
-            (feature(:satellite).current_minor_version == '7.0' || \
-            ForemanMaintain.upgrade_in_progress == '7.0.z')
+          feature(:capsule) &&
+            (feature(:capsule).current_minor_version == '6.11' || \
+              ForemanMaintain.upgrade_in_progress == '6.11.z')
         end
         instance_eval(&block)
       end
     end
 
     def target_version
-      '7.0.z'
+      '6.11.z'
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Satellite 7.0.z'
+      description 'Checks before upgrading to Capsule 6.11.z'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -27,13 +27,13 @@ module Scenarios::Satellite_7_0_z
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
-      add_step(Checks::Repositories::Validate.new(:version => '7.0'))
+      add_step(Checks::Repositories::Validate.new(:version => '6.11'))
     end
   end
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before migrating to Satellite 7.0.z'
+      description 'Procedures before migrating to Capsule 6.11.z'
       tags :pre_migrations
     end
 
@@ -45,7 +45,7 @@ module Scenarios::Satellite_7_0_z
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Migration scripts to Satellite 7.0.z'
+      description 'Migration scripts to Capsule 6.11.z'
       tags :migrations
     end
 
@@ -54,17 +54,16 @@ module Scenarios::Satellite_7_0_z
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => '7.0'))
+      add_step(Procedures::Repositories::Setup.new(:version => '6.11'))
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)
-      add_step(Procedures::Installer::UpgradeRakeTask)
     end
   end
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures after migrating to Satellite 7.0.z'
+      description 'Procedures after migrating to Capsule 6.11.z'
       tags :post_migrations
     end
 
@@ -77,7 +76,7 @@ module Scenarios::Satellite_7_0_z
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Satellite 7.0.z'
+      description 'Checks after upgrading to Capsule 6.11.z'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end
