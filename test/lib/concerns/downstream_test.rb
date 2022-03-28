@@ -37,10 +37,10 @@ module ForemanMaintain
                      system.send(:ansible_repo, system.version('6.9'))
       end
 
-      it 'returns correct ansible 2.9 repo for 7.0 on el8' do
+      it 'returns correct ansible 2.9 repo for 6.11 on el8' do
         system.stubs(:el_major_version).returns(8)
         assert_equal 'ansible-2.9-for-rhel-8-x86_64-rpms',
-                     system.send(:ansible_repo, system.version('7.0'))
+                     system.send(:ansible_repo, system.version('6.11'))
       end
     end
 
@@ -53,12 +53,12 @@ module ForemanMaintain
                      system.send(:product_specific_repos, '6.10')
       end
 
-      it 'returns correct repos for sat 7.0 on el8' do
+      it 'returns correct repos for sat 6.11 on el8' do
         system.stubs(:el_major_version).returns(8)
-        expected_repos = ['satellite-7.0-for-rhel-8-x86_64-rpms',
-                          'satellite-maintenance-7.0-for-rhel-8-x86_64-rpms']
+        expected_repos = ['satellite-6.11-for-rhel-8-x86_64-rpms',
+                          'satellite-maintenance-6.11-for-rhel-8-x86_64-rpms']
         assert_equal expected_repos,
-                     system.send(:product_specific_repos, '7.0')
+                     system.send(:product_specific_repos, '6.11')
       end
 
       it 'returns correct beta repos for sat 6.10 on el7' do
@@ -70,13 +70,13 @@ module ForemanMaintain
                      system.send(:product_specific_repos, '6.10')
       end
 
-      it 'returns correct beta repos for sat 7.0 on el8' do
+      it 'returns correct beta repos for sat 6.11 on el8' do
         system.stubs(:use_beta_repos?).returns(true)
         system.stubs(:el_major_version).returns(8)
-        expected_repos = ['satellite-7-beta-for-rhel-8-x86_64-rpms',
-                          'satellite-maintenance-7-beta-for-rhel-8-x86_64-rpms']
+        expected_repos = ['satellite-6-beta-for-rhel-8-x86_64-rpms',
+                          'satellite-maintenance-6-beta-for-rhel-8-x86_64-rpms']
         assert_equal expected_repos,
-                     system.send(:product_specific_repos, '7.0')
+                     system.send(:product_specific_repos, '6.11')
       end
 
       it 'returns correct repos for capsule 6.10 on el7' do
@@ -87,12 +87,12 @@ module ForemanMaintain
                      capsule.send(:product_specific_repos, '6.10')
       end
 
-      it 'returns correct repos for capsule 7.0 on el8' do
+      it 'returns correct repos for capsule 6.11 on el8' do
         capsule.stubs(:el_major_version).returns(8)
-        expected_repos = ['satellite-capsule-7.0-for-rhel-8-x86_64-rpms',
-                          'satellite-maintenance-7.0-for-rhel-8-x86_64-rpms']
+        expected_repos = ['satellite-capsule-6.11-for-rhel-8-x86_64-rpms',
+                          'satellite-maintenance-6.11-for-rhel-8-x86_64-rpms']
         assert_equal expected_repos,
-                     capsule.send(:product_specific_repos, '7.0')
+                     capsule.send(:product_specific_repos, '6.11')
       end
 
       it 'returns correct beta repos for capsule 6.10 on el7' do
@@ -104,13 +104,13 @@ module ForemanMaintain
                      capsule.send(:product_specific_repos, '6.10')
       end
 
-      it 'returns correct beta repos for capsule 7.0 on el8' do
+      it 'returns correct beta repos for capsule 6.11 on el8' do
         capsule.stubs(:use_beta_repos?).returns(true)
         capsule.stubs(:el_major_version).returns(8)
-        expected_repos = ['satellite-capsule-7-beta-for-rhel-8-x86_64-rpms',
-                          'satellite-maintenance-7-beta-for-rhel-8-x86_64-rpms']
+        expected_repos = ['satellite-capsule-6-beta-for-rhel-8-x86_64-rpms',
+                          'satellite-maintenance-6-beta-for-rhel-8-x86_64-rpms']
         assert_equal expected_repos,
-                     capsule.send(:product_specific_repos, '7.0')
+                     capsule.send(:product_specific_repos, '6.11')
       end
     end
 
@@ -121,16 +121,16 @@ module ForemanMaintain
                      system.send(:common_repos, '6.10')
       end
 
-      it 'returns correct maintenance repo for 7.0 on el7' do
+      it 'returns correct maintenance repo for 6.11 on el7' do
         system.stubs(:el_major_version).returns(7)
-        assert_equal ['rhel-7-server-satellite-maintenance-7.0-rpms'],
-                     system.send(:common_repos, '7.0')
+        assert_equal ['rhel-7-server-satellite-maintenance-6.11-rpms'],
+                     system.send(:common_repos, '6.11')
       end
 
-      it 'returns correct maintenance repo for 7.0 on el8' do
+      it 'returns correct maintenance repo for 6.11 on el8' do
         system.stubs(:el_major_version).returns(8)
-        assert_equal ['satellite-maintenance-7.0-for-rhel-8-x86_64-rpms'],
-                     system.send(:common_repos, '7.0')
+        assert_equal ['satellite-maintenance-6.11-for-rhel-8-x86_64-rpms'],
+                     system.send(:common_repos, '6.11')
       end
 
       it 'returns correct beta maintenance repo for 6.10 on el7' do
@@ -140,18 +140,18 @@ module ForemanMaintain
                      system.send(:common_repos, '6.10')
       end
 
-      it 'returns correct beta maintenance repo for 7.0 on el7' do
+      it 'returns correct beta maintenance repo for 6.11 on el7' do
         system.stubs(:use_beta_repos?).returns(true)
         system.stubs(:el_major_version).returns(7)
-        assert_equal ['rhel-7-server-satellite-maintenance-7-beta-rpms'],
-                     system.send(:common_repos, '7.0')
+        assert_equal ['rhel-7-server-satellite-maintenance-6-beta-rpms'],
+                     system.send(:common_repos, '6.11')
       end
 
-      it 'returns correct beta maintenance repo for 7.0 on el8' do
+      it 'returns correct beta maintenance repo for 6.11 on el8' do
         system.stubs(:use_beta_repos?).returns(true)
         system.stubs(:el_major_version).returns(8)
-        assert_equal ['satellite-maintenance-7-beta-for-rhel-8-x86_64-rpms'],
-                     system.send(:common_repos, '7.0')
+        assert_equal ['satellite-maintenance-6-beta-for-rhel-8-x86_64-rpms'],
+                     system.send(:common_repos, '6.11')
       end
     end
 
