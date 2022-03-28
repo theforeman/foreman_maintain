@@ -116,7 +116,7 @@ module ForemanMaintain
       end
 
       def common_repos(full_version)
-        sat_maint_version = if version(full_version) >= version('7.0') && !use_beta_repos?
+        sat_maint_version = if version(full_version) >= version('6.11') && !use_beta_repos?
                               full_version
                             else
                               full_version[0]
