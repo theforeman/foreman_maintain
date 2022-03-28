@@ -1,6 +1,10 @@
 class Features::Iptables < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::Firewall::IptablesMaintenanceMode
   metadata do
     label :iptables
+    confine do
+      find_package('iptables')
+    end
   end
 
   def add_chain(chain_name, rules, rule_chain = 'INPUT')
@@ -27,27 +31,6 @@ class Features::Iptables < ForemanMaintain::Feature
 
   def rule_exist?(target_name, rule_chain = 'INPUT')
     execute?("iptables -L #{rule_chain} | tail -n +3 | grep '^#{target_name} '")
-  end
-
-  def add_maintenance_mode_chain
-    add_chain(custom_chain_name,
-              ['-i lo -j ACCEPT', '-p tcp --dport 443 -j REJECT'])
-  end
-
-  def remove_maintenance_mode_chain
-    remove_chain(custom_chain_name)
-  end
-
-  def maintenance_mode_chain_exist?
-    chain_exist?(custom_chain_name)
-  end
-
-  def status_for_maintenance_mode
-    if maintenance_mode_chain_exist?
-      ['Iptables chain: present', []]
-    else
-      ['Iptables chain: absent', []]
-    end
   end
 
   private
