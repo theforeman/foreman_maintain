@@ -32,7 +32,7 @@ module Procedures::Pulp
     end
 
     def deletable_pulp_dirs
-      pulp_data_dirs - pulp_data_dirs_mountpoints
+      @deletable_pulp_dirs ||= pulp_data_dirs - pulp_data_dirs_mountpoints
     end
 
     # rubocop:disable  Metrics/MethodLength
@@ -175,28 +175,35 @@ module Procedures::Pulp
       mountpoints = pulp_data_dirs_mountpoints
       with_spinner('') do |spinner|
         if non_mountpoints.any?
-          spinner.update('Deleting pulp2 data directories')
+          spinner.update('Deleting pulp2 data directories.')
           non_mountpoints.each do |cmd|
             execute!(cmd)
           end
+          msg_for_del_non_moutpoints(mountpoints, spinner)
         end
         if mountpoints.any?
-          msg_for_del_mountpoints(mountpoints)
-        else
-          spinner.update('Done deleting pulp2 data directories')
+          msg_for_del_mountpoints(mountpoints, spinner)
         end
       end
     end
 
-    def msg_for_del_mountpoints(mountpoints)
+    def msg_for_del_non_moutpoints(mountpoints, spinner)
+      if mountpoints.empty?
+        spinner.update('Done deleting all pulp2 data directories.')
+      else
+        spinner.update("Deleted only: #{deletable_pulp_dirs.join("\n")}")
+      end
+    end
+
+    def msg_for_del_mountpoints(mountpoints, spinner)
       _, cmd_name = ForemanMaintain.pkg_and_cmd_name
       if mountpoints.count > 1
-        puts "\nThe directories #{mountpoints.join(',')} are individual mountpoints."\
-              "\nThe #{cmd_name} won't delete these directories.\n"\
+        spinner.update("The directories #{mountpoints.join(',')} are individual mountpoints.")
+        puts  "\nThe #{cmd_name} won't delete these directories.\n"\
               'You need to remove content and these directories on your own.'
       else
-        puts "\nThe directory #{mountpoints.join(',')} is individual mountpoint."\
-              "\nThe #{cmd_name} won't delete the directory.\n"\
+        spinner.update("The directory #{mountpoints.join(',')} is individual mountpoint.")
+        puts  "\nThe #{cmd_name} won't delete the directory.\n"\
               'You need to remove content and the directory on your own.'
       end
     end
