@@ -24,7 +24,18 @@ module Procedures::Pulp
         '/var/lib/pulp/uploads',
         '/var/lib/mongodb/',
         '/var/cache/pulp'
-      ]
+      ].select { |dir| File.directory?(dir) }
+    end
+
+    def pulp_data_dirs_mountpoints
+      pulp_data_dirs.map do |pulp_dir|
+        dir_path = Pathname.new(pulp_dir)
+        pulp_dir if dir_path.mountpoint?
+      end.compact
+    end
+
+    def deletable_pulp_dirs
+      pulp_data_dirs - pulp_data_dirs_mountpoints
     end
 
     # rubocop:disable  Metrics/MethodLength
@@ -53,8 +64,8 @@ module Procedures::Pulp
       @installed_pulp_packages
     end
 
-    def data_dir_removal_cmds
-      pulp_data_dirs.select { |dir| File.directory?(dir) }.map { |dir| "rm -rf #{dir}" }
+    def data_dir_removal_cmds(pulp_dirs)
+      pulp_dirs.map { |dir| "rm -rf #{dir}" }
     end
 
     def ask_to_proceed(rm_cmds)
@@ -70,7 +81,7 @@ module Procedures::Pulp
     end
 
     def run
-      rm_cmds = data_dir_removal_cmds
+      rm_cmds = data_dir_removal_cmds(pulp_data_dirs)
 
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
 
@@ -82,11 +93,11 @@ module Procedures::Pulp
 
       remove_other_packages
 
-      drop_migration_tables
+      # drop_migration_tables
 
-      drop_migrations
+      # drop_migrations
 
-      delete_pulp_data(rm_cmds) if rm_cmds.any?
+      delete_pulp_data if rm_cmds.any?
 
       restart_pulpcore_services
     end
@@ -163,12 +174,33 @@ module Procedures::Pulp
     end
     # rubocop:enable Metrics/BlockLength
 
-    def delete_pulp_data(rm_cmds)
+    def delete_pulp_data
+      non_mountpoints = data_dir_removal_cmds(deletable_pulp_dirs)
+      mountpoints = pulp_data_dirs_mountpoints
       with_spinner('Deleting pulp2 data directories') do |spinner|
-        rm_cmds.each do |cmd|
-          execute!(cmd)
+        if non_mountpoints.any?
+          non_mountpoints.each do |cmd|
+            execute!(cmd)
+          end
         end
-        spinner.update('Done deleting pulp2 data directories')
+        if mountpoints.any?
+          msg_for_del_mountpoints
+        else
+          spinner.update('Done deleting pulp2 data directories')
+        end
+      end
+    end
+
+    def msg_for_del_mountpoints
+      mountpoints = pulp_data_dirs_mountpoints
+      if mountpoints.count > 1
+        puts "\nThe directories #{mountpoints.join(',')} are individual mountpoints."\
+              "\nThe satellite-maintain won't delete these directories.\n"\
+              'You need to remove content and these directories on your own.'
+      else
+        puts "\nThe directory #{mountpoints.join(',')} is individual mountpoint."\
+              "\nThe satellite-maintain won't delete the directory.\n"\
+              'You need to remove content and the directory on your own.'
       end
     end
 
