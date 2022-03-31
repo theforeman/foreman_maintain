@@ -23,7 +23,15 @@ module Procedures::Pulp
         '/var/lib/pulp/uploads',
         '/var/lib/mongodb/',
         '/var/cache/pulp'
-      ]
+      ].select { |dir| File.directory?(dir) }
+    end
+
+    def pulp_data_dirs_mountpoints
+      pulp_data_dirs.select { |d| Pathname(d).mountpoint? }
+    end
+
+    def deletable_pulp_dirs
+      @deletable_pulp_dirs ||= pulp_data_dirs - pulp_data_dirs_mountpoints
     end
 
     # rubocop:disable  Metrics/MethodLength
@@ -52,11 +60,12 @@ module Procedures::Pulp
       @installed_pulp_packages
     end
 
-    def data_dir_removal_cmds
-      pulp_data_dirs.select { |dir| File.directory?(dir) }.map { |dir| "rm -rf #{dir}" }
+    def data_dir_removal_cmds(pulp_dirs)
+      pulp_dirs.map { |dir| "rm -rf #{dir}" }
     end
 
-    def ask_to_proceed(rm_cmds)
+    def ask_to_proceed
+      rm_cmds = data_dir_removal_cmds(pulp_data_dirs)
       question = "\nWARNING: All pulp2 packages will be removed with the following commands:\n"
       question += "\n# rpm -e #{pulp_packages.join('  ')}" if pulp_packages.any?
       question += "\n# yum remove rh-mongodb34-*"
@@ -69,11 +78,9 @@ module Procedures::Pulp
     end
 
     def run
-      rm_cmds = data_dir_removal_cmds
-
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
 
-      ask_to_proceed(rm_cmds) unless assumeyes_val
+      ask_to_proceed unless assumeyes_val
 
       remove_pulp if pulp_packages.any?
 
@@ -85,7 +92,7 @@ module Procedures::Pulp
 
       drop_migrations
 
-      delete_pulp_data(rm_cmds) if rm_cmds.any?
+      delete_pulp_data
 
       restart_pulpcore_services
     end
@@ -162,12 +169,41 @@ module Procedures::Pulp
     end
     # rubocop:enable Metrics/BlockLength
 
-    def delete_pulp_data(rm_cmds)
-      with_spinner('Deleting pulp2 data directories') do |spinner|
-        rm_cmds.each do |cmd|
-          execute!(cmd)
+    def delete_pulp_data
+      non_mountpoints = data_dir_removal_cmds(deletable_pulp_dirs)
+      mountpoints = pulp_data_dirs_mountpoints
+      with_spinner('') do |spinner|
+        if non_mountpoints.any?
+          spinner.update('Deleting pulp2 data directories.')
+          non_mountpoints.each do |cmd|
+            execute!(cmd)
+          end
+          msg_for_del_non_mountpoints(mountpoints, spinner)
         end
-        spinner.update('Done deleting pulp2 data directories')
+        if mountpoints.any?
+          msg_for_del_mountpoints(mountpoints, spinner)
+        end
+      end
+    end
+
+    def msg_for_del_non_mountpoints(mountpoints, spinner)
+      if mountpoints.empty?
+        spinner.update('Done deleting all pulp2 data directories.')
+      else
+        spinner.update("Deleted: #{deletable_pulp_dirs.join("\n")}")
+      end
+    end
+
+    def msg_for_del_mountpoints(mountpoints, spinner)
+      _, cmd_name = ForemanMaintain.pkg_and_cmd_name
+      if mountpoints.count > 1
+        spinner.update("The directories #{mountpoints.join(',')} are individual mountpoints.")
+        puts  "\nThe #{cmd_name} won't delete these directories.\n"\
+              'You need to remove content and these directories on your own.'
+      else
+        spinner.update("The directory #{mountpoints.join(',')} is individual mountpoint.")
+        puts  "\nThe #{cmd_name} won't delete the directory.\n"\
+              'You need to remove content and the directory on your own.'
       end
     end
 
