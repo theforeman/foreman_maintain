@@ -179,7 +179,7 @@ module Procedures::Pulp
           non_mountpoints.each do |cmd|
             execute!(cmd)
           end
-          msg_for_del_non_moutpoints(mountpoints, spinner)
+          msg_for_del_non_mountpoints(mountpoints, spinner)
         end
         if mountpoints.any?
           msg_for_del_mountpoints(mountpoints, spinner)
@@ -187,7 +187,7 @@ module Procedures::Pulp
       end
     end
 
-    def msg_for_del_non_moutpoints(mountpoints, spinner)
+    def msg_for_del_non_mountpoints(mountpoints, spinner)
       if mountpoints.empty?
         spinner.update('Done deleting all pulp2 data directories.')
       else
