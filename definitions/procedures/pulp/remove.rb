@@ -191,7 +191,7 @@ module Procedures::Pulp
       if mountpoints.empty?
         spinner.update('Done deleting all pulp2 data directories.')
       else
-        spinner.update("Deleted only: #{deletable_pulp_dirs.join("\n")}")
+        spinner.update("Deleted: #{deletable_pulp_dirs.join("\n")}")
       end
     end
 
