@@ -3,18 +3,23 @@ module ForemanMaintain
     class SelfUpgradeCommand < Base
       option ['--target-version'], 'TARGET_VERSION',\
              'Major version of the Satellite or Capsule'\
-           	', e.g 7.0', :required => true
+             ', e.g 6.11', :required => true
+      option ['--repository-label'], 'REPOSITORY_LABEL',\
+             'Repository label from which packages should be updated.'\
+             'This can be used when standard CDN repositories are unavailable.'
       def execute
         allow_major_version_upgrade_only
         run_scenario(upgrade_scenario, upgrade_rescue_scenario)
       end
 
       def upgrade_scenario
-        Scenarios::SelfUpgrade.new(target_version: target_version)
+        Scenarios::SelfUpgrade.new(target_version: target_version,
+                                   repository_label: repository_label)
       end
 
       def upgrade_rescue_scenario
-        Scenarios::SelfUpgradeRescue.new(target_version: target_version)
+        Scenarios::SelfUpgradeRescue.new(target_version: target_version,
+                                         repository_label: repository_label)
       end
 
       def current_downstream_version
