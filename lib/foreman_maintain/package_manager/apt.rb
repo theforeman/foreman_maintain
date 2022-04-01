@@ -18,8 +18,8 @@ module ForemanMaintain::PackageManager
       apt_action(action, packages, :assumeyes => assumeyes)
     end
 
-    def clean_cache
-      apt_action('clean')
+    def clean_cache(assumeyes: false)
+      apt_action('clean', :assumeyes => assumeyes)
     end
 
     def find_installed_package(name, queryfm = '')
