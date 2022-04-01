@@ -20,8 +20,14 @@ module ForemanMaintain::Scenarios
       feature(:instance).downstream.current_minor_version
     end
 
+    def repository_label
+      @repository_label ||= context.get(:repository_label)
+    end
+
     def maintenance_repo_id(version)
-      if (repo = ENV['maintenance_repo'])
+      if repository_label
+        return repository_label
+      elsif (repo = ENV['MAINTENANCE_REPO'])
         return repo unless repo.empty?
       end
 
@@ -64,7 +70,9 @@ module ForemanMaintain::Scenarios
     end
 
     def use_rhsm?
-      if (repo = ENV['maintenance_repo'])
+      return false if repository_label
+
+      if (repo = ENV['MAINTENANCE_REPO'])
         return false unless repo.empty?
       end
 
