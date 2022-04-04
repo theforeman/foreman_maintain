@@ -46,8 +46,8 @@ class ForemanProtector(dnf.Plugin):
         if package_whitelist:
         #  If anything obsoletes something that we have whitelisted ... then
         # whitelist that too.
-            whitelist_query = self.base.sack.query().filter(name=package_whitelist)
-            obsoletes_query = self.base.sack.query().filter(obsoletes=list(whitelist_query))
+            whitelist_query = self.base.sack.query().filterm(name=package_whitelist)
+            obsoletes_query = self.base.sack.query().filterm(obsoletes=list(whitelist_query))
 
             final_query = whitelist_query.union(obsoletes_query)
         return final_query
