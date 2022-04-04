@@ -4,7 +4,7 @@ module ForemanMaintain
       option ['--target-version'], 'TARGET_VERSION',\
              'Major version of the Satellite or Capsule'\
              ', e.g 6.11', :required => true
-      option ['--repository-label'], 'REPOSITORY_LABEL',\
+      option ['--maintenance-repo-label'], 'REPOSITORY_LABEL',\
              'Repository label from which packages should be updated.'\
              'This can be used when standard CDN repositories are unavailable.'
       def execute
@@ -14,12 +14,12 @@ module ForemanMaintain
 
       def upgrade_scenario
         Scenarios::SelfUpgrade.new(target_version: target_version,
-                                   repository_label: repository_label)
+                                   maintenance_repo_label: maintenance_repo_label)
       end
 
       def upgrade_rescue_scenario
         Scenarios::SelfUpgradeRescue.new(target_version: target_version,
-                                         repository_label: repository_label)
+                                         maintenance_repo_label: maintenance_repo_label)
       end
 
       def current_downstream_version
