@@ -20,7 +20,6 @@ class ForemanProtector(dnf.Plugin):
         except Exception as e:
             raise dnf.exceptions.Error(_("Parsing file failed: {}").format(str(e)))
 
-        ## Need to fix the if condition
         if parser.has_section('main'):
             fileurl = parser.get('main', 'whitelist')
         else:
@@ -37,8 +36,8 @@ class ForemanProtector(dnf.Plugin):
 
                     package_whitelist.add(line.rstrip().lower())
                 llfile.close()
-        except urlgrabber.grabber.URLGrabError as e:
-            raise dnf.exceptions('Unable to read Foreman protector"s configuration: %s' % e)
+        except IOError as e:
+            raise dnf.exceptions.Error('Unable to read Foreman protector"s configuration: %s' % e)
         return package_whitelist
 
     def _add_obsoletes(self):
