@@ -3,7 +3,6 @@ import dnf.exceptions
 from dnfpluginscore import _, logger
 
 import configparser
-package_whitelist = set()
 
 class ForemanProtector(dnf.Plugin):
     name = 'foreman-protector'
@@ -28,7 +27,7 @@ class ForemanProtector(dnf.Plugin):
             raise dnf.exceptions.Error(_('Incorrect plugin configuration!'))
 
     def _load_whitelist(self):
-        global package_whitelist
+        package_whitelist = set()
         try:
             if fileurl:
                 llfile = open(fileurl, 'r')
@@ -40,21 +39,21 @@ class ForemanProtector(dnf.Plugin):
                 llfile.close()
         except urlgrabber.grabber.URLGrabError as e:
             raise dnf.exceptions('Unable to read Foreman protector"s configuration: %s' % e)
+        return package_whitelist
 
     def _add_obsoletes(self):
-        global package_whitelist
+        package_whitelist = self._load_whitelist()
         final_query = self.base.sack.query()
         if package_whitelist:
         #  If anything obsoletes something that we have whitelisted ... then
         # whitelist that too.
             whitelist_query = self.base.sack.query().filter(name=package_whitelist)
-            obsoletes_query = self.base.sack.query().filterm(obsoletes=list(whitelist_query))
+            obsoletes_query = self.base.sack.query().filter(obsoletes=list(whitelist_query))
 
             final_query = whitelist_query.union(obsoletes_query)
         return final_query
 
     def sack(self):
-        self._load_whitelist()
         whitelist_and_obsoletes = self._add_obsoletes()
         all_available_updates = self.base.sack.query().available()
         excluded_pkgs_query = all_available_updates.difference(whitelist_and_obsoletes)
@@ -68,9 +67,12 @@ class ForemanProtector(dnf.Plugin):
                 suffix = 's'
             else:
                 suffix = ''
-        logger.info(_('\n'
-                        'WARNING: Excluding %d package%s due to foreman-protector. \n'
-                        'Use foreman-maintain packages install/update <package> \n'
-                        'to safely install packages without restrictions.\n'
-                        'Use foreman-maintain upgrade run for full upgrade.\n'
-                        % (total, suffix)))
+            logger.info(_('\n'
+                            'WARNING: Excluding %d package%s due to foreman-protector. \n'
+                            'Use foreman-maintain packages install/update <package> \n'
+                            'to safely install packages without restrictions.\n'
+                            'Use foreman-maintain upgrade run for full upgrade.\n'
+                            % (total, suffix)))
+        else:
+            logger.info(_('\n'
+                            'Nothing excluded by foreman-protector!\n'))
