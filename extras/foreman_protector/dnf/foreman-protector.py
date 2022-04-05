@@ -34,7 +34,7 @@ class ForemanProtector(dnf.Plugin):
                     if line.startswith('#') or line.strip() == '':
                         continue
 
-                    package_whitelist.add(line.rstrip().lower())
+                    package_whitelist.add(line.rstrip())
                 llfile.close()
         except IOError as e:
             raise dnf.exceptions.Error('Unable to read Foreman protector"s configuration: %s' % e)
@@ -54,8 +54,8 @@ class ForemanProtector(dnf.Plugin):
 
     def sack(self):
         whitelist_and_obsoletes = self._add_obsoletes()
-        all_available_updates = self.base.sack.query().available()
-        excluded_pkgs_query = all_available_updates.difference(whitelist_and_obsoletes)
+        all_available_packages = self.base.sack.query().available()
+        excluded_pkgs_query = all_available_packages.difference(whitelist_and_obsoletes)
         total = len(excluded_pkgs_query)
         logger.info(_('Reading Foreman protector configuration'))
         self.base.sack.add_excludes(excluded_pkgs_query)
