@@ -66,6 +66,10 @@ class FakePackageManager < ForemanMaintain::PackageManager::Base
   def find_installed_package(name)
     @packages.find { |package| package =~ /^#{name}/ }
   end
+
+  def version_locking_supported?
+    true
+  end
 end
 
 module PackageManagerTestHelper
