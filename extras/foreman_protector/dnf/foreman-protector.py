@@ -12,9 +12,7 @@ class ForemanProtector(dnf.Plugin):
         self.base = base
         self.cli = cli
 
-    def config(self):
-        global fileurl
-
+    def _get_whitelist_file_url(self):
         try:
              parser = self.read_config(self.base.conf)
         except Exception as e:
@@ -24,8 +22,10 @@ class ForemanProtector(dnf.Plugin):
             fileurl = parser.get('main', 'whitelist')
         else:
             raise dnf.exceptions.Error(_('Incorrect plugin configuration!'))
+        return fileurl
 
     def _load_whitelist(self):
+        fileurl = self._get_whitelist_file_url()
         package_whitelist = set()
         try:
             if fileurl:
