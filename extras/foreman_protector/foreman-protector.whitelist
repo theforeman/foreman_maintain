@@ -17,5 +17,8 @@ boost-random
 boost-iostreams
 boost-thread
 yum-utils
+# el8 yum-utils dependencies
+dnf-plugins-core
+python3-dnf-plugins-core
 # foreman-maintain
 rubygem-foreman_maintain
