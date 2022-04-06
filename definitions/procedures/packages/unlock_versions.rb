@@ -2,7 +2,9 @@ module Procedures::Packages
   class UnlockVersions < ForemanMaintain::Procedure
     metadata do
       description 'Unlock packages'
-      preparation_steps { [Checks::VersionLockingEnabled.new] }
+      confine do
+        package_manager.version_locking_supported?
+      end
     end
 
     def run

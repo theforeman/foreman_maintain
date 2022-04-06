@@ -27,6 +27,7 @@ module ForemanMaintain
       it 'locks unlocked versions' do
         with_lock_config(:protector_enabled => false) do |lock_conf|
           subject.stubs(:protector_config_file).returns(lock_conf.path)
+          subject.stubs(:protector_whitelist_file_nonzero?).returns(true)
           lock_conf.rewind
           subject.lock_versions
           lock_conf.rewind
@@ -37,6 +38,7 @@ module ForemanMaintain
       it 'does nothing on locked versions' do
         with_lock_config(:protector_enabled => true) do |lock_conf|
           subject.stubs(:protector_config_file).returns(lock_conf.path)
+          subject.stubs(:protector_whitelist_file_nonzero?).returns(true)
           lock_conf.rewind
           subject.lock_versions
           lock_conf.rewind
@@ -71,6 +73,7 @@ module ForemanMaintain
       it 'checks if packages were locked by lock_versions' do
         with_lock_config(:protector_enabled => true) do |lock_conf|
           subject.stubs(:protector_config_file).returns(lock_conf.path)
+          subject.stubs(:protector_whitelist_file_nonzero?).returns(true)
           subject.versions_locked?.must_equal true
         end
       end

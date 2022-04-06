@@ -2,7 +2,6 @@ module ForemanMaintain::PackageManager
   class Yum < Base
     PROTECTOR_CONFIG_FILE = '/etc/yum/pluginconf.d/foreman-protector.conf'.freeze
     PROTECTOR_WHITELIST_FILE = '/etc/yum/pluginconf.d/foreman-protector.whitelist'.freeze
-    PROTECTOR_PLUGIN_FILE = '/usr/lib/yum-plugins/foreman-protector.py'.freeze
 
     def self.parse_envra(envra)
       # envra format: 0:foreman-1.20.1.10-1.el7sat.noarch
@@ -19,18 +18,17 @@ module ForemanMaintain::PackageManager
     end
 
     def versions_locked?
-      !!(protector_config =~ /^\s*enabled\s*=\s*1/)
+      !!(protector_config =~ /^\s*enabled\s*=\s*1/) &&
+        protector_whitelist_file_nonzero?
     end
 
-    def version_locking_enabled?
-      File.exist?(PROTECTOR_PLUGIN_FILE) && File.exist?(PROTECTOR_CONFIG_FILE) &&
-        File.exist?(PROTECTOR_WHITELIST_FILE)
+    def protector_whitelist_file_nonzero?
+      File.exist?(PROTECTOR_WHITELIST_FILE) &&
+        !File.zero?(PROTECTOR_WHITELIST_FILE)
     end
 
-    def install_version_locking(*)
-      install_extras('foreman_protector/foreman-protector.py', PROTECTOR_PLUGIN_FILE)
-      install_extras('foreman_protector/foreman-protector.conf', PROTECTOR_CONFIG_FILE)
-      install_extras('foreman_protector/foreman-protector.whitelist', PROTECTOR_WHITELIST_FILE)
+    def version_locking_supported?
+      true
     end
 
     def installed?(packages)
@@ -51,6 +49,10 @@ module ForemanMaintain::PackageManager
 
     def install(packages, assumeyes: false)
       yum_action('install', packages, :assumeyes => assumeyes)
+    end
+
+    def reinstall(packages, assumeyes: false)
+      yum_action('reinstall', packages, :assumeyes => assumeyes)
     end
 
     def remove(packages, assumeyes: false)
@@ -131,15 +133,6 @@ module ForemanMaintain::PackageManager
       else
         sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
                      :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
-      end
-    end
-
-    def install_extras(src, dest, override: false)
-      extras_src = File.expand_path('../../../../extras', __FILE__)
-      if override ||
-         (File.directory?(dest) && !File.exist?(File.join(dest, src))) ||
-         !File.exist?(dest)
-        FileUtils.cp(File.join(extras_src, src), dest)
       end
     end
   end

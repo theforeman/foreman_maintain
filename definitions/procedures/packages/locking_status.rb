@@ -2,7 +2,9 @@ module Procedures::Packages
   class LockingStatus < ForemanMaintain::Procedure
     metadata do
       description 'Check status of version locking of packages'
-      preparation_steps { [Checks::VersionLockingEnabled.new] }
+      confine do
+        package_manager.version_locking_supported?
+      end
     end
 
     def run
