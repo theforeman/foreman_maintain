@@ -13,7 +13,8 @@ module ForemanMaintain::Scenarios
     end
 
     def target_version
-      @target_version ||= context.get(:target_version)
+      current_full_version = feature(:instance).downstream.current_version
+      @target_version ||= current_full_version.bump
     end
 
     def current_version
