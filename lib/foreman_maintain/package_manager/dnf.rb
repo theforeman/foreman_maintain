@@ -5,6 +5,10 @@ module ForemanMaintain::PackageManager
       super
     end
 
+    def version_locking_supported?
+      true
+    end
+
     private
 
     def dnf_action(action, packages, with_status: false, assumeyes: false)

@@ -6,7 +6,11 @@ module Procedures::Packages
     end
 
     def run
-      package_manager.install_version_locking(:assumeyes => @assumeyes)
+      installed_fm_packages = []
+      ['satellite-maintain', 'rubygem-foreman_maintain'].each do |pkg|
+        installed_fm_packages << find_package(pkg)
+      end
+      package_manager.reinstall(installed_fm_packages, :assumeyes => @assumeyes)
     end
   end
 end
