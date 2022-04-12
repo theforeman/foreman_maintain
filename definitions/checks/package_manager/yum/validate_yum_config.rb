@@ -41,9 +41,7 @@ module Checks::PackageManager
 
       def yum_config_options
         @yum_config_options ||= {
-          'exclude' => '^exclude\s*=\s*\S+.*$',
-          'clean_requirements_on_remove' =>
-            '^clean_requirements_on_remove\s*=\S*(1|yes|true)$'
+          'exclude' => '^exclude\s*=\s*\S+.*$'
         }
       end
     end
