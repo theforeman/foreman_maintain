@@ -1,3 +1,3 @@
 module ForemanMaintain
-  VERSION = '0.9.3'.freeze
+  VERSION = '1.1.0'.freeze
 end
