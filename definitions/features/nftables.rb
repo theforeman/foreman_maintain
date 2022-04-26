@@ -25,12 +25,14 @@ class Features::Nftables < ForemanMaintain::Feature
     execute!("nft add chain #{family} #{table} #{chain} #{chain_options}")
   end
 
-  def add_rule(options = {})
+  def add_rules(options = {})
     family = options.fetch(:family, ip_family)
     table = options.fetch(:table, table_name)
     chain = options.fetch(:chain, chain_name)
-    rule = options.fetch(:rule) # needs validation
-    execute!("nft add rule #{family} #{table} #{chain} #{rule}")
+    rules = options.fetch(:rules) # needs validation
+    rules.each do |rule|
+      execute!("nft add rule #{family} #{table} #{chain} #{rule}")
+    end
   end
 
   def table_exist?(name = table_name)
