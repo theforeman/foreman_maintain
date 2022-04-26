@@ -10,7 +10,7 @@ module ForemanMaintain
           unless table_exist?
             add_table
             add_chain(:chain_options => nftables_chain_options)
-            add_rule(rule: nftables_rule)
+            add_rules(rules: nftables_rules)
           end
         end
 
@@ -22,8 +22,8 @@ module ForemanMaintain
           '{type filter hook input priority 0\\;}'
         end
 
-        def nftables_rule
-          'tcp dport https reject'
+        def nftables_rules
+          ['iifname "lo" accept', 'tcp dport 443 reject']
         end
 
         def status_for_maintenance_mode
