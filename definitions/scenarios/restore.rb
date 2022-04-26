@@ -37,7 +37,8 @@ module ForemanMaintain::Scenarios
       end
       restore_mongo_dump(backup)
       add_steps_with_context(Procedures::Pulp::Migrate,
-                             Procedures::Pulpcore::Migrate)
+                             Procedures::Pulpcore::Migrate,
+                             Procedures::Restore::CandlepinResetMigrations)
 
       add_steps_with_context(Procedures::Restore::RegenerateQueues) if backup.online_backup?
       add_steps_with_context(Procedures::Service::Start,
