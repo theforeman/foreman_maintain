@@ -36,6 +36,36 @@ module ForemanMaintain
       Scenarios::Dummy::WarnAndFail.new
     end
 
+    let(:fail_multiple_skipwhitelist) do
+      Scenarios::DummySkipWhitelist::FailMultiple.new
+    end
+
+    let(:warn_and_fail_skipwhitelist) do
+      Scenarios::DummySkipWhitelist::WarnAndFail.new
+    end
+
+    class FakeInstanceFeature < ForemanMaintain::Feature
+      metadata do
+        label :fake_instance
+      end
+
+      def downstream
+        feature(:satellite) || feature(:capsule)
+      end
+    end
+
+    def fake_instance_feature
+      ForemanMaintain.detector.stubs(:feature).with(:instance).returns(FakeInstanceFeature.new)
+    end
+
+    def assume_feature_present(label)
+      ForemanMaintain.detector.stubs(:feature).with(label).returns(true)
+    end
+
+    def assume_feature_absent(label)
+      ForemanMaintain.detector.stubs(:feature).with(label).returns(false)
+    end
+
     def decision_question(description)
       "Continue with step [#{description}]?, [y(yes), n(no), q(quit)]"
     end
@@ -75,7 +105,9 @@ module ForemanMaintain
       assert_equal :quit, reporter.on_next_steps([start_step, restart_step])
     end
 
-    it 'informs the user about failures of the last scenario' do
+    it 'informs the user about failures of the last scenario for downstream' do
+      assume_feature_present(:satellite)
+      fake_instance_feature
       run_scenario(fail_multiple_scenario)
       reporter.after_scenario_finishes(fail_multiple_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
@@ -94,9 +126,41 @@ module ForemanMaintain
         [dummy-check-fail]
         [dummy-check-fail2]
 
-      Resolve the failed steps and rerun
-      the command. In case the failures are false positives,
-      use --whitelist=\"dummy-check-fail,dummy-check-fail2\"
+      Resolve the failed steps and rerun the command.
+
+      If the situation persists and, you are unclear what to do next,
+      contact Red Hat Technical Support.
+
+      In case the failures are false positives, use
+      --whitelist="dummy-check-fail,dummy-check-fail2"
+      MESSAGE
+    end
+
+    it 'informs the user about failures of the last scenario for upstream' do
+      assume_feature_absent(:satellite)
+      assume_feature_absent(:capsule)
+      fake_instance_feature
+      run_scenario(fail_multiple_scenario)
+      reporter.after_scenario_finishes(fail_multiple_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      Check that ends up with fail:                                         [FAIL]
+      this check is always causing failure
+      --------------------------------------------------------------------------------
+      Check that ends up with fail:                                         [FAIL]
+      this check is always causing failure
+      --------------------------------------------------------------------------------
+      Check that ends up with success:                                      [OK]
+      --------------------------------------------------------------------------------
+      Scenario [Scenarios::Dummy::FailMultiple] failed.
+
+      The following steps ended up in failing state:
+
+        [dummy-check-fail]
+        [dummy-check-fail2]
+
+      Resolve the failed steps and rerun the command.
+      In case the failures are false positives, use
+      --whitelist="dummy-check-fail,dummy-check-fail2"
       MESSAGE
     end
 
@@ -120,7 +184,10 @@ module ForemanMaintain
       MESSAGE
     end
 
-    it 'informs the user about warnings and failures of the last scenario' do
+    it 'informs the user about warnings and failures of the last scenario for upstream' do
+      assume_feature_absent(:satellite)
+      assume_feature_absent(:capsule)
+      fake_instance_feature
       run_scenario(warn_and_fail_scenario)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
       assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
@@ -142,9 +209,46 @@ module ForemanMaintain
 
           [dummy-check-warn]
 
-        Resolve the failed steps and rerun
-        the command. In case the failures are false positives,
-        use --whitelist=\"dummy-check-fail\"
+        Resolve the failed steps and rerun the command.
+        In case the failures are false positives, use
+        --whitelist="dummy-check-fail"
+
+        The steps in warning state itself might not mean there is an error,
+        but it should be reviewed to ensure the behavior is expected
+      MESSAGE
+    end
+
+    it 'informs the user about warnings and failures of the last scenario for downstream' do
+      assume_feature_present(:satellite)
+      fake_instance_feature
+      run_scenario(warn_and_fail_scenario)
+      reporter.after_scenario_finishes(warn_and_fail_scenario)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+        Check that ends up with warning:                                      [WARNING]
+        this check is always causing warnings
+        --------------------------------------------------------------------------------
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::Dummy::WarnAndFail] failed.
+
+        The following steps ended up in failing state:
+
+          [dummy-check-fail]
+
+        The following steps ended up in warning state:
+
+          [dummy-check-warn]
+
+        Resolve the failed steps and rerun the command.
+
+        If the situation persists and, you are unclear what to do next,
+        contact Red Hat Technical Support.
+
+        In case the failures are false positives, use
+        --whitelist="dummy-check-fail"
 
         The steps in warning state itself might not mean there is an error,
         but it should be reviewed to ensure the behavior is expected
@@ -161,6 +265,72 @@ module ForemanMaintain
         --------------------------------------------------------------------------------
         Check that ends up with success:                                      [SKIPPED]
         --------------------------------------------------------------------------------
+      MESSAGE
+    end
+
+    it 'informs the user about warnings and failures but skip the failed step from whitelist' do
+      assume_feature_absent(:satellite)
+      assume_feature_absent(:capsule)
+      fake_instance_feature
+      run_scenario(warn_and_fail_skipwhitelist)
+      reporter.after_scenario_finishes(warn_and_fail_skipwhitelist)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+        Check that ends up with warning:                                      [WARNING]
+        this check is always causing warnings
+        --------------------------------------------------------------------------------
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::DummySkipWhitelist::WarnAndFail] failed.
+
+        The following steps ended up in failing state:
+
+          [dummy-check-fail]
+          [dummy-check-fail-skipwhitelist]
+
+        The following steps ended up in warning state:
+
+          [dummy-check-warn]
+
+        Resolve the failed steps and rerun the command.
+        In case the failures are false positives, use
+        --whitelist="dummy-check-fail"
+
+        The steps in warning state itself might not mean there is an error,
+        but it should be reviewed to ensure the behavior is expected
+      MESSAGE
+    end
+
+    it 'informs the user about failures but skip the failed step from whitelist' do
+      assume_feature_absent(:satellite)
+      assume_feature_absent(:capsule)
+      fake_instance_feature
+      run_scenario(fail_multiple_skipwhitelist)
+      reporter.after_scenario_finishes(fail_multiple_skipwhitelist)
+      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      Check that ends up with fail:                                         [FAIL]
+      this check is always causing failure
+      --------------------------------------------------------------------------------
+      Check that ends up with fail:                                         [FAIL]
+      this check is always causing failure
+      --------------------------------------------------------------------------------
+      Check that ends up with success:                                      [OK]
+      --------------------------------------------------------------------------------
+      Scenario [Scenarios::DummySkipWhitelist::FailMultiple] failed.
+
+      The following steps ended up in failing state:
+
+        [dummy-check-fail]
+        [dummy-check-fail-skipwhitelist]
+
+      Resolve the failed steps and rerun the command.
+      In case the failures are false positives, use
+      --whitelist="dummy-check-fail"
       MESSAGE
     end
 

@@ -317,7 +317,11 @@ module ForemanMaintain
 
         steps_with_error = scenario.steps_with_error(:whitelisted => false)
         steps_with_skipped = scenario.steps_with_skipped(:whitelisted => true)
-        steps_to_whitelist = steps_with_error + steps_with_skipped
+        not_skippable_steps = scenario.steps_with_error.select do |step|
+          step.metadata[:do_not_whitelist] == true
+        end
+
+        steps_to_whitelist = steps_with_error + steps_with_skipped - not_skippable_steps
         unless steps_with_error.empty?
           message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_error, "\n", 2))
           The following steps ended up in failing state:
@@ -325,11 +329,25 @@ module ForemanMaintain
           %s
           MESSAGE
           whitelist_labels = steps_to_whitelist.map(&:label_dashed).join(',')
-          recommend << format(<<-MESSAGE.strip_heredoc, whitelist_labels)
-          Resolve the failed steps and rerun
-          the command. In case the failures are false positives,
-          use --whitelist="%s"
-          MESSAGE
+          unless whitelist_labels.empty?
+            recommend << if scenario.detector.feature(:instance).downstream
+                           format(<<-MESSAGE.strip_heredoc, whitelist_labels)
+              Resolve the failed steps and rerun the command.
+
+              If the situation persists and, you are unclear what to do next,
+              contact Red Hat Technical Support.
+
+              In case the failures are false positives, use
+              --whitelist="%s"
+              MESSAGE
+                         else
+                           format(<<-MESSAGE.strip_heredoc, whitelist_labels)
+              Resolve the failed steps and rerun the command.
+              In case the failures are false positives, use
+              --whitelist="%s"
+              MESSAGE
+                         end
+          end
         end
 
         steps_with_warning = scenario.steps_with_warning(:whitelisted => false)

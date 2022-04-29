@@ -37,6 +37,7 @@ module ForemanMaintain
         assert_cmd <<-OUTPUT.strip_heredoc
           [dummy-check-fail] Check that ends up with fail
           [dummy-check-fail2] Check that ends up with fail
+          [dummy-check-fail-skipwhitelist] Check that ends up with fail
           [dummy-check-success] Check that ends up with success
           [dummy-check-warn] Check that ends up with warning
           [external-service-is-accessible] External_service_is_accessible         [pre-upgrade-check]
