@@ -67,7 +67,10 @@ module ForemanMaintain::Scenarios
 
     def repos_ids_to_reenable
       repos_ids_to_reenable = stored_enabled_repos_ids - all_maintenance_repos
-      repos_ids_to_reenable << maintenance_repo(maintenance_repo_version)
+      if use_rhsm?
+        repos_ids_to_reenable << maintenance_repo(maintenance_repo_version)
+      end
+      repos_ids_to_reenable
     end
 
     def use_rhsm?
@@ -97,6 +100,7 @@ module ForemanMaintain::Scenarios
         add_step(Procedures::Repositories::Enable.new(repos: [maintenance_repo_id(target_version)],
                                                       use_rhsm: use_rhsm?))
         add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
+        disable_repos('*')
         enable_repos(repos_ids_to_reenable)
       end
     end
@@ -113,6 +117,7 @@ module ForemanMaintain::Scenarios
 
     def compose
       if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
+        disable_repos('*')
         enable_repos(repos_ids_to_reenable)
       end
     end
