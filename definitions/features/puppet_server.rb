@@ -11,8 +11,6 @@ class Features::PuppetServer < ForemanMaintain::Feature
     [
       '/etc/puppet',
       '/etc/puppetlabs',
-      '/opt/puppetlabs/puppet/cache/foreman_cache_data',
-      '/var/lib/puppet/foreman_cache_data',
       '/opt/puppetlabs/puppet/ssl/',
       '/var/lib/puppet/ssl',
       '/var/lib/puppet',
