@@ -1,5 +1,6 @@
 module ForemanMaintain::Scenarios
   class SelfUpgradeBase < ForemanMaintain::Scenario
+    include ForemanMaintain::Concerns::Downstream
     def enabled_system_repos_id
       repository_manager.enabled_repos.keys
     end
@@ -78,16 +79,6 @@ module ForemanMaintain::Scenarios
       end
 
       true
-    end
-
-    def main_rh_repos
-      if el7?
-        ["rhel-#{el_major_version}-server-rpms",
-         "rhel-server-rhscl-#{el_major_version}-rpms"]
-      else
-        ["rhel-#{el_major_version}-for-x86_64-baseos-rpms",
-         "rhel-#{el_major_version}-for-x86_64-appstream-rpms"]
-      end
     end
 
     def req_repos_to_update_pkgs
