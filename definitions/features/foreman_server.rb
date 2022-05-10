@@ -34,8 +34,7 @@ module ForemanMaintain
           '/etc/selinux/targeted/contexts/files/file_contexts.subs',
           '/etc/sysconfig/foreman',
           '/usr/share/ruby/vendor_ruby/puppet/reports/foreman.rb',
-          '/var/lib/foreman',
-          '/opt/puppetlabs/puppet/cache/foreman_cache_data'
+          '/var/lib/foreman'
         ]
       end
 
