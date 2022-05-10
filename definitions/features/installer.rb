@@ -64,7 +64,9 @@ class Features::Installer < ForemanMaintain::Feature
   def config_files
     Dir.glob(File.join(config_directory, '**/*')) +
       [
-        '/usr/local/bin/validate_postgresql_connection.sh'
+        '/usr/local/bin/validate_postgresql_connection.sh',
+        '/opt/puppetlabs/puppet/cache/foreman_cache_data',
+        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data'
       ]
   end
 

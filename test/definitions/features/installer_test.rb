@@ -21,7 +21,9 @@ describe Features::Installer do
         "#{data_dir}/installer/simple_config/scenarios.d/foreman-answers.yaml",
         "#{data_dir}/installer/simple_config/scenarios.d/foreman.yaml",
         "#{data_dir}/installer/simple_config/scenarios.d/last_scenario.yaml",
-        '/usr/local/bin/validate_postgresql_connection.sh'
+        '/usr/local/bin/validate_postgresql_connection.sh',
+        '/opt/puppetlabs/puppet/cache/foreman_cache_data',
+        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data'
       ].sort
       subject.config_files.sort.must_equal(expected_config_files)
     end
