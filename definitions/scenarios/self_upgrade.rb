@@ -105,7 +105,7 @@ module ForemanMaintain::Scenarios
         add_step(Procedures::Repositories::Enable.new(repos: req_repos_to_update_pkgs,
                                                       use_rhsm: use_rhsm?))
         add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
-        disable_repos('*')
+        disable_repos([maintenance_repo_id(maintenance_repo_version)])
         enable_repos(repos_ids_to_reenable)
       end
     end
@@ -122,7 +122,7 @@ module ForemanMaintain::Scenarios
 
     def compose
       if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
-        disable_repos('*')
+        disable_repos([maintenance_repo_id(maintenance_repo_version)])
         enable_repos(repos_ids_to_reenable)
       end
     end
