@@ -76,10 +76,21 @@ module ForemanMaintain::RepositoryManager
     end
 
     def hash_of_repoids_urls(repos, regex)
-      Hash[*repos.split("\n").grep(regex).map do |entry|
-             entry.split(':', 2).last.strip
-           end
+      ids_urls = Hash[*repos.split("\n").grep(regex).map do |entry|
+                        entry.split(':', 2).last.strip
+                      end
       ]
+
+      if el7?
+        trimmed_hash = {}
+        ids_urls.each do |id, url|
+          trimed_id = id.include?('/') ? id.split('/').first : id
+          trimmed_hash[trimed_id] = url
+        end
+        return trimmed_hash
+      end
+
+      ids_urls
     end
   end
 end
