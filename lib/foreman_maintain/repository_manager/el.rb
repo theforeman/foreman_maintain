@@ -81,16 +81,17 @@ module ForemanMaintain::RepositoryManager
                       end
       ]
 
-      if el7?
-        trimmed_hash = {}
-        ids_urls.each do |id, url|
-          trimed_id = id.include?('/') ? id.split('/').first : id
-          trimmed_hash[trimed_id] = url
-        end
-        return trimmed_hash
+      # The EL7 yum repolist output includes extra info in the output,
+      # as example
+      # rhel-7-server-rpms/7Server/x86_64
+      # rhel-server-rhscl-7-rpms/7Server/x86_64
+      # This trims anything after first '/' to get correct repo label
+      trimmed_hash = {}
+      ids_urls.each do |id, url|
+        trimmed_id = id.split('/').first
+        trimmed_hash[trimmed_id] = url
       end
-
-      ids_urls
+      trimmed_hash
     end
   end
 end
