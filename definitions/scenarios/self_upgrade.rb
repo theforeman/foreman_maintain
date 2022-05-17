@@ -85,7 +85,11 @@ module ForemanMaintain::Scenarios
     end
 
     def req_repos_to_update_pkgs
-      main_rh_repos + [maintenance_repo_id(target_version)]
+      if use_rhsm?
+        main_rh_repos + [maintenance_repo_id(target_version)]
+      else
+        [maintenance_repo_id(target_version)]
+      end
     end
   end
 
