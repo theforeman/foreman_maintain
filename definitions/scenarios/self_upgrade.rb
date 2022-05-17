@@ -5,12 +5,14 @@ module ForemanMaintain::Scenarios
       repository_manager.enabled_repos.keys
     end
 
-    def enable_repos(repo_ids = stored_enabled_repos_ids)
-      add_step(Procedures::Repositories::Enable.new(repos: repo_ids))
+    def enable_repos(repo_ids = stored_enabled_repos_ids, _use_rhsm = use_rhsm?)
+      add_step(Procedures::Repositories::Enable.new(repos: repo_ids,
+                                                    use_rhsm: use_rhsm?))
     end
 
-    def disable_repos(repo_ids = stored_enabled_repos_ids)
-      add_step(Procedures::Repositories::Disable.new(repos: repo_ids))
+    def disable_repos(repo_ids = stored_enabled_repos_ids, use_rhsm = use_rhsm?)
+      add_step(Procedures::Repositories::Disable.new(repos: repo_ids,
+                                                     use_rhsm: use_rhsm))
     end
 
     def target_version
@@ -102,8 +104,7 @@ module ForemanMaintain::Scenarios
         pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
         add_step(Procedures::Repositories::BackupEnabledRepos.new)
         disable_repos
-        add_step(Procedures::Repositories::Enable.new(repos: req_repos_to_update_pkgs,
-                                                      use_rhsm: use_rhsm?))
+        enable_repos(req_repos_to_update_pkgs)
         add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
         disable_repos([maintenance_repo_id(maintenance_repo_version)])
         enable_repos(repos_ids_to_reenable)
