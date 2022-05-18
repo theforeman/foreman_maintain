@@ -76,10 +76,21 @@ module ForemanMaintain::RepositoryManager
     end
 
     def hash_of_repoids_urls(repos, regex)
-      Hash[*repos.split("\n").grep(regex).map do |entry|
-             entry.split(':', 2).last.strip
-           end
-      ]
+      ids_urls = Hash[*repos.split("\n").grep(regex).map do |entry|
+                        entry.split(':', 2).last.strip
+                      end]
+
+      # The EL7 yum repolist output includes extra info in the output,
+      # as example
+      # rhel-7-server-rpms/7Server/x86_64
+      # rhel-server-rhscl-7-rpms/7Server/x86_64
+      # This trims anything after first '/' to get correct repo label
+      trimmed_hash = {}
+      ids_urls.each do |id, url|
+        trimmed_id = id.split('/').first
+        trimmed_hash[trimmed_id] = url
+      end
+      trimmed_hash
     end
   end
 end
