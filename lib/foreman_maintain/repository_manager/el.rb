@@ -78,8 +78,7 @@ module ForemanMaintain::RepositoryManager
     def hash_of_repoids_urls(repos, regex)
       ids_urls = Hash[*repos.split("\n").grep(regex).map do |entry|
                         entry.split(':', 2).last.strip
-                      end
-      ]
+                      end]
 
       # The EL7 yum repolist output includes extra info in the output,
       # as example
