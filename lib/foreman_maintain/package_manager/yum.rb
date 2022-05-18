@@ -59,8 +59,8 @@ module ForemanMaintain::PackageManager
       yum_action('remove', packages, :assumeyes => assumeyes)
     end
 
-    def update(packages = [], assumeyes: false)
-      yum_action('update', packages, :assumeyes => assumeyes)
+    def update(packages = [], assumeyes: false, yum_options: [])
+      yum_action('update', packages, :assumeyes => assumeyes, :yum_options => yum_options)
     end
 
     def clean_cache(assumeyes: false)
@@ -120,8 +120,7 @@ module ForemanMaintain::PackageManager
       File.open(protector_config_file, 'w') { |file| file.puts config }
     end
 
-    def yum_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
-      yum_options = []
+    def yum_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0], yum_options: [])
       packages = [packages].flatten(1)
       yum_options << '-y' if assumeyes
       yum_options << '--disableplugin=foreman-protector'
