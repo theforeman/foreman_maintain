@@ -53,8 +53,8 @@ module ForemanMaintain::PackageManager
       yum_action('remove', packages, :assumeyes => assumeyes)
     end
 
-    def update(packages = [], assumeyes: false)
-      yum_action('update', packages, :assumeyes => assumeyes)
+    def update(packages = [], assumeyes: false, yum_options: [])
+      yum_action('update', packages, :assumeyes => assumeyes, :yum_options => yum_options)
     end
 
     def clean_cache(assumeyes: false)
@@ -114,8 +114,12 @@ module ForemanMaintain::PackageManager
       File.open(protector_config_file, 'w') { |file| file.puts config }
     end
 
-    def yum_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
-      yum_options = []
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def yum_action(action, packages, options)
+      with_status = options.fetch(:with_status, false)
+      assumeyes = options.fetch(:assumeyes, false)
+      valid_exit_statuses = options.fetch(:valid_exit_statuses, [0])
+      yum_options = options.fetch(:yum_options, [])
       packages = [packages].flatten(1)
       yum_options << '-y' if assumeyes
       yum_options << '--disableplugin=foreman-protector'
