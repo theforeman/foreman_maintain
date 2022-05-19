@@ -100,12 +100,13 @@ module ForemanMaintain
       end
 
       def packages_action(action, packages, options = {})
-        options.validate_options!(:assumeyes)
+        options.validate_options!(:assumeyes, :yum_options)
         case action
         when :install
           package_manager.install(packages, :assumeyes => options[:assumeyes])
         when :update
-          package_manager.update(packages, :assumeyes => options[:assumeyes])
+          package_manager.update(packages, :assumeyes => options[:assumeyes],
+                                           :yum_options => options[:yum_options])
         when :remove
           package_manager.remove(packages, :assumeyes => options[:assumeyes])
         else
