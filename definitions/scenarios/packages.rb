@@ -111,7 +111,7 @@ module ForemanMaintain::Scenarios
         else
           add_steps_with_context(
             Procedures::Packages::UpdateAllConfirmation,
-            Procedures::Packages::InstallerConfirmation,
+            Procedures::Packages::InstallerConfirmation
           )
           add_step_with_context(Procedures::Packages::UnlockVersions) if el?
           add_step_with_context(Procedures::Packages::Update,
