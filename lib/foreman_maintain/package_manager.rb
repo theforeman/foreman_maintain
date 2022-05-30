@@ -4,19 +4,12 @@ require 'foreman_maintain/package_manager/dnf'
 require 'foreman_maintain/package_manager/apt'
 
 module ForemanMaintain
-  def self.find_pkg_manager
-    %w[dnf yum apt].find do |manager|
-      system('which', manager.to_s, [:out, :err] => File::NULL)
-    end
-  end
-
   def self.package_manager
-    @package_manager ||= case find_pkg_manager
-                         when 'dnf'
+    @package_manager ||= if el? && !el7?
                            ForemanMaintain::PackageManager::Dnf.new
-                         when 'yum'
+                         elsif el? && el7?
                            ForemanMaintain::PackageManager::Yum.new
-                         when 'apt'
+                         elsif debian?
                            ForemanMaintain::PackageManager::Apt.new
                          else
                            raise 'No supported package manager was found'
