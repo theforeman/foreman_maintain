@@ -45,6 +45,10 @@ module ForemanMaintain::PackageManager
       sys.execute!("dpkg-query --showformat='#{queryfm}' -W").split("\n")
     end
 
+    def version_locking_supported?
+      true
+    end
+
     def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
       apt_options = []
       packages = [packages].flatten(1)
