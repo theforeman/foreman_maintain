@@ -2,6 +2,7 @@ module ForemanMaintain
   module Cli
     class PackagesCommand < Base
       subcommand 'lock', 'Prevent packages from automatic update' do
+        # This command is not implemented for Debian based operating systems
         interactive_option(['assumeyes'])
         def execute
           run_scenario_or_rescue do
@@ -11,6 +12,7 @@ module ForemanMaintain
       end
 
       subcommand 'unlock', 'Enable packages for automatic update' do
+        # This command is not implemented for Debian based operating systems
         interactive_option(['assumeyes'])
         def execute
           run_scenario_or_rescue do
@@ -20,6 +22,7 @@ module ForemanMaintain
       end
 
       subcommand 'status', 'Check if packages are protected against update' do
+        # This command is not implemented for Debian based operating systems
         interactive_option(['assumeyes'])
         def execute
           run_scenario_or_rescue do
@@ -64,6 +67,7 @@ module ForemanMaintain
       end
 
       subcommand 'is-locked', 'Check if update of packages is allowed' do
+        # This command is not implemented for Debian based operating systems
         interactive_option(['assumeyes'])
         def execute
           run_scenario_or_rescue do
