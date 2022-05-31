@@ -6,9 +6,9 @@ require 'foreman_maintain/package_manager/apt'
 module ForemanMaintain
   def self.package_manager
     @package_manager ||= if el7?
-                           ForemanMaintain::PackageManager::Dnf.new
-                         elsif el?
                            ForemanMaintain::PackageManager::Yum.new
+                         elsif el?
+                           ForemanMaintain::PackageManager::Dnf.new
                          elsif debian?
                            ForemanMaintain::PackageManager::Apt.new
                          else
