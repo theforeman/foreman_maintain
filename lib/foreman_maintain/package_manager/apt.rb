@@ -34,7 +34,7 @@ module ForemanMaintain::PackageManager
     end
 
     def check_update(packages: nil, with_status: false)
-      apt_action('list --upgradable -a', packages, :with_status => with_status)
+      apt_action('upgrade --dry-run', packages, :with_status => with_status)
     end
 
     def list_installed_packages(queryfm = '${binary:Package}-${VERSION}\n')
@@ -46,7 +46,7 @@ module ForemanMaintain::PackageManager
     end
 
     def version_locking_supported?
-      true
+      false
     end
 
     def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
@@ -56,10 +56,10 @@ module ForemanMaintain::PackageManager
       apt_options_s = apt_options.empty? ? '' : ' ' + apt_options.join(' ')
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
       if with_status
-        sys.execute_with_status("apt#{apt_options_s} #{action}#{packages_s}",
+        sys.execute_with_status("apt-get#{apt_options_s} #{action}#{packages_s}",
                                 :interactive => !assumeyes)
       else
-        sys.execute!("apt#{apt_options_s} #{action}#{packages_s}",
+        sys.execute!("apt-get#{apt_options_s} #{action}#{packages_s}",
                      :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
       end
     end
