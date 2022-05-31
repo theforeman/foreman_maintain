@@ -46,6 +46,10 @@ module ForemanMaintain
         facts.fetch('ID_LIKE', '').split
       end
 
+      def os_name
+        facts.fetch('NAME')
+      end
+
       def el?
         File.exist?('/etc/redhat-release')
       end

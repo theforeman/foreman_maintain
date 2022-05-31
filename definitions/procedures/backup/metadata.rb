@@ -17,7 +17,7 @@ module Procedures::Backup
         metadata['os_version'] = release_info(spinner)
         metadata['plugin_list'] = plugin_list(spinner) || []
         metadata['proxy_features'] = proxy_feature_list(spinner) || []
-        metadata['rpms'] = rpms(spinner)
+        metadata['rpms'] = package_manager.list_installed_packages
         metadata['incremental'] = @incremental_dir || false
         metadata['online'] = @online_backup
         metadata['hostname'] = hostname
@@ -37,7 +37,7 @@ module Procedures::Backup
 
     def release_info(spinner)
       spinner.update('Collecting system release info')
-      execute!('cat /etc/redhat-release').chomp
+      os_name + ' ' + os_version_id
     end
 
     def rpms(spinner)
