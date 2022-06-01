@@ -20,7 +20,11 @@ module ForemanMaintain
       end
 
       def postgresql_conf
-        "#{data_dir}/postgresql.conf"
+        if el?
+          "#{data_dir}/postgresql.conf"
+        else
+          '/etc/postgresql/11/main/postgresql.conf'
+        end
       end
 
       def restore_transform
