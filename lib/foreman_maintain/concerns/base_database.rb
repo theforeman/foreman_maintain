@@ -4,8 +4,18 @@ module ForemanMaintain
       def data_dir
         if el7? && package_manager.installed?('rh-postgresql12-postgresql-server-syspaths')
           '/var/opt/rh/rh-postgresql12/lib/pgsql/data/'
+        elsif debian?
+          deb_psql_data_dir
         else
           '/var/lib/pgsql/data/'
+        end
+      end
+
+      def deb_psql_data_dir
+        if package_manager.installed?('postgresql-11')
+          '/var/lib/postgresql/11/main/'
+        elsif package_manager.installed?('postgresql-12')
+          '/var/lib/postgresql/11/main/'
         end
       end
 
