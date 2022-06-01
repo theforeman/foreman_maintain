@@ -2,7 +2,7 @@ module ForemanMaintain::PackageManager
   class Apt < Base
     def installed?(packages)
       packages_list = [packages].flatten(1).map { |pkg| "'#{pkg}'" }.join(' ')
-      sys.execute?(%(dpkg-query -l #{packages_list}))
+      sys.execute?(%(dpkg --status #{packages_list}))
     end
 
     def install(packages, assumeyes: false)
