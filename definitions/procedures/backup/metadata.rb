@@ -40,11 +40,6 @@ module Procedures::Backup
       os_name + ' ' + os_version_id
     end
 
-    def rpms(spinner)
-      spinner.update('Collecting installed RPMs')
-      execute!('rpm -qa').split("\n")
-    end
-
     def plugin_list(spinner)
       if feature(:foreman_server)
         spinner.update('Collecting list of plugins')
