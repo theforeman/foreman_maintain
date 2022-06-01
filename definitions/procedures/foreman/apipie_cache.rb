@@ -6,7 +6,7 @@ module Procedures::Foreman
     end
 
     def run
-      execute!('foreman-rake apipie:cache')
+      execute!('FOREMAN_APIPIE_LANGS=en foreman-rake apipie:cache')
     end
   end
 end
