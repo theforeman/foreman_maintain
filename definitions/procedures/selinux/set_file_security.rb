@@ -7,6 +7,9 @@ module Procedures::Selinux
             'Is the backup incremental?',
             :required => true
       manual_detection
+      confine do
+        package_manager.installed?(['policycoreutils'])
+      end
     end
 
     def run
