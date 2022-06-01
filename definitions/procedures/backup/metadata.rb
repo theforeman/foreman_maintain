@@ -17,7 +17,7 @@ module Procedures::Backup
         metadata['os_version'] = release_info(spinner)
         metadata['plugin_list'] = plugin_list(spinner) || []
         metadata['proxy_features'] = proxy_feature_list(spinner) || []
-        metadata['rpms'] = package_manager.list_installed_packages
+        installed_pkgs(metadata)
         metadata['incremental'] = @incremental_dir || false
         metadata['online'] = @online_backup
         metadata['hostname'] = hostname
@@ -28,6 +28,15 @@ module Procedures::Backup
 
     private
 
+    def installed_pkgs(metadata)
+      installed_pkgs = package_manager.list_installed_packages
+      if el?
+        metadata[:rpms] = installed_pkgs
+      else
+        metadata[:debs] = installed_pkgs
+      end
+    end
+
     def save_metadata(metadata, spinner)
       spinner.update('Saving metadata to metadata.yml')
       File.open(File.join(@backup_dir, 'metadata.yml'), 'w') do |metadata_file|
@@ -37,7 +46,7 @@ module Procedures::Backup
 
     def release_info(spinner)
       spinner.update('Collecting system release info')
-      os_name + ' ' + os_version_id
+      "#{os_name} #{os_version_id}"
     end
 
     def plugin_list(spinner)
