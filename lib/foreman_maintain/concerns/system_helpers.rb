@@ -115,8 +115,12 @@ module ForemanMaintain
       end
 
       def package_version(name)
-        # space for extension to support non-rpm distributions
-        pkg = package_manager.find_installed_package(name, '%{VERSION}')
+        ver = if el?
+                '%{VERSION}'
+              elsif debian?
+                '${VERSION}'
+              end
+        pkg = package_manager.find_installed_package(name, ver)
         version(pkg) unless pkg.nil?
       end
 

@@ -1,3 +1,4 @@
+
 describe ForemanMaintain do
   subject { ForemanMaintain }
 
@@ -8,17 +9,26 @@ describe ForemanMaintain do
     end
 
     it 'instantiates correct yum manager implementation' do
-      subject.stubs(:`).with('command -v yum').returns('/bin/yum')
+      subject.stubs(:el?).returns(true)
+      subject.stubs(:el7?).returns(true)
       subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Yum
     end
 
     it 'instantiates correct dnf manager implementation' do
-      subject.stubs(:`).with('command -v yum').returns('/bin/yum')
-      subject.stubs(:`).with('command -v dnf').returns('/bin/dnf')
+      subject.stubs(:el?).returns(true)
+      subject.stubs(:el7?).returns(false)
       subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Dnf
     end
 
+    it 'instantiates correct apt manager implementation' do
+      subject.stubs(:el?).returns(false)
+      subject.stubs(:debian?).returns(true)
+      subject.package_manager.must_be_instance_of ForemanMaintain::PackageManager::Apt
+    end
+
     it 'fail on unknown manager type' do
+      subject.stubs(:el?).returns(false)
+      subject.stubs(:debian?).returns(false)
       err = proc { subject.package_manager }.must_raise Exception
       err.message.must_equal 'No supported package manager was found'
     end
