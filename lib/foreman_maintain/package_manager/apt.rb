@@ -2,7 +2,15 @@ module ForemanMaintain::PackageManager
   class Apt < Base
     def installed?(packages)
       packages_list = [packages].flatten(1).map { |pkg| "'#{pkg}'" }.join(' ')
-      sys.execute?(%(dpkg --status #{packages_list}))
+      status, output = sys.execute_with_status(%(dpkg --status #{packages_list}))
+      return false if status != 0
+
+      status_of_pkg = output.split("\n").grep(/^Status:/).first
+      if status_of_pkg.include?('installed')
+        return true
+      end
+
+      false
     end
 
     def install(packages, assumeyes: false)
@@ -23,14 +31,14 @@ module ForemanMaintain::PackageManager
     end
 
     def find_installed_package(name, queryfm = '')
+      return unless installed?(name)
+
       dpkg_cmd = "dpkg-query --show #{name}"
       unless queryfm.empty?
         dpkg_cmd = "dpkg-query --showformat='#{queryfm}' --show #{name}"
       end
-      status, result = sys.execute_with_status(dpkg_cmd)
-      if status == 0
-        result
-      end
+      _, result = sys.execute_with_status(dpkg_cmd)
+      result
     end
 
     def check_update(packages: nil, with_status: false)
