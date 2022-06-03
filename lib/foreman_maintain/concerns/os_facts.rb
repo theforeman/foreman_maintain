@@ -69,6 +69,10 @@ module ForemanMaintain
       def el_major_version
         return os_version_id.to_i if el?
       end
+
+      def deb_major_version
+        return os_version_id.to_i if debian?
+      end
     end
   end
 end
