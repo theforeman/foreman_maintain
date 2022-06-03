@@ -8,7 +8,7 @@ module Procedures::Selinux
             :required => true
       manual_detection
       confine do
-        package_manager.installed?(['policycoreutils'])
+        File.directory?('/sys/fs/selinux')
       end
     end
 
