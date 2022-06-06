@@ -12,11 +12,19 @@ module ForemanMaintain
       end
 
       def deb_psql_data_dir
-        if package_manager.installed?('postgresql-11')
-          '/var/lib/postgresql/11/main/'
-        elsif package_manager.installed?('postgresql-12')
-          '/var/lib/postgresql/11/main/'
+        @deb_psql_data_dir = []
+        deb_psql_versions.each do |ver|
+          @deb_psql_data_dir << "/var/lib/postgresql/#{ver}/main/"
         end
+        @deb_psql_data_dir
+      end
+
+      def deb_psql_versions
+        installed_pkgs = package_manager.list_installed_packages('${binary:Package}\n')
+        @deb_psql_versions ||= installed_pkgs.grep(/^postgresql-\d+$/).map do |name|
+          name.split('-').last
+        end
+        @deb_psql_versions
       end
 
       def postgresql_conf
@@ -103,11 +111,13 @@ module ForemanMaintain
 
       def backup_local(backup_file, extra_tar_options = {})
         dir = extra_tar_options.fetch(:data_dir, data_dir)
+        command = extra_tar_options.fetch(:command, 'create')
+
         FileUtils.cd(dir) do
           tar_options = {
             :archive => backup_file,
-            :command => 'create',
-            :transform => "s,^,#{data_dir[1..-1]},S",
+            :command => command,
+            :transform => "s,^,#{dir[1..-1]},S",
             :files => '*'
           }.merge(extra_tar_options)
           feature(:tar).run(tar_options)

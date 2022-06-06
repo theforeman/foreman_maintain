@@ -19,6 +19,7 @@ module ForemanMaintain::Scenarios
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
     end
 
+    # rubocop:disable Metrics/MethodLength
     def compose
       check_valid_startegy
       safety_confirmation
@@ -33,9 +34,18 @@ module ForemanMaintain::Scenarios
       when :offline
         add_offline_backup_steps
       when :snapshot
+        deb_snapshot_msg
         add_snapshot_backup_steps
       end
       add_step_with_context(Procedures::Backup::CompressData)
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def deb_snapshot_msg
+      if debian?
+        puts 'The snapshot backup is not yet available for Debian based OSes!'
+        exit 0
+      end
     end
 
     # rubocop:disable  Metrics/MethodLength
