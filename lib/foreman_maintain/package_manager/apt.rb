@@ -6,11 +6,7 @@ module ForemanMaintain::PackageManager
       return false if status != 0
 
       status_of_pkg = output.split("\n").grep(/^Status:/).first
-      if status_of_pkg.include?('installed')
-        return true
-      end
-
-      false
+      status_of_pkg.include?('installed')
     end
 
     def install(packages, assumeyes: false)
