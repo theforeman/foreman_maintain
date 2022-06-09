@@ -60,20 +60,26 @@ module Procedures::Backup
         exclude_configs += feature.config_files_exclude_for_online if @online_backup
       end
 
-      if feature(:foreman_proxy)
-        configs += feature(:foreman_proxy).config_files(@proxy_features)
-        exclude_configs += feature(:foreman_proxy).config_files_to_exclude(@proxy_features)
-      end
-
-      if debian?
-        configs += feature(:foreman_database).config_dirs
-      end
-
+      configs += foreman_proxy_configs if feature(:foreman_proxy)
+      exclude_configs += foreman_proxy_exclude_configs if feature(:foreman_proxy)
+      configs += deb_config_dirs if debian?
       configs.compact.select { |path| Dir.glob(path).any? }
       exclude_configs.compact.select { |path| Dir.glob(path).any? }
       [configs, exclude_configs]
     end
     # rubocop:enable Metrics/AbcSize
+
+    def foreman_proxy_configs
+      feature(:foreman_proxy).config_files(@proxy_features)
+    end
+
+    def foreman_proxy_exclude_configs
+      feature(:foreman_proxy).config_files_to_exclude(@proxy_features)
+    end
+
+    def deb_config_dirs
+      feature(:foreman_database).config_dirs if debian?
+    end
 
     private
 

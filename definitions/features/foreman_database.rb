@@ -24,7 +24,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   def config_dirs
     # On Debian config files reside in /etc/postgresql/#{version}/main/
     # There could be more than on config dir because of multiple versions
-    deb_psql_conf_dirs
+    deb_postgresql_conf_dirs
   end
 
   def services
