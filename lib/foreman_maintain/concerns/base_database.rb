@@ -12,11 +12,11 @@ module ForemanMaintain
       end
 
       def deb_psql_data_dir
-        @deb_psql_data_dir = []
+        deb_psql_data_dir = []
         deb_psql_versions.each do |ver|
-          @deb_psql_data_dir << "/var/lib/postgresql/#{ver}/main/"
+          deb_psql_data_dir << "/var/lib/postgresql/#{ver}/main/"
         end
-        @deb_psql_data_dir
+        deb_psql_data_dir
       end
 
       def deb_psql_versions
@@ -28,11 +28,19 @@ module ForemanMaintain
       end
 
       def postgresql_conf
-        if el?
-          "#{data_dir}/postgresql.conf"
-        else
-          '/etc/postgresql/11/main/postgresql.conf'
+        return "#{data_dir}/postgresql.conf" if el?
+
+        deb_psql_conf_dirs.map do |conf_dir|
+          "#{conf_dir}postgresql.conf"
         end
+      end
+
+      def deb_psql_conf_dirs
+        deb_psql_conf = []
+        deb_psql_versions.each do |ver|
+          deb_psql_conf << "/etc/postgresql/#{ver}/main/"
+        end
+        deb_psql_conf
       end
 
       def restore_transform
