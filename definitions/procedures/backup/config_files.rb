@@ -65,6 +65,10 @@ module Procedures::Backup
         exclude_configs += feature(:foreman_proxy).config_files_to_exclude(@proxy_features)
       end
 
+      if debian?
+        configs += feature(:foreman_database).config_dirs
+      end
+
       configs.compact.select { |path| Dir.glob(path).any? }
       exclude_configs.compact.select { |path| Dir.glob(path).any? }
       [configs, exclude_configs]
