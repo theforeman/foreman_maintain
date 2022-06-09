@@ -5,42 +5,38 @@ module ForemanMaintain
         if el7? && package_manager.installed?('rh-postgresql12-postgresql-server-syspaths')
           '/var/opt/rh/rh-postgresql12/lib/pgsql/data/'
         elsif debian?
-          deb_psql_data_dir
+          deb_postgresql_data_dir
         else
           '/var/lib/pgsql/data/'
         end
       end
 
-      def deb_psql_data_dir
-        deb_psql_data_dir = []
-        deb_psql_versions.each do |ver|
-          deb_psql_data_dir << "/var/lib/postgresql/#{ver}/main/"
+      def deb_postgresql_data_dir
+        deb_postgresql_versions.map do |ver|
+          "/var/lib/postgresql/#{ver}/main/"
         end
-        deb_psql_data_dir
       end
 
-      def deb_psql_versions
+      def deb_postgresql_versions
         installed_pkgs = package_manager.list_installed_packages('${binary:Package}\n')
-        @deb_psql_versions ||= installed_pkgs.grep(/^postgresql-\d+$/).map do |name|
+        @deb_postgresql_versions ||= installed_pkgs.grep(/^postgresql-\d+$/).map do |name|
           name.split('-').last
         end
-        @deb_psql_versions
+        @deb_postgresql_versions
       end
 
       def postgresql_conf
         return "#{data_dir}/postgresql.conf" if el?
 
-        deb_psql_conf_dirs.map do |conf_dir|
+        deb_postgresql_conf_dirs.map do |conf_dir|
           "#{conf_dir}postgresql.conf"
         end
       end
 
-      def deb_psql_conf_dirs
-        deb_psql_conf = []
-        deb_psql_versions.each do |ver|
-          deb_psql_conf << "/etc/postgresql/#{ver}/main/"
+      def deb_postgresql_conf_dirs
+        deb_postgresql_versions.map do |ver|
+          "/etc/postgresql/#{ver}/main/"
         end
-        deb_psql_conf
       end
 
       def restore_transform
