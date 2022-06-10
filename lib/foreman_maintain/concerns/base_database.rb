@@ -28,12 +28,12 @@ module ForemanMaintain
       def postgresql_conf
         return "#{data_dir}/postgresql.conf" if el?
 
-        deb_postgresql_conf_dirs.map do |conf_dir|
+        deb_postgresql_config_dirs.map do |conf_dir|
           "#{conf_dir}postgresql.conf"
         end
       end
 
-      def deb_postgresql_conf_dirs
+      def deb_postgresql_config_dirs
         deb_postgresql_versions.map do |ver|
           "/etc/postgresql/#{ver}/main/"
         end

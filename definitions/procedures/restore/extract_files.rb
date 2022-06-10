@@ -71,18 +71,12 @@ module Procedures::Restore
         :transform => any_database.restore_transform
       )
       feature(:tar).run(pgsql_data_tar)
-      del_data_dir_param
+      del_data_dir_param if el?
     end
 
     def del_data_dir_param
       # workaround for https://tickets.puppetlabs.com/browse/MODULES-11160
-      if el?
-        execute("sed -i '/data_directory/d' #{any_database.postgresql_conf}")
-      else
-        any_database.postgresql_conf.each do |conf_file|
-          execute("sed -i '/data_directory/d' #{conf_file}")
-        end
-      end
+      execute("sed -i '/data_directory/d' #{any_database.postgresql_conf}")
     end
   end
 end
