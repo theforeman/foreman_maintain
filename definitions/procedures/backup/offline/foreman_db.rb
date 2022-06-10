@@ -20,7 +20,7 @@ module Procedures::Backup
             local_backup
           end
         else
-          puts "Backup of #{pg_data_dir} is not supported for remote databases." \
+          puts "Backup of #{pg_data_dir.join(',')} is not supported for remote databases." \
             ' Doing postgres dump instead...'
           with_spinner('Getting Foreman DB dump') do
             feature(:foreman_database).dump_db(File.join(@backup_dir, 'foreman.dump'))
@@ -31,30 +31,15 @@ module Procedures::Backup
       private
 
       def local_backup
-        with_spinner("Collecting data from #{pg_data_dir}") do
-          if el?
-            do_backup
-          elsif pg_data_dir.size == 1
-            do_backup(pg_data_dir.first)
-          else
-            deb_local_backup
+        with_spinner("Collecting data from #{pg_data_dir.join(',')}") do
+          pg_data_dir.each_with_index do |pg_dir, index|
+            do_backup(pg_dir, 'create') if index == 0
+            do_backup(pg_dir, 'append') if index != 0
           end
         end
       end
 
-      def deb_local_backup
-        # We take backup of first dir
-        first_dir = pg_data_dir.first
-        pg_data_dir.delete(first_dir)
-        do_backup(first_dir)
-
-        # We append the rest of the dirs to pgsql_data.tar file
-        pg_data_dir.each do |pg_dir|
-          do_backup(pg_dir, 'append')
-        end
-      end
-
-      def do_backup(pg_dir = pg_data_dir, cmd = 'create')
+      def do_backup(pg_dir, cmd)
         feature(:foreman_database).backup_local(
           pg_backup_file,
           :listed_incremental => File.join(@backup_dir, '.postgres.snar'),
@@ -70,7 +55,7 @@ module Procedures::Backup
 
       def pg_data_dir
         if el?
-          pg_data_dir_el
+          [pg_data_dir_el]
         else
           pg_data_dirs_deb
         end
