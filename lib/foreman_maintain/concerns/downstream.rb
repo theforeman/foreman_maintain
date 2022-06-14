@@ -66,7 +66,8 @@ module ForemanMaintain
         server_version_full = "#{server_version.major}.#{server_version.minor}"
         rh_repos.concat(product_specific_repos(server_version_full))
         if server_version > version('6.3')
-          rh_repos << ansible_repo(server_version)
+          ansible_repo = ansible_repo(server_version)
+          rh_repos << ansible_repo if ansible_repo
         end
 
         rh_repos
@@ -83,8 +84,6 @@ module ForemanMaintain
 
         if el7?
           "rhel-#{el_major_version}-server-ansible-#{ansible_version}-rpms"
-        else
-          "ansible-#{ansible_version}-for-rhel-#{el_major_version}-x86_64-rpms"
         end
       end
 
