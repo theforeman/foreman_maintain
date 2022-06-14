@@ -37,10 +37,9 @@ module ForemanMaintain
                      system.send(:ansible_repo, system.version('6.9'))
       end
 
-      it 'returns correct ansible 2.9 repo for 6.11 on el8' do
+      it 'returns no ansible 2.9 repo for 6.11 on el8' do
         system.stubs(:el_major_version).returns(8)
-        assert_equal 'ansible-2.9-for-rhel-8-x86_64-rpms',
-                     system.send(:ansible_repo, system.version('6.11'))
+        assert_nil system.send(:ansible_repo, system.version('6.11'))
       end
     end
 
