@@ -13,7 +13,7 @@ module Procedures::Repositories
 
     def run
       with_spinner("Configuring repositories for #{@version}") do
-        (feature(:instance).downstream || feature(:upstream)).setup_repositories(@version)
+        (feature(:instance).downstream || feature(:instance).upstream_install).setup_repositories(@version)
       end
     end
   end

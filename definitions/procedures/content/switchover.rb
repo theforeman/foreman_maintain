@@ -19,7 +19,7 @@ module Procedures::Content
       puts execute!('foreman-rake katello:pulp3_post_migration_check')
       puts 'Switching specified content over to pulp 3'
       puts execute!('foreman-rake katello:pulp3_content_switchover')
-      run_installer if feature(:upstream)
+      run_installer if feature(:katello_install)
     end
 
     def run_installer

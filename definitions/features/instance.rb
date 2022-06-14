@@ -74,6 +74,10 @@ class Features::Instance < ForemanMaintain::Feature
     feature(:nftables) || feature(:iptables)
   end
 
+  def upstream_install
+    feature(:foreman_install) || feature(:katello_install)
+  end
+
   private
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
