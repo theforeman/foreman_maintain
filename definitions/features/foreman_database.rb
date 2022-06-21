@@ -16,9 +16,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   end
 
   def config_files
-    [postgresql_conf] if el?
-
-    []
+    el? ? [postgresql_conf] : []
   end
 
   def config_dirs

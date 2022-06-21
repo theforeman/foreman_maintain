@@ -54,11 +54,7 @@ module Procedures::Backup
       end
 
       def pg_data_dir
-        if el?
-          [pg_data_dir_el]
-        else
-          pg_data_dirs_deb
-        end
+        el? ? [pg_data_dir_el] : pg_data_dirs_deb
       end
 
       def pg_data_dirs_deb
