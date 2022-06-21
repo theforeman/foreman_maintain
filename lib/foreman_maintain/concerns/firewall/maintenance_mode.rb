@@ -14,7 +14,9 @@ module ForemanMaintain
 
         def can_install_nft?
           # The nftables is default from EL8 and Debian 10(Buster)
-          el_major_version >= 8 || deb_major_version >= 10
+          el_major_version >= 8 ||
+            deb_major_version >= 10 ||
+            ubuntu_major_version >= 22
         end
 
         def question_and_pkg_name

@@ -55,7 +55,11 @@ module ForemanMaintain
       end
 
       def debian?
-        File.exist?('/etc/debian_version')
+        os_id == 'debian'
+      end
+
+      def ubuntu?
+        os_id == 'ubuntu'
       end
 
       def el7?
@@ -67,11 +71,15 @@ module ForemanMaintain
       end
 
       def el_major_version
-        return os_version_id.to_i if el?
+        os_version_id.to_i if el?
       end
 
       def deb_major_version
-        return os_version_id.to_i if debian?
+        os_version_id.to_i if debian?
+      end
+
+      def ubuntu_major_version
+        os_version_id.to_i if ubuntu?
       end
     end
   end
