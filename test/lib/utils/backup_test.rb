@@ -111,10 +111,11 @@ module ForemanMaintain
     end
 
     def feature_with_local_method(label, return_value)
-      feature = MiniTest::Mock.new
-      feature.expect(:configuration, 'host' => 'abc.example.com')
-      feature.expect(:local?, return_value)
-      ForemanMaintain.detector.stubs(:feature).with(label).returns(feature)
+      fake_feature = MiniTest::Mock.new
+      ret_hash = { 'host' => 'abc.example.com' }
+      fake_feature.expect(:configuration, ret_hash)
+      fake_feature.expect(:local?, return_value)
+      ForemanMaintain.detector.stubs(:feature).with(label).returns(fake_feature)
     end
 
     it 'Validates katello standard backup' do
