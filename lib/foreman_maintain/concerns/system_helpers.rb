@@ -117,7 +117,7 @@ module ForemanMaintain
       def package_version(name)
         ver = if el?
                 '%{VERSION}'
-              elsif debian?
+              elsif debian_or_ubuntu?
                 '${VERSION}'
               end
         pkg = package_manager.find_installed_package(name, ver)
@@ -189,7 +189,7 @@ module ForemanMaintain
       end
 
       def ruby_prefix(scl = true)
-        if debian?
+        if debian_or_ubuntu?
           'ruby-'
         elsif el7? && scl
           'tfm-rubygem-'
@@ -199,12 +199,12 @@ module ForemanMaintain
       end
 
       def foreman_plugin_name(plugin)
-        plugin = plugin.tr('_', '-') if debian?
+        plugin = plugin.tr('_', '-') if debian_or_ubuntu?
         ruby_prefix + plugin
       end
 
       def proxy_plugin_name(plugin)
-        if debian?
+        if debian_or_ubuntu?
           plugin = plugin.tr('_', '-')
           proxy_plugin_prefix = 'smart-proxy-'
         else
@@ -215,12 +215,12 @@ module ForemanMaintain
       end
 
       def hammer_plugin_name(plugin)
-        plugin = plugin.tr('_', '-') if debian?
-        [hammer_package, plugin].join(debian? ? '-' : '_')
+        plugin = plugin.tr('_', '-') if debian_or_ubuntu?
+        [hammer_package, plugin].join(debian_or_ubuntu? ? '-' : '_')
       end
 
       def hammer_package
-        hammer_prefix = if debian?
+        hammer_prefix = if debian_or_ubuntu?
                           'hammer-cli'
                         else
                           'hammer_cli'

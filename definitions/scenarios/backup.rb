@@ -42,7 +42,7 @@ module ForemanMaintain::Scenarios
     # rubocop:enable Metrics/MethodLength
 
     def deb_snapshot_msg
-      if debian?
+      if debian_or_ubuntu?
         puts 'The snapshot backup is not yet available for Debian based OSes!'
         exit 0
       end
