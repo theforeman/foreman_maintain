@@ -9,7 +9,7 @@ module ForemanMaintain
                            ForemanMaintain::PackageManager::Yum.new
                          elsif el?
                            ForemanMaintain::PackageManager::Dnf.new
-                         elsif debian?
+                         elsif debian_or_ubuntu?
                            ForemanMaintain::PackageManager::Apt.new
                          else
                            raise 'No supported package manager was found'

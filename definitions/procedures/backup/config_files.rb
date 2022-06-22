@@ -62,7 +62,7 @@ module Procedures::Backup
 
       configs += foreman_proxy_configs if feature(:foreman_proxy)
       exclude_configs += foreman_proxy_exclude_configs if feature(:foreman_proxy)
-      configs += deb_config_dirs if debian?
+      configs += deb_config_dirs if debian_or_ubuntu?
       configs.compact.select { |path| Dir.glob(path).any? }
       exclude_configs.compact.select { |path| Dir.glob(path).any? }
       [configs, exclude_configs]

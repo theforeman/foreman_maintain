@@ -81,6 +81,10 @@ module ForemanMaintain
       def ubuntu_major_version
         os_version_id.to_i if ubuntu?
       end
+
+      def debian_or_ubuntu?
+        debian? || ubuntu?
+      end
     end
   end
 end

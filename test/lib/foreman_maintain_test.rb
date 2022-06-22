@@ -29,6 +29,7 @@ describe ForemanMaintain do
     it 'fail on unknown manager type' do
       subject.stubs(:el?).returns(false)
       subject.stubs(:debian?).returns(false)
+      subject.stubs(:ubuntu?).returns(false)
       err = proc { subject.package_manager }.must_raise Exception
       err.message.must_equal 'No supported package manager was found'
     end

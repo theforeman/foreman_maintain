@@ -4,7 +4,7 @@ module ForemanMaintain
   def self.repository_manager
     @repository_manager ||= if el?
                               ForemanMaintain::RepositoryManager::El.new
-                            elsif debian?
+                            elsif debian_or_ubuntu?
                               raise 'Not implemented!'
                             else
                               raise 'No supported repository manager was found'
