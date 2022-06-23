@@ -32,7 +32,7 @@ module Procedures::Backup
 
       def local_backup
         with_spinner("Collecting data from #{pg_data_dir.join(',')}") do
-          pg_data_dir.each_with_index do |pg_dir, index|
+          pg_data_dirs.each_with_index do |pg_dir, index|
             do_backup(pg_dir, 'create') if index == 0
             do_backup(pg_dir, 'append') if index != 0
           end
@@ -53,7 +53,7 @@ module Procedures::Backup
         File.join(@backup_dir, 'pgsql_data.tar')
       end
 
-      def pg_data_dir
+      def pg_data_dirs
         el? ? [pg_data_dir_el] : pg_data_dirs_deb
       end
 
