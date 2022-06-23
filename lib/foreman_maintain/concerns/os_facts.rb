@@ -85,6 +85,10 @@ module ForemanMaintain
       def debian_or_ubuntu?
         debian? || ubuntu?
       end
+
+      def os_version
+        facts.fetch('VERSION')
+      end
     end
   end
 end
