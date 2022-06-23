@@ -45,10 +45,24 @@ module Procedures::Backup
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/AbcSize
     def config_files
+      all_configs = available_features_config
+      configs = all_configs.first
+      exclude_configs = all_configs.last
+
+      if feature(:foreman_proxy)
+        configs += foreman_proxy_configs
+        exclude_configs += foreman_proxy_exclude_configs
+      end
+
+      configs += deb_config_dirs if debian_or_ubuntu?
+      configs.compact.select { |path| Dir.glob(path).any? }
+      exclude_configs.compact.select { |path| Dir.glob(path).any? }
+      [configs, exclude_configs]
+    end
+
+    def available_features_config
       configs = []
       exclude_configs = []
       ForemanMaintain.available_features.each do |feature|
@@ -59,15 +73,8 @@ module Procedures::Backup
         exclude_configs += feature.config_files_to_exclude
         exclude_configs += feature.config_files_exclude_for_online if @online_backup
       end
-
-      configs += foreman_proxy_configs if feature(:foreman_proxy)
-      exclude_configs += foreman_proxy_exclude_configs if feature(:foreman_proxy)
-      configs += deb_config_dirs if debian_or_ubuntu?
-      configs.compact.select { |path| Dir.glob(path).any? }
-      exclude_configs.compact.select { |path| Dir.glob(path).any? }
       [configs, exclude_configs]
     end
-    # rubocop:enable Metrics/AbcSize
 
     def foreman_proxy_configs
       feature(:foreman_proxy).config_files(@proxy_features)
@@ -78,7 +85,7 @@ module Procedures::Backup
     end
 
     def deb_config_dirs
-      feature(:foreman_database).config_dirs if debian?
+      feature(:foreman_database).config_dirs if debian_or_ubuntu?
     end
 
     private
