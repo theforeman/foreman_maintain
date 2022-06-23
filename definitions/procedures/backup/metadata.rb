@@ -46,7 +46,7 @@ module Procedures::Backup
 
     def release_info(spinner)
       spinner.update('Collecting system release info')
-      "#{os_name} #{os_version_id}"
+      "#{os_name} #{os_version}"
     end
 
     def plugin_list(spinner)
