@@ -14,23 +14,16 @@ module ForemanMaintain
 
         def can_install_nft?
           # The nftables is default from EL8 and Debian 10(Buster)
-          el_major_version >= 8 ||
-            deb_major_version >= 10 ||
-            ubuntu_major_version >= 22
+          (el? && el_major_version >= 8) ||
+            (debian? && deb_major_version >= 10) ||
+            (ubuntu? && ubuntu_major_version.to_i >= 22)
         end
 
         def question_and_pkg_name
-          question = 'Do you want to install missing netfilter utility '
-          pkg_to_install = []
-          if can_install_nft?
-            question << 'nftables?'
-            pkg_to_install << 'nftables'
-          else
-            question << 'iptables?'
-            pkg_to_install << 'iptables'
-          end
-          question << "\nand start maintenance mode?"
-          [question, pkg_to_install]
+          pkg_to_install = can_install_nft? ? 'nftables' : 'iptables'
+          question = "Do you want to install missing netfilter utility #{pkg_to_install}?"\
+                     "\nand start maintenance mode?"
+          [question, [pkg_to_install]]
         end
       end
     end

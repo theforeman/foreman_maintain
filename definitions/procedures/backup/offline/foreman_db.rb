@@ -20,7 +20,7 @@ module Procedures::Backup
             local_backup
           end
         else
-          puts "Backup of #{pg_data_dir.join(',')} is not supported for remote databases." \
+          puts "Backup of #{pg_data_dirs.join(',')} is not supported for remote databases." \
             ' Doing postgres dump instead...'
           with_spinner('Getting Foreman DB dump') do
             feature(:foreman_database).dump_db(File.join(@backup_dir, 'foreman.dump'))
@@ -31,10 +31,9 @@ module Procedures::Backup
       private
 
       def local_backup
-        with_spinner("Collecting data from #{pg_data_dir.join(',')}") do
+        with_spinner("Collecting data from #{pg_data_dirs.join(',')}") do
           pg_data_dirs.each_with_index do |pg_dir, index|
-            do_backup(pg_dir, 'create') if index == 0
-            do_backup(pg_dir, 'append') if index != 0
+            do_backup(pg_dir, index == 0 ? 'create' : 'append')
           end
         end
       end
@@ -68,6 +67,7 @@ module Procedures::Backup
 
       def pg_data_dir_el
         return feature(:foreman_database).data_dir if @mount_dir.nil?
+
         mount_point = File.join(@mount_dir, 'pgsql')
         dir = feature(:foreman_database).find_base_directory(mount_point)
         fail!("Snapshot of Foreman DB was not found mounted in #{mount_point}") if dir.nil?
