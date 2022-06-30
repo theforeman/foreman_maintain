@@ -143,6 +143,9 @@ module ForemanMaintain
       end
 
       def version(value)
+        # packages versions, especially on Debian, sometimes include a + or a ~,
+        # but Gem::Version can't handle that.
+        value.gsub!(/[+~]/, '-')
         Version.new(value)
       end
 
