@@ -1,3 +1,0 @@
-# Configuration file /etc/cron.d/passenger-recycler to run passenger-recycler
-# every 15 minutes.
-*/15 * * * * root /usr/bin/passenger-recycler
