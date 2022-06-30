@@ -18,7 +18,7 @@ the Foreman/Satellite up and running."
   s.files += `git ls-files extras`.split("\n")
   s.extra_rdoc_files = ['LICENSE', 'README.md']
   s.require_paths = ['lib']
-  s.executables = ['foreman-maintain', 'passenger-recycler',
+  s.executables = ['foreman-maintain',
                    'foreman-maintain-complete', 'foreman-maintain-rotate-tar']
 
   s.add_dependency 'clamp'
