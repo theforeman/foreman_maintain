@@ -19,7 +19,7 @@ module Procedures::Backup
           '*** for debugging purposes only.' \
           " The backup routine can not ensure 100% consistency while the\n" \
           "*** backup is taking place as there is a chance there may be data mismatch between\n" \
-          '*** Mongo and Postgres databases while the services are live.' \
+          '*** the databases while the services are live.' \
           " If you wish to utilize the #{substr}\n" \
           '*** for production use you need to ensure that there are' \
           " no modifications occurring during\n" \
