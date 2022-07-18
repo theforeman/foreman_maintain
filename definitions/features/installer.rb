@@ -92,9 +92,16 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def run(arguments = '', exec_options = {})
-    out = execute!("LANG=en_US.utf-8 #{installer_command} #{arguments}".strip, exec_options)
+    out = execute!("#{installer_command} #{arguments}".strip, exec_options)
     @configuration = nil
     out
+  end
+
+  def run_with_status(arguments = '', exec_options = {})
+    cmd_with_arguments = "#{installer_command} #{arguments}".strip
+    cmd_status, out = execute_with_status(cmd_with_arguments, exec_options)
+    @configuration = nil
+    [cmd_status, out]
   end
 
   def upgrade(exec_options = {})
@@ -105,13 +112,15 @@ class Features::Installer < ForemanMaintain::Feature
     installer_args = ''
 
     if feature(:foreman_proxy) &&
-       feature(:foreman_proxy).with_content?
+       feature(:foreman_proxy).with_content? &&
+       check_max_version('foreman-installer', '3.4')
       installer_args += ' --disable-system-checks'
     end
 
-    unless check_min_version('foreman', '2.1') || check_min_version('foreman-proxy', '2.1')
+    unless check_min_version('foreman-installer', '2.1')
       installer_args += ' --upgrade' if can_upgrade?
     end
+
     installer_args
   end
 

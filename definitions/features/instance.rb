@@ -60,8 +60,13 @@ class Features::Instance < ForemanMaintain::Feature
     end
   end
 
+  def foreman_server_ssl_ca
+    @foreman_server_ssl_ca ||= feature(:installer).answers['foreman']['server_ssl_ca']
+  end
+
   def server_connection
     net = Net::HTTP.new(ForemanMaintain.config.foreman_url, ForemanMaintain.config.foreman_port)
+    net.ca_file = foreman_server_ssl_ca
     net.use_ssl = true
     net
   end

@@ -1,6 +1,7 @@
 module ForemanMaintain
   module Features
     class ForemanServer < ForemanMaintain::Feature
+      include ForemanMaintain::Concerns::Versions
       metadata do
         label :foreman_server
         confine do
@@ -46,6 +47,10 @@ module ForemanMaintain
 
       def services_running?
         services.all?(&:running?)
+      end
+
+      def current_version
+        @current_version ||= package_version('foreman')
       end
     end
   end

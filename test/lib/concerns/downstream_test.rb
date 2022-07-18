@@ -3,6 +3,7 @@ require 'test_helper'
 class FakeSatelliteFeature
   include ForemanMaintain::Concerns::SystemHelpers
   include ForemanMaintain::Concerns::Downstream
+  include ForemanMaintain::Concerns::Versions
 
   def package_name
     'satellite'

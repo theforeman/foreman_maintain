@@ -1,5 +1,6 @@
 class Features::Capsule < ForemanMaintain::Feature
   include ForemanMaintain::Concerns::Downstream
+  include ForemanMaintain::Concerns::Versions
 
   metadata do
     label :capsule
