@@ -40,6 +40,7 @@ module Scenarios::Capsule_6_11
     def compose
       add_steps(find_procedures(:pre_migrations))
       add_step(Procedures::Pulp::Remove.new(:assumeyes => true))
+      add_step(Procedures::Content::FixPulpcoreArtifactOwnership.new(:assumeyes => true))
       add_step(Procedures::Service::Stop.new)
     end
   end
