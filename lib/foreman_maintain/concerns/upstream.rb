@@ -4,7 +4,8 @@ module ForemanMaintain
       # TO DO - have a special file to keep Foreman and Katello mapping
       VERSION_MAPPING = {
         '3.2' => '4.4',
-        '3.3' => '4.5'
+        '3.3' => '4.5',
+        'nightly' => 'nightly'
       }.freeze
 
       def server_url
