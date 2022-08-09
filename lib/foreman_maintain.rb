@@ -22,6 +22,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/base_database'
   require 'foreman_maintain/concerns/directory_marker'
   require 'foreman_maintain/concerns/downstream'
+  require 'foreman_maintain/concerns/upstream'
   require 'foreman_maintain/concerns/primary_checks'
   require 'foreman_maintain/concerns/pulp_common'
   require 'foreman_maintain/concerns/firewall/iptables_maintenance_mode'

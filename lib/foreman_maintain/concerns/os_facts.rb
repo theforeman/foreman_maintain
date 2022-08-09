@@ -89,6 +89,22 @@ module ForemanMaintain
       def os_version
         facts.fetch('VERSION')
       end
+
+      def os_version_codename
+        facts.fetch('VERSION_CODENAME')
+      end
+
+      def rhel?
+        os_id == 'rhel'
+      end
+
+      def centos?
+        os_id == 'centos'
+      end
+
+      def el_short_name
+        "el#{el_major_version}"
+      end
     end
   end
 end
