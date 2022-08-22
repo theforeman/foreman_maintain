@@ -2,8 +2,7 @@ module ForemanMaintain::Scenarios
   class SelfUpgradeBase < ForemanMaintain::Scenario
     include ForemanMaintain::Concerns::Downstream
     def target_version
-      current_full_version = feature(:instance).downstream.current_version
-      @target_version ||= current_full_version.bump
+      @target_version ||= current_version.bump
     end
 
     def current_version
