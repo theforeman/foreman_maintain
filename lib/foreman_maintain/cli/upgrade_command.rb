@@ -52,12 +52,19 @@ module ForemanMaintain
         target_versions.sort.each { |version| puts version }
       end
 
+      def allow_self_upgrade?
+        !disable_self_upgrade? ||
+          ((respond_to?(:target_version) && !target_version.nil?) &&
+          (!target_version.end_with?('z') ||
+           target_version == 'nightly'))
+      end
+
       subcommand 'list-versions', 'List versions this system is upgradable to' do
         disable_self_upgrade_option
 
         def execute
           ForemanMaintain.validate_downstream_packages
-          ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
+          ForemanMaintain.perform_self_upgrade if allow_self_upgrade?
           print_versions(UpgradeRunner.available_targets)
         end
       end
@@ -69,7 +76,7 @@ module ForemanMaintain
 
         def execute
           ForemanMaintain.validate_downstream_packages
-          ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
+          ForemanMaintain.perform_self_upgrade if allow_self_upgrade?
           upgrade_runner.run_phase(:pre_upgrade_checks)
           exit upgrade_runner.exit_code
         end
@@ -89,7 +96,7 @@ module ForemanMaintain
 
         def execute
           ForemanMaintain.validate_downstream_packages
-          ForemanMaintain.perform_self_upgrade unless disable_self_upgrade?
+          ForemanMaintain.perform_self_upgrade if allow_self_upgrade?
           if phase
             upgrade_runner.run_phase(phase.to_sym)
           else
