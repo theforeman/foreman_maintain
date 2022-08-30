@@ -28,6 +28,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/firewall/iptables_maintenance_mode'
   require 'foreman_maintain/concerns/firewall/nftables_maintenance_mode'
   require 'foreman_maintain/concerns/firewall/maintenance_mode'
+  require 'foreman_maintain/concerns/foreman_and_katello_version_map'
   require 'foreman_maintain/top_level_modules'
   require 'foreman_maintain/yaml_storage'
   require 'foreman_maintain/config'
