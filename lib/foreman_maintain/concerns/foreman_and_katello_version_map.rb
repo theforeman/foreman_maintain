@@ -1,14 +1,16 @@
-require 'foreman_maintain/foreman_and_katello_version_map'
-
 module ForemanMaintain
   module Concerns
     module ForemanAndKatelloVersionMap
+      FOREMAN_AND_KATELLO_VERSION_MAP = {
+        'nightly' => 'nightly'
+      }.freeze
+
       def foreman_version_by_katello(version)
-        ForemanMaintain::FOREMAN_AND_KATELLO_VERSION_MAP.key(version)
+        FOREMAN_AND_KATELLO_VERSION_MAP.key(version)
       end
 
       def katello_version_by_foreman(version)
-        ForemanMaintain::FOREMAN_AND_KATELLO_VERSION_MAP.fetch(version)
+        FOREMAN_AND_KATELLO_VERSION_MAP.fetch(version)
       end
     end
   end
