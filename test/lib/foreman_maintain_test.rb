@@ -30,7 +30,7 @@ describe ForemanMaintain do
       subject.stubs(:el?).returns(false)
       subject.stubs(:debian?).returns(false)
       subject.stubs(:ubuntu?).returns(false)
-      err = proc { subject.package_manager }.must_raise Exception
+      err = proc { subject.package_manager }.must_raise RuntimeError
       err.message.must_equal 'No supported package manager was found'
     end
   end

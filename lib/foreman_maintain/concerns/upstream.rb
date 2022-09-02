@@ -1,12 +1,7 @@
 module ForemanMaintain
   module Concerns
     module Upstream
-      # TO DO - have a special file to keep Foreman and Katello mapping
-      VERSION_MAPPING = {
-        '3.2' => '4.4',
-        '3.3' => '4.5',
-        'nightly' => 'nightly'
-      }.freeze
+      include Concerns::ForemanAndKatelloVersionMap
 
       def server_url
         if el?
@@ -34,8 +29,7 @@ module ForemanMaintain
       end
 
       def katello_release_pkg(version)
-        katello_version = VERSION_MAPPING[version]
-        "#{katello_pkgs_url(katello_version)}katello-repos-latest.rpm"
+        "#{katello_pkgs_url(katello_version_by_foreman(version))}katello-repos-latest.rpm"
       end
 
       def update_release_pkg_el(pkg_url)
