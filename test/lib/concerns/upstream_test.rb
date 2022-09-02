@@ -63,7 +63,7 @@ module ForemanMaintain
 
       it 'returns failure for non EL and Debian system' do
         stub_unknown(foreman_system)
-        assert_raises(Exception) { foreman_system.server_url }
+        assert_raises(RuntimeError) { foreman_system.server_url }
       end
     end
 
@@ -85,7 +85,7 @@ module ForemanMaintain
 
       it 'returns failure for non EL and Debian system' do
         stub_unknown(foreman_system)
-        assert_raises(Exception) { foreman_system.foreman_release_pkg_url('3.3') }
+        assert_raises(RuntimeError) { foreman_system.foreman_release_pkg_url('3.3') }
       end
     end
 
@@ -93,6 +93,7 @@ module ForemanMaintain
       it 'returns the katello-repos-latest.rpm path' do
         stub_el(katello_system)
         katello_system.stubs(:el_short_name).returns('el8')
+        katello_system.stubs(:katello_version_by_foreman).returns('4.5')
         pkg_url = 'https://yum.theforeman.org/katello/4.5/katello/el8/x86_64/katello-repos-latest.rpm'
         assert katello_system.katello_release_pkg('3.3') == pkg_url
       end
