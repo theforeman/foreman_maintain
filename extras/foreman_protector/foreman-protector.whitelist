@@ -17,8 +17,28 @@ boost-random
 boost-iostreams
 boost-thread
 yum-utils
+# el7 psql client dependencies
+rh-postgresql12-postgresql
+rh-postgresql12-postgresql-libs
+rh-postgresql12-runtime
 # el8 yum-utils dependencies
 dnf-plugins-core
 python3-dnf-plugins-core
+# el8 nftables dependencies
+nftables
+firewalld
+firewalld-filesystem
+ipset
+ipset-libs
+iptables
+iptables-etables
+iptables-libs
+libnetfilter_conntrack
+libnffnetlink
+libnftnl
+python3-firewall
+python3-nftables
+python3-slip
+python3-slip-dbus
 # foreman-maintain
 rubygem-foreman_maintain
