@@ -53,10 +53,14 @@ module ForemanMaintain
       end
 
       def allow_self_upgrade?
-        !disable_self_upgrade? ||
-          ((respond_to?(:target_version) && !target_version.nil?) &&
-          (!target_version.end_with?('z') ||
-           target_version == 'nightly'))
+        if disable_self_upgrade?
+          return !disable_self_upgrade?
+        elsif respond_to?(:target_version) && !target_version.nil?
+          target_version.end_with?('z') ||
+            target_version == 'nightly'
+        else
+          true
+        end
       end
 
       subcommand 'list-versions', 'List versions this system is upgradable to' do
