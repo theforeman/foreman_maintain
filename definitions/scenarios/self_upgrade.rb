@@ -77,8 +77,14 @@ module ForemanMaintain::Scenarios
     end
 
     def upstream_self_upgrade(pkgs_to_update)
+      # This method is responsible for
+      # 1. Setup the repositories of next major version
+      # 2. Update the foreman-maintain packages from next major version repository
+      # 3. Rollback the repository to current major version
+
       add_step(Procedures::Repositories::Setup.new(:version => upstream_target_version))
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
+    ensure
       installed_release_pkg = package_manager.find_installed_package('foreman-release',
                                                                      '%{VERSION}')
       current_major_version = current_version[0..2]
