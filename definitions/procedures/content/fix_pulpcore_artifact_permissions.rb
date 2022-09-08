@@ -5,7 +5,8 @@ module Procedures::Content
       param :assumeyes, 'Do not ask for confirmation', :default => false
 
       confine do
-        check_min_version(foreman_plugin_name('katello'), '4.0')
+        check_min_version(foreman_plugin_name('katello'), '4.0') &&
+          Dir.exist?('/var/lib/pulp/media/artifact')
       end
     end
 
