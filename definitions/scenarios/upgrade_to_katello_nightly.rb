@@ -1,23 +1,39 @@
 module Scenarios::Katello_Nightly
   class Abstract < ForemanMaintain::Scenario
+    def self.target_version
+      'nightly'
+    end
+
     def self.upgrade_metadata(&block)
+      target_version = self.target_version
+
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:katello_install) || ForemanMaintain.upgrade_in_progress == 'nightly'
+          feature(:katello_install) || ForemanMaintain.upgrade_in_progress == target_version
         end
+
+        @target_version = target_version
+        def target_version
+          @target_version
+        end
+
+        def target
+          "Katello #{target_version}"
+        end
+
         instance_eval(&block)
       end
     end
 
     def target_version
-      'nightly'
+      self.target_version
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Katello nightly'
+      description "Checks before upgrading to #{target}"
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -30,7 +46,7 @@ module Scenarios::Katello_Nightly
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before upgrading to Katello nightly'
+      description "Procedures before upgrading to #{target}"
       tags :pre_migrations
     end
 
@@ -41,7 +57,7 @@ module Scenarios::Katello_Nightly
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Upgrade steps for Katello nightly'
+      description "Upgrade steps for #{target}"
       tags :migrations
       run_strategy :fail_fast
     end
@@ -51,7 +67,7 @@ module Scenarios::Katello_Nightly
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
+      add_step(Procedures::Repositories::Setup.new(:version => target_version))
       modules_to_enable = ["katello:#{el_short_name}", "pulpcore:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
@@ -61,7 +77,7 @@ module Scenarios::Katello_Nightly
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Post upgrade procedures for Katello nightly'
+      description "Post upgrade procedures for #{target}"
       tags :post_migrations
     end
 
@@ -74,7 +90,7 @@ module Scenarios::Katello_Nightly
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Katello nightly'
+      description "Checks after upgrading to #{target}"
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end
