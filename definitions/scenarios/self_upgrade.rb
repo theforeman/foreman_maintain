@@ -85,14 +85,21 @@ module ForemanMaintain::Scenarios
       add_step(Procedures::Repositories::Setup.new(:version => upstream_target_version))
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
     ensure
+      rollback_repositories
+    end
+
+    def rollback_repositories
       installed_release_pkg = package_manager.find_installed_package('foreman-release',
                                                                      '%{VERSION}')
-      current_major_version = current_version[0..2]
-      installed_foreman_release_major_version = installed_release_pkg[0..2]
-      if installed_foreman_release_major_version != current_major_version
-        add_step(Procedures::Packages::Uninstall.new(packages: %w[foreman-release katello-repos],
-                                                     assumeyes: true))
-        add_step(Procedures::Repositories::Setup.new(:version => current_major_version))
+
+      unless current_version.nil? && installed_release_pkg.nil?
+        current_major_version = current_version[0..2]
+        installed_foreman_release_major_version = installed_release_pkg[0..2]
+        if installed_foreman_release_major_version != current_major_version
+          add_step(Procedures::Packages::Uninstall.new(packages: %w[foreman-release katello-repos],
+                                                       assumeyes: true))
+          add_step(Procedures::Repositories::Setup.new(:version => current_major_version))
+        end
       end
     end
 
