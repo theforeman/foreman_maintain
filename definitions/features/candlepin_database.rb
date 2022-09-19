@@ -75,21 +75,12 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   # rubocop:enable Metrics/MethodLength
 
   def extend_with_db_options
-    db_options = { '-d' => construct_database_string }
+    db_options = { '-d' => configuration['database'] }
     if check_option_using_cpdb_help('dbhost')
       db_options['--dbhost'] = configuration['host']
       db_options['--dbport'] = configuration['port']
     end
     db_options
-  end
-
-  def construct_database_string
-    db_str = configuration['database']
-    extra_opts = []
-    extra_opts << "ssl=#{configuration['ssl']}" if configuration['ssl']
-    extra_opts << "sslfactory=#{configuration['sslfactory']}" if configuration['sslfactory']
-    db_str += "?#{extra_opts.join('&')}" unless extra_opts.empty?
-    db_str
   end
 
   def fetch_extra_param(url, key_name)
