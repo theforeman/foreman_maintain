@@ -29,4 +29,5 @@ the Foreman/Satellite up and running."
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rubocop', '0.50.0' # rubocop >= 0.51.0 drops support for ruby 2.0
+  s.add_development_dependency 'minitest-stub-const'
 end
