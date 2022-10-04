@@ -2,7 +2,7 @@ module ForemanMaintain::Scenarios
   class SelfUpgradeBase < ForemanMaintain::Scenario
     include ForemanMaintain::Concerns::Downstream
     def target_version
-      @target_version ||= current_version.bump
+      @target_version ||= Gem::Version.new(current_version).bump.to_s
     end
 
     def current_version
