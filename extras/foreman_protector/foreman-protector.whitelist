@@ -21,6 +21,9 @@ yum-utils
 rh-postgresql12-postgresql
 rh-postgresql12-postgresql-libs
 rh-postgresql12-runtime
+# el8 psql client dependencies
+postgresql
+libpq
 # el8 yum-utils dependencies
 dnf-plugins-core
 python3-dnf-plugins-core
