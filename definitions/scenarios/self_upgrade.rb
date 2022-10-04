@@ -6,7 +6,7 @@ module ForemanMaintain::Scenarios
     end
 
     def current_version
-      feature(:instance).downstream.current_minor_version
+      feature(:instance).downstream.current_version.to_s[/^\d+\.\d+\.\d+/]
     end
 
     def maintenance_repo_label
