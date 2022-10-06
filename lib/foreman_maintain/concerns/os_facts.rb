@@ -105,6 +105,15 @@ module ForemanMaintain
       def el_short_name
         "el#{el_major_version}"
       end
+
+      def memory
+        meminfo = File.read('/proc/meminfo')
+        meminfo.match(/^MemTotal:\s+(?<memory>\d+) kB/)['memory']
+      end
+
+      def cpu_cores
+        execute('nproc')
+      end
     end
   end
 end
