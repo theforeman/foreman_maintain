@@ -35,13 +35,13 @@ module ForemanMaintain
           '/etc/selinux/targeted/contexts/files/file_contexts.subs',
           '/etc/sysconfig/foreman',
           '/usr/share/ruby/vendor_ruby/puppet/reports/foreman.rb',
-          '/var/lib/foreman'
+          '/var/lib/foreman',
         ]
       end
 
       def config_files_to_exclude
         [
-          '/var/lib/foreman/public'
+          '/var/lib/foreman/public',
         ]
       end
 

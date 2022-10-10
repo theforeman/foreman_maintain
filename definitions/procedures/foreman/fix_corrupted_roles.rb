@@ -36,9 +36,9 @@ module Procedures::Foreman
 
     def update_records(set)
       new_filter = create_filter set.first['role_id'],
-                                 set.first['search'],
-                                 set.first['taxonomy_search'],
-                                 set.first['override']
+        set.first['search'],
+        set.first['taxonomy_search'],
+        set.first['override']
       set.each do |item|
         destroy_filtering item
         next if !new_filter || new_filter.empty?

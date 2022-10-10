@@ -49,8 +49,8 @@ module ForemanMaintain
                     ['before_execution_starts', :present_service_restart],
                     ['after_execution_finishes', :present_service_restart],
                     ['after_scenario_finishes', :present_upgrade_pre_upgrade_checks]],
-                   reporter.log,
-                   'unexpected order of execution')
+        reporter.log,
+        'unexpected order of execution')
     end
 
     it "assumeyes doesn't cause endless loops" do
@@ -79,8 +79,8 @@ module ForemanMaintain
                     ['before_execution_starts', :present_service_restart],
                     ['after_execution_finishes', :present_service_restart],
                     ['after_scenario_finishes', :present_upgrade_pre_upgrade_checks]],
-                   reporter.log,
-                   'unexpected order of execution')
+        reporter.log,
+        'unexpected order of execution')
     end
 
     it 'performs preparation scenarios when preparations steps are necessary' do
@@ -156,7 +156,7 @@ module ForemanMaintain
                        ['before_scenario_starts', :dummy_fail_fast],
                        ['before_execution_starts', :dummy_check_fail],
                        ['after_execution_finishes', :dummy_check_fail],
-                       ['after_scenario_finishes', :dummy_fail_fast]
+                       ['after_scenario_finishes', :dummy_fail_fast],
                      ], reporter.log, 'unexpected execution')
       end
 
@@ -169,7 +169,7 @@ module ForemanMaintain
                        ['after_execution_finishes', :dummy_check_fail],
                        ['before_execution_starts', :dummy_check_success],
                        ['after_execution_finishes', :dummy_check_success],
-                       ['after_scenario_finishes', :dummy_fail_slow]
+                       ['after_scenario_finishes', :dummy_fail_slow],
                      ], reporter.log, 'unexpected execution')
       end
     end

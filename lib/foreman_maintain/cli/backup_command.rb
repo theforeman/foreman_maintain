@@ -33,20 +33,20 @@ module ForemanMaintain
         def common_backup_options
           # TODO: BACKUP_DIR in f-m config - should be default?
           parameter 'BACKUP_DIR', 'Path to backup dir',
-                    :completion => { :type => :directory },
-                    :attribute_name => :backup_root_dir do |dir|
+            :completion => { :type => :directory },
+            :attribute_name => :backup_root_dir do |dir|
             File.expand_path(dir)
           end
           option ['-s', '--skip-pulp-content'], :flag, 'Do not backup Pulp content'
           option ['-p', '--preserve-directory'], :flag, 'Do not create a time-stamped subdirectory'
           option ['-t', '--split-pulp-tar'], 'SPLIT_SIZE',
-                 'Split pulp data into files of a specified size, i.e. (100M, 50G). ' \
-                 "See '--tape-length' in 'info tar' for all sizes" do |size|
+            'Split pulp data into files of a specified size, i.e. (100M, 50G). ' \
+            "See '--tape-length' in 'info tar' for all sizes" do |size|
             self.class.valid_tape_size(size)
           end
           option ['-i', '--incremental'], 'PREVIOUS_BACKUP_DIR',
-                 'Backup changes since previous backup',
-                 :completion => { :type => :directory } do |dir|
+            'Backup changes since previous backup',
+            :completion => { :type => :directory } do |dir|
             unless File.directory?(dir)
               raise ArgumentError, "Previous backup directory does not exist: #{dir}"
             end
@@ -55,8 +55,8 @@ module ForemanMaintain
           end
           proxy_name = ForemanMaintain.detector.feature(:capsule) ? 'Capsule' : 'Foreman Proxy'
           option '--features', 'FEATURES',
-                 "#{proxy_name} features to include in the backup. " \
-                     'Valid features are tftp, dns, dhcp, openscap, and all.', :multivalued => true
+            "#{proxy_name} features to include in the backup. " \
+                'Valid features are tftp, dns, dhcp, openscap, and all.', :multivalued => true
         end
         # rubocop:enable  Metrics/MethodLength
 
@@ -76,7 +76,7 @@ module ForemanMaintain
         Scenarios::BackupRescueCleanup.new({
           :backup_dir => backup_dir,
           :strategy => strategy,
-          :preserve_dir => preserve_directory?
+          :preserve_dir => preserve_directory?,
         }.merge(options))
       end
 
@@ -88,7 +88,7 @@ module ForemanMaintain
           :proxy_features => features,
           :tar_volume_size => split_pulp_tar,
           :skip_pulp_content => skip_pulp_content?,
-          :incremental_dir => incremental
+          :incremental_dir => incremental,
         }.merge(options))
       end
 
@@ -123,7 +123,7 @@ module ForemanMaintain
 
       def execute
         perform_backup(:offline,
-                       :include_db_dumps => include_db_dumps?)
+          :include_db_dumps => include_db_dumps?)
       end
     end
 
@@ -133,21 +133,21 @@ module ForemanMaintain
       common_backup_options
       option '--include-db-dumps', :flag, 'Also dump full database schema before snapshot backup'
       option ['-d', '--snapshot-mount-dir'], 'SNAPSHOT_MOUNT_DIR',
-             "Override default directory ('/var/snap/') where the snapshots will be mounted",
-             :default => '/var/snap/' do |dir|
+        "Override default directory ('/var/snap/') where the snapshots will be mounted",
+        :default => '/var/snap/' do |dir|
         unless File.directory?(dir)
           raise ArgumentError, "Snapshot mount directory does not exist: #{dir}"
         end
         dir
       end
       option ['-b', '--snapshot-block-size'], 'SNAPSHOT_BLOCK_SIZE',
-             'Override default block size (2G)', :default => '2G'
+        'Override default block size (2G)', :default => '2G'
 
       def execute
         perform_backup(:snapshot,
-                       :snapshot_mount_dir => snapshot_mount_dir,
-                       :snapshot_block_size => snapshot_block_size,
-                       :include_db_dumps => include_db_dumps?)
+          :snapshot_mount_dir => snapshot_mount_dir,
+          :snapshot_block_size => snapshot_block_size,
+          :include_db_dumps => include_db_dumps?)
       end
     end
 

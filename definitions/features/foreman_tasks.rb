@@ -40,14 +40,14 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     end
   end
 
-  def backup_tasks(state)
-    backup_table('dynflow_execution_plans', state, 'uuid') { |status| yield(status) }
-    backup_table('dynflow_steps', state) { |status| yield(status) }
-    backup_table('dynflow_actions', state) { |status| yield(status) }
+  def backup_tasks(state, &block)
+    backup_table('dynflow_execution_plans', state, 'uuid', &block)
+    backup_table('dynflow_steps', state, &block)
+    backup_table('dynflow_actions', state, &block)
 
     yield('Backup Tasks [running]')
     export_csv("SELECT * FROM foreman_tasks_tasks WHERE #{condition(state)}",
-               'foreman_tasks_tasks.csv', state)
+      'foreman_tasks_tasks.csv', state)
     yield('Backup Tasks [DONE]')
     @backup_dir = nil
   end
@@ -106,9 +106,10 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   def condition(state)
     raise 'Invalid State' unless valid(state)
 
-    if state == :old
+    case state
+    when :old
       old_tasks_condition
-    elsif state == :paused
+    when :paused
       paused_tasks_condition
     else
       tasks_condition(state)

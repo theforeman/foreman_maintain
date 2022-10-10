@@ -14,8 +14,8 @@ module Checks
       def run
         items = find_filter_permissions
         assert(items.empty?,
-               error_message(items),
-               :next_steps => Procedures::Foreman::FixCorruptedRoles.new)
+          error_message(items),
+          :next_steps => Procedures::Foreman::FixCorruptedRoles.new)
       end
 
       def error_message(items)
@@ -29,7 +29,6 @@ module Checks
         feature(:foreman_database).query(self.class.inconsistent_filter_perms)
       end
 
-      # rubocop:disable Metrics/MethodLength
       def self.inconsistent_filter_perms
         subquery = <<-SQL
           SELECT filters.id AS filter_id,
@@ -65,7 +64,6 @@ module Checks
                 OR (first.resource_type != second.resource_type))
         SQL
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

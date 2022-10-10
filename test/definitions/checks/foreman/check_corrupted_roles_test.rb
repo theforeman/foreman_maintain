@@ -24,6 +24,6 @@ describe Checks::Foreman::CheckCorruptedRoles do
     assert_match 'There are filters having permissions with multiple resource types. ' \
                   "Roles with such filters are:\ndemoRole", result.output
     assert_equal [Procedures::Foreman::FixCorruptedRoles],
-                 subject.next_steps.map(&:class)
+      subject.next_steps.map(&:class)
   end
 end

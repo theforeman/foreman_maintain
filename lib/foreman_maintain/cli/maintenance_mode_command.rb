@@ -42,7 +42,7 @@ module ForemanMaintain
         end
 
         def fetch_procedure(scenario, procedure_class_name)
-          scenario.steps.find { |procedure| procedure.class.eql?(procedure_class_name) }
+          scenario.steps.find { |procedure| procedure.instance_of?(procedure_class_name) }
         end
       end
     end

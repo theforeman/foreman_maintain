@@ -52,7 +52,7 @@ module Procedures::Backup
       dir = any_pulp_feature.find_marked_directory(mount_point)
       unless dir
         raise ForemanMaintain::Error::Fail,
-              "Pulp base directory not found in the mount point (#{mount_point})"
+          "Pulp base directory not found in the mount point (#{mount_point})"
       end
       dir
     end

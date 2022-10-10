@@ -3,5 +3,6 @@ class Procedures::RunOnce < ForemanMaintain::Procedure
     run_once
   end
 
-  def run; end
+  def run
+  end
 end

@@ -20,7 +20,7 @@ class Features::Hammer < ForemanMaintain::Feature
   def config_directories
     [
       '~/.hammer/',
-      '/etc/hammer/'
+      '/etc/hammer/',
     ]
   end
 
@@ -122,14 +122,14 @@ class Features::Hammer < ForemanMaintain::Feature
       configuration[:foreman][:username] != username
   end
 
-  def exec_hammer_cmd(cmd, required_json = false)
+  def exec_hammer_cmd(cmd, required_json: false)
     response = run(cmd)
     json_str = parse_json(response) if required_json
-    json_str ? json_str : response
+    json_str || response
   end
 
   def load_configuration
-    config_directories.reverse.each do |path|
+    config_directories.reverse_each do |path|
       full_path = File.expand_path path
       next unless File.directory? full_path
 

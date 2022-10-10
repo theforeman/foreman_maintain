@@ -90,20 +90,20 @@ module ForemanMaintain
     describe 'install' do
       it 'invokes yum to install single package' do
         expect_sys_execute('yum --disableplugin=foreman-protector install package',
-                           :via => :execute!)
+          :via => :execute!)
         subject.install('package')
       end
 
       it 'invokes yum to install list of packages' do
         expect_sys_execute('yum --disableplugin=foreman-protector install package1 package2',
-                           :via => :execute!)
+          :via => :execute!)
         subject.install(%w[package1 package2], :assumeyes => false)
       end
 
       it 'invokes yum to install package with yes enforced' do
         expect_sys_execute('yum -y --disableplugin=foreman-protector install package',
-                           :via => :execute!, :execute_options => { :interactive => false,
-                                                                    :valid_exit_statuses => [0] })
+          :via => :execute!, :execute_options => { :interactive => false,
+                                                   :valid_exit_statuses => [0] })
         subject.install('package', :assumeyes => true)
       end
     end
@@ -111,20 +111,20 @@ module ForemanMaintain
     describe 'update' do
       it 'invokes yum to update single package' do
         expect_sys_execute('yum --disableplugin=foreman-protector update package',
-                           :via => :execute!)
+          :via => :execute!)
         subject.update('package')
       end
 
       it 'invokes yum to update list of packages' do
         expect_sys_execute('yum --disableplugin=foreman-protector update package1 package2',
-                           :via => :execute!)
+          :via => :execute!)
         subject.update(%w[package1 package2])
       end
 
       it 'invokes yum to update package with yes enforced' do
         expect_sys_execute('yum -y --disableplugin=foreman-protector update package',
-                           :via => :execute!, :execute_options => { :interactive => false,
-                                                                    :valid_exit_statuses => [0] })
+          :via => :execute!, :execute_options => { :interactive => false,
+                                                   :valid_exit_statuses => [0] })
         subject.update('package', :assumeyes => true)
       end
 
@@ -137,9 +137,9 @@ module ForemanMaintain
     describe 'clean_cache' do
       it 'invokes yum to clean cache' do
         expect_sys_execute('yum -y --disableplugin=foreman-protector clean all',
-                           :via => :execute!,
-                           :execute_options => { :interactive => false,
-                                                 :valid_exit_statuses => [0] })
+          :via => :execute!,
+          :execute_options => { :interactive => false,
+                                :valid_exit_statuses => [0] })
         subject.clean_cache(:assumeyes => true)
       end
     end
@@ -147,13 +147,13 @@ module ForemanMaintain
     describe 'installed?' do
       it 'returns true if all packages listed are installed' do
         expect_sys_execute("rpm -q 'package1' 'package2'",
-                           :via => :execute?, :execute_options => nil, :response => true)
+          :via => :execute?, :execute_options => nil, :response => true)
         subject.installed?(%w[package1 package2]).must_equal true
       end
 
       it 'returns false if any of the packages is not installed' do
         expect_sys_execute("rpm -q 'missing' 'package'",
-                           :via => :execute?, :execute_options => nil, :response => false)
+          :via => :execute?, :execute_options => nil, :response => false)
         subject.installed?(%w[missing package]).must_equal false
       end
 
@@ -167,17 +167,17 @@ module ForemanMaintain
     describe 'find_installed_package' do
       it 'invokes rpm to lookup the package and returns the pacakge' do
         expect_sys_execute("rpm -q 'package'",
-                           :via => :execute_with_status,
-                           :execute_options => nil,
-                           :response => [0, 'package-3.4.3-161.el7.noarch'])
+          :via => :execute_with_status,
+          :execute_options => nil,
+          :response => [0, 'package-3.4.3-161.el7.noarch'])
         subject.find_installed_package('package').must_equal 'package-3.4.3-161.el7.noarch'
       end
 
       it 'invokes rpm to lookup the package and returns nil if not found' do
         expect_sys_execute("rpm -q 'package'",
-                           :via => :execute_with_status,
-                           :execute_options => nil,
-                           :response => [1, 'package package is not insalled'])
+          :via => :execute_with_status,
+          :execute_options => nil,
+          :response => [1, 'package package is not insalled'])
         assert_nil subject.find_installed_package('package')
       end
     end

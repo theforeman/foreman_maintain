@@ -86,7 +86,7 @@ module ForemanMaintain
         repoids_and_urls = {}
         repository_manager.enabled_repos.each do |repo, url|
           repo_urls.each do |regex|
-            repoids_and_urls[repo] = url if url =~ regex
+            repoids_and_urls[repo] = url if url&.match?(regex)
           end
         end
         repoids_and_urls
@@ -95,8 +95,8 @@ module ForemanMaintain
       private
 
       def repo_urls
-        [%r{yum.theforeman.org\/*},
-         %r{yum.puppetlabs.com\/*}]
+        [%r{yum.theforeman.org/*},
+         %r{yum.puppetlabs.com/*}]
       end
     end
   end

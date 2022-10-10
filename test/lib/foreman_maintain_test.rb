@@ -1,4 +1,3 @@
-
 describe ForemanMaintain do
   subject { ForemanMaintain }
 

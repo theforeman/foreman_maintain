@@ -17,13 +17,13 @@ module ForemanMaintain
               '--log' => { :type => :file, :filter => '.*\.log$' },
               '--pool' => { :type => :directory },
               '-t' => { :type => :value },
-              :params => [{ :type => :directory }, { :type => :value }, { :type => :file }]
+              :params => [{ :type => :directory }, { :type => :value }, { :type => :file }],
             },
             '--help' => { :type => :flag },
-            '--debug' => { :type => :flag }
+            '--debug' => { :type => :flag },
           },
           '--help' => { :type => :flag },
-          '-h' => { :type => :flag }
+          '-h' => { :type => :flag },
         }
       end
 

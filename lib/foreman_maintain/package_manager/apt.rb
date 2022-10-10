@@ -68,10 +68,10 @@ module ForemanMaintain::PackageManager
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
       if with_status
         sys.execute_with_status("apt-get#{apt_options_s} #{action}#{packages_s}",
-                                :interactive => !assumeyes)
+          :interactive => !assumeyes)
       else
         sys.execute!("apt-get#{apt_options_s} #{action}#{packages_s}",
-                     :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
+          :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
       end
     end
   end

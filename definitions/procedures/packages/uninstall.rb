@@ -5,7 +5,7 @@ module Procedures::Packages
       param :packages, 'List of packages to uninstall', :array => true
       param :assumeyes, 'Do not ask for confirmation'
       param :warn_on_errors, 'Do not interrupt scenario on failure',
-            :flag => true, :default => false
+        :flag => true, :default => false
     end
 
     def run

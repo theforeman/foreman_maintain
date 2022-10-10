@@ -4,8 +4,8 @@ module Procedures::Restore
       description 'Drop postgresql databases'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
 
       confine do
         feature(:foreman_database) || feature(:candlepin_database) || feature(:pulpcore_database)

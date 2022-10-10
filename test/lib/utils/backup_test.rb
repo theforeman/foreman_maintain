@@ -1,6 +1,6 @@
 require 'test_helper'
 require File.expand_path('../../../lib/foreman_maintain/utils/backup.rb',
-                         File.dirname(__FILE__))
+  File.dirname(__FILE__))
 
 module ForemanMaintain
   describe Utils::Backup do
@@ -123,15 +123,15 @@ module ForemanMaintain
         assume_features(f)
         kat_stand_backup = subject.new(send("katello_standard_#{f.first}"))
         assert kat_stand_backup.katello_standard_backup?
-        assert !kat_stand_backup.katello_online_backup?
-        assert !kat_stand_backup.katello_logical_backup?
-        assert !kat_stand_backup.foreman_online_backup?
-        assert !kat_stand_backup.foreman_logical_backup?
-        assert !kat_stand_backup.fpc_online_backup?
-        assert !kat_stand_backup.fpc_logical_backup?
+        refute kat_stand_backup.katello_online_backup?
+        refute kat_stand_backup.katello_logical_backup?
+        refute kat_stand_backup.foreman_online_backup?
+        refute kat_stand_backup.foreman_logical_backup?
+        refute kat_stand_backup.fpc_online_backup?
+        refute kat_stand_backup.fpc_logical_backup?
         if f == :pulp2
-          assert !kat_stand_backup.foreman_standard_backup?
-          assert !kat_stand_backup.fpc_standard_backup?
+          refute kat_stand_backup.foreman_standard_backup?
+          refute kat_stand_backup.fpc_standard_backup?
         end
       end
     end
@@ -144,15 +144,15 @@ module ForemanMaintain
                             else
                               subject.new(send("katello_online_#{f.first}"))
                             end
-        assert !kat_online_backup.katello_standard_backup?
+        refute kat_online_backup.katello_standard_backup?
         assert kat_online_backup.katello_online_backup?
-        assert !kat_online_backup.katello_logical_backup?
-        assert !kat_online_backup.foreman_standard_backup?
-        assert !kat_online_backup.foreman_online_backup?
-        assert !kat_online_backup.foreman_logical_backup?
-        assert !kat_online_backup.fpc_standard_backup?
-        assert !kat_online_backup.fpc_online_backup?
-        assert !kat_online_backup.fpc_logical_backup?
+        refute kat_online_backup.katello_logical_backup?
+        refute kat_online_backup.foreman_standard_backup?
+        refute kat_online_backup.foreman_online_backup?
+        refute kat_online_backup.foreman_logical_backup?
+        refute kat_online_backup.fpc_standard_backup?
+        refute kat_online_backup.fpc_online_backup?
+        refute kat_online_backup.fpc_logical_backup?
       end
     end
 
@@ -164,15 +164,15 @@ module ForemanMaintain
                              else
                                subject.new(send("katello_logical_#{f.first}"))
                              end
-        assert !kat_logical_backup.katello_standard_backup?
-        assert !kat_logical_backup.katello_online_backup?
+        refute kat_logical_backup.katello_standard_backup?
+        refute kat_logical_backup.katello_online_backup?
         assert kat_logical_backup.katello_logical_backup?
-        assert !kat_logical_backup.foreman_standard_backup?
-        assert !kat_logical_backup.foreman_online_backup?
-        assert !kat_logical_backup.foreman_logical_backup?
-        assert !kat_logical_backup.fpc_standard_backup?
-        assert !kat_logical_backup.fpc_online_backup?
-        assert !kat_logical_backup.fpc_logical_backup?
+        refute kat_logical_backup.foreman_standard_backup?
+        refute kat_logical_backup.foreman_online_backup?
+        refute kat_logical_backup.foreman_logical_backup?
+        refute kat_logical_backup.fpc_standard_backup?
+        refute kat_logical_backup.fpc_online_backup?
+        refute kat_logical_backup.fpc_logical_backup?
       end
     end
 
@@ -185,61 +185,61 @@ module ForemanMaintain
       feature_with_local_method(:candlepin_database, false)
       feature_with_local_method(:foreman_database, false)
       kat_hybrid_db_backup = subject.new(katello_hybrid_db_backup)
-      assert !kat_hybrid_db_backup.katello_standard_backup?
-      assert !kat_hybrid_db_backup.katello_online_backup?
-      assert !kat_hybrid_db_backup.katello_logical_backup?
+      refute kat_hybrid_db_backup.katello_standard_backup?
+      refute kat_hybrid_db_backup.katello_online_backup?
+      refute kat_hybrid_db_backup.katello_logical_backup?
       assert kat_hybrid_db_backup.katello_hybrid_db_backup?
-      assert !kat_hybrid_db_backup.foreman_standard_backup?
-      assert !kat_hybrid_db_backup.foreman_online_backup?
-      assert !kat_hybrid_db_backup.foreman_logical_backup?
-      assert !kat_hybrid_db_backup.fpc_standard_backup?
-      assert !kat_hybrid_db_backup.fpc_online_backup?
-      assert !kat_hybrid_db_backup.fpc_logical_backup?
+      refute kat_hybrid_db_backup.foreman_standard_backup?
+      refute kat_hybrid_db_backup.foreman_online_backup?
+      refute kat_hybrid_db_backup.foreman_logical_backup?
+      refute kat_hybrid_db_backup.fpc_standard_backup?
+      refute kat_hybrid_db_backup.fpc_online_backup?
+      refute kat_hybrid_db_backup.fpc_logical_backup?
     end
 
     it 'Validates foreman standard backup' do
       assume_feature_absent(:pulp2)
       assume_feature_absent(:pulpcore_database)
       foreman_standard_backup = subject.new(foreman_standard)
-      assert !foreman_standard_backup.katello_standard_backup?
-      assert !foreman_standard_backup.katello_online_backup?
-      assert !foreman_standard_backup.katello_logical_backup?
+      refute foreman_standard_backup.katello_standard_backup?
+      refute foreman_standard_backup.katello_online_backup?
+      refute foreman_standard_backup.katello_logical_backup?
       assert foreman_standard_backup.foreman_standard_backup?
-      assert !foreman_standard_backup.foreman_online_backup?
-      assert !foreman_standard_backup.foreman_logical_backup?
-      assert !foreman_standard_backup.fpc_standard_backup?
-      assert !foreman_standard_backup.fpc_online_backup?
-      assert !foreman_standard_backup.fpc_logical_backup?
+      refute foreman_standard_backup.foreman_online_backup?
+      refute foreman_standard_backup.foreman_logical_backup?
+      refute foreman_standard_backup.fpc_standard_backup?
+      refute foreman_standard_backup.fpc_online_backup?
+      refute foreman_standard_backup.fpc_logical_backup?
     end
 
     it 'Validates foreman online backup' do
       assume_feature_absent(:pulp2)
       assume_feature_absent(:pulpcore_database)
       foreman_online_backup = subject.new(foreman_online)
-      assert !foreman_online_backup.katello_standard_backup?
-      assert !foreman_online_backup.katello_online_backup?
-      assert !foreman_online_backup.katello_logical_backup?
-      assert !foreman_online_backup.foreman_standard_backup?
+      refute foreman_online_backup.katello_standard_backup?
+      refute foreman_online_backup.katello_online_backup?
+      refute foreman_online_backup.katello_logical_backup?
+      refute foreman_online_backup.foreman_standard_backup?
       assert foreman_online_backup.foreman_online_backup?
-      assert !foreman_online_backup.foreman_logical_backup?
-      assert !foreman_online_backup.fpc_standard_backup?
-      assert !foreman_online_backup.fpc_online_backup?
-      assert !foreman_online_backup.fpc_logical_backup?
+      refute foreman_online_backup.foreman_logical_backup?
+      refute foreman_online_backup.fpc_standard_backup?
+      refute foreman_online_backup.fpc_online_backup?
+      refute foreman_online_backup.fpc_logical_backup?
     end
 
     it 'Validates foreman logical backup' do
       assume_feature_absent(:pulp2)
       assume_feature_absent(:pulpcore_database)
       foreman_logical_backup = subject.new(foreman_logical)
-      assert !foreman_logical_backup.katello_standard_backup?
-      assert !foreman_logical_backup.katello_online_backup?
-      assert !foreman_logical_backup.katello_logical_backup?
-      assert !foreman_logical_backup.foreman_standard_backup?
-      assert !foreman_logical_backup.foreman_online_backup?
+      refute foreman_logical_backup.katello_standard_backup?
+      refute foreman_logical_backup.katello_online_backup?
+      refute foreman_logical_backup.katello_logical_backup?
+      refute foreman_logical_backup.foreman_standard_backup?
+      refute foreman_logical_backup.foreman_online_backup?
       assert foreman_logical_backup.foreman_logical_backup?
-      assert !foreman_logical_backup.fpc_standard_backup?
-      assert !foreman_logical_backup.fpc_online_backup?
-      assert !foreman_logical_backup.fpc_logical_backup?
+      refute foreman_logical_backup.fpc_standard_backup?
+      refute foreman_logical_backup.fpc_online_backup?
+      refute foreman_logical_backup.fpc_logical_backup?
     end
 
     it 'Validates fpc standard backup' do
@@ -250,15 +250,15 @@ module ForemanMaintain
                               else
                                 subject.new(send("fpc_standard_#{f.first}"))
                               end
-        assert !fpc_standard_backup.katello_online_backup?
-        assert !fpc_standard_backup.katello_logical_backup?
-        assert !fpc_standard_backup.foreman_online_backup?
-        assert !fpc_standard_backup.foreman_logical_backup?
+        refute fpc_standard_backup.katello_online_backup?
+        refute fpc_standard_backup.katello_logical_backup?
+        refute fpc_standard_backup.foreman_online_backup?
+        refute fpc_standard_backup.foreman_logical_backup?
         assert fpc_standard_backup.fpc_standard_backup?
-        assert !fpc_standard_backup.fpc_online_backup?
-        assert !fpc_standard_backup.fpc_logical_backup?
+        refute fpc_standard_backup.fpc_online_backup?
+        refute fpc_standard_backup.fpc_logical_backup?
         if f == :pulp2
-          assert !fpc_standard_backup.foreman_standard_backup?
+          refute fpc_standard_backup.foreman_standard_backup?
         end
       end
     end
@@ -271,15 +271,15 @@ module ForemanMaintain
                             else
                               subject.new(send("fpc_online_#{f.first}"))
                             end
-        assert !fpc_online_backup.katello_standard_backup?
-        assert !fpc_online_backup.katello_online_backup?
-        assert !fpc_online_backup.katello_logical_backup?
-        assert !fpc_online_backup.foreman_standard_backup?
-        assert !fpc_online_backup.foreman_online_backup?
-        assert !fpc_online_backup.foreman_logical_backup?
-        assert !fpc_online_backup.fpc_standard_backup?
+        refute fpc_online_backup.katello_standard_backup?
+        refute fpc_online_backup.katello_online_backup?
+        refute fpc_online_backup.katello_logical_backup?
+        refute fpc_online_backup.foreman_standard_backup?
+        refute fpc_online_backup.foreman_online_backup?
+        refute fpc_online_backup.foreman_logical_backup?
+        refute fpc_online_backup.fpc_standard_backup?
         assert fpc_online_backup.fpc_online_backup?
-        assert !fpc_online_backup.fpc_logical_backup?
+        refute fpc_online_backup.fpc_logical_backup?
       end
     end
 
@@ -291,14 +291,14 @@ module ForemanMaintain
                              else
                                subject.new(send("fpc_logical_#{f.first}"))
                              end
-        assert !fpc_logical_backup.katello_standard_backup?
-        assert !fpc_logical_backup.katello_online_backup?
-        assert !fpc_logical_backup.katello_logical_backup?
-        assert !fpc_logical_backup.foreman_standard_backup?
-        assert !fpc_logical_backup.foreman_online_backup?
-        assert !fpc_logical_backup.foreman_logical_backup?
-        assert !fpc_logical_backup.fpc_standard_backup?
-        assert !fpc_logical_backup.fpc_online_backup?
+        refute fpc_logical_backup.katello_standard_backup?
+        refute fpc_logical_backup.katello_online_backup?
+        refute fpc_logical_backup.katello_logical_backup?
+        refute fpc_logical_backup.foreman_standard_backup?
+        refute fpc_logical_backup.foreman_online_backup?
+        refute fpc_logical_backup.foreman_logical_backup?
+        refute fpc_logical_backup.fpc_standard_backup?
+        refute fpc_logical_backup.fpc_online_backup?
         assert fpc_logical_backup.fpc_logical_backup?
       end
     end
@@ -310,21 +310,21 @@ module ForemanMaintain
       feature_with_local_method(:pulpcore_database, true)
       feature_with_local_method(:mongo, false)
       fpc_hybrid_db_backup = subject.new(fpc_hybrid_pulp2_pulpcore_database_backup)
-      assert !fpc_hybrid_db_backup.katello_standard_backup?
-      assert !fpc_hybrid_db_backup.katello_online_backup?
-      assert !fpc_hybrid_db_backup.katello_logical_backup?
-      assert !fpc_hybrid_db_backup.foreman_standard_backup?
-      assert !fpc_hybrid_db_backup.foreman_online_backup?
-      assert !fpc_hybrid_db_backup.foreman_logical_backup?
-      assert !fpc_hybrid_db_backup.fpc_standard_backup?
-      assert !fpc_hybrid_db_backup.fpc_online_backup?
-      assert !fpc_hybrid_db_backup.fpc_logical_backup?
+      refute fpc_hybrid_db_backup.katello_standard_backup?
+      refute fpc_hybrid_db_backup.katello_online_backup?
+      refute fpc_hybrid_db_backup.katello_logical_backup?
+      refute fpc_hybrid_db_backup.foreman_standard_backup?
+      refute fpc_hybrid_db_backup.foreman_online_backup?
+      refute fpc_hybrid_db_backup.foreman_logical_backup?
+      refute fpc_hybrid_db_backup.fpc_standard_backup?
+      refute fpc_hybrid_db_backup.fpc_online_backup?
+      refute fpc_hybrid_db_backup.fpc_logical_backup?
       assert fpc_hybrid_db_backup.fpc_hybrid_db_backup?
     end
 
     it 'does not validate backup without config_files.tar.gz' do
       no_configs_backup = subject.new(no_configs)
-      assert !no_configs_backup.valid_backup?
+      refute no_configs_backup.valid_backup?
     end
 
     it 'recognizes incremental backup' do
@@ -341,7 +341,7 @@ module ForemanMaintain
     it 'accepts backup without proxy config in the metadata' do
       backup = subject.new(katello_standard_pulp2)
       Dir.stubs(:entries).returns(%w[. .. lo eth0])
-      assert backup.validate_interfaces.empty?
+      assert_empty backup.validate_interfaces
     end
 
     it 'accepts backup with proxy config and disabled DHCP/DNS in the metadata' do
@@ -352,7 +352,7 @@ module ForemanMaintain
                                         'dhcp_interface' => 'eth0',
                                         'dns' => false,
                                         'dns_interface' => 'eth0' })
-      assert backup.validate_interfaces.empty?
+      assert_empty backup.validate_interfaces
     end
 
     it 'accepts backup when DHCP/DNS configured interfaces are found on system' do
@@ -363,7 +363,7 @@ module ForemanMaintain
                                         'dhcp_interface' => 'eth0',
                                         'dns' => true,
                                         'dns_interface' => 'eth0' })
-      assert backup.validate_interfaces.empty?
+      assert_empty backup.validate_interfaces
     end
 
     it 'rejects backup when DHCP/DNS configured interfaces are not found on system' do
@@ -374,7 +374,7 @@ module ForemanMaintain
                                         'dhcp_interface' => 'eth0',
                                         'dns' => true,
                                         'dns_interface' => 'eth0' })
-      refute backup.validate_interfaces.empty?
+      refute_empty backup.validate_interfaces
       assert backup.validate_interfaces['dns']['configured'] = 'eth0'
       assert backup.validate_interfaces['dhcp']['configured'] = 'eth0'
     end

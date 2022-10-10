@@ -5,7 +5,7 @@ module Checks::Candlepin
       tags :pre_upgrade
 
       confine do
-        feature(:candlepin_database) && feature(:candlepin_database).validate_available_in_cpdb?
+        feature(:candlepin_database)&.validate_available_in_cpdb?
       end
     end
 

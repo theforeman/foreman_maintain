@@ -23,7 +23,7 @@ describe Features::Installer do
         "#{data_dir}/installer/simple_config/scenarios.d/last_scenario.yaml",
         '/usr/local/bin/validate_postgresql_connection.sh',
         '/opt/puppetlabs/puppet/cache/foreman_cache_data',
-        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data'
+        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
       ].sort
       subject.config_files.sort.must_equal(expected_config_files)
     end
@@ -49,7 +49,7 @@ describe Features::Installer do
         assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
           with('foreman-installer --disable-system-checks --upgrade',
-               :interactive => true).
+            :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
       end
@@ -58,7 +58,7 @@ describe Features::Installer do
         assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
           with('satellite-installer --disable-system-checks --upgrade',
-               :interactive => true).
+            :interactive => true).
           returns(true)
         subject.upgrade(:interactive => true)
       end

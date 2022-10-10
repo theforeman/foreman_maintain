@@ -35,10 +35,10 @@ module ForemanMaintain::PackageManager
       yum_options << '-y' if assumeyes
       if with_status
         sys.execute_with_status("dnf #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
-                                :interactive => !assumeyes)
+          :interactive => !assumeyes)
       else
         sys.execute!("dnf #{yum_options.join(' ')} #{action} #{packages.join(' ')}",
-                     :interactive => !assumeyes)
+          :interactive => !assumeyes)
 
       end
     end

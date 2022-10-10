@@ -14,7 +14,7 @@ class Checks::ServicesUp < ForemanMaintain::Check
       :wait_for_server_response => true
     )
     assert(failed_services.empty?,
-           'Following services are not running: ' + failed_services.map(&:to_s).join(', '),
-           :next_steps => restart_procedure)
+      'Following services are not running: ' + failed_services.map(&:to_s).join(', '),
+      :next_steps => restart_procedure)
   end
 end

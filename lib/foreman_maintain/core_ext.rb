@@ -10,7 +10,7 @@ module ForemanMaintain
         gsub(/^[ \t]{#{indent}}/, '')
       end
     end
-    String.send(:include, StripHeredoc)
+    String.include StripHeredoc
 
     module ValidateOptions
       def validate_options!(*valid_keys)
@@ -23,6 +23,6 @@ module ForemanMaintain
         self
       end
     end
-    Hash.send(:include, ValidateOptions)
+    Hash.include ValidateOptions
   end
 end

@@ -88,10 +88,12 @@ module ForemanMaintain
     end
 
     # Override to compose steps for the scenario
-    def compose; end
+    def compose
+    end
 
     # Override to map context for the scenario
-    def set_context_mapping; end
+    def set_context_mapping
+    end
 
     def preparation_steps
       # we first take the preparation steps defined for the scenario + collect

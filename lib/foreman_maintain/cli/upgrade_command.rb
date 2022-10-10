@@ -3,20 +3,20 @@ module ForemanMaintain
     class UpgradeCommand < Base
       def self.target_version_option
         option '--target-version', 'TARGET_VERSION', 'Target version of the upgrade',
-               :required => false
+          :required => false
       end
 
       def self.disable_self_upgrade_option
         option '--disable-self-upgrade', :flag, 'Disable automatic self upgrade',
-               :default => false
+          :default => false
       end
 
       def current_target_version
         current_target_version = ForemanMaintain::UpgradeRunner.current_target_version
         if current_target_version && target_version && target_version != current_target_version
           raise Error::UsageError,
-                "Can't set target version #{target_version}, "\
-                "#{current_target_version} already in progress"
+            "Can't set target version #{target_version}, "\
+            "#{current_target_version} already in progress"
         end
         @target_version = current_target_version if current_target_version
         return true if current_target_version
@@ -43,9 +43,9 @@ module ForemanMaintain
         return @upgrade_runner if defined? @upgrade_runner
         validate_target_version!
         @upgrade_runner = ForemanMaintain::UpgradeRunner.new(target_version, reporter,
-                                                             :assumeyes => assumeyes?,
-                                                             :whitelist => whitelist || [],
-                                                             :force => force?).tap(&:load)
+          :assumeyes => assumeyes?,
+          :whitelist => whitelist || [],
+          :force => force?).tap(&:load)
       end
 
       def print_versions(target_versions)

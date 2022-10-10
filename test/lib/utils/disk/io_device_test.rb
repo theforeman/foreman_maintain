@@ -21,14 +21,14 @@ module ForemanMaintain
     it 'returns read_speed and executes fio only once' do
       @fio.expects(:fio).once.returns(99 * 1024)
 
-      refute_nil(@fio.read_speed)
+      refute_nil @fio.read_speed
       assert_equal(99, @fio.read_speed)
     end
 
     it 'returns unit and executes fio only once' do
       @fio.expects(:fio).never
 
-      refute_nil(@fio.unit)
+      refute_nil @fio.unit
       assert_equal('MB/sec', @fio.unit)
     end
   end

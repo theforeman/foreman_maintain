@@ -20,12 +20,13 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
   def services
     [
       system_service('postgresql', 10, :component => 'pulpcore',
-                                       :db_feature => feature(:pulpcore_database))
+                                       :db_feature => feature(:pulpcore_database)),
     ]
   end
 
   private
 
+  # rubocop:disable Metrics/AbcSize
   def load_configuration
     full_config = File.read(PULPCORE_DB_CONFIG).split(/[\s,'":]/).reject(&:empty?)
 
@@ -38,4 +39,5 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
     @configuration['password'] = full_config[full_config.index('PASSWORD') + 1]
     @configuration
   end
+  # rubocop:enable Metrics/AbcSize
 end

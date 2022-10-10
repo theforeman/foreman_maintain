@@ -17,7 +17,7 @@ module Procedures::Restore
       @qpid_configs ||= {
         'ssl_cert' => "/etc/pki/katello/certs/#{hostname}-qpid-broker.crt",
         'ssl_key' => "/etc/pki/katello/private/#{hostname}-qpid-broker.key",
-        'amqps_url' => "amqps://localhost:#{qpid_router_broker_port}"
+        'amqps_url' => "amqps://localhost:#{qpid_router_broker_port}",
       }
     end
 
@@ -41,7 +41,7 @@ module Procedures::Restore
       # The activemq queues(/var/lib/candlepin/activemq-artemis) regenerate on tomcat restart.
       # After stopping the tomcat here, service start is triggered from the restore scenario.
       spinner.update('Stopping tomcat service')
-      feature(:candlepin).services.select(&:exist?).first.stop
+      feature(:candlepin).services.find(&:exist?).stop
       spinner.update('Recreating activemq queues')
       execute!('rm -rf /var/lib/candlepin/activemq-artemis/')
     end

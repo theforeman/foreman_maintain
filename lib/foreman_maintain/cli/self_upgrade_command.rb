@@ -2,8 +2,8 @@ module ForemanMaintain
   module Cli
     class SelfUpgradeCommand < Base
       option ['--maintenance-repo-label'], 'REPOSITORY_LABEL',\
-             'Repository label from which packages should be updated.'\
-             'This can be used when standard CDN repositories are unavailable.'
+        'Repository label from which packages should be updated.'\
+        'This can be used when standard CDN repositories are unavailable.'
       def execute
         run_scenario(upgrade_scenario)
       end

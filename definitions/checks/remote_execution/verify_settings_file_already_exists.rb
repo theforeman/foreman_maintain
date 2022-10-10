@@ -20,7 +20,7 @@ module Checks::RemoteExecution
           :next_steps => [
             Procedures::RemoteExecution::RemoveExistingSettingsd.new(
               :dirpath => settingd_dir_path
-            )
+            ),
           ]
         )
       end

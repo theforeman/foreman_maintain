@@ -14,7 +14,7 @@ module Checks
         end
         assert(status, 'Pulpcore DB is not responding. ' \
           'It needs to be up and running to perform the following steps',
-               :next_steps => next_steps)
+          :next_steps => next_steps)
       end
 
       def next_steps

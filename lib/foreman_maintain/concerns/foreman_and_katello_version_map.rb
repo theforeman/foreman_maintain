@@ -2,7 +2,7 @@ module ForemanMaintain
   module Concerns
     module ForemanAndKatelloVersionMap
       FOREMAN_AND_KATELLO_VERSION_MAP = {
-        'nightly' => 'nightly'
+        'nightly' => 'nightly',
       }.freeze
 
       def foreman_version_by_katello(version)

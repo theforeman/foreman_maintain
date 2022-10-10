@@ -11,8 +11,8 @@ module Checks::Repositories
       end
 
       param :version,
-            'Version for which repositories needs to be validated',
-            :required => true
+        'Version for which repositories needs to be validated',
+        :required => true
 
       manual_detection
     end

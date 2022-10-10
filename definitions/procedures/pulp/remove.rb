@@ -24,7 +24,7 @@ module Procedures::Pulp
         '/var/lib/pulp/uploads',
         '/var/lib/mongodb/',
         '/var/cache/pulp',
-        '/var/spool/squid'
+        '/var/spool/squid',
       ].select { |dir| File.directory?(dir) }
     end
 
@@ -61,6 +61,7 @@ module Procedures::Pulp
       @installed_pulp_packages ||= possible.select { |pkg| find_package(pkg) }
       @installed_pulp_packages
     end
+    # rubocop:enable  Metrics/MethodLength
 
     def data_dir_removal_cmds(pulp_dirs)
       pulp_dirs.map { |dir| "rm -rf #{dir}" }
@@ -117,6 +118,7 @@ module Procedures::Pulp
       end
     end
 
+    # rubocop:disable  Metrics/MethodLength
     def drop_migration_tables
       with_spinner('Dropping migration tables') do
         feature(:pulpcore_database).psql(<<-SQL)
@@ -156,6 +158,7 @@ module Procedures::Pulp
         SQL
       end
     end
+    # rubocop:enable  Metrics/MethodLength
 
     def drop_migrations
       with_spinner('Dropping migrations') do
@@ -169,7 +172,6 @@ module Procedures::Pulp
         SQL
       end
     end
-    # rubocop:enable Metrics/BlockLength
 
     def delete_pulp_data
       non_mountpoints = data_dir_removal_cmds(deletable_pulp_dirs)

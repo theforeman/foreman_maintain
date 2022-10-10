@@ -48,12 +48,12 @@ class Features::SyncPlans < ForemanMaintain::Feature
     if @data[:enabled] && key_empty?(:disabled)
       [
         'sync plans: enabled',
-        mode_on ? [Procedures::SyncPlans::Disable.new] : []
+        mode_on ? [Procedures::SyncPlans::Disable.new] : [],
       ]
     else
       [
         'sync plans: disabled',
-        mode_on ? [] : [Procedures::SyncPlans::Enable.new]
+        mode_on ? [] : [Procedures::SyncPlans::Enable.new],
       ]
     end
   end

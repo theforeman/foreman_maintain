@@ -1,5 +1,4 @@
 module ForemanMaintain::PackageManager
-  # rubocop:disable Lint/UnusedMethodArgument
   class Base
     # confirms that Package Manager supports the locking mechanism
     def version_locking_supported?
@@ -62,5 +61,4 @@ module ForemanMaintain::PackageManager
       ForemanMaintain::Utils::SystemHelpers
     end
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 end

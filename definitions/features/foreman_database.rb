@@ -28,7 +28,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   def services
     [
       system_service('postgresql', 10, :component => 'foreman',
-                                       :db_feature => feature(:foreman_database))
+                                       :db_feature => feature(:foreman_database)),
     ]
   end
 

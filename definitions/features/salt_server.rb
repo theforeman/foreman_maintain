@@ -10,7 +10,7 @@ class Features::SaltServer < ForemanMaintain::Feature
 
   def config_files
     [
-      '/etc/salt'
+      '/etc/salt',
     ]
   end
 

@@ -60,7 +60,7 @@ module ForemanMaintain
       'warn' => ::Logger::WARN,
       'error' => ::Logger::ERROR,
       'fatal' => ::Logger::FATAL,
-      'unknown' => ::Logger::UNKNOWN
+      'unknown' => ::Logger::UNKNOWN,
     }.freeze
 
     def setup(options = {})
@@ -98,7 +98,7 @@ module ForemanMaintain
       $LOAD_PATH.concat(config.definitions_dirs)
       config.definitions_dirs.each do |definitions_dir|
         file_paths = File.expand_path(File.join(definitions_dir, '**', '*.rb'))
-        Dir.glob(file_paths).each { |f| require f }
+        Dir.glob(file_paths).sort.each { |f| require f }
       end
     end
 

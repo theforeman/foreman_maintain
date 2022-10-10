@@ -6,8 +6,8 @@ module Procedures::Repositories
         feature(:instance).downstream || feature(:upstream)
       end
       param :version,
-            'Version for which repositories needs to be setup',
-            :required => true
+        'Version for which repositories needs to be setup',
+        :required => true
       run_once
     end
 

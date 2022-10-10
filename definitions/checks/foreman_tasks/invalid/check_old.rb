@@ -14,8 +14,8 @@ module Checks::ForemanTasks
         # Check and delete 'all tasks beyond 30 days(paused and stopped)'
         count_old_tasks = feature(:foreman_tasks).count(:old)
         assert(count_old_tasks <= 0,
-               "Found #{count_old_tasks} paused or stopped task(s) older than 30 days",
-               :next_steps => Procedures::ForemanTasks::Delete.new(:state => :old))
+          "Found #{count_old_tasks} paused or stopped task(s) older than 30 days",
+          :next_steps => Procedures::ForemanTasks::Delete.new(:state => :old))
       end
     end
   end

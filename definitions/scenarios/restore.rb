@@ -11,15 +11,15 @@ module ForemanMaintain::Scenarios
     end
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
       add_steps(find_checks(:root_user))
       supported_version_check
       add_steps_with_context(Checks::Restore::ValidateBackup,
-                             Checks::Restore::ValidateHostname,
-                             Checks::Restore::ValidateInterfaces)
+        Checks::Restore::ValidateHostname,
+        Checks::Restore::ValidateInterfaces)
 
       if context.get(:dry_run)
         self.class.metadata[:run_strategy] = :fail_slow
@@ -27,12 +27,12 @@ module ForemanMaintain::Scenarios
       end
 
       add_steps_with_context(Procedures::Restore::Confirmation,
-                             Procedures::Selinux::SetFileSecurity,
-                             Procedures::Restore::Configs)
+        Procedures::Selinux::SetFileSecurity,
+        Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
       unless backup.incremental?
         add_steps_with_context(Procedures::Restore::EnsureMongoEngineMatches,
-                               Procedures::Restore::InstallerReset)
+          Procedures::Restore::InstallerReset)
       end
       add_step_with_context(Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
@@ -51,18 +51,18 @@ module ForemanMaintain::Scenarios
       end
 
       add_steps_with_context(Procedures::Pulp::Migrate,
-                             Procedures::Pulpcore::Migrate,
-                             Procedures::Restore::CandlepinResetMigrations)
+        Procedures::Pulpcore::Migrate,
+        Procedures::Restore::CandlepinResetMigrations)
 
       add_steps_with_context(Procedures::Restore::RegenerateQueues) if backup.online_backup?
       add_steps_with_context(Procedures::Service::Start,
-                             Procedures::Service::DaemonReload)
+        Procedures::Service::DaemonReload)
       add_step(Procedures::Installer::Upgrade.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::UpgradeRakeTask)
       add_step_with_context(Procedures::Crond::Start) if feature(:cron)
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/CyclomaticComplexity
 
     def drop_dbs(backup)
       if backup.file_map[:candlepin_dump][:present] ||
@@ -91,7 +91,7 @@ module ForemanMaintain::Scenarios
     end
 
     def supported_version_check
-      if feature(:instance).downstream && feature(:instance).downstream.less_than_version?('6.3')
+      if feature(:instance).downstream&.less_than_version?('6.3')
         msg = 'ERROR: Restore subcommand is supported by Satellite 6.3+. ' \
               'Please use katello-restore instead.'
         abort(msg)
@@ -100,19 +100,19 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:backup_dir,
-                  Checks::Restore::ValidateBackup => :backup_dir,
-                  Checks::Restore::ValidateHostname => :backup_dir,
-                  Checks::Restore::ValidateInterfaces => :backup_dir,
-                  Procedures::Restore::Configs => :backup_dir,
-                  Procedures::Restore::DropDatabases => :backup_dir,
-                  Procedures::Restore::CandlepinDump => :backup_dir,
-                  Procedures::Restore::ForemanDump => :backup_dir,
-                  Procedures::Restore::PulpcoreDump => :backup_dir,
-                  Procedures::Restore::ExtractFiles => :backup_dir,
-                  Procedures::Restore::MongoDump => :backup_dir)
+        Checks::Restore::ValidateBackup => :backup_dir,
+        Checks::Restore::ValidateHostname => :backup_dir,
+        Checks::Restore::ValidateInterfaces => :backup_dir,
+        Procedures::Restore::Configs => :backup_dir,
+        Procedures::Restore::DropDatabases => :backup_dir,
+        Procedures::Restore::CandlepinDump => :backup_dir,
+        Procedures::Restore::ForemanDump => :backup_dir,
+        Procedures::Restore::PulpcoreDump => :backup_dir,
+        Procedures::Restore::ExtractFiles => :backup_dir,
+        Procedures::Restore::MongoDump => :backup_dir)
 
       context.map(:incremental_backup,
-                  Procedures::Selinux::SetFileSecurity => :incremental_backup)
+        Procedures::Selinux::SetFileSecurity => :incremental_backup)
     end
   end
 

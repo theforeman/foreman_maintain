@@ -14,14 +14,14 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
     end
     [
       '/etc/foreman/dynflow',
-      service_symlinks
+      service_symlinks,
     ].flatten
   end
 
   def services
     service_names.map do |service|
       system_service service, instance_priority(service),
-                     :instance_parent_unit => 'dynflow-sidekiq@'
+        :instance_parent_unit => 'dynflow-sidekiq@'
     end
   end
 

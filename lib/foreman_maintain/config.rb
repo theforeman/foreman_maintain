@@ -2,17 +2,17 @@ require 'fileutils'
 module ForemanMaintain
   class Config
     attr_accessor :pre_setup_log_messages,
-                  :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
-                  :log_filename, :storage_file, :backup_dir, :foreman_proxy_cert_path,
-                  :db_backup_dir, :completion_cache_file, :disable_commands, :manage_crond,
-                  :foreman_url, :foreman_port
+      :config_file, :definitions_dirs, :log_level, :log_dir, :log_file_size,
+      :log_filename, :storage_file, :backup_dir, :foreman_proxy_cert_path,
+      :db_backup_dir, :completion_cache_file, :disable_commands, :manage_crond,
+      :foreman_url, :foreman_port
 
     def initialize(options)
       @pre_setup_log_messages = []
       @config_file = options.fetch(:config_file, config_file_path)
       @options = load_config
       @definitions_dirs = @options.fetch(:definitions_dirs,
-                                         [File.join(source_path, 'definitions')])
+        [File.join(source_path, 'definitions')])
       load_log_configs
       load_backup_dir_paths
       load_cron_option
@@ -68,7 +68,7 @@ module ForemanMaintain
     end
 
     def source_path
-      File.expand_path('../../..', __FILE__)
+      File.expand_path('../..', __dir__)
     end
 
     def find_dir_path(dir_path_str)

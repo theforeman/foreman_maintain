@@ -20,7 +20,7 @@ module Checks::Puppet
           (puppet_package !~ /puppet-3/),
           'Before continuing with upgrade, please make sure you finish puppet upgrade.',
           :next_steps => [
-            Procedures::KnowledgeBaseArticle.new(:doc => doc_ids_by_sat_versions[curr_sat_version])
+            Procedures::KnowledgeBaseArticle.new(:doc => doc_ids_by_sat_versions[curr_sat_version]),
           ]
         )
       end

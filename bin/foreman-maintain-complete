@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'English'
-project_root = File.expand_path('../..', __FILE__)
+project_root = File.expand_path('..', __dir__)
 $LOAD_PATH.unshift(File.join(project_root, 'lib'))
 CONFIG_FILE = '/etc/foreman-maintain/foreman_maintain.yml'.freeze
 system('which foreman_maintain > /dev/null 2>&1')
@@ -10,14 +10,14 @@ FOREMAN_MAINTAIN = found ? 'foreman-maintain' : File.join(project_root, 'bin/for
 require 'yaml'
 require 'foreman_maintain/utils/bash'
 
-# rubocop:disable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
+# rubocop:disable Lint/SuppressedException
 def cache_file(config_file)
   config = YAML.load(File.open(config_file))
   config.fetch(:completion_cache_file,
-               "#{ENV['HOME'] || '/root'}/.cache/foreman_maintain_completion.yml")
-rescue
+    "#{ENV['HOME'] || '/root'}/.cache/foreman_maintain_completion.yml")
+rescue StandardError
 end
-# rubocop:enable Lint/RescueWithoutErrorClass, Lint/HandleExceptions
+# rubocop:enable Lint/SuppressedException
 
 config_file = if File.exist?(CONFIG_FILE)
                 CONFIG_FILE

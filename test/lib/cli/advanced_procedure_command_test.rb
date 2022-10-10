@@ -4,6 +4,7 @@ require 'foreman_maintain/cli'
 
 module ForemanMaintain
   include CliAssertions
+
   describe 'Advanced::Procedure' do
     include CliAssertions
 

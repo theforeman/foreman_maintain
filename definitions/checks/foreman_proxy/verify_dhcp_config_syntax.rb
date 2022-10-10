@@ -4,8 +4,7 @@ module Checks::ForemanProxy
       description 'Check for verifying syntax for ISP DHCP configurations'
       tags :default
       confine do
-        feature(:foreman_proxy) &&
-          feature(:foreman_proxy).features.include?('dhcp') &&
+        feature(:foreman_proxy)&.features&.include?('dhcp') &&
           feature(:foreman_proxy).dhcp_isc_provider?
       end
     end

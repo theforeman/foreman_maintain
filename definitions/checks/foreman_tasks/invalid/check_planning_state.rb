@@ -13,8 +13,8 @@ module Checks::ForemanTasks
         # Check and delete 'all tasks in planning state'
         tasks_in_planning_count = feature(:foreman_tasks).count(:planning)
         assert(tasks_in_planning_count <= 0,
-               "Found #{tasks_in_planning_count} task(s) in planning state",
-               :next_steps => Procedures::ForemanTasks::Delete.new(:state => :planning))
+          "Found #{tasks_in_planning_count} task(s) in planning state",
+          :next_steps => Procedures::ForemanTasks::Delete.new(:state => :planning))
       end
     end
   end

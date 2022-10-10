@@ -2,6 +2,7 @@ module ForemanMaintain::Utils
   module Service
     class RemoteDB < Abstract
       attr_reader :component, :db_feature
+
       def initialize(name, priority, options = {})
         super
         @db_feature = options.fetch(:db_feature)

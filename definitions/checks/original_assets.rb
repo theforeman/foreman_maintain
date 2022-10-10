@@ -16,8 +16,8 @@ class Checks::OriginalAssets < ForemanMaintain::Check
     end
     remove_files = Procedures::Files::Remove.new(:files => custom_assets, :assumeyes => true)
     assert(custom_assets.empty?,
-           "Some assets not owned by #{product_name} were detected on the system.\n" \
-             'Possible conflicting versions can affect operation of the Web UI.',
-           :next_steps => remove_files)
+      "Some assets not owned by #{product_name} were detected on the system.\n" \
+        'Possible conflicting versions can affect operation of the Web UI.',
+      :next_steps => remove_files)
   end
 end

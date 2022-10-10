@@ -14,13 +14,13 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::Restart => :only)
+        Procedures::Service::Restart => :only)
 
       context.map(:exclude,
-                  Procedures::Service::Restart => :exclude)
+        Procedures::Service::Restart => :exclude)
 
       context.map(:wait_for_server_response,
-                  Procedures::Service::Restart => :wait_for_server_response)
+        Procedures::Service::Restart => :wait_for_server_response)
     end
   end
 
@@ -39,10 +39,10 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::Stop => :only)
+        Procedures::Service::Stop => :only)
 
       context.map(:exclude,
-                  Procedures::Service::Stop => :exclude)
+        Procedures::Service::Stop => :exclude)
     end
   end
 
@@ -61,10 +61,10 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::Start => :only)
+        Procedures::Service::Start => :only)
 
       context.map(:exclude,
-                  Procedures::Service::Start => :exclude)
+        Procedures::Service::Start => :exclude)
     end
   end
 
@@ -82,10 +82,10 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::List => :only)
+        Procedures::Service::List => :only)
 
       context.map(:exclude,
-                  Procedures::Service::List => :exclude)
+        Procedures::Service::List => :exclude)
     end
   end
 
@@ -104,10 +104,10 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::Enable => :only)
+        Procedures::Service::Enable => :only)
 
       context.map(:exclude,
-                  Procedures::Service::Enable => :exclude)
+        Procedures::Service::Enable => :exclude)
     end
   end
 
@@ -126,10 +126,10 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::Disable => :only)
+        Procedures::Service::Disable => :only)
 
       context.map(:exclude,
-                  Procedures::Service::Disable => :exclude)
+        Procedures::Service::Disable => :exclude)
     end
   end
 
@@ -147,16 +147,16 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:only,
-                  Procedures::Service::Status => :only)
+        Procedures::Service::Status => :only)
 
       context.map(:exclude,
-                  Procedures::Service::Status => :exclude)
+        Procedures::Service::Status => :exclude)
 
       context.map(:brief,
-                  Procedures::Service::Status => :brief)
+        Procedures::Service::Status => :brief)
 
       context.map(:failing,
-                  Procedures::Service::Status => :failing)
+        Procedures::Service::Status => :failing)
     end
   end
 end

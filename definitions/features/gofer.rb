@@ -10,7 +10,7 @@ class Features::Gofer < ForemanMaintain::Feature
 
   def services
     [
-      system_service('goferd', 30)
+      system_service('goferd', 30),
     ]
   end
 end

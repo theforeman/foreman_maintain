@@ -5,8 +5,8 @@ module Procedures::Restore
       description 'Make postgres owner of backup directory'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
     end
 
     def run

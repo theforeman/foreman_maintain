@@ -3,8 +3,8 @@ module Procedures::Restore
     metadata do
       description 'Restore foreman postgresql dump from backup'
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
       preparation_steps { Checks::Foreman::DBUp.new }
       confine do
         feature(:foreman_database)

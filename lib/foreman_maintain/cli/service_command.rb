@@ -35,8 +35,8 @@ module ForemanMaintain
         service_options
         if feature(:katello)
           option ['-p', '--wait-for-server-response', '--wait-for-hammer-ping'], :flag,
-                 'Wait for hammer ping to return successfully before terminating',
-                 :attribute_name => :wait_for_server_response
+            'Wait for hammer ping to return successfully before terminating',
+            :attribute_name => :wait_for_server_response
         end
 
         def execute

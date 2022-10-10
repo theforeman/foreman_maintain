@@ -20,7 +20,7 @@ class Features::Pulp < ForemanMaintain::Feature
       system_service('pulp_celerybeat', 20),
       system_service('pulp_resource_manager', 20),
       system_service('pulp_streamer', 20),
-      system_service('httpd', 30)
+      system_service('httpd', 30),
     ]
   end
 
@@ -29,7 +29,7 @@ class Features::Pulp < ForemanMaintain::Feature
       '/etc/pki/pulp',
       '/etc/pulp',
       '/etc/crane.conf',
-      '/etc/default/pulp_workers'
+      '/etc/default/pulp_workers',
     ]
   end
 end

@@ -4,9 +4,9 @@ module Procedures::ForemanTasks
 
     metadata do
       param :state,
-            'In what state should the task be deleted.'\
-            " Possible values are #{ALLOWED_STATES_VALUES.join(', ')}",
-            :required => true, :allowed_values => ALLOWED_STATES_VALUES
+        'In what state should the task be deleted.'\
+        " Possible values are #{ALLOWED_STATES_VALUES.join(', ')}",
+        :required => true, :allowed_values => ALLOWED_STATES_VALUES
       description 'Delete tasks'
     end
 

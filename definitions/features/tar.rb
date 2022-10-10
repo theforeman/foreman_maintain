@@ -29,13 +29,13 @@ class Features::Tar < ForemanMaintain::Feature
   def validate_volume_size(size)
     if size.nil? || size !~ /^\d+[bBcGKkMPTw]?$/
       raise ForemanMaintain::Error::Validation,
-            "Please specify size according to 'tar --tape-length' format."
+        "Please specify size according to 'tar --tape-length' format."
     end
     true
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def tar_command(options)
     volume_size = options.fetch(:volume_size, nil)
     absolute_names = options.fetch(:absolute_names, nil)
@@ -81,7 +81,7 @@ class Features::Tar < ForemanMaintain::Feature
     tar_command.join(' ')
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   private
 

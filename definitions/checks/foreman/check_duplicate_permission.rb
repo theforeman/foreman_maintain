@@ -14,7 +14,7 @@ module Checks
           duplicate_permissions.empty?,
           'Duplicate permissions in your database',
           :next_steps => [
-            Procedures::Foreman::RemoveDuplicatePermissions.new
+            Procedures::Foreman::RemoveDuplicatePermissions.new,
           ]
         )
       end

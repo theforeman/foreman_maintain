@@ -8,6 +8,6 @@ class Checks::MissingServiceIsRunning < ForemanMaintain::Check
 
   def run
     assert(feature(:missing_service).running?,
-           'The missing service is not running')
+      'The missing service is not running')
   end
 end

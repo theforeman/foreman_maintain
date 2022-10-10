@@ -65,7 +65,7 @@ module Checks
           'medium' => { cpu_cores: 8, memory: 32 },
           'large' => { cpu_cores: 16, memory: 64 },
           'extra-large' => { cpu_cores: 32, memory: 128 },
-          'extra-extra-large' => { cpu_cores: 48, memory: 256 }
+          'extra-extra-large' => { cpu_cores: 48, memory: 256 },
         }
       end
 

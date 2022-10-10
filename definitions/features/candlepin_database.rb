@@ -14,7 +14,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   def services
     [
       system_service('postgresql', 10, :component => 'candlepin',
-                                       :db_feature => feature(:candlepin_database))
+                                       :db_feature => feature(:candlepin_database)),
     ]
   end
 
@@ -53,7 +53,6 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
 
   private
 
-  # rubocop:disable Metrics/MethodLength
   def load_configuration
     raw_config = File.read(CANDLEPIN_DB_CONFIG)
     full_config = Hash[raw_config.scan(/(^[^#\n][^=]*)=(.*)/)]
@@ -69,10 +68,9 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
       'ssl' => (fetch_extra_param(url, 'ssl') == 'true'),
       'sslfactory' => fetch_extra_param(url, 'sslfactory'),
       'driver_class' => full_config['jpa.config.hibernate.connection.driver_class'],
-      'url' => url
+      'url' => url,
     }
   end
-  # rubocop:enable Metrics/MethodLength
 
   def extend_with_db_options
     db_options = { '-d' => configuration['database'] }

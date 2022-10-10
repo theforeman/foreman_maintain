@@ -1,6 +1,7 @@
 require 'foreman_maintain/repository_manager/el'
-include ForemanMaintain::Concerns::OsFacts
 module ForemanMaintain
+  extend ForemanMaintain::Concerns::OsFacts
+
   def self.repository_manager
     @repository_manager ||= if el?
                               ForemanMaintain::RepositoryManager::El.new

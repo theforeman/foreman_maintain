@@ -1,12 +1,18 @@
+inherit_gem:
+  theforeman-rubocop:
+    - lenient.yml
+
 AllCops:
-  Exclude:
-    - 'vendor/**/*'
+  TargetRubyVersion: 2.7
+
+Rails:
+  Enabled: false
 
 Metrics/LineLength:
   Max: 100
 
 Metrics/AbcSize:
-  Max: 20
+  Max: 22
 
 Metrics/CyclomaticComplexity:
   Max: 10
@@ -49,6 +55,7 @@ Metrics/BlockLength:
     - 'test/**/*'
     - 'lib/foreman_maintain/cli.rb'
     - 'lib/foreman_maintain/cli/**/*'
+    - 'foreman_maintain.gemspec'
 
 Metrics/ModuleLength:
   Enabled: false
@@ -69,7 +76,7 @@ Security/YAMLLoad:
 # default 10 lines seems to be too constraining, especially when trying to do
 # some proper logging
 Metrics/MethodLength:
-  Max: 15
+  Max: 20
 
 Style/SymbolArray:
   Description: 'Use %i or %I for arrays of symbols.'
@@ -96,4 +103,25 @@ Style/FrozenStringLiteralComment:
 Style/DoubleNegation:
   Description: 'Checks for uses of double negation (!!).'
   StyleGuide: '#no-bang-bang'
+  Enabled: false
+
+Minitest/GlobalExpectations:
+  Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false
+
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+
+Lint/MissingSuper:
+  Enabled: false
+
+Style/HashLikeCase:
+  Enabled: false
+
+Style/OptionalBooleanParameter:
+  Enabled: false
+
+Style/StderrPuts:
   Enabled: false

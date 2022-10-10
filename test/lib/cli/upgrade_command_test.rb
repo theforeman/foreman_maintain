@@ -14,7 +14,7 @@ module ForemanMaintain
       ForemanMaintain.stubs(:el?).returns(true)
       PackageManagerTestHelper.mock_package_manager
       FakePackageManager.any_instance.stubs(:update).with('rubygem-foreman_maintain',
-                                                          :assumeyes => true).returns(true)
+        :assumeyes => true).returns(true)
       # rubocop:disable Layout/LineLength
       FakePackageManager.any_instance.stubs(:update_available?).with('rubygem-foreman_maintain').returns(true)
       # rubocop:enable Layout/LineLength

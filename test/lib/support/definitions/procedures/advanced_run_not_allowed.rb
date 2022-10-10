@@ -3,5 +3,6 @@ class Procedures::AdvancedRunNotAllowed < ForemanMaintain::Procedure
     advanced_run false
   end
 
-  def run; end
+  def run
+  end
 end

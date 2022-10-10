@@ -78,7 +78,7 @@ module ForemanMaintain
                  elsif @last_scenario.steps_with_warning(:whitelisted => false).any?
                    @last_scenario_continuation_confirmed = true
                    reporter.ask_decision("Continue with [#{scenario.description}]",
-                                         run_strategy: scenario.run_strategy)
+                     run_strategy: scenario.run_strategy)
                  end
 
       ask_to_quit if [:quit, :no].include?(decision)
@@ -93,7 +93,7 @@ module ForemanMaintain
     def add_steps(*steps)
       # we we add the steps at the beginning, but still keeping the
       # order of steps passed in the arguments
-      steps.reverse.each do |step|
+      steps.reverse_each do |step|
         @steps_to_run.unshift(step)
       end
     end
@@ -125,9 +125,9 @@ module ForemanMaintain
     def run_step(step)
       @reporter.puts('Rerunning the check after fix procedure') if rerun_check?(step)
       execution = Execution.new(step, @reporter,
-                                :whitelisted => whitelisted_step?(step),
-                                :storage => storage,
-                                :force => @force)
+        :whitelisted => whitelisted_step?(step),
+        :storage => storage,
+        :force => @force)
       execution.run
       execution
     ensure

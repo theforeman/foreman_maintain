@@ -23,7 +23,7 @@ describe Features::Mongo do
       'ssl' => false,
       'unsafe_autoretry' => false,
       'host' => 'mymongo',
-      'port' => '27019'
+      'port' => '27019',
     }
     subject.configuration.must_equal expected_config
   end

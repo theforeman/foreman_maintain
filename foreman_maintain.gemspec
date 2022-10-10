@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift File.expand_path('lib', __dir__)
 require 'foreman_maintain/version'
 
 Gem::Specification.new do |s|
@@ -20,14 +20,15 @@ the Foreman/Satellite up and running."
   s.require_paths = ['lib']
   s.executables = ['foreman-maintain',
                    'foreman-maintain-complete', 'foreman-maintain-rotate-tar']
+  s.required_ruby_version = ">= 2.7", "< 4"
 
   s.add_dependency 'clamp'
   s.add_dependency 'highline'
 
   s.add_development_dependency 'bundler', '>= 1.17'
   s.add_development_dependency 'minitest'
+  s.add_development_dependency 'minitest-stub-const'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rubocop', '0.50.0' # rubocop >= 0.51.0 drops support for ruby 2.0
-  s.add_development_dependency 'minitest-stub-const'
+  s.add_development_dependency 'theforeman-rubocop'
 end

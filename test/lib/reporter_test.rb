@@ -1,8 +1,34 @@
 require 'test_helper'
 
 module ForemanMaintain
+  class FakeInstanceFeature < ForemanMaintain::Feature
+    metadata do
+      label :fake_instance
+    end
+
+    def downstream
+      feature(:satellite) || feature(:capsule)
+    end
+  end
+
   describe Reporter::CLIReporter do
     include CliAssertions
+
+    def fake_instance_feature
+      ForemanMaintain.detector.stubs(:feature).with(:instance).returns(FakeInstanceFeature.new)
+    end
+
+    def assume_feature_present(label)
+      ForemanMaintain.detector.stubs(:feature).with(label).returns(true)
+    end
+
+    def assume_feature_absent(label)
+      ForemanMaintain.detector.stubs(:feature).with(label).returns(false)
+    end
+
+    def decision_question(description)
+      "Continue with step [#{description}]?, [y(yes), n(no), q(quit)]"
+    end
 
     let :capture do
       StringIO.new
@@ -42,32 +68,6 @@ module ForemanMaintain
 
     let(:warn_and_fail_skipwhitelist) do
       Scenarios::DummySkipWhitelist::WarnAndFail.new
-    end
-
-    class FakeInstanceFeature < ForemanMaintain::Feature
-      metadata do
-        label :fake_instance
-      end
-
-      def downstream
-        feature(:satellite) || feature(:capsule)
-      end
-    end
-
-    def fake_instance_feature
-      ForemanMaintain.detector.stubs(:feature).with(:instance).returns(FakeInstanceFeature.new)
-    end
-
-    def assume_feature_present(label)
-      ForemanMaintain.detector.stubs(:feature).with(label).returns(true)
-    end
-
-    def assume_feature_absent(label)
-      ForemanMaintain.detector.stubs(:feature).with(label).returns(false)
-    end
-
-    def decision_question(description)
-      "Continue with step [#{description}]?, [y(yes), n(no), q(quit)]"
     end
 
     it 'reports human-readable info about the run' do

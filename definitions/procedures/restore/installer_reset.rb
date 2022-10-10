@@ -20,8 +20,7 @@ module Procedures::Restore
       # We always disable system checks to avoid unnecessary errors. The installer should have
       # already ran since this is to be run on an existing system, which means installer checks
       # has already been skipped
-      if feature(:foreman_proxy) &&
-         feature(:foreman_proxy).with_content? &&
+      if feature(:foreman_proxy)&.with_content? &&
          check_max_version('foreman-installer', '3.4')
         installer << '--disable-system-checks '
       end
