@@ -6,8 +6,8 @@ module Checks::Restore
       description 'Validate backup has appropriate files'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
       manual_detection
     end
 

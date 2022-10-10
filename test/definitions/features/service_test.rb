@@ -1,19 +1,27 @@
 require 'test_helper'
 
+class RemoteDBFeature
+  def local?
+    false
+  end
+end
+
+class LocalDBFeature
+  def local?
+    true
+  end
+end
+
+class TestFeature < ForemanMaintain::Feature
+  def initialize(*services)
+    @services = services
+  end
+
+  attr_reader :services
+end
+
 describe Features::Service do
   include DefinitionsTestHelper
-
-  class RemoteDBFeature
-    def local?
-      false
-    end
-  end
-
-  class LocalDBFeature
-    def local?
-      true
-    end
-  end
 
   def service_names_match?(filtered_services, services_to_compare)
     filtered_services.values.flatten(1).map(&:name).must_equal services_to_compare.map(&:name)
@@ -29,31 +37,23 @@ describe Features::Service do
   let(:httpd) { existing_system_service('httpd', 30) }
   let(:local_foreman_db) do
     existing_system_service('postgresql', 20,
-                            :component => 'Foreman', :db_feature => LocalDBFeature.new)
+      :component => 'Foreman', :db_feature => LocalDBFeature.new)
   end
   let(:local_candlepin_db) do
     existing_system_service('postgresql', 10,
-                            :component => 'Candlepin', :db_feature => LocalDBFeature.new)
+      :component => 'Candlepin', :db_feature => LocalDBFeature.new)
   end
   let(:remote_foreman_db) do
     existing_system_service('postgresql', 20,
-                            :component => 'Foreman', :db_feature => RemoteDBFeature.new)
+      :component => 'Foreman', :db_feature => RemoteDBFeature.new)
   end
   let(:remote_candlepin_db) do
     existing_system_service('postgresql', 10,
-                            :component => 'Candlepin', :db_feature => RemoteDBFeature.new)
+      :component => 'Candlepin', :db_feature => RemoteDBFeature.new)
   end
   let(:missing) { missing_system_service('missing', 30) }
 
   let(:crond) { existing_system_service('crond', 50) }
-
-  class TestFeature < ForemanMaintain::Feature
-    def initialize(*services)
-      @services = services
-    end
-
-    attr_reader :services
-  end
 
   subject { Features::Service.new }
 
@@ -64,7 +64,7 @@ describe Features::Service do
           TestFeature.new(httpd, local_foreman_db),
           TestFeature.new(httpd, local_candlepin_db),
           TestFeature.new(missing),
-          TestFeature.new
+          TestFeature.new,
         ]
       )
       subject.existing_services.must_equal [local_candlepin_db, httpd]
@@ -76,7 +76,7 @@ describe Features::Service do
           TestFeature.new(httpd, remote_foreman_db),
           TestFeature.new(httpd, remote_candlepin_db),
           TestFeature.new(missing),
-          TestFeature.new
+          TestFeature.new,
         ]
       )
       subject.existing_services.must_equal [remote_candlepin_db, remote_foreman_db, httpd]
@@ -88,7 +88,7 @@ describe Features::Service do
       ForemanMaintain.stubs(:available_features).returns(
         [
           TestFeature.new(httpd, remote_foreman_db),
-          TestFeature.new(httpd, remote_candlepin_db)
+          TestFeature.new(httpd, remote_candlepin_db),
         ]
       )
     end

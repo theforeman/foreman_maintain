@@ -14,8 +14,8 @@ module Checks::ForemanProxy
       if non_zero_token_duration? && Dir.exist?(tftp_boot_directory)
         files = old_files_from_tftp_boot
         assert(files.empty?,
-               'There are old initrd and vmlinuz files present in tftp',
-               :next_steps => Procedures::Files::Remove.new(:files => files))
+          'There are old initrd and vmlinuz files present in tftp',
+          :next_steps => Procedures::Files::Remove.new(:files => files))
       else
         skip "TFTP #{tftp_boot_directory} directory doesn't exist."
       end
@@ -23,8 +23,8 @@ module Checks::ForemanProxy
 
     def old_files_from_tftp_boot
       Dir.glob("#{tftp_boot_directory}*-{vmlinuz,initrd.img}").map do |file|
-        unless File.directory?(file)
-          file if File.mtime(file) + (token_duration * 60) < Time.now
+        if !File.directory?(file) && (File.mtime(file) + (token_duration * 60) < Time.now)
+          file
         end
       end.compact
     end

@@ -8,10 +8,9 @@ module ForemanMaintain
       include Concerns::SystemHelpers
 
       attr_accessor :standard_files, :katello_online_files, :katello_offline_files,
-                    :foreman_online_files, :foreman_offline_files, :fpc_offline_files,
-                    :fpc_online_files
+        :foreman_online_files, :foreman_offline_files, :fpc_offline_files,
+        :fpc_online_files
 
-      # rubocop:disable Metrics/MethodLength
       def initialize(backup_dir)
         # fpc stands for foreman proxy w/ content
         @backup_dir = backup_dir
@@ -31,7 +30,6 @@ module ForemanMaintain
           @fpc_offline_files = ['pgsql_data.tar.gz']
         end
       end
-      # rubocop:enable Metrics/MethodLength
 
       def file_map
         @file_map ||= {
@@ -43,7 +41,7 @@ module ForemanMaintain
           :mongo_dump => map_file(@backup_dir, 'mongo_dump'),
           :config_files => map_file(@backup_dir, 'config_files.tar.gz'),
           :metadata => map_file(@backup_dir, 'metadata.yml'),
-          :pulpcore_dump => map_file(@backup_dir, 'pulpcore.dump')
+          :pulpcore_dump => map_file(@backup_dir, 'pulpcore.dump'),
         }
       end
 
@@ -52,7 +50,7 @@ module ForemanMaintain
         present = File.exist?(file_path)
         {
           :present => present,
-          :path => file_path
+          :path => file_path,
         }
       end
 
@@ -118,7 +116,7 @@ module ForemanMaintain
           return false
         end
         check_file_existence(:present => present,
-                             :absent => absent)
+          :absent => absent)
       end
 
       def katello_online_backup?
@@ -136,7 +134,7 @@ module ForemanMaintain
           return false
         end
         check_file_existence(:present => present,
-                             :absent => absent)
+          :absent => absent)
       end
 
       def katello_logical_backup?
@@ -154,7 +152,7 @@ module ForemanMaintain
           return false
         end
         check_file_existence(:present => present,
-                             :absent => absent)
+          :absent => absent)
       end
 
       def katello_hybrid_db_backup?
@@ -180,7 +178,7 @@ module ForemanMaintain
           return false
         end
         check_file_existence(:present => present,
-                             :absent => absent)
+          :absent => absent)
       end
 
       def fpc_online_backup?
@@ -228,22 +226,21 @@ module ForemanMaintain
 
       def foreman_standard_backup?
         check_file_existence(:present => [:pgsql_data],
-                             :absent => [:candlepin_dump, :foreman_dump, :pulpcore_dump,
-                                         :mongo_data, :mongo_dump])
+          :absent => [:candlepin_dump, :foreman_dump, :pulpcore_dump,
+                      :mongo_data, :mongo_dump])
       end
 
       def foreman_online_backup?
         check_file_existence(:present => [:foreman_dump],
-                             :absent => [:candlepin_dump, :pgsql_data,
-                                         :mongo_data, :mongo_dump, :pulpcore_dump])
+          :absent => [:candlepin_dump, :pgsql_data,
+                      :mongo_data, :mongo_dump, :pulpcore_dump])
       end
 
       def foreman_logical_backup?
         check_file_existence(:present => [:pgsql_data, :foreman_dump],
-                             :absent => [:candlepin_dump, :mongo_data, :mongo_dump, :pulpcore_dump])
+          :absent => [:candlepin_dump, :mongo_data, :mongo_dump, :pulpcore_dump])
       end
 
-      # rubocop:disable Metrics/MethodLength
       def dumps_for_hybrid_db_setup(dbs_hash)
         present = []
         absent = []
@@ -262,7 +259,6 @@ module ForemanMaintain
         end
         [present, absent]
       end
-      # rubocop:enable Metrics/MethodLength
 
       def validate_hostname?
         # make sure that the system hostname is the same as the backup

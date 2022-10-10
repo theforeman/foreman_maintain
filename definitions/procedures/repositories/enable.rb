@@ -3,7 +3,7 @@ module Procedures::Repositories
     metadata do
       param :repos, 'Array of repositories to enable'
       param :use_rhsm, 'Use RHSM to enable repository',
-            :flag => true, :default => false
+        :flag => true, :default => false
       description 'Enable repositories'
     end
     def run

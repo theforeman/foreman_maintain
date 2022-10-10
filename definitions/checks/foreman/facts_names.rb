@@ -21,10 +21,10 @@ module Checks
           host_id = result['host_id']
           count = result['count'].to_i
           assert(count < max,
-                 "Host (ID #{host_id}) has #{count} fact values which is more than #{max}.\n" \
-                 'This can cause slow fact processing.',
-                 :warn => true,
-                 :next_steps => [Procedures::KnowledgeBaseArticle.new(:doc => 'many_fact_values')])
+            "Host (ID #{host_id}) has #{count} fact values which is more than #{max}.\n" \
+            'This can cause slow fact processing.',
+            :warn => true,
+            :next_steps => [Procedures::KnowledgeBaseArticle.new(:doc => 'many_fact_values')])
         end
       end
     end

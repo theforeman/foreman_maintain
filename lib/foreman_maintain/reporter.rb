@@ -10,17 +10,21 @@ module ForemanMaintain
     DECISION_MAPPER = {
       %w[y yes] => :yes,
       %w[n next no] => :no,
-      %w[q quit] => :quit
+      %w[q quit] => :quit,
     }.freeze
 
     # Each public method is a hook called by executor at the specific point
-    def before_scenario_starts(_scenario, _last_scenario = nil); end
+    def before_scenario_starts(_scenario, _last_scenario = nil)
+    end
 
-    def before_execution_starts(_execution); end
+    def before_execution_starts(_execution)
+    end
 
-    def after_execution_finishes(_execution); end
+    def after_execution_finishes(_execution)
+    end
 
-    def after_scenario_finishes(_scenario); end
+    def after_scenario_finishes(_scenario)
+    end
 
     def on_next_steps(steps, run_strategy = :fail_fast)
       return if steps.empty?
@@ -36,11 +40,14 @@ module ForemanMaintain
       yield DummySpinner.new
     end
 
-    def print(_message); end
+    def print(_message)
+    end
 
-    def puts(_message); end
+    def puts(_message)
+    end
 
-    def ask(_message); end
+    def ask(_message)
+    end
 
     def assumeyes?
       @assumeyes
@@ -100,7 +107,6 @@ module ForemanMaintain
       decision
     end
 
-    # rubocop:disable Metrics/MethodLength
     def ask_to_select(message, steps, run_strategy)
       if assumeyes?
         puts('(assuming first option)')
@@ -122,7 +128,6 @@ module ForemanMaintain
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
     # loop over the block until it returns some non-false value
     def until_valid_decision

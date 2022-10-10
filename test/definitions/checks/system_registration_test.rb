@@ -6,7 +6,7 @@ describe Checks::SystemRegistration do
   subject { Checks::SystemRegistration.new }
 
   let(:rhsm_conf_file_path) do
-    File.expand_path('../../../support/', __FILE__)
+    File.expand_path('../../support', __dir__)
   end
 
   context 'when RH subscription manager conf exists' do

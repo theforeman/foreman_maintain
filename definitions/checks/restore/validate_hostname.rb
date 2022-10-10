@@ -6,8 +6,8 @@ module Checks::Restore
       description 'Validate hostname is the same as backup'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
       manual_detection
     end
 

@@ -121,8 +121,8 @@ describe Features::Instance do
           'status' => 'ok',
           'services' => {
             'pulp' => { 'status' => 'ok', 'duration_ms' => '44' },
-            'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' }
-          }
+            'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' },
+          },
         }
       end
       let(:failing_response_body) do
@@ -130,8 +130,8 @@ describe Features::Instance do
           'status' => 'ok',
           'services' => {
             'pulp' => { 'status' => 'FAIL', 'duration_ms' => '44' },
-            'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' }
-          }
+            'candlepin' => { 'status' => 'ok', 'duration_ms' => '15' },
+          },
         }
       end
       let(:connection) { mock('connection') }

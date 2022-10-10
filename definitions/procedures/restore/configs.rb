@@ -4,8 +4,8 @@ module Procedures::Restore
       description 'Restore configs from backup'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
     end
 
     def run
@@ -19,7 +19,6 @@ module Procedures::Restore
       end
     end
 
-    # rubocop:disable  Metrics/MethodLength
     def restore_configs(backup)
       exclude = ForemanMaintain.available_features.each_with_object([]) do |feat, cfgs|
         if backup.online_backup?
@@ -35,15 +34,14 @@ module Procedures::Restore
         :directory => '/',
         :archive => backup.file_map[:config_files][:path],
         :gzip => true,
-        :exclude => exclude
+        :exclude => exclude,
       }
 
       feature(:tar).run(tar_options)
     end
-    # rubocop:enable  Metrics/MethodLength
 
     def reload_configs
-      feature(:mongo).reload_db_config if feature(:mongo)
+      feature(:mongo)&.reload_db_config
     end
 
     private

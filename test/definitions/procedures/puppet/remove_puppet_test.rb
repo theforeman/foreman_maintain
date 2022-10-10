@@ -19,7 +19,7 @@ describe Procedures::Puppet::RemovePuppet do
         '--no-enable-foreman-plugin-puppet',
         '--foreman-proxy-puppet false',
         '--foreman-proxy-puppetca false',
-        '--no-enable-puppet'
+        '--no-enable-puppet',
       ]
       _(subject.send(:installer_arguments_disabling_puppet).sort).must_equal expected_arguments.sort
     end
@@ -29,7 +29,7 @@ describe Procedures::Puppet::RemovePuppet do
       expected_arguments = [
         '--foreman-proxy-puppet false',
         '--foreman-proxy-puppetca false',
-        '--no-enable-puppet'
+        '--no-enable-puppet',
       ]
       _(subject.send(:installer_arguments_disabling_puppet).sort).must_equal expected_arguments.sort
     end
@@ -41,7 +41,7 @@ describe Procedures::Puppet::RemovePuppet do
         '--no-enable-foreman-plugin-puppet',
         '--foreman-proxy-puppet false',
         '--foreman-proxy-puppetca false',
-        '--no-enable-puppet'
+        '--no-enable-puppet',
       ]
       _(subject.send(:installer_arguments_disabling_puppet).sort).must_equal expected_arguments.sort
     end
@@ -51,7 +51,7 @@ describe Procedures::Puppet::RemovePuppet do
       expected_arguments = [
         '--foreman-proxy-puppet false',
         '--foreman-proxy-puppetca false',
-        '--no-enable-puppet'
+        '--no-enable-puppet',
       ]
       _(subject.send(:installer_arguments_disabling_puppet).sort).must_equal expected_arguments.sort
     end

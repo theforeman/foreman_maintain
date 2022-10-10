@@ -6,8 +6,8 @@ module ForemanMaintain
     class AdvancedCommand < Base
       subcommand 'procedure', 'Run maintain procedures manually', ProcedureCommand
       subcommand 'prebuild-bash-completion',
-                 'Prepare map of options and subcommands for Bash completion',
-                 PrebuildBashCompletionCommand
+        'Prepare map of options and subcommands for Bash completion',
+        PrebuildBashCompletionCommand
     end
   end
 end

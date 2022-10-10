@@ -6,7 +6,7 @@ module Procedures::Service
       description 'Restart applicable services'
       Base.common_params(self)
       param :wait_for_server_response,
-            'Wait for server ping to return successfully before terminating'
+        'Wait for server ping to return successfully before terminating'
     end
 
     RETRIES_FOR_SERVICES_RESTART = 5

@@ -4,7 +4,7 @@ module ForemanMaintain
 
     def initialize(name, description, options, &block)
       options.validate_options!(:description, :required, :flag, :array,
-                                :allowed_values, :default)
+        :allowed_values, :default)
       @name = name
       @description = description || options[:description] || ''
       @options = options
@@ -63,7 +63,7 @@ module ForemanMaintain
       return if within_allowed
       error_msg = "'#{value}' not allowed for #{name} param."
       raise ForemanMaintain::Error::UsageError,
-            "#{error_msg} Possible values are #{@allowed_values.join(', ')}"
+        "#{error_msg} Possible values are #{@allowed_values.join(', ')}"
     end
   end
 end

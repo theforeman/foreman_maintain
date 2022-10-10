@@ -1,4 +1,3 @@
-require 'thread'
 require 'highline'
 
 module ForemanMaintain
@@ -73,7 +72,7 @@ module ForemanMaintain
       attr_accessor :select_option_counter
       attr_reader :last_line, :max_length
 
-      def initialize(stdout = STDOUT, stdin = STDIN, options = {})
+      def initialize(stdout = $stdout, stdin = $stdin, options = {})
         @stdout = stdout
         @stdin = stdin
         options.validate_options!(:assumeyes)
@@ -127,9 +126,9 @@ module ForemanMaintain
         @new_line_next_time = false
         @last_line = ''
         # add space at the end as otherwise highline would add new line there :/
-        message = "#{message} " unless message =~ /\s\Z/
+        message = "#{message} " unless /\s\Z/.match?(message)
         answer = @hl.ask(message) { |q| q.echo = false if options[:password] }
-        answer.to_s.chomp if answer
+        answer&.to_s&.chomp
       end
 
       def new_line_if_needed
@@ -179,7 +178,7 @@ module ForemanMaintain
 
       def single_step_decision(step, run_strategy)
         answer = ask_decision("Continue with step [#{step.runtime_message}]?",
-                              run_strategy: run_strategy)
+          run_strategy: run_strategy)
         if answer == :yes
           step
         else
@@ -339,13 +338,13 @@ module ForemanMaintain
 
               In case the failures are false positives, use
               --whitelist="%s"
-              MESSAGE
+                           MESSAGE
                          else
                            format(<<-MESSAGE.strip_heredoc, whitelist_labels)
               Resolve the failed steps and rerun the command.
               In case the failures are false positives, use
               --whitelist="%s"
-              MESSAGE
+                           MESSAGE
                          end
           end
         end

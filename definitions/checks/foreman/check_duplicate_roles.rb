@@ -21,7 +21,7 @@ module Checks
             Procedures::Foreman::RemoveDuplicateObsoleteRoles.new,
             Procedures::KnowledgeBaseArticle.new(
               :doc => 'fix_db_migrate_failure_on_duplicate_roles'
-            )
+            ),
           ]
         )
       end

@@ -6,8 +6,8 @@ module Checks::Restore
       description 'Validate network interfaces match the backup'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
       manual_detection
     end
 

@@ -1,33 +1,33 @@
 require 'test_helper'
 
 module ForemanMaintain
+  class LocalDBFeature < Feature
+    def local?
+      true
+    end
+  end
+
+  class RemoteDBFeature < Feature
+    def local?
+      false
+    end
+
+    def ping
+      true
+    end
+  end
+
+  class RemoteStoppedDBFeature < Feature
+    def local?
+      false
+    end
+
+    def ping
+      false
+    end
+  end
+
   describe Utils::Service::RemoteDB do
-    class LocalDBFeature < Feature
-      def local?
-        true
-      end
-    end
-
-    class RemoteDBFeature < Feature
-      def local?
-        false
-      end
-
-      def ping
-        true
-      end
-    end
-
-    class RemoteStoppedDBFeature < Feature
-      def local?
-        false
-      end
-
-      def ping
-        false
-      end
-    end
-
     let(:remote_db_feature) { RemoteDBFeature.new }
     let(:remote_db_service) do
       ForemanMaintain::Utils::Service::RemoteDB.new(

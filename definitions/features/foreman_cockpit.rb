@@ -9,7 +9,7 @@ class Features::ForemanCockpit < ForemanMaintain::Feature
 
   def services
     [
-      system_service('foreman-cockpit')
+      system_service('foreman-cockpit'),
     ]
   end
 end

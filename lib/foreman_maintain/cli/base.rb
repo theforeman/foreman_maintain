@@ -57,10 +57,10 @@ module ForemanMaintain
       def run_scenario(scenarios, rescue_scenario = nil)
         @runner ||=
           ForemanMaintain::Runner.new(reporter, scenarios,
-                                      :assumeyes => option_wrapper('assumeyes?'),
-                                      :whitelist => option_wrapper('whitelist') || [],
-                                      :force => option_wrapper('force?'),
-                                      :rescue_scenario => rescue_scenario)
+            :assumeyes => option_wrapper('assumeyes?'),
+            :whitelist => option_wrapper('whitelist') || [],
+            :force => option_wrapper('force?'),
+            :rescue_scenario => rescue_scenario)
         runner.run
       end
 
@@ -135,8 +135,8 @@ module ForemanMaintain
 
       def self.label_option
         option '--label', 'label',
-               'Run only a specific check with a label. ' \
-                 '(Use "list" command to see available labels)' do |label|
+          'Run only a specific check with a label. ' \
+            '(Use "list" command to see available labels)' do |label|
           raise ArgumentError, 'value not specified' if label.nil? || label.empty?
           underscorize(label).to_sym
         end
@@ -144,9 +144,9 @@ module ForemanMaintain
 
       def self.tags_option
         option('--tags', 'tags',
-               'Run only those with all specific set of tags. ' \
-                 '(Use list-tags command to see available tags)',
-               :multivalued => true) do |tags|
+          'Run only those with all specific set of tags. ' \
+            '(Use list-tags command to see available tags)',
+          :multivalued => true) do |tags|
           raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
           tags.map { |tag| underscorize(tag).to_sym }
         end
@@ -158,14 +158,14 @@ module ForemanMaintain
 
         if opts.include?('assumeyes')
           option ['-y', '--assumeyes'], :flag,
-                 'Automatically answer yes for all questions' do |assume|
+            'Automatically answer yes for all questions' do |assume|
             ForemanMaintain.reporter.assumeyes = assume
           end
         end
 
         if opts.include?('whitelist')
           option(['-w', '--whitelist'], 'whitelist',
-                 'Comma-separated list of labels of steps to be skipped') do |whitelist|
+            'Comma-separated list of labels of steps to be skipped') do |whitelist|
             raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
             whitelist.split(',').map(&:strip)
           end
@@ -173,12 +173,12 @@ module ForemanMaintain
 
         if opts.include?('force')
           option ['-f', '--force'], :flag,
-                 'Force steps that would be skipped as they were already run'
+            'Force steps that would be skipped as they were already run'
         end
 
         if opts.include?('plaintext')
           option(['--plaintext'], :flag,
-                 'Print the output in plaintext and disable the spinner') do |plaintext|
+            'Print the output in plaintext and disable the spinner') do |plaintext|
             ForemanMaintain.reporter.plaintext = plaintext
           end
         end

@@ -21,15 +21,13 @@ module ForemanMaintain
       end
 
       def run
-        if logger
-          logger.debug(hide_strings("Running command #{@command} with stdin #{@stdin.inspect}"))
-        end
+        logger&.debug(hide_strings("Running command #{@command} with stdin #{@stdin.inspect}"))
         if @interactive
           run_interactively
         else
           run_non_interactively
         end
-        logger.debug("output of the command:\n #{hide_strings(output)}") if logger
+        logger&.debug("output of the command:\n #{hide_strings(output)}")
       end
 
       def interactive?
@@ -52,14 +50,13 @@ module ForemanMaintain
 
       def execution_error
         raise Error::ExecutionError.new(hide_strings(@command),
-                                        exit_status,
-                                        hide_strings(@stdin),
-                                        @interactive ? nil : hide_strings(@output))
+          exit_status,
+          hide_strings(@stdin),
+          @interactive ? nil : hide_strings(@output))
       end
 
       private
 
-      # rubocop:disable Metrics/MethodLength
       def run_interactively
         # use tmp files to capture output and exit status of the command when
         # running interactively
@@ -82,7 +79,6 @@ module ForemanMaintain
         log_file.close
         exit_file.close
       end
-      # rubocop:enable Metrics/MethodLength
 
       def run_non_interactively
         IO.popen(full_command, 'r+') do |f|

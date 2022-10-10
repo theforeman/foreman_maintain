@@ -3,20 +3,20 @@ require 'test_helper'
 require 'foreman_maintain/cli'
 
 module ForemanMaintain
+  class CommandB < Cli::Base
+    option ['--filename'], 'FILE', 'File name', :completion => { :type => :file }
+    parameter 'BACKUP_DIR', 'Path to backup dir', :completion => { :type => :directory }
+    parameter 'BACKUP_MODE', 'Backup mode'
+  end
+
+  class CommandA < Cli::Base
+    subcommand 'b', 'Descr', CommandB
+    option ['--level', '-l'], 'LEVEL', 'descr'
+    option ['--flag', '-f'], :flag, 'descr'
+  end
+
   describe Cli::Base do
     describe '.completion_dict' do
-      class CommandB < Cli::Base
-        option ['--filename'], 'FILE', 'File name', :completion => { :type => :file }
-        parameter 'BACKUP_DIR', 'Path to backup dir', :completion => { :type => :directory }
-        parameter 'BACKUP_MODE', 'Backup mode'
-      end
-
-      class CommandA < Cli::Base
-        subcommand 'b', 'Descr', CommandB
-        option ['--level', '-l'], 'LEVEL', 'descr'
-        option ['--flag', '-f'], :flag, 'descr'
-      end
-
       it 'collects options with multiple names' do
         desc = CommandA.completion_map
         desc.keys.must_include '--help'

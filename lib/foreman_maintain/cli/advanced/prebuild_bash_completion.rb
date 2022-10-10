@@ -9,7 +9,7 @@ module ForemanMaintain
         answers = feature(:installer).configuration[:answer_file]
         comp_map[:expire] = {
           :file => answers,
-          :sha1sum => execute!("sha1sum #{answers}")
+          :sha1sum => execute!("sha1sum #{answers}"),
         }
         cache_dir = File.dirname(ForemanMaintain.config.completion_cache_file)
         FileUtils.mkdir_p(cache_dir) unless File.directory?(cache_dir)

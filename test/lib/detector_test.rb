@@ -10,51 +10,51 @@ module ForemanMaintain
 
     it 'detects features on the system based on #confine block' do
       features = detector.available_features
-      assert(features.find { |f| f.class == Features::PresentService },
-             'failed to collect features that were initialized in `confine` block')
+      assert(features.find { |f| f.instance_of?(Features::PresentService) },
+        'failed to collect features that were initialized in `confine` block')
 
       TestHelper.use_present_service_2 = true
       detector.refresh
       features = detector.available_features
-      assert(features.find { |f| f.class == Features::PresentService2 },
-             'failed to collect newer version of a feature')
+      assert(features.find { |f| f.instance_of?(Features::PresentService2) },
+        'failed to collect newer version of a feature')
     end
 
     it 'allows confining one feature based on present of other' do
       features = detector.available_features
-      assert(features.find { |f| f.class == Features::Server },
-             'failed to collect features that were initialized in `confine` block')
-      refute(features.find { |f| f.class == Features::Client },
-             'failed to detect feature that reference another feature in `confine` block')
+      assert(features.find { |f| f.instance_of?(Features::Server) },
+        'failed to collect features that were initialized in `confine` block')
+      refute(features.find { |f| f.instance_of?(Features::Client) },
+        'failed to detect feature that reference another feature in `confine` block')
     end
 
     it 'allows to filter checks based on label or class ===' do
       checks = detector.available_checks(:label => :present_service_is_running)
       assert_equal(1, checks.size,
-                   'expected exactly one check to be found')
+        'expected exactly one check to be found')
       assert_includes(checks, Checks::PresentServiceIsRunning,
-                      'checks that should be found is missing')
+        'checks that should be found is missing')
       checks = detector.available_checks(:class => Checks::PresentServiceIsRunning)
       assert_equal(1, checks.size,
-                   'expected exactly one check to be found')
+        'expected exactly one check to be found')
       assert_includes(checks, Checks::PresentServiceIsRunning,
-                      'checks that should be found is missing')
+        'checks that should be found is missing')
     end
 
     it 'allows to filter checks based on metadata and present features' do
       checks = detector.available_checks(:default)
       assert_includes(checks, Checks::PresentServiceIsRunning,
-                      'checks that should be found is missing')
+        'checks that should be found is missing')
       refute_includes(checks, Checks::MissingServiceIsRunning,
-                      'checks that should not be found are present')
+        'checks that should not be found are present')
     end
 
     it 'allows to filter scenarios based on metadata and present features' do
       scenarios = detector.available_scenarios(:tags => :upgrade)
       assert(scenarios.find { |c| c.is_a? Scenarios::PresentUpgrade::PreUpgradeChecks },
-             'scenarios that should be found is missing')
+        'scenarios that should be found is missing')
       refute(scenarios.find { |c| c.is_a? Scenarios::MissingUpgrade::PreUpgradeChecks },
-             'scenarios that should not be found are present')
+        'scenarios that should not be found are present')
     end
   end
 end

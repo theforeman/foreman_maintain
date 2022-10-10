@@ -3,8 +3,8 @@ module Procedures::Restore
     metadata do
       description 'Restore candlepin postgresql dump from backup'
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
       preparation_steps { Checks::Candlepin::DBUp.new }
       confine do
         feature(:candlepin_database)

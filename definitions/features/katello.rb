@@ -23,7 +23,7 @@ class Features::Katello < ForemanMaintain::Feature
     else
       [
         system_service('qpidd', 10),
-        system_service('qdrouterd', 10)
+        system_service('qdrouterd', 10),
       ]
     end
   end
@@ -43,7 +43,7 @@ class Features::Katello < ForemanMaintain::Feature
       '/etc/qpid',
       '/etc/qpid-dispatch',
       '/var/lib/qpidd',
-      '/etc/qpid-dispatch'
+      '/etc/qpid-dispatch',
     ]
 
     if installer_scenario_answers['certs']
@@ -51,7 +51,7 @@ class Features::Katello < ForemanMaintain::Feature
         installer_scenario_answers['certs']['server_cert'],
         installer_scenario_answers['certs']['server_key'],
         installer_scenario_answers['certs']['server_cert_req'],
-        installer_scenario_answers['certs']['server_ca_cert']
+        installer_scenario_answers['certs']['server_ca_cert'],
       ].compact
     end
 
@@ -62,7 +62,7 @@ class Features::Katello < ForemanMaintain::Feature
   def config_files_exclude_for_online
     [
       '/var/lib/qpidd',
-      '/var/lib/candlepin/activemq-artemis'
+      '/var/lib/candlepin/activemq-artemis',
     ]
   end
 

@@ -4,11 +4,11 @@ class Checks::CheckForNewerPackages < ForemanMaintain::Check
     description 'Check for newer packages and optionally ask for confirmation if not found.'
 
     param :packages,
-          'package names to validate',
-          :required => true
+      'package names to validate',
+      :required => true
     param :manual_confirmation_version,
-          'Version of satellite (6.9) to ask the user if they are on the latest minor release of.',
-          :required => false
+      'Version of satellite (6.9) to ask the user if they are on the latest minor release of.',
+      :required => false
     manual_detection
   end
 
@@ -24,7 +24,7 @@ class Checks::CheckForNewerPackages < ForemanMaintain::Check
 
   def check_for_package_update
     exit_status, output = ForemanMaintain.package_manager.check_update(packages: @packages,
-                                                                       with_status: true)
+      with_status: true)
     packages_with_updates = []
     if exit_status == 100
       packages_with_updates = compare_pkg_versions(output).select do |_, result|

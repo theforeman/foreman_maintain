@@ -46,8 +46,8 @@ module DefinitionsTestHelper
     assert_equal expected_output.strip, log_reporter.output.strip
   end
 
-  alias run_check run_step
-  alias run_procedure run_step
+  alias_method :run_check, :run_step
+  alias_method :run_procedure, :run_step
 
   def mock_with_spinner(definition)
     mock_spinner = MiniTest::Mock.new
@@ -80,7 +80,7 @@ module DefinitionsTestHelper
   # assume_feature_absent), assert the scenario with given filter is considered
   # present
   def assert_scenario(filter, sat_version)
-    scenario = find_scenarios(filter).select(&matching_version_check(sat_version)).first
+    scenario = find_scenarios(filter).find(&matching_version_check(sat_version))
     assert scenario, "Expected the scenario #{filter} to be present"
     scenario
   end
@@ -95,18 +95,18 @@ module DefinitionsTestHelper
   # assume_feature_absent), assert the scenario with given filter is considered
   # absent
   def refute_scenario(filter, version)
-    scenario = find_scenarios(filter).select(&matching_version_check(version)).first
+    scenario = find_scenarios(filter).find(&matching_version_check(version))
     refute scenario, "Expected the scenario #{filter} to be absent"
   end
 
   def assert_scenario_has_step(scenario, scenario_step)
     assert(scenario.steps.find { |step| step.is_a? scenario_step },
-           "Expected scenario to have #{scenario_step}")
+      "Expected scenario to have #{scenario_step}")
   end
 
   def refute_scenario_has_step(scenario, scenario_step)
     refute(scenario.steps.find { |step| step.is_a? scenario_step },
-           "Expected scenario not to have #{scenario_step}")
+      "Expected scenario not to have #{scenario_step}")
   end
 
   def hammer_config_dirs(dirs)

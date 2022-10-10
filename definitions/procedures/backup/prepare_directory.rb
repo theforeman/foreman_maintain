@@ -8,7 +8,6 @@ module Procedures::Backup
       param :incremental_dir, 'Changes since specified backup only'
     end
 
-    # rubocop:disable Metrics/MethodLength
     def run
       puts "Creating backup folder #{@backup_dir}"
 
@@ -31,6 +30,5 @@ module Procedures::Backup
         end
       end
     end
-    # rubocop:enable Metrics/MethodLength
   end
 end

@@ -37,7 +37,7 @@ module ForemanMaintain
 
       subcommand 'cleanup-repository-metadata', 'Cleanup old repository metadata under Pulp 2' do
         option ['-r', '--remove-files'], :flag, 'Remove the files instead of just listing them.',
-               :attribute_name => :remove_files
+          :attribute_name => :remove_files
 
         def execute
           run_scenarios_and_exit(
@@ -56,7 +56,7 @@ module ForemanMaintain
       end
 
       subcommand 'fix-pulpcore-artifact-ownership',
-                 'Update filesystem ownership for Pulpcore artifacts' do
+        'Update filesystem ownership for Pulpcore artifacts' do
         interactive_option(%w[assumeyes plaintext])
         def execute
           run_scenarios_and_exit(

@@ -13,8 +13,8 @@ module Scenarios
     describe 'with default params' do
       let(:scenario) do
         ForemanMaintain::Scenarios::Restore.new(:backup_dir => '.',
-                                                :incremental_backup => false,
-                                                :dry_run => false)
+          :incremental_backup => false,
+          :dry_run => false)
       end
 
       it 'composes all steps' do
@@ -46,8 +46,8 @@ module Scenarios
     describe 'with dry_run=true' do
       let(:scenario) do
         ForemanMaintain::Scenarios::Restore.new(:backup_dir => '.',
-                                                :incremental_backup => false,
-                                                :dry_run => true)
+          :incremental_backup => false,
+          :dry_run => true)
       end
 
       it 'composes only check steps' do

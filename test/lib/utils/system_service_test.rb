@@ -1,8 +1,9 @@
 require 'test_helper'
 
 module ForemanMaintain
+  class FakeFeature; end
+
   describe '#system_service' do
-    class FakeFeature; end
     let(:fake_feature) { FakeFeature.new }
     it 'can create normal system service object' do
       service = ForemanMaintain::Utils.system_service('serviced', 30)

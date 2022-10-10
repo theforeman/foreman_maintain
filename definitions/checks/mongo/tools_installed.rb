@@ -7,7 +7,7 @@ module Checks::Mongo
     end
 
     def run
-      if feature(:mongo).server_version =~ /^3\.4/
+      if /^3\.4/.match?(feature(:mongo).server_version)
         tools_pkg = 'rh-mongodb34-mongo-tools'
         result = find_package(tools_pkg)
       else
@@ -21,11 +21,11 @@ module Checks::Mongo
 
     def handle_result(result, tools_pkg)
       assert(result,
-             "#{tools_pkg} was not found among installed package.\nThis package is needed to " \
-               'do various operations such as backup, restore and import with Mongo DB.',
-             :next_steps => [
-               Procedures::Packages::Install.new(:packages => [tools_pkg])
-             ])
+        "#{tools_pkg} was not found among installed package.\nThis package is needed to " \
+          'do various operations such as backup, restore and import with Mongo DB.',
+        :next_steps => [
+          Procedures::Packages::Install.new(:packages => [tools_pkg]),
+        ])
     end
   end
 end

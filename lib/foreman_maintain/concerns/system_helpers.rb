@@ -127,7 +127,7 @@ module ForemanMaintain
       def parse_csv(data)
         parsed_data = CSV.parse(data)
         header = parsed_data.first
-        parsed_data[1..-1].map do |row|
+        parsed_data[1..].map do |row|
           Hash[*header.zip(row).flatten(1)]
         end
       end

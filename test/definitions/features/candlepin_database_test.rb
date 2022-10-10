@@ -7,21 +7,17 @@ describe Features::CandlepinDatabase do
   let(:subject_ins) { Features::CandlepinDatabase.any_instance }
 
   let(:cp_config_dir) do
-    File.expand_path('../../../support/', __FILE__)
+    File.expand_path('../../support', __dir__)
   end
 
-  def stub_with_ssl_config
+  def stub_with_ssl_config(&block)
     Features::CandlepinDatabase.stub_const(:CANDLEPIN_DB_CONFIG,
-                                           cp_config_dir + '/candlepin_with_ssl.conf') do
-      yield
-    end
+      cp_config_dir + '/candlepin_with_ssl.conf', &block)
   end
 
-  def stub_without_ssl_config
+  def stub_without_ssl_config(&block)
     Features::CandlepinDatabase.stub_const(:CANDLEPIN_DB_CONFIG,
-                                           cp_config_dir + '/candlepin_without_ssl.conf') do
-      yield
-    end
+      cp_config_dir + '/candlepin_without_ssl.conf', &block)
   end
 
   describe '.configuration' do

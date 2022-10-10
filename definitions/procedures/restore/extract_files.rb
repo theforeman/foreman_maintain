@@ -4,8 +4,8 @@ module Procedures::Restore
       description 'Extract any existing tar files in backup'
 
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
     end
 
     def run
@@ -32,7 +32,7 @@ module Procedures::Restore
         :absolute_names => true,
         :listed_incremental => '/dev/null',
         :command => 'extract',
-        :directory => '/'
+        :directory => '/',
       }
     end
 

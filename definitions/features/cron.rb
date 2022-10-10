@@ -13,12 +13,12 @@ class Features::Cron < ForemanMaintain::Feature
     if cron_service.running?
       [
         'cron jobs: running',
-        mode_on ? [Procedures::Service::Stop.new(:only => [cron_service])] : []
+        mode_on ? [Procedures::Service::Stop.new(:only => [cron_service])] : [],
       ]
     else
       [
         'cron jobs: not running',
-        mode_on ? [] : [Procedures::Service::Start.new(:only => [cron_service])]
+        mode_on ? [] : [Procedures::Service::Start.new(:only => [cron_service])],
       ]
     end
   end

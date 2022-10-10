@@ -32,6 +32,6 @@ describe Checks::Puppet::VerifyNoEmptyCacertRequests do
     assert result.fail?, 'Check expected to fail'
     assert_match "Found 1 empty file(s) under #{cacert_requests_directory}", result.output
     assert_equal [Procedures::Puppet::DeleteEmptyCaCertRequestFiles],
-                 subject.next_steps.map(&:class)
+      subject.next_steps.map(&:class)
   end
 end

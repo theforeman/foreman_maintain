@@ -4,8 +4,8 @@ module Procedures::Selinux
       description 'Setting file security'
 
       param :incremental_backup,
-            'Is the backup incremental?',
-            :required => true
+        'Is the backup incremental?',
+        :required => true
       manual_detection
       confine do
         File.directory?('/sys/fs/selinux')

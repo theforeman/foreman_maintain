@@ -3,13 +3,13 @@ module ForemanMaintain
     class RestoreCommand < Base
       interactive_option
       parameter 'BACKUP_DIR', 'Path to backup directory to restore',
-                :attribute_name => :backup_dir, :completion => { :type => :directory }
+        :attribute_name => :backup_dir, :completion => { :type => :directory }
 
       option ['-i', '--incremental'], :flag, 'Restore an incremental backup',
-             :attribute_name => :incremental, :completion => { :type => :directory }
+        :attribute_name => :incremental, :completion => { :type => :directory }
       option ['-n', '--dry-run'], :flag,
-             'Check if backup could be restored, without performing the restore',
-             :attribute_name => :dry_run
+        'Check if backup could be restored, without performing the restore',
+        :attribute_name => :dry_run
 
       def execute
         scenario = Scenarios::Restore.new(

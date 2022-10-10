@@ -15,7 +15,7 @@ module Checks
           end
           assert(status, 'Candlepin DB is not responding. ' \
             'It needs to be up and running to perform the following steps',
-                 :next_steps => start_pgsql)
+            :next_steps => start_pgsql)
         else
           feature(:candlepin_database).raise_psql_missing_error
         end

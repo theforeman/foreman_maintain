@@ -17,7 +17,7 @@ module ForemanMaintain
 
     let(:upgrade_runner_with_whitelist) do
       UpgradeRunner.new('1.15', reporter,
-                        :whitelist => %w[present-service-is-running service-is-stopped])
+        :whitelist => %w[present-service-is-running service-is-stopped])
     end
 
     it 'lists versions available for upgrading, based on available scenarios' do
@@ -43,7 +43,7 @@ module ForemanMaintain
         Confirm to continue with the modification part of the upgrade, [y(yes), n(no), q(quit)]
       MESSAGE
       assert_equal(:pre_upgrade_checks, upgrade_runner_with_whitelist.phase,
-                   'The phase should not be switched until confirmed')
+        'The phase should not be switched until confirmed')
     end
 
     it 'remembers the state of the previous run of the upgrade' do

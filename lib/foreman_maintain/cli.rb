@@ -30,7 +30,7 @@ module ForemanMaintain
       subcommand 'plugin', 'Manage optional plugins on your server', PluginCommand
       subcommand 'self-upgrade', 'Perform major version self upgrade', SelfUpgradeCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
-                 MaintenanceModeCommand
+        MaintenanceModeCommand
       if ForemanMaintain.detector.feature(:satellite) &&
          ForemanMaintain.detector.feature(:satellite).current_minor_version == '6.9'
         subcommand 'prep-6.10-upgrade', 'Preparations for the Satellite 6.10 upgrade' do

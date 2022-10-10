@@ -10,6 +10,6 @@ class Checks::ServiceIsStopped < ForemanMaintain::Check
 
   def run
     assert(false, 'service is running',
-           :next_steps => Procedures::StopService.new)
+      :next_steps => Procedures::StopService.new)
   end
 end

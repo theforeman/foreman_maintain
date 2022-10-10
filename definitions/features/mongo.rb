@@ -5,6 +5,7 @@ class Features::Mongo < ForemanMaintain::Feature
   PULP_DB_CONFIG = '/etc/pulp/server.conf'.freeze
 
   attr_reader :configuration
+
   metadata do
     label :mongo
 
@@ -54,7 +55,7 @@ class Features::Mongo < ForemanMaintain::Feature
     if @core.nil?
       begin
         version = server_version
-        @core = if version =~ /^3\.4/
+        @core = if /^3\.4/.match?(version)
                   load_mongo_core_34(version)
                 else
                   load_mongo_core_default(version)
@@ -72,7 +73,6 @@ class Features::Mongo < ForemanMaintain::Feature
     ['localhost', '127.0.0.1', hostname].include?(configuration['host'])
   end
 
-  # rubocop:disable Metrics/AbcSize
   def base_command(command, config = configuration, args = '')
     if config['ssl']
       ssl = ' --ssl'
@@ -89,7 +89,6 @@ class Features::Mongo < ForemanMaintain::Feature
     host = "--host #{config['host']} --port #{config['port']}"
     "#{command}#{username}#{password} #{host}#{ssl}#{verify_ssl}#{ca_cert}#{client_cert} #{args}"
   end
-  # rubocop:enable Metrics/AbcSize
 
   def mongo_command(args, config = configuration)
     base_command(core.client_command, config, "#{args} #{config['name']}")
@@ -97,29 +96,29 @@ class Features::Mongo < ForemanMaintain::Feature
 
   def dump(target, config = configuration)
     execute!(base_command(core.dump_command, config, "-d #{config['name']} --out #{target}"),
-             :hidden_patterns => [config['password']])
+      :hidden_patterns => [config['password']])
   end
 
   def restore(dir, config = configuration)
     cmd = base_command(core.restore_command, config,
-                       "-d #{config['name']} #{File.join(dir, config['name'])}")
+      "-d #{config['name']} #{File.join(dir, config['name'])}")
     execute!(cmd, :hidden_patterns => [config['password']])
   end
 
   def dropdb(config = configuration)
     execute!(mongo_command("--eval 'db.dropDatabase()'", config),
-             :hidden_patterns => [config['password']])
+      :hidden_patterns => [config['password']])
   end
 
   def ping(config = configuration)
     execute?(mongo_command("--eval 'ping:1'", config),
-             :hidden_patterns => [config['password']])
+      :hidden_patterns => [config['password']])
   end
 
   def server_version(config = configuration)
     # do not use any core methods as we need this prior the core is created
     mongo_cmd = base_command(available_core.client_command, config,
-                             "--eval 'db.version()' #{config['name']}")
+      "--eval 'db.version()' #{config['name']}")
     version = execute!(mongo_cmd, :hidden_patterns => [config['password']])
     version.split("\n").last
   end
@@ -134,7 +133,7 @@ class Features::Mongo < ForemanMaintain::Feature
         :command => 'create',
         :exclude => ['mongod.lock'],
         :transform => 's,^,var/lib/mongodb/,S',
-        :files => '*'
+        :files => '*',
       }.merge(extra_tar_options)
       feature(:tar).run(tar_options)
     end
@@ -191,7 +190,6 @@ class Features::Mongo < ForemanMaintain::Feature
     cfg
   end
 
-  # rubocop:disable  Metrics/MethodLength
   def read_db_section(config)
     cfg = {}
     section = nil
@@ -213,5 +211,4 @@ class Features::Mongo < ForemanMaintain::Feature
     end
     cfg
   end
-  # rubocop:enable  Metrics/MethodLength
 end

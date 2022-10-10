@@ -15,7 +15,7 @@ class Features::PuppetServer < ForemanMaintain::Feature
       '/var/lib/puppet/ssl',
       '/var/lib/puppet',
       '/usr/share/ruby/vendor_ruby/puppet/reports/foreman.rb',
-      '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet/reports/foreman.rb'
+      '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet/reports/foreman.rb',
     ]
   end
 

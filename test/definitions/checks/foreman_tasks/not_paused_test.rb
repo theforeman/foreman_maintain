@@ -20,6 +20,6 @@ describe Checks::ForemanTasks::NotPaused do
     assert_match 'There are currently 5 paused tasks in the system', result.output
     assert_equal [Procedures::ForemanTasks::Resume, Procedures::ForemanTasks::Delete,
                   Procedures::ForemanTasks::UiInvestigate],
-                 subject.next_steps.map(&:class)
+      subject.next_steps.map(&:class)
   end
 end

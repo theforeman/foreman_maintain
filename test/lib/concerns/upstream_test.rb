@@ -52,13 +52,13 @@ module ForemanMaintain
       it 'returns yum.theforeman.org for EL systems' do
         stub_el(foreman_system)
         foreman_url = 'https://yum.theforeman.org/'
-        assert foreman_system.server_url == foreman_url
+        assert_equal foreman_system.server_url, foreman_url
       end
 
       it 'returns deb.theforeman.org for Debian or Ubuntu' do
         stub_deb(foreman_system)
         foreman_url = 'https://deb.theforeman.org/'
-        assert foreman_system.server_url == foreman_url
+        assert_equal foreman_system.server_url, foreman_url
       end
 
       it 'returns failure for non EL and Debian system' do
@@ -72,7 +72,7 @@ module ForemanMaintain
         stub_el(foreman_system)
         foreman_system.stubs(:el_short_name).returns('el8')
         pkg_url = 'https://yum.theforeman.org/releases/3.3/el8/x86_64/foreman-release.rpm'
-        assert foreman_system.foreman_release_pkg_url('3.3') == pkg_url
+        assert_equal foreman_system.foreman_release_pkg_url('3.3'), pkg_url
       end
 
       it 'returns deb pkg path when Debian or Ubuntu' do
@@ -80,7 +80,7 @@ module ForemanMaintain
         foreman_system.stubs(:os_version_codename).returns('buster')
         pkg_url = 'https://deb.theforeman.org/pool/buster/3.3'\
           '/f/foreman-release/foreman-release.deb'
-        assert foreman_system.foreman_release_pkg_url('3.3') == pkg_url
+        assert_equal foreman_system.foreman_release_pkg_url('3.3'), pkg_url
       end
 
       it 'returns failure for non EL and Debian system' do
@@ -95,7 +95,7 @@ module ForemanMaintain
         katello_system.stubs(:el_short_name).returns('el8')
         katello_system.stubs(:katello_version_by_foreman).returns('4.5')
         pkg_url = 'https://yum.theforeman.org/katello/4.5/katello/el8/x86_64/katello-repos-latest.rpm'
-        assert katello_system.katello_release_pkg('3.3') == pkg_url
+        assert_equal katello_system.katello_release_pkg('3.3'), pkg_url
       end
     end
 
@@ -152,10 +152,10 @@ module ForemanMaintain
         katello_repo_url = 'https://yum.theforeman.org/katello/4.5/katello/el8/x86_64/'
         repository_manager_obj = MiniTest::Mock.new
         system_repositories = { 'non_foreman' => 'abc.example.com',
-                                'katello' =>  katello_repo_url }
+                                'katello' => katello_repo_url }
         repository_manager_obj.expect(:enabled_repos, system_repositories)
         ForemanMaintain.stubs(:repository_manager).returns(repository_manager_obj)
-        assert katello_system.repoids_and_urls == { 'katello' => katello_repo_url }
+        assert_equal katello_system.repoids_and_urls, { 'katello' => katello_repo_url }
       end
     end
   end

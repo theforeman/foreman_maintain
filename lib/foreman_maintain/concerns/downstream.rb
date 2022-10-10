@@ -110,18 +110,16 @@ module ForemanMaintain
                             end
 
         # rubocop:disable Metrics/LineLength
-        repos = if el7? && use_beta_repos?
-                  ["rhel-#{el_major_version}-server-satellite-maintenance-#{sat_maint_version}-beta-rpms"]
-                elsif el7?
-                  ["rhel-#{el_major_version}-server-satellite-maintenance-#{sat_maint_version}-rpms"]
-                elsif use_beta_repos?
-                  ["satellite-maintenance-#{sat_maint_version}-beta-for-rhel-#{el_major_version}-x86_64-rpms"]
-                else
-                  ["satellite-maintenance-#{sat_maint_version}-for-rhel-#{el_major_version}-x86_64-rpms"]
-                end
+        if el7? && use_beta_repos?
+          ["rhel-#{el_major_version}-server-satellite-maintenance-#{sat_maint_version}-beta-rpms"]
+        elsif el7?
+          ["rhel-#{el_major_version}-server-satellite-maintenance-#{sat_maint_version}-rpms"]
+        elsif use_beta_repos?
+          ["satellite-maintenance-#{sat_maint_version}-beta-for-rhel-#{el_major_version}-x86_64-rpms"]
+        else
+          ["satellite-maintenance-#{sat_maint_version}-for-rhel-#{el_major_version}-x86_64-rpms"]
+        end
         # rubocop:enable Metrics/LineLength
-
-        repos
       end
 
       def main_rh_repos

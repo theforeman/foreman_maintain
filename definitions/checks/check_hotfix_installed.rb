@@ -22,8 +22,8 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
         installed_pkg_list = installed_packages
         files_modifications = installed_pkg_list.flat_map { |pkg| modified_files(pkg) }
         assert(hotfix_rpmlist.empty? && files_modifications.empty?,
-               warning_message(hotfix_rpmlist, files_modifications),
-               :warn => true)
+          warning_message(hotfix_rpmlist, files_modifications),
+          :warn => true)
       end
     end
   end
@@ -49,7 +49,7 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
       io.each do |line|
         repo, pkg = line.chomp.split
         next if repo.nil? || pkg.nil?
-        packages << pkg if /satellite|rhscl/ =~ repo.downcase
+        packages << pkg if /satellite|rhscl/.match?(repo.downcase)
       end
     end
     packages

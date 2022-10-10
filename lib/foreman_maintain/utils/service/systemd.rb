@@ -2,6 +2,7 @@ module ForemanMaintain::Utils
   module Service
     class Systemd < Abstract
       attr_reader :instance_parent_unit
+
       def initialize(name, priority, options = {})
         super
         @sys = SystemHelpers.new
@@ -46,8 +47,7 @@ module ForemanMaintain::Utils
 
       def exist?
         if @sys.systemd_installed?
-          systemd = service_enabled_status
-          systemd == 'enabled' || systemd == 'disabled'
+          ['enabled', 'disabled'].include?(service_enabled_status)
         else
           File.exist?("/etc/init.d/#{@name}")
         end
@@ -73,14 +73,12 @@ module ForemanMaintain::Utils
         # Enable and disable does not work well with globs since they treat them literally.
         # We are skipping the pulpcore-workers@* for these actions until they are configured in
         # a more managable way with systemd
-        # rubocop:disable Layout/IndentAssignment
         msg =
-"
+          "
 \nWARNING: Skipping #{action} for #{name} as there are a variable amount of services to manage
 and this command will not respond to glob operators. These services have been configured by
 the installer and it is recommended to keep them enabled to prevent misconfiguration.\n
 "
-        # rubocop:enable Layout/IndentAssignment
         puts msg
       end
     end

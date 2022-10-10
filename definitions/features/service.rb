@@ -8,7 +8,7 @@ class Features::Service < ForemanMaintain::Feature
     # { :only => ["httpd"] }
     # { :exclude => ["pulp-workers", "tomcat"] }
     # { :include => ["crond"] }
-    if feature(:instance).downstream && feature(:instance).downstream.less_than_version?('6.3')
+    if feature(:instance).downstream&.less_than_version?('6.3')
       use_katello_service(action, options)
     else
       use_system_service(action, options, spinner)
@@ -16,8 +16,7 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def existing_services
-    ForemanMaintain.available_features.map(&:services).
-      flatten(1).
+    ForemanMaintain.available_features.flat_map(&:services).
       sort.
       inject([]) do |pool, service| # uniq(&:to_s) for ruby 1.8.7
         pool.last.nil? || !pool.last.matches?(service) ? pool << service : pool
@@ -130,16 +129,15 @@ class Features::Service < ForemanMaintain::Feature
     service_list + socket_list
   end
 
-  # rubocop:disable Metrics/AbcSize
   def filter_services(service_list, options, action)
-    if options[:only] && options[:only].any?
+    if options[:only]&.any?
       service_list = service_list.select do |service|
         options[:only].any? { |opt| service.matches?(opt) }
       end
       service_list = include_unregistered_services(service_list, options[:only])
     end
 
-    if options[:exclude] && options[:exclude].any?
+    if options[:exclude]&.any?
       service_list = service_list.reject { |service| options[:exclude].include?(service.name) }
     end
 
@@ -147,7 +145,6 @@ class Features::Service < ForemanMaintain::Feature
     service_list = filter_disabled_services!(action, service_list)
     service_list.group_by(&:priority).to_h
   end
-  # rubocop:enable Metrics/AbcSize
 
   def include_unregistered_services(service_list, services_filter)
     return service_list unless services_filter
@@ -215,10 +212,10 @@ class Features::Service < ForemanMaintain::Feature
 
   def katello_service_filters(options)
     filters = ''
-    if options[:exclude] && options[:exclude].any?
+    if options[:exclude]&.any?
       filters += "--exclude #{options[:exclude].join(',')}"
     end
-    if options[:only] && options[:only].any?
+    if options[:only]&.any?
       filters += "--only #{options[:only].join(',')}"
     end
     filters

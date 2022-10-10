@@ -1,6 +1,9 @@
 require 'test_helper'
 
 module ForemanMaintain
+  class FakeProcedure; end
+  class FakeCheck; end
+
   describe Context do
     let(:context) { ForemanMaintain::Context.new }
 
@@ -21,9 +24,6 @@ module ForemanMaintain
 
     describe 'mapping' do
       let(:context) { ForemanMaintain::Context.new(:backup_dir => '/tmp') }
-
-      class FakeProcedure; end
-      class FakeCheck; end
 
       it 'allows to set mapping for a key' do
         context.map(:backup_dir, ForemanMaintain::FakeProcedure => :backup_directory)

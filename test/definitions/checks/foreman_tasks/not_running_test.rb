@@ -22,6 +22,6 @@ describe Checks::ForemanTasks::NotRunning do
     assert_match msg, result.output
     assert_equal [Procedures::ForemanTasks::FetchTasksStatus,
                   Procedures::ForemanTasks::UiInvestigate],
-                 subject.next_steps.map(&:class)
+      subject.next_steps.map(&:class)
   end
 end

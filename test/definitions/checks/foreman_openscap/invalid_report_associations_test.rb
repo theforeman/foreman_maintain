@@ -23,6 +23,6 @@ describe Checks::ForemanOpenscap::InvalidReportAssociations do
     assert result.fail?, 'Check expected to fail'
     assert_match 'There are 2 reports with issues that will be removed', result.output
     assert_equal [Procedures::ForemanOpenscap::InvalidReportAssociations],
-                 subject.next_steps.map(&:class)
+      subject.next_steps.map(&:class)
   end
 end

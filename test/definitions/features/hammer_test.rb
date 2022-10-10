@@ -19,7 +19,7 @@ describe Features::Hammer do
     hammer_config_dirs(["#{data_dir}/hammer/sample_user_config"])
     expected_config_files = [
       "#{data_dir}/hammer/sample_user_config/cli_config.yml",
-      "#{data_dir}/hammer/sample_user_config/cli.modules.d/foreman.yml"
+      "#{data_dir}/hammer/sample_user_config/cli.modules.d/foreman.yml",
     ].map { |p| File.expand_path(p) }
 
     subject.config_files.must_equal(expected_config_files)
@@ -28,7 +28,7 @@ describe Features::Hammer do
   it 'loads and merges hammer configuration' do
     hammer_config_dirs([
                          "#{data_dir}/hammer/sample_user_config",
-                         "#{data_dir}/hammer/sample_default_config"
+                         "#{data_dir}/hammer/sample_default_config",
                        ])
     subject.configuration[:log_level].must_equal('error')
     subject.configuration[:foreman][:username].must_equal('user')
@@ -71,7 +71,7 @@ describe Features::Hammer do
     it 'gets credentials from hammer configs' do
       hammer_config_dirs([
                            "#{data_dir}/hammer/sample_admin_config",
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_hostname
       stub_connection_check(false, true)
@@ -84,7 +84,7 @@ describe Features::Hammer do
       hammer_config_dirs([
                            "#{data_dir}/hammer/different_host_config",
                            "#{data_dir}/hammer/sample_admin_config",
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_connection_check(false, true)
 
@@ -104,7 +104,7 @@ describe Features::Hammer do
     it 'gets credentials from answer files when invalid password' do
       hammer_config_dirs([
                            "#{data_dir}/hammer/sample_admin_config",
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_hostname
       stub_connection_check(false, false, true)
@@ -115,7 +115,7 @@ describe Features::Hammer do
     it 'makes sure we use admin account and ignore the non-admin password' do
       hammer_config_dirs([
                            "#{data_dir}/hammer/sample_user_config",
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_hostname
       stub_connection_check(false, true)
@@ -125,7 +125,7 @@ describe Features::Hammer do
 
     it 'asks if the installer stored password is wrong' do
       hammer_config_dirs([
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_hostname
       stub_connection_check(false, false, true)
@@ -137,7 +137,7 @@ describe Features::Hammer do
 
     it 'fails when the interractive password is wrong' do
       hammer_config_dirs([
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_hostname
       stub_connection_check(false, false)
@@ -156,7 +156,7 @@ describe Features::Hammer do
     it 'ignores stored values from last time if invalid' do
       hammer_config_dirs([
                            "#{data_dir}/hammer/sample_admin_config",
-                           "#{data_dir}/hammer/sample_default_config"
+                           "#{data_dir}/hammer/sample_default_config",
                          ])
       stub_hostname
       stub_connection_check(false, true)

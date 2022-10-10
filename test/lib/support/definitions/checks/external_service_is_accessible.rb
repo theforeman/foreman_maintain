@@ -4,5 +4,6 @@ class Checks::ExternalServiceIsAccessible < ForemanMaintain::Check
     description 'External_service_is_accessible'
   end
 
-  def run; end
+  def run
+  end
 end

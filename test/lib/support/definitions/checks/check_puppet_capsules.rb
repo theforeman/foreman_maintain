@@ -7,6 +7,7 @@ module Checks
       manual_detection
     end
 
-    def run; end
+    def run
+    end
   end
 end

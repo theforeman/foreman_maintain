@@ -9,7 +9,7 @@ class Features::Apache < ForemanMaintain::Feature
 
   def services
     [
-      system_service(self.class.package_name, 30)
+      system_service(self.class.package_name, 30),
     ]
   end
 

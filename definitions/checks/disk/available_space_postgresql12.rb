@@ -16,9 +16,10 @@ module Checks
       end
 
       def pgsql_dir(version)
-        if version == 9
+        case version
+        when 9
           '/var/lib/pgsql/'
-        elsif version == 12
+        when 12
           '/var/opt/rh/rh-postgresql12/'
         end
       end

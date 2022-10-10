@@ -68,37 +68,36 @@ module ForemanMaintain
 
         def traverse_tree(dict, path)
           return [dict, []] if path.nil? || path.empty?
-          result = if dict.key?(path.first)
-                     if path.first.start_with?('-')
-                       parse_option(dict, path)
-                     else
-                       parse_subcommand(dict, path)
-                     end
-                   elsif dict[:params]
-                     # traverse params one by one
-                     parse_params(dict, path)
-                   else
-                     # not found
-                     [{}, path]
-                   end
-          result
+          if dict.key?(path.first)
+            if path.first.start_with?('-')
+              parse_option(dict, path)
+            else
+              parse_subcommand(dict, path)
+            end
+          elsif dict[:params]
+            # traverse params one by one
+            parse_params(dict, path)
+          else
+            # not found
+            [{}, path]
+          end
         end
 
         def parse_params(dict, path)
-          traverse_tree({ :params => dict[:params][1..-1] }, path[1..-1])
+          traverse_tree({ :params => dict[:params][1..] }, path[1..])
         end
 
         def parse_subcommand(dict, path)
-          traverse_tree(dict[path.first], path[1..-1])
+          traverse_tree(dict[path.first], path[1..])
         end
 
         def parse_option(dict, path)
           if dict[path.first][:type] == :flag # flag
-            traverse_tree(dict, path[1..-1])
+            traverse_tree(dict, path[1..])
           elsif path.length >= 2 # option with value
-            traverse_tree(dict, path[2..-1])
+            traverse_tree(dict, path[2..])
           else # option with value missing
-            [dict[path.first], path[1..-1]]
+            [dict[path.first], path[1..]]
           end
         end
 

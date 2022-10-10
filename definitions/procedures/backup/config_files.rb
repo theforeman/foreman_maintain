@@ -14,14 +14,13 @@ module Procedures::Backup
 
       param :backup_dir, 'Directory where to backup to', :required => true
       param :proxy_features, 'List of proxy features to backup (default: all)',
-            :array => true, :default => ['all']
+        :array => true, :default => ['all']
       param :ignore_changed_files, 'Should packing tar ignore changed files',
-            :flag => true, :default => false
+        :flag => true, :default => false
       param :online_backup, 'The config files are being prepared for an online backup',
-            :flag => true, :default => false
+        :flag => true, :default => false
     end
 
-    # rubocop:disable Metrics/MethodLength
     def run
       logger.debug("Invoking tar from #{FileUtils.pwd}")
       tar_cmd = tar_command
@@ -63,9 +62,11 @@ module Procedures::Backup
     def available_features_config
       configs = []
       exclude_configs = []
+      proxy_scenarios = [:foreman_proxy, :capsule]
+
       ForemanMaintain.available_features.each do |feature|
         # exclude proxy as it has special handling later
-        next if [:foreman_proxy, :capsule].include?(feature.label)
+        next if proxy_scenarios.include?(feature.label)
 
         configs += feature.config_files
         exclude_configs += feature.config_files_to_exclude

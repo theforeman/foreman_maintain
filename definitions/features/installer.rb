@@ -66,7 +66,7 @@ class Features::Installer < ForemanMaintain::Feature
       [
         '/usr/local/bin/validate_postgresql_connection.sh',
         '/opt/puppetlabs/puppet/cache/foreman_cache_data',
-        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data'
+        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
       ]
   end
 
@@ -111,14 +111,13 @@ class Features::Installer < ForemanMaintain::Feature
   def installer_arguments
     installer_args = ''
 
-    if feature(:foreman_proxy) &&
-       feature(:foreman_proxy).with_content? &&
+    if feature(:foreman_proxy)&.with_content? &&
        check_max_version('foreman-installer', '3.4')
       installer_args += ' --disable-system-checks'
     end
 
-    unless check_min_version('foreman-installer', '2.1')
-      installer_args += ' --upgrade' if can_upgrade?
+    if !check_min_version('foreman-installer', '2.1') && can_upgrade?
+      installer_args += ' --upgrade'
     end
 
     installer_args

@@ -52,7 +52,7 @@ module ForemanMaintain
 
       def config_files
         [
-          '/etc/systemd/system/postgresql.service'
+          '/etc/systemd/system/postgresql.service',
         ]
       end
 
@@ -71,8 +71,8 @@ module ForemanMaintain
       def psql(query, config = configuration)
         if ping(config)
           execute(psql_command(config),
-                  :stdin => query,
-                  :hidden_patterns => [config['password']])
+            :stdin => query,
+            :hidden_patterns => [config['password']])
         else
           raise_service_error
         end
@@ -80,8 +80,8 @@ module ForemanMaintain
 
       def ping(config = configuration)
         execute?(psql_command(config),
-                 :stdin => 'SELECT 1 as ping',
-                 :hidden_patterns => [config['password']])
+          :stdin => 'SELECT 1 as ping',
+          :hidden_patterns => [config['password']])
       end
 
       def backup_file_path(config = configuration)
@@ -116,8 +116,8 @@ module ForemanMaintain
           tar_options = {
             :archive => backup_file,
             :command => command,
-            :transform => "s,^,#{dir[1..-1]},S",
-            :files => '*'
+            :transform => "s,^,#{dir[1..]},S",
+            :files => '*',
           }.merge(extra_tar_options)
           feature(:tar).run(tar_options)
         end

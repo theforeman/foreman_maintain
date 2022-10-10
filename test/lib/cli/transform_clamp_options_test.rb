@@ -9,9 +9,9 @@ class Definition
 
   def params
     {
-      :name     => param_name,
-      :state    => param_state,
-      :packages => param_packages
+      :name => param_name,
+      :state => param_state,
+      :packages => param_packages,
     }
   end
 
@@ -43,7 +43,7 @@ module ForemanMaintain
         def recognised_options
           [
             { :read_method => :state, :switches => ['--state'] },
-            { :read_method => :assumeyes, :switches => ['--assumeyes'] }
+            { :read_method => :assumeyes, :switches => ['--assumeyes'] },
           ].map { |options| Option.new(options[:read_method], options[:switches]) }
         end
       end

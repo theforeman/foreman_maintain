@@ -3,10 +3,11 @@ module ForemanMaintain
     extend Forwardable
     extend Concerns::Finders
     attr_reader :options
+
     def_delegators :execution,
-                   :success?, :skipped?, :fail?, :aborted?, :warning?, :output,
-                   :assumeyes?, :whitelisted?, :ask_decision,
-                   :execution, :puts, :print, :with_spinner, :ask, :storage
+      :success?, :skipped?, :fail?, :aborted?, :warning?, :output,
+      :assumeyes?, :whitelisted?, :ask_decision,
+      :execution, :puts, :print, :with_spinner, :ask, :storage
 
     def initialize(options = {})
       @options = options.inject({}) { |h, (k, v)| h.update(k.to_s => v) }
@@ -26,7 +27,8 @@ module ForemanMaintain
     end
 
     # public method to be overriden to perform after-initialization steps
-    def after_initialize; end
+    def after_initialize
+    end
 
     # processes the params from provided options
     def setup_params
@@ -113,11 +115,7 @@ module ForemanMaintain
     end
 
     def execution
-      if @_execution
-        @_execution
-      else
-        raise 'Trying to get execution information before the run started happened'
-      end
+      @_execution || raise('Trying to get execution information before the run started happened')
     end
 
     # public method to be overriden: it can perform additional checks

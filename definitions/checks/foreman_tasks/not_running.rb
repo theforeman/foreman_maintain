@@ -11,12 +11,12 @@ module Checks::ForemanTasks
     def run
       task_count = feature(:foreman_tasks).running_tasks_count
       assert(task_count == 0,
-             failure_message(task_count),
-             :next_steps =>
-               [Procedures::ForemanTasks::FetchTasksStatus.new(:state => 'running'),
-                Procedures::ForemanTasks::UiInvestigate.new(
-                  'search_query' => search_query_for_running_tasks
-                )])
+        failure_message(task_count),
+        :next_steps =>
+          [Procedures::ForemanTasks::FetchTasksStatus.new(:state => 'running'),
+           Procedures::ForemanTasks::UiInvestigate.new(
+             'search_query' => search_query_for_running_tasks
+           )])
     end
 
     private

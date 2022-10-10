@@ -4,8 +4,8 @@ module Procedures::Restore
       description 'Restore mongo dump'
       for_feature :pulp2
       param :backup_dir,
-            'Path to backup directory',
-            :required => true
+        'Path to backup directory',
+        :required => true
       preparation_steps do
         [Checks::Mongo::DBUp.new, Checks::Mongo::ToolsInstalled.new]
       end
@@ -26,7 +26,7 @@ module Procedures::Restore
     def handle_mongo_service(action, spinner)
       if feature(:instance).database_local?(:mongo)
         feature(:service).handle_services(spinner, action,
-                                          :only => feature(:mongo).services)
+          :only => feature(:mongo).services)
       end
     end
 

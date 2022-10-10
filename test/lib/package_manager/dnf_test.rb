@@ -37,7 +37,7 @@ module ForemanMaintain
           'dnf -y module info test-module:el8',
           :response => [1, non_existent_module]
         )
-        assert !subject.module_enabled?('test-module:el8')
+        refute subject.module_enabled?('test-module:el8')
       end
 
       it 'returns false if module exists but is not enabled' do
@@ -45,7 +45,7 @@ module ForemanMaintain
           'dnf -y module info test-module:el8',
           :response => [0, disabled_module]
         )
-        assert !subject.module_enabled?('test-module:el8')
+        refute subject.module_enabled?('test-module:el8')
       end
     end
 

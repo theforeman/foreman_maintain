@@ -15,7 +15,7 @@ module Checks
           end
           assert(status, 'Mongo DB is not responding. ' \
             'It needs to be up and running to perform the following steps.',
-                 :next_steps => start_mongodb)
+            :next_steps => start_mongodb)
         else
           feature(:mongo).raise_mongo_client_missing_error
         end

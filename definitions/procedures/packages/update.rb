@@ -5,7 +5,7 @@ module Procedures::Packages
       param :assumeyes, 'Do not ask for confirmation'
       param :force, 'Do not skip if package is installed', :flag => true, :default => false
       param :warn_on_errors, 'Do not interrupt scenario on failure',
-            :flag => true, :default => false
+        :flag => true, :default => false
       param :yum_options, 'Extra yum options if any', :array => true, :default => []
     end
 

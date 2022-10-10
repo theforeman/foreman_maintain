@@ -6,7 +6,7 @@ module ForemanMaintain::Scenarios
       tags :backup
       run_strategy :fail_fast
       param :strategy, 'Backup strategy. One of [:online, :offline, :snapshot]',
-            :required => true
+        :required => true
       param :backup_dir, 'Directory where to backup to', :required => true
       param :mount_dir, 'Snapshot mount directory'
       param :include_db_dumps, 'Include dumps of local dbs as part of offline'
@@ -19,7 +19,6 @@ module ForemanMaintain::Scenarios
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
     end
 
-    # rubocop:disable Metrics/MethodLength
     def compose
       check_valid_startegy
       safety_confirmation
@@ -39,7 +38,6 @@ module ForemanMaintain::Scenarios
       end
       add_step_with_context(Procedures::Backup::CompressData)
     end
-    # rubocop:enable Metrics/MethodLength
 
     def deb_snapshot_msg
       if debian_or_ubuntu?
@@ -51,60 +49,60 @@ module ForemanMaintain::Scenarios
     # rubocop:disable  Metrics/MethodLength
     def set_context_mapping
       context.map(:backup_dir,
-                  Checks::Backup::DirectoryReady => :backup_dir,
-                  Procedures::Backup::PrepareDirectory => :backup_dir,
-                  Procedures::Backup::Metadata => :backup_dir,
-                  Procedures::Backup::ConfigFiles => :backup_dir,
-                  Procedures::Backup::CompressData => :backup_dir,
-                  Procedures::Backup::Pulp => :backup_dir,
-                  Procedures::Backup::Online::Mongo => :backup_dir,
-                  Procedures::Backup::Online::CandlepinDB => :backup_dir,
-                  Procedures::Backup::Online::ForemanDB => :backup_dir,
-                  Procedures::Backup::Online::PulpcoreDB => :backup_dir,
-                  Procedures::Backup::Offline::CandlepinDB => :backup_dir,
-                  Procedures::Backup::Offline::ForemanDB => :backup_dir,
-                  Procedures::Backup::Offline::PulpcoreDB => :backup_dir,
-                  Procedures::Backup::Offline::Mongo => :backup_dir,
-                  Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :backup_dir,
-                  Procedures::Backup::Snapshot::MountCandlepinDB => :backup_dir,
-                  Procedures::Backup::Snapshot::MountForemanDB => :backup_dir,
-                  Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir,
-                  Procedures::Backup::Snapshot::MountMongo => :backup_dir)
+        Checks::Backup::DirectoryReady => :backup_dir,
+        Procedures::Backup::PrepareDirectory => :backup_dir,
+        Procedures::Backup::Metadata => :backup_dir,
+        Procedures::Backup::ConfigFiles => :backup_dir,
+        Procedures::Backup::CompressData => :backup_dir,
+        Procedures::Backup::Pulp => :backup_dir,
+        Procedures::Backup::Online::Mongo => :backup_dir,
+        Procedures::Backup::Online::CandlepinDB => :backup_dir,
+        Procedures::Backup::Online::ForemanDB => :backup_dir,
+        Procedures::Backup::Online::PulpcoreDB => :backup_dir,
+        Procedures::Backup::Offline::CandlepinDB => :backup_dir,
+        Procedures::Backup::Offline::ForemanDB => :backup_dir,
+        Procedures::Backup::Offline::PulpcoreDB => :backup_dir,
+        Procedures::Backup::Offline::Mongo => :backup_dir,
+        Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :backup_dir,
+        Procedures::Backup::Snapshot::MountCandlepinDB => :backup_dir,
+        Procedures::Backup::Snapshot::MountForemanDB => :backup_dir,
+        Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir,
+        Procedures::Backup::Snapshot::MountMongo => :backup_dir)
       context.map(:preserve_dir,
-                  Checks::Backup::DirectoryReady => :preserve_dir,
-                  Procedures::Backup::PrepareDirectory => :preserve_dir)
+        Checks::Backup::DirectoryReady => :preserve_dir,
+        Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
-                  Procedures::Backup::PrepareDirectory => :incremental_dir,
-                  Procedures::Backup::Metadata => :incremental_dir)
+        Procedures::Backup::PrepareDirectory => :incremental_dir,
+        Procedures::Backup::Metadata => :incremental_dir)
       context.map(:proxy_features,
-                  Procedures::Backup::ConfigFiles => :proxy_features)
+        Procedures::Backup::ConfigFiles => :proxy_features)
       context.map(:snapshot_mount_dir,
-                  Procedures::Backup::Snapshot::PrepareMount => :mount_dir,
-                  Procedures::Backup::Snapshot::MountMongo => :mount_dir,
-                  Procedures::Backup::Snapshot::MountPulp => :mount_dir,
-                  Procedures::Backup::Snapshot::CleanMount => :mount_dir,
-                  Procedures::Backup::Snapshot::MountCandlepinDB => :mount_dir,
-                  Procedures::Backup::Snapshot::MountForemanDB => :mount_dir,
-                  Procedures::Backup::Snapshot::MountPulpcoreDB => :mount_dir,
-                  Procedures::Backup::Offline::Mongo => :mount_dir,
-                  Procedures::Backup::Pulp => :mount_dir,
-                  Procedures::Backup::Offline::CandlepinDB => :mount_dir,
-                  Procedures::Backup::Offline::ForemanDB => :mount_dir,
-                  Procedures::Backup::Offline::PulpcoreDB => :mount_dir)
+        Procedures::Backup::Snapshot::PrepareMount => :mount_dir,
+        Procedures::Backup::Snapshot::MountMongo => :mount_dir,
+        Procedures::Backup::Snapshot::MountPulp => :mount_dir,
+        Procedures::Backup::Snapshot::CleanMount => :mount_dir,
+        Procedures::Backup::Snapshot::MountCandlepinDB => :mount_dir,
+        Procedures::Backup::Snapshot::MountForemanDB => :mount_dir,
+        Procedures::Backup::Snapshot::MountPulpcoreDB => :mount_dir,
+        Procedures::Backup::Offline::Mongo => :mount_dir,
+        Procedures::Backup::Pulp => :mount_dir,
+        Procedures::Backup::Offline::CandlepinDB => :mount_dir,
+        Procedures::Backup::Offline::ForemanDB => :mount_dir,
+        Procedures::Backup::Offline::PulpcoreDB => :mount_dir)
       context.map(:snapshot_block_size,
-                  Procedures::Backup::Snapshot::MountMongo => :block_size,
-                  Procedures::Backup::Snapshot::MountPulp => :block_size,
-                  Procedures::Backup::Snapshot::MountForemanDB => :block_size,
-                  Procedures::Backup::Snapshot::MountCandlepinDB => :block_size,
-                  Procedures::Backup::Snapshot::MountPulpcoreDB => :block_size)
+        Procedures::Backup::Snapshot::MountMongo => :block_size,
+        Procedures::Backup::Snapshot::MountPulp => :block_size,
+        Procedures::Backup::Snapshot::MountForemanDB => :block_size,
+        Procedures::Backup::Snapshot::MountCandlepinDB => :block_size,
+        Procedures::Backup::Snapshot::MountPulpcoreDB => :block_size)
       context.map(:skip_pulp_content,
-                  Procedures::Backup::Pulp => :skip,
-                  Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :skip_pulp,
-                  Procedures::Backup::Snapshot::MountPulp => :skip)
+        Procedures::Backup::Pulp => :skip,
+        Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :skip_pulp,
+        Procedures::Backup::Snapshot::MountPulp => :skip)
       context.map(:tar_volume_size,
-                  Procedures::Backup::Pulp => :tar_volume_size)
+        Procedures::Backup::Pulp => :tar_volume_size)
       context.map(:include_db_dumps,
-                  Procedures::Backup::Online::SafetyConfirmation => :include_db_dumps)
+        Procedures::Backup::Online::SafetyConfirmation => :include_db_dumps)
     end
     # rubocop:enable  Metrics/MethodLength
 
@@ -253,11 +251,11 @@ module ForemanMaintain::Scenarios
 
     def set_context_mapping
       context.map(:snapshot_mount_dir,
-                  Procedures::Backup::Snapshot::CleanMount => :mount_dir)
+        Procedures::Backup::Snapshot::CleanMount => :mount_dir)
       context.map(:backup_dir,
-                  Procedures::Backup::Clean => :backup_dir)
+        Procedures::Backup::Clean => :backup_dir)
       context.map(:preserve_dir,
-                  Procedures::Backup::Clean => :preserve_dir)
+        Procedures::Backup::Clean => :preserve_dir)
     end
 
     private

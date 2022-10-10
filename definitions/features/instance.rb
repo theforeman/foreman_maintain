@@ -43,7 +43,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def foreman_proxy_with_content?
-    feature(:foreman_proxy) && feature(:foreman_proxy).with_content? && !feature(:katello)
+    feature(:foreman_proxy)&.with_content? && !feature(:katello)
   end
 
   def downstream
@@ -85,7 +85,7 @@ class Features::Instance < ForemanMaintain::Feature
 
   private
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize
   def katello_ping
     res = server_connection.get('/katello/api/ping')
     logger.debug('Called /katello/api/ping')
@@ -95,19 +95,19 @@ class Features::Instance < ForemanMaintain::Feature
       result = create_response(false, response['message'] || response['displayMessage'])
     else # valid response
       failing_components = pick_failing_components(response['services'])
-      if failing_components.empty? # all okay
-        result = create_response(true, 'Success')
-      else # some components not okay
-        result = create_response(false,
-                                 "Some components are failing: #{failing_components.join(', ')}",
-                                 component_services(failing_components))
-      end
+      result = if failing_components.empty? # all okay
+                 create_response(true, 'Success')
+               else # some components not okay
+                 create_response(false,
+                   "Some components are failing: #{failing_components.join(', ')}",
+                   component_services(failing_components))
+               end
     end
     result
   rescue StandardError => e # server error, server down
     create_response(false, "Couldn't connect to the server: #{e.message}")
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize
 
   def foreman_ping
     res = server_connection.get('/apidoc/apipie_checksum')
@@ -163,7 +163,7 @@ class Features::Instance < ForemanMaintain::Feature
       'pulp3_content' => %w[pulpcore pulpcore_database],
       'foreman_tasks' => %w[foreman_tasks],
       'katello_agent' => %w[katello],
-      'katello_events' => %w[katello]
+      'katello_events' => %w[katello],
     }
   end
 

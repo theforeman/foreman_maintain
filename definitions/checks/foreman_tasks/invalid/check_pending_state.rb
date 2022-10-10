@@ -13,8 +13,8 @@ module Checks::ForemanTasks
         # Check and delete 'all tasks in pending state'
         count_tasks_in_pending_state = feature(:foreman_tasks).count(:pending)
         assert(count_tasks_in_pending_state <= 0,
-               "Found #{count_tasks_in_pending_state} pending task(s) which are safe to delete",
-               :next_steps => Procedures::ForemanTasks::Delete.new(:state => :pending))
+          "Found #{count_tasks_in_pending_state} pending task(s) which are safe to delete",
+          :next_steps => Procedures::ForemanTasks::Delete.new(:state => :pending))
       end
     end
   end

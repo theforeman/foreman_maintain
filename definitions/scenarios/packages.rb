@@ -73,12 +73,12 @@ module ForemanMaintain::Scenarios
       def compose
         if Packages.skip_installer_run?(context.get(:packages))
           add_step_with_context(Procedures::Packages::Install,
-                                :force => true, :warn_on_errors => true)
+            :force => true, :warn_on_errors => true)
         else
           add_step_with_context(Procedures::Packages::InstallerConfirmation)
           add_step_with_context(Procedures::Packages::UnlockVersions)
           add_step_with_context(Procedures::Packages::Install,
-                                :force => true, :warn_on_errors => true)
+            :force => true, :warn_on_errors => true)
           add_step_with_context(Procedures::Installer::Upgrade)
           add_step(Procedures::Packages::LockingStatus)
         end
@@ -86,9 +86,9 @@ module ForemanMaintain::Scenarios
 
       def set_context_mapping
         context.map(:packages,
-                    Procedures::Packages::Install => :packages)
+          Procedures::Packages::Install => :packages)
         context.map(:assumeyes,
-                    Procedures::Packages::Install => :assumeyes)
+          Procedures::Packages::Install => :assumeyes)
       end
     end
 
@@ -103,7 +103,7 @@ module ForemanMaintain::Scenarios
       def compose
         if Packages.skip_installer_run?(context.get(:packages))
           add_step_with_context(Procedures::Packages::Update,
-                                :force => true, :warn_on_errors => true)
+            :force => true, :warn_on_errors => true)
         else
           add_steps_with_context(
             Procedures::Packages::UpdateAllConfirmation,
@@ -111,7 +111,7 @@ module ForemanMaintain::Scenarios
           )
           add_step_with_context(Procedures::Packages::UnlockVersions)
           add_step_with_context(Procedures::Packages::Update,
-                                :force => true, :warn_on_errors => true)
+            :force => true, :warn_on_errors => true)
           add_step_with_context(Procedures::Installer::Upgrade)
           add_step(Procedures::Packages::LockingStatus)
         end
@@ -119,10 +119,10 @@ module ForemanMaintain::Scenarios
 
       def set_context_mapping
         context.map(:packages,
-                    Procedures::Packages::Update => :packages,
-                    Procedures::Packages::UpdateAllConfirmation => :packages)
+          Procedures::Packages::Update => :packages,
+          Procedures::Packages::UpdateAllConfirmation => :packages)
         context.map(:assumeyes,
-                    Procedures::Packages::Update => :assumeyes)
+          Procedures::Packages::Update => :assumeyes)
       end
     end
   end

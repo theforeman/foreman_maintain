@@ -5,7 +5,8 @@ module Checks::Dummy
       description 'Check that ends up with success'
     end
 
-    def run; end
+    def run
+    end
   end
 
   class Fail < ForemanMaintain::Check

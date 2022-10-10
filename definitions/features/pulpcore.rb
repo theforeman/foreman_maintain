@@ -30,21 +30,21 @@ class Features::Pulpcore < ForemanMaintain::Feature
       ForemanMaintain::Utils.system_service('pulpcore-worker@1', 20),
       ForemanMaintain::Utils.system_service('pulpcore-worker@2', 20),
       ForemanMaintain::Utils.system_service('pulpcore-worker@3', 20),
-      ForemanMaintain::Utils.system_service('pulpcore-worker@4', 20)
+      ForemanMaintain::Utils.system_service('pulpcore-worker@4', 20),
     ]
   end
 
   def config_files
     [
       '/etc/pulp/settings.py',
-      '/etc/pulp/certs/database_fields.symmetric.key'
+      '/etc/pulp/certs/database_fields.symmetric.key',
     ]
   end
 
   def self.pulpcore_common_services
     common_services = [
       ForemanMaintain::Utils.system_service('pulpcore-api', 10, :socket => 'pulpcore-api'),
-      ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content')
+      ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
     ]
     common_services + pulpcore_resource_manager_service
   end

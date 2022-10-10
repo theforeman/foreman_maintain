@@ -4,7 +4,7 @@ require 'minitest/autorun'
 require 'mocha/minitest'
 require 'stringio'
 require File.dirname(__FILE__) + '/support/minitest_spec_context'
-require File.expand_path('../lib/support/log_reporter', __FILE__)
+require File.expand_path('lib/support/log_reporter', __dir__)
 
 module CliAssertions
   def assert_cmd(expected_output, args = [], ignore_whitespace: false)
@@ -33,11 +33,9 @@ module CliAssertions
 
   def run_cmd(args = [])
     capture_io_with_stderr do
-      begin
-        ForemanMaintain::Cli::MainCommand.run('foreman-maintain', command + args)
-      rescue SystemExit # rubocop:disable Lint/HandleExceptions
-        # don't accept system exit from running a command
-      end
+      ForemanMaintain::Cli::MainCommand.run('foreman-maintain', command + args)
+    rescue SystemExit
+      # don't accept system exit from running a command
     end
   end
 
@@ -52,6 +50,7 @@ end
 
 class FakePackageManager < ForemanMaintain::PackageManager::Base
   def initialize
+    super
     @packages = []
   end
 

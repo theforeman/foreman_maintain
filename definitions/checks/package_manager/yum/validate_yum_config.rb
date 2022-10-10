@@ -41,7 +41,7 @@ module Checks::PackageManager
 
       def yum_config_options
         @yum_config_options ||= {
-          'exclude' => '^exclude\s*=\s*\S+.*$'
+          'exclude' => '^exclude\s*=\s*\S+.*$',
         }
       end
     end

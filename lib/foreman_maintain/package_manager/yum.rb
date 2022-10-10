@@ -120,7 +120,6 @@ module ForemanMaintain::PackageManager
       File.open(protector_config_file, 'w') { |file| file.puts config }
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def yum_action(action, packages, options)
       with_status = options.fetch(:with_status, false)
       assumeyes = options.fetch(:assumeyes, false)
@@ -133,10 +132,10 @@ module ForemanMaintain::PackageManager
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
       if with_status
         sys.execute_with_status("yum#{yum_options_s} #{action}#{packages_s}",
-                                :interactive => !assumeyes)
+          :interactive => !assumeyes)
       else
         sys.execute!("yum#{yum_options_s} #{action}#{packages_s}",
-                     :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
+          :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
       end
     end
   end

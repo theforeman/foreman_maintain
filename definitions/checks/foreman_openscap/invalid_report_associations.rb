@@ -11,10 +11,10 @@ module Checks
       def run
         ids_to_remove = to_remove
         assert(ids_to_remove.empty?,
-               "There are #{ids_to_remove.count} reports with issues that will be removed",
-               :next_steps => Procedures::ForemanOpenscap::InvalidReportAssociations.new(
-                 :ids_to_remove => ids_to_remove
-               ))
+          "There are #{ids_to_remove.count} reports with issues that will be removed",
+          :next_steps => Procedures::ForemanOpenscap::InvalidReportAssociations.new(
+            :ids_to_remove => ids_to_remove
+          ))
       end
 
       def to_remove

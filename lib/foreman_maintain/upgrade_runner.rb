@@ -146,7 +146,6 @@ module ForemanMaintain
 
     private
 
-    # rubocop:disable Metrics/MethodLength
     def rollback_pre_migrations
       raise "Unexpected phase #{phase}, expecting pre_migrations" unless phase == :pre_migrations
 
@@ -169,7 +168,6 @@ module ForemanMaintain
         The upgrade failed and system was restored to pre-upgrade state.
       MESSAGE
     end
-    # rubocop:enable Metrics/MethodLength
 
     def with_non_empty_scenario(phase)
       next_scenario = scenario(phase)
