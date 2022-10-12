@@ -13,7 +13,7 @@ module Procedures::Service
     PING_RETRY_INTERVAL = 30
 
     def run
-      run_service_action('restart', common_options)
+      run_service_action('restart', common_options.merge(:include_sockets => true))
       server_ping_retry if @wait_for_server_response
     end
 
