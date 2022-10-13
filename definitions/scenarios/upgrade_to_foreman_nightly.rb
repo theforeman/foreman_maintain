@@ -54,8 +54,7 @@ module Scenarios::Foreman_Nightly
       add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
       if el?
         modules_to_enable = ["foreman:#{el_short_name}"]
-        add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable,
-                                                         :assumeyes => true))
+        add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       end
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)
