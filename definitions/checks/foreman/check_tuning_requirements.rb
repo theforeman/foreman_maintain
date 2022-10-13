@@ -22,7 +22,7 @@ module Checks
         cpu_message = check_cpu_cores(tuning_profile)
         memory_message = check_memory(tuning_profile)
 
-        return true unless cpu_message || memory_message
+        return unless cpu_message || memory_message
 
         message = failure_message(tuning_profile)
         if cpu_message

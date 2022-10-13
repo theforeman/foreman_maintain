@@ -15,7 +15,8 @@ describe Checks::Foreman::TuningRequirements do
     subject.stubs(:memory).returns(24 * 1024 * 1024)
     result = run_check(subject)
 
-    assert_equal 'true', result.output
+    assert_equal '', result.output
+    assert result.success?
   end
 
   it 'fails when system memory is less than tuning profile' do
