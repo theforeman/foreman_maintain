@@ -55,6 +55,7 @@ module ForemanMaintain
       end
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
+        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
 
@@ -67,6 +68,7 @@ module ForemanMaintain
 
       it 'inform if no updates available for foreman-maintain' do
         foreman_maintain_update_unavailable
+        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
         Nothing to update, can't find new version of rubygem-foreman_maintain.
@@ -90,6 +92,7 @@ module ForemanMaintain
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
         command << '--target-version=1.15'
+        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
 
@@ -131,6 +134,7 @@ module ForemanMaintain
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
         command << '--target-version=1.15'
+        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
 
