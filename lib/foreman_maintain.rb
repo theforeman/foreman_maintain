@@ -21,6 +21,7 @@ module ForemanMaintain
   require 'foreman_maintain/concerns/hammer'
   require 'foreman_maintain/concerns/base_database'
   require 'foreman_maintain/concerns/directory_marker'
+  require 'foreman_maintain/concerns/versions'
   require 'foreman_maintain/concerns/downstream'
   require 'foreman_maintain/concerns/foreman_and_katello_version_map'
   require 'foreman_maintain/concerns/upstream'

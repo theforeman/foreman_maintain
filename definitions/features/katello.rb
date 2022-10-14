@@ -1,4 +1,6 @@
 class Features::Katello < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::Versions
+
   metadata do
     label :katello
 

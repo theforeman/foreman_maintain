@@ -4,6 +4,7 @@ module ForemanMaintain
     include Concerns::SystemHelpers
     include Concerns::ScenarioMetadata
     include Concerns::Finders
+    include Concerns::Versions
     extend Concerns::Finders
 
     attr_reader :steps, :context
