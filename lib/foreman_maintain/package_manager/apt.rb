@@ -1,3 +1,5 @@
+require 'open3'
+
 module ForemanMaintain::PackageManager
   class Apt < Base
     def installed?(packages)
@@ -39,6 +41,11 @@ module ForemanMaintain::PackageManager
 
     def check_update(packages: nil, with_status: false)
       apt_action('upgrade --dry-run', packages, :with_status => with_status)
+    end
+
+    def update_available?(package)
+      output, status = Open3.capture2("apt-get install #{package} --dry-run")
+      status.success? && output.include?("Inst #{package}")
     end
 
     def list_installed_packages(queryfm = '${binary:Package}-${VERSION}\n')

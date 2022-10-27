@@ -50,6 +50,14 @@ module ForemanMaintain::Scenarios
         [maintenance_repo_id(target_version)]
       end
     end
+
+    def upstream_target_version
+      if feature(:katello_install)
+        return foreman_version_by_katello(target_version)
+      else
+        target_version
+      end
+    end
   end
 
   class SelfUpgrade < SelfUpgradeBase
@@ -60,14 +68,50 @@ module ForemanMaintain::Scenarios
       manual_detection
     end
 
-    def compose
+    def downstream_self_upgrade(pkgs_to_update)
       if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
-        pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
         yum_options = req_repos_to_update_pkgs.map do |id|
           "--enablerepo=#{id}"
         end
         add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true,
                                                   yum_options: yum_options))
+      end
+    end
+
+    def upstream_self_upgrade(pkgs_to_update)
+      # This method is responsible for
+      # 1. Setup the repositories of next major version
+      # 2. Update the foreman-maintain packages from next major version repository
+      # 3. Rollback the repository to current major version
+
+      add_step(Procedures::Repositories::Setup.new(:version => upstream_target_version))
+      add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
+    ensure
+      rollback_repositories
+    end
+
+    def rollback_repositories
+      installed_release_pkg = package_manager.find_installed_package('foreman-release',
+                                                                     '%{VERSION}')
+
+      unless current_version.nil? && installed_release_pkg.nil?
+        current_major_version = current_version[0..2]
+        installed_foreman_release_major_version = installed_release_pkg[0..2]
+        if installed_foreman_release_major_version != current_major_version
+          add_step(Procedures::Packages::Uninstall.new(packages: %w[foreman-release katello-repos],
+                                                       assumeyes: true))
+          add_step(Procedures::Repositories::Setup.new(:version => current_major_version))
+        end
+      end
+    end
+
+    def compose
+      pkgs_to_update = %w[rubygem-foreman_maintain]
+      if feature(:instance).downstream
+        pkgs_to_update << 'satellite-maintain'
+        downstream_self_upgrade(pkgs_to_update)
+      elsif feature(:instance).upstream_install
+        upstream_self_upgrade(pkgs_to_update)
       end
     end
   end
