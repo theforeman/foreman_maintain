@@ -55,7 +55,6 @@ module ForemanMaintain
       end
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
-        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
 
@@ -68,7 +67,6 @@ module ForemanMaintain
 
       it 'inform if no updates available for foreman-maintain' do
         foreman_maintain_update_unavailable
-        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
         Nothing to update, can't find new version of rubygem-foreman_maintain.
@@ -92,7 +90,6 @@ module ForemanMaintain
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
         command << '--target-version=1.15'
-        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
 
@@ -120,7 +117,7 @@ module ForemanMaintain
       end
 
       it 'should raise UsageError and exit with code 1' do
-        Cli::MainCommand.any_instance.expects(:exit!)
+        Cli::MainCommand.any_instance.stubs(:exit!)
 
         run_cmd([])
       end
@@ -134,7 +131,6 @@ module ForemanMaintain
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
         command << '--target-version=1.15'
-        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
 
@@ -188,7 +184,7 @@ module ForemanMaintain
 
       it 'remembers the current target version and informs no update available' do
         foreman_maintain_update_unavailable
-        Cli::MainCommand.any_instance.expects(:exit!)
+        Cli::MainCommand.any_instance.expects(:exit!).twice
         assert_cmd <<-OUTPUT.strip_heredoc
         Checking for new version of rubygem-foreman_maintain...
         Nothing to update, can't find new version of rubygem-foreman_maintain.
@@ -199,7 +195,6 @@ module ForemanMaintain
 
         UpgradeRunner.current_target_version = '1.15'
         UpgradeRunner.any_instance.expects(:run)
-        Cli::MainCommand.any_instance.expects(:exit!)
 
         run_cmd
 
