@@ -43,6 +43,7 @@ class Features::Tar < ForemanMaintain::Feature
 
     tar_command = ['tar']
     tar_command << '--selinux'
+    tar_command << '--no-check-device'
     tar_command << "--#{options.fetch(:command, 'create')}"
     tar_command << "--file=#{options.fetch(:archive)}"
 
