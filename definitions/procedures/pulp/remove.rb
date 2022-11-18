@@ -23,7 +23,8 @@ module Procedures::Pulp
         '/var/lib/pulp/importers',
         '/var/lib/pulp/uploads',
         '/var/lib/mongodb/',
-        '/var/cache/pulp'
+        '/var/cache/pulp',
+        '/var/spool/squid'
       ].select { |dir| File.directory?(dir) }
     end
 
