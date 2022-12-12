@@ -144,7 +144,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
 
     cmd = "curl -w '\n%{http_code}' -s "
     cmd += format_shell_args('--cert' => ssl_cert, '--key' => ssl_key, '--cacert' => ssl_ca)
-    cmd += " https://$(hostname):#{proxy_settings[:https_port]}"
+    cmd += " https://#{hostname}:#{proxy_settings[:https_port]}"
     cmd
   end
 
