@@ -5,8 +5,7 @@ class Features::Pulpcore < ForemanMaintain::Feature
     label :pulpcore
 
     confine do
-      ForemanMaintain::Utils::Service::Systemd.new('pulpcore-api', 0).exist? &&
-        ForemanMaintain::Utils::Service::Systemd.new('pulpcore-api', 0).enabled?
+      ForemanMaintain::Utils::Service::Systemd.new('pulpcore-api', 0).enabled?
     end
   end
 

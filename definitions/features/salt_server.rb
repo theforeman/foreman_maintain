@@ -4,7 +4,6 @@ class Features::SaltServer < ForemanMaintain::Feature
 
     confine do
       find_package('salt-master') &&
-        ForemanMaintain::Utils::Service::Systemd.new('salt-master', 0).exist? &&
         ForemanMaintain::Utils::Service::Systemd.new('salt-master', 0).enabled?
     end
   end
@@ -17,8 +16,7 @@ class Features::SaltServer < ForemanMaintain::Feature
 
   def services
     salt_services = [system_service('salt-master', 30)]
-    if ForemanMaintain::Utils::Service::Systemd.new('salt-api', 0).exist? &&
-       ForemanMaintain::Utils::Service::Systemd.new('salt-api', 0).enabled?
+    if ForemanMaintain::Utils::Service::Systemd.new('salt-api', 0).enabled?
       salt_services += [system_service('salt-api', 30)]
     end
     salt_services
