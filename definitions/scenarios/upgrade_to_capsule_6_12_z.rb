@@ -56,6 +56,8 @@ module Scenarios::Capsule_6_12_z
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => '6.12'))
+      modules_to_enable = ["satellite-capsule:#{el_short_name}"]
+      add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       add_step(Procedures::Packages::UnlockVersions.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)
