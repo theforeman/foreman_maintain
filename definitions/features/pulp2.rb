@@ -7,7 +7,6 @@ class Features::Pulp < ForemanMaintain::Feature
 
     confine do
       !check_min_version('katello-common', '4.0') &&
-        ForemanMaintain::Utils::Service::Systemd.new('pulp_resource_manager', 0).exist? &&
         ForemanMaintain::Utils::Service::Systemd.new('pulp_resource_manager', 0).enabled?
     end
   end
