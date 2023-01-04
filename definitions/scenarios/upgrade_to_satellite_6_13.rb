@@ -1,25 +1,25 @@
-module Scenarios::Satellite_6_12
+module Scenarios::Satellite_6_13
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
         tags :upgrade_scenario
         confine do
           feature(:satellite) &&
-            (feature(:satellite).current_minor_version == '6.11' || \
-            ForemanMaintain.upgrade_in_progress == '6.12')
+            (feature(:satellite).current_minor_version == '6.12' || \
+            ForemanMaintain.upgrade_in_progress == '6.13')
         end
         instance_eval(&block)
       end
     end
 
     def target_version
-      '6.12'
+      '6.13'
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Satellite 6.12'
+      description 'Checks before upgrading to Satellite 6.13'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -28,13 +28,13 @@ module Scenarios::Satellite_6_12
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
       add_step(Checks::Foreman::CheckpointSegments)
-      add_step(Checks::Repositories::Validate.new(:version => '6.12'))
+      add_step(Checks::Repositories::Validate.new(:version => '6.13'))
     end
   end
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before migrating to Satellite 6.12'
+      description 'Procedures before migrating to Satellite 6.13'
       tags :pre_migrations
     end
 
@@ -46,7 +46,7 @@ module Scenarios::Satellite_6_12
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Migration scripts to Satellite 6.12'
+      description 'Migration scripts to Satellite 6.13'
       tags :migrations
       run_strategy :fail_fast
     end
@@ -56,7 +56,7 @@ module Scenarios::Satellite_6_12
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => '6.12'))
+      add_step(Procedures::Repositories::Setup.new(:version => '6.13'))
       modules_to_enable = ["satellite:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       add_step(Procedures::Packages::UnlockVersions.new)
@@ -68,7 +68,7 @@ module Scenarios::Satellite_6_12
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures after migrating to Satellite 6.12'
+      description 'Procedures after migrating to Satellite 6.13'
       tags :post_migrations
     end
 
@@ -82,7 +82,7 @@ module Scenarios::Satellite_6_12
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Satellite 6.12'
+      description 'Checks after upgrading to Satellite 6.13'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end
