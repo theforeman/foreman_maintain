@@ -24,6 +24,23 @@ module Scenarios
         assert_scenario_has_step(scenario, Procedures::Restore::Confirmation)
         assert_scenario_has_step(scenario, Procedures::Restore::Configs)
       end
+
+      it 'reindexes the DB if DB is local and offline backup' do
+        assume_feature_present(:instance, :postgresql_local? => true)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(false)
+        assert_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
+      end
+
+      it 'doesnt reindex the DB if DB is local and online backup' do
+        assume_feature_present(:instance, :postgresql_local? => false)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(true)
+        refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
+      end
+
+      it 'doesnt reindex the DB if it is remote' do
+        assume_feature_present(:instance, :postgresql_local? => false)
+        refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
+      end
     end
 
     describe 'with dry_run=true' do
@@ -39,6 +56,7 @@ module Scenarios
         end
         refute_scenario_has_step(scenario, Procedures::Restore::Confirmation)
         refute_scenario_has_step(scenario, Procedures::Restore::Configs)
+        refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
       end
     end
   end
