@@ -17,6 +17,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     Actions::Candlepin::ListenOnCandlepinEvents
     Actions::Katello::EventQueue::Monitor
     Actions::Insights::EmailPoller
+    ForemanInventoryUpload::Async::GenerateAllReportsJob
     ForemanInventoryUpload::Async::GenerateReportJob
     ForemanInventoryUpload::Async::QueueForUploadJob
     ForemanInventoryUpload::Async::UploadReportJob
@@ -24,6 +25,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     InsightsCloud::Async::InsightsFullSync
     InsightsCloud::Async::InsightsResolutionsSync
     InsightsCloud::Async::InsightsRulesSync
+    InsightsCloud::Async::InsightsScheduledSync
     InventorySync::Async::InventoryFullSync
     InventorySync::Async::InventoryHostsSync
     InventorySync::Async::InventoryScheduledSync
