@@ -42,12 +42,8 @@ module Checks::ForemanProxy
     end
 
     def lookup_token_duration
-      data = feature(:foreman_database). \
-             query("select s.value, s.default from settings s \
-                    where category IN ('Setting::Provisioning','Setting') \
-                    and name = 'token_duration'")
-
-      YAML.load(data[0]['value'] || data[0]['default'])
+      data = feature(:hammer).run('--output yaml settings info --id token_duration')
+      YAML.load(data)['Value']
     end
   end
 end
