@@ -51,13 +51,11 @@ class Features::Tar < ForemanMaintain::Feature
     end
 
     if volume_size
-      split_tar_script = default_split_tar_script
       tar_command << "--tape-length=#{volume_size}"
-      tar_command << "--new-volume-script=#{split_tar_script}"
     end
 
     tar_command << '--overwrite' if options[:overwrite]
-    tar_command << '--gzip' if options[:gzip]
+    tar_command << (options[:gzip] ? '--gzip' : "--new-volume-script=#{default_split_tar_script}")
 
     exclude = options.fetch(:exclude, [])
     exclude.each do |ex|
