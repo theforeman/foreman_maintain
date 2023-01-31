@@ -33,12 +33,22 @@ class Features::SyncPlans < ForemanMaintain::Feature
     feature(:foreman_database).query(query).map { |r| r['id'].to_i }
   end
 
+  def validate_sync_plan_ids(ids)
+    ids_condition = ids.map { |id| "'#{id}'" }.join(',')
+    query = <<-SQL
+      SELECT id FROM katello_sync_plans WHERE id IN (#{ids_condition})
+    SQL
+    feature(:foreman_database).query(query).map { |r| r['id'].to_i }
+  end
+
   def make_disable(ids)
     update_records(ids, false)
   end
 
   def make_enable
-    update_records(data[:disabled], true)
+    # remove ids of sync plans which no longer exist in DB
+    @data[:disabled] = validate_sync_plan_ids(@data[:disabled])
+    update_records(@data[:disabled], true)
   end
 
   def load_from_storage(storage)
