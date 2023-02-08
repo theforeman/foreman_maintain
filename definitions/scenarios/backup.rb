@@ -81,15 +81,13 @@ module ForemanMaintain::Scenarios
       include_dumps if include_db_dumps?
       add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
       add_steps_with_context(
-        find_procedures(:maintenance_mode_on),
         Procedures::Service::Stop,
         Procedures::Backup::ConfigFiles,
         Procedures::Backup::Pulp,
         Procedures::Backup::Offline::CandlepinDB,
         Procedures::Backup::Offline::ForemanDB,
         Procedures::Backup::Offline::PulpcoreDB,
-        Procedures::Service::Start,
-        find_procedures(:maintenance_mode_off)
+        Procedures::Service::Start
       )
     end
 
