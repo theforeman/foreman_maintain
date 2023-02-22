@@ -20,6 +20,8 @@ actions:
   post-upstream-clone:
     - "wget https://raw.githubusercontent.com/theforeman/foreman-packaging/rpm/develop/packages/foreman/rubygem-foreman_maintain/rubygem-foreman_maintain.spec -O rubygem-foreman_maintain.spec"
     - "wget https://raw.githubusercontent.com/theforeman/foreman-packaging/rpm/develop/packages/foreman/rubygem-foreman_maintain/foreman_maintain.logrotate -O foreman_maintain.logrotate"
+  get-current-version:
+    - ruby -rrubygems -e 'puts Gem::Specification::load(Dir.glob("*.gemspec").first).version'
   create-archive:
     - gem build foreman_maintain.gemspec
     - bash -c "ls -1t ./foreman_maintain-*.gem | head -n 1"
