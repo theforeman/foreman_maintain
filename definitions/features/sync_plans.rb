@@ -34,10 +34,10 @@ class Features::SyncPlans < ForemanMaintain::Feature
   end
 
   def validate_sync_plan_ids(ids)
+    return [] if ids.empty?
+
     ids_condition = ids.map { |id| "'#{id}'" }.join(',')
-    query = <<-SQL
-      SELECT id FROM katello_sync_plans WHERE id IN (#{ids_condition})
-    SQL
+    query = "SELECT id FROM katello_sync_plans WHERE id IN (#{ids_condition})"
     feature(:foreman_database).query(query).map { |r| r['id'].to_i }
   end
 
