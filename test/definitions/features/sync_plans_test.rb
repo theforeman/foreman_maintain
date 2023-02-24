@@ -5,6 +5,34 @@ describe Features::SyncPlans do
 
   subject { Features::SyncPlans.new }
 
+  describe '#sync_plan_ids_by_status' do
+    it 'return list of enabled sync plan ids' do
+      assume_feature_present(:foreman_database) do |db|
+        enabled = true
+        query = <<-SQL
+      select sp.id as id from katello_sync_plans sp inner join foreman_tasks_recurring_logics rl on sp.foreman_tasks_recurring_logic_id = rl.id
+      where rl.state='#{enabled ? 'active' : 'disabled'}'
+        SQL
+        result = [{ 'id' => '1' }, { 'id' => '2' }]
+        db.any_instance.stubs(:query).with(query).returns(result)
+        _(subject.sync_plan_ids_by_status(true)).must_equal([1, 2])
+      end
+    end
+
+    it 'return empty list of enabled sync plan ids' do
+      assume_feature_present(:foreman_database) do |db|
+        enabled = true
+        query = <<-SQL
+      select sp.id as id from katello_sync_plans sp inner join foreman_tasks_recurring_logics rl on sp.foreman_tasks_recurring_logic_id = rl.id
+      where rl.state='#{enabled ? 'active' : 'disabled'}'
+        SQL
+        result = []
+        db.any_instance.stubs(:query).with(query).returns(result)
+        _(subject.sync_plan_ids_by_status(true)).must_equal([])
+      end
+    end
+  end
+
   describe '#validate_sync_plan_ids' do
     it 'retuns an empty list if there are no ids' do
       assume_feature_present(:foreman_database) do |db|
