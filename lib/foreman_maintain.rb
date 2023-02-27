@@ -178,6 +178,9 @@ module ForemanMaintain
       package_name, command = pkg_and_cmd_name
 
       puts "Checking for new version of #{package_name}..."
+
+      enable_maintenance_module
+
       if ForemanMaintain.package_manager.update_available?(main_package_name)
         puts "\nUpdating #{package_name} package."
         ForemanMaintain.package_manager.update(main_package_name, :assumeyes => true)
@@ -186,6 +189,17 @@ module ForemanMaintain
         exit 75
       end
       puts "Nothing to update, can't find new version of #{package_name}."
+    end
+
+    def enable_maintenance_module
+      maintenance_module = 'satellite-maintenance:el8'
+      package_manager = ForemanMaintain.package_manager
+
+      if package_manager.module_exists?(maintenance_module) &&
+         !package_manager.module_enabled?(maintenance_module)
+        puts "\nEnabling #{maintenance_module} module"
+        package_manager.enable_module(maintenance_module)
+      end
     end
 
     def main_package_name

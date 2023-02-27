@@ -228,6 +228,7 @@ module ForemanMaintain
       end
 
       it 'with --phase it runs only a specific phase of the upgrade' do
+        foreman_maintain_update_unavailable
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
         run_cmd(['--phase=pre_migrations', '--target-version=1.15'])
       end

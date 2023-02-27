@@ -69,6 +69,8 @@ module ForemanMaintain::Scenarios
     end
 
     def downstream_self_upgrade(pkgs_to_update)
+      ForemanMaintain.enable_maintenance_module
+
       if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
         yum_options = req_repos_to_update_pkgs.map do |id|
           "--enablerepo=#{id}"

@@ -34,4 +34,35 @@ describe ForemanMaintain do
       err.message.must_equal 'No supported package manager was found'
     end
   end
+
+  describe 'enable_maintenance_module' do
+    let(:package_manager) { ForemanMaintain.package_manager }
+
+    it 'should enable the maintenance module' do
+      package_manager.expects(:module_exists?).with('satellite-maintenance:el8').returns(true)
+      package_manager.expects(:module_enabled?).with('satellite-maintenance:el8').returns(false)
+      package_manager.expects(:enable_module).with('satellite-maintenance:el8').returns(true)
+
+      assert_output("\nEnabling satellite-maintenance:el8 module\n") do
+        subject.enable_maintenance_module
+      end
+    end
+
+    it 'should not enable the maintenance module if module does not exist' do
+      package_manager.expects(:module_exists?).with('satellite-maintenance:el8').returns(false)
+
+      assert_output('') do
+        subject.enable_maintenance_module
+      end
+    end
+
+    it 'should not enable the maintenance module if module is already enabled' do
+      package_manager.expects(:module_exists?).with('satellite-maintenance:el8').returns(true)
+      package_manager.expects(:module_enabled?).with('satellite-maintenance:el8').returns(true)
+
+      assert_output('') do
+        subject.enable_maintenance_module
+      end
+    end
+  end
 end
