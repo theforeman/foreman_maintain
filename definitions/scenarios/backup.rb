@@ -58,7 +58,6 @@ module ForemanMaintain::Scenarios
                   Procedures::Backup::CompressData => :backup_dir,
                   Procedures::Backup::Pulp => :backup_dir,
                   Procedures::Backup::Online::Mongo => :backup_dir,
-                  Procedures::Backup::Online::PgGlobalObjects => :backup_dir,
                   Procedures::Backup::Online::CandlepinDB => :backup_dir,
                   Procedures::Backup::Online::ForemanDB => :backup_dir,
                   Procedures::Backup::Online::PulpcoreDB => :backup_dir,
@@ -160,9 +159,6 @@ module ForemanMaintain::Scenarios
     end
 
     def include_dumps
-      if feature(:instance).postgresql_local?
-        add_step_with_context(Procedures::Backup::Online::PgGlobalObjects)
-      end
       if feature(:instance).database_local?(:candlepin_database)
         add_step_with_context(Procedures::Backup::Online::CandlepinDB)
       end
@@ -217,7 +213,6 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
       add_steps_with_context(
         Procedures::Backup::Online::Mongo,
-        Procedures::Backup::Online::PgGlobalObjects,
         Procedures::Backup::Online::CandlepinDB,
         Procedures::Backup::Online::ForemanDB,
         Procedures::Backup::Online::PulpcoreDB

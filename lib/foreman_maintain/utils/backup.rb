@@ -42,7 +42,6 @@ module ForemanMaintain
           :candlepin_dump => map_file(@backup_dir, 'candlepin.dump'),
           :mongo_dump => map_file(@backup_dir, 'mongo_dump'),
           :config_files => map_file(@backup_dir, 'config_files.tar.gz'),
-          :pg_globals => map_file(@backup_dir, 'pg_globals.dump'),
           :metadata => map_file(@backup_dir, 'metadata.yml'),
           :pulpcore_dump => map_file(@backup_dir, 'pulpcore.dump')
         }
