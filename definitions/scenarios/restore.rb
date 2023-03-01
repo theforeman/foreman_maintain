@@ -73,9 +73,6 @@ module ForemanMaintain::Scenarios
     end
 
     def restore_sql_dumps(backup)
-      if backup.file_map[:pg_globals][:present]
-        add_steps_with_context(Procedures::Restore::PgGlobalObjects)
-      end
       if backup.file_map[:candlepin_dump][:present]
         add_steps_with_context(Procedures::Restore::CandlepinDump)
       end
@@ -108,7 +105,6 @@ module ForemanMaintain::Scenarios
                   Checks::Restore::ValidateInterfaces => :backup_dir,
                   Procedures::Restore::Configs => :backup_dir,
                   Procedures::Restore::DropDatabases => :backup_dir,
-                  Procedures::Restore::PgGlobalObjects => :backup_dir,
                   Procedures::Restore::CandlepinDump => :backup_dir,
                   Procedures::Restore::ForemanDump => :backup_dir,
                   Procedures::Restore::PulpcoreDump => :backup_dir,

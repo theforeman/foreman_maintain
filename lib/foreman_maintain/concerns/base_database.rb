@@ -108,11 +108,6 @@ module ForemanMaintain
         end
       end
 
-      def restore_pg_globals(pg_globals, config = configuration)
-        execute!(base_command(config, 'psql') + " -f #{pg_globals} postgres 2>/dev/null",
-                 :hidden_patterns => [config['password']])
-      end
-
       def backup_local(backup_file, extra_tar_options = {})
         dir = extra_tar_options.fetch(:data_dir, data_dir)
         command = extra_tar_options.fetch(:command, 'create')
@@ -137,10 +132,6 @@ module ForemanMaintain
       # TODO: remove the backup file path tools from here. Lib Utils::Backup?
       def backup_dir
         @backup_dir ||= File.expand_path(ForemanMaintain.config.db_backup_dir)
-      end
-
-      def backup_global_objects(file)
-        execute!("runuser - postgres -c 'pg_dumpall -g > #{file}'")
       end
 
       def perform_backup(config = configuration)
