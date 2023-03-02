@@ -10,6 +10,7 @@ module ForemanMaintain
       ForemanMaintain.detector.refresh
       UpgradeRunner.clear_current_target_version
     end
+
     let :command do
       %w[upgrade]
     end
