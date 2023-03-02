@@ -9,6 +9,24 @@ module ForemanMaintain::PackageManager
       true
     end
 
+    def module_enabled?(name)
+      _status, result = info(name)
+      result.match?(/Stream.+\[e\].+/)
+    end
+
+    def enable_module(name)
+      dnf_action('module enable', name, assumeyes: true)
+    end
+
+    def module_exists?(name)
+      status, _result = info(name)
+      status == 0
+    end
+
+    def info(name)
+      dnf_action('module info', name, with_status: true, assumeyes: true)
+    end
+
     private
 
     def dnf_action(action, packages, with_status: false, assumeyes: false)
