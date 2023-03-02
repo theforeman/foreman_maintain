@@ -58,7 +58,9 @@ module ForemanMaintain::Scenarios
       manual_detection
     end
 
-    def compose
+    def compose(pkgs_to_update)
+      ForemanMaintain.enable_maintenance_module
+
       if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
         pkgs_to_update = %w[satellite-maintain rubygem-foreman_maintain]
         yum_options = req_repos_to_update_pkgs.map do |id|

@@ -70,6 +70,14 @@ class FakePackageManager < ForemanMaintain::PackageManager::Base
   def version_locking_supported?
     true
   end
+
+  def module_enabled?(_name)
+    true
+  end
+
+  def module_exists?(_name)
+    false
+  end
 end
 
 module PackageManagerTestHelper
