@@ -36,6 +36,11 @@ describe ForemanMaintain do
   end
 
   describe 'enable_maintenance_module' do
+    before do
+      subject.stubs(:el?).returns(true)
+      subject.stubs(:el7?).returns(false)
+    end
+
     let(:package_manager) { ForemanMaintain.package_manager }
 
     it 'should enable the maintenance module' do
