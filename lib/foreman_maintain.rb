@@ -205,7 +205,7 @@ module ForemanMaintain
     end
 
     def main_package_name
-      'rubygem-foreman_maintain'
+      el? ? 'rubygem-foreman_maintain' : 'ruby-foreman-maintain'
     end
   end
 end

@@ -11,6 +11,7 @@ module ForemanMaintain
     end
 
     def foreman_maintain_update_available
+      ForemanMaintain.stubs(:el?).returns(true)
       PackageManagerTestHelper.mock_package_manager
       FakePackageManager.any_instance.stubs(:update).with('rubygem-foreman_maintain',
                                                           :assumeyes => true).returns(true)
@@ -20,6 +21,7 @@ module ForemanMaintain
     end
 
     def foreman_maintain_update_unavailable
+      ForemanMaintain.stubs(:el?).returns(true)
       PackageManagerTestHelper.mock_package_manager
       # rubocop:disable Layout/LineLength
       FakePackageManager.any_instance.stubs(:update_available?).with('rubygem-foreman_maintain').returns(false)
@@ -230,8 +232,8 @@ module ForemanMaintain
       it 'with --phase it runs only a specific phase of the upgrade' do
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
         assert_cmd(<<-OUTPUT.strip_heredoc, ['--phase=pre_migrations', '--target-version=1.15'])
-          Checking for new version of rubygem-foreman_maintain...
-          Nothing to update, can't find new version of rubygem-foreman_maintain.
+          Checking for new version of #{ForemanMaintain.main_package_name}...
+          Nothing to update, can't find new version of #{ForemanMaintain.main_package_name}.
         OUTPUT
       end
 
