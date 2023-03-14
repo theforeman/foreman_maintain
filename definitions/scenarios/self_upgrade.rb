@@ -108,7 +108,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      pkgs_to_update = %w[rubygem-foreman_maintain]
+      pkgs_to_update = [ForemanMaintain.main_package_name]
       if feature(:instance).downstream
         pkgs_to_update << 'satellite-maintain'
         downstream_self_upgrade(pkgs_to_update)

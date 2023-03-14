@@ -70,4 +70,18 @@ describe ForemanMaintain do
       end
     end
   end
+
+  describe '#main_package_name' do
+    it 'should return rubygem-foreman_maintain on EL systems' do
+      subject.stubs(:el?).returns(true)
+
+      _(subject.main_package_name).must_equal 'rubygem-foreman_maintain'
+    end
+
+    it 'should return ruby-foreman-maintain on Debian systems' do
+      subject.stubs(:el?).returns(false)
+
+      _(subject.main_package_name).must_equal 'ruby-foreman-maintain'
+    end
+  end
 end
