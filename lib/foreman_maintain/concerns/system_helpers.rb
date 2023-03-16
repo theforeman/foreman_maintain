@@ -30,7 +30,7 @@ module ForemanMaintain
       end
 
       def systemd_installed?
-        File.exist?('/usr/bin/systemctl')
+        File.exist?('/run/systemd/system/')
       end
 
       def check_min_version(name, minimal_version)
