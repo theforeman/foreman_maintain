@@ -19,7 +19,8 @@ module ForemanMaintain::Scenarios
       supported_version_check
       add_steps_with_context(Checks::Restore::ValidateBackup,
         Checks::Restore::ValidateHostname,
-        Checks::Restore::ValidateInterfaces)
+        Checks::Restore::ValidateInterfaces,
+        Checks::Restore::ValidatePostgresqlDumpPermissions)
 
       if context.get(:dry_run)
         self.class.metadata[:run_strategy] = :fail_slow
@@ -103,6 +104,7 @@ module ForemanMaintain::Scenarios
         Checks::Restore::ValidateBackup => :backup_dir,
         Checks::Restore::ValidateHostname => :backup_dir,
         Checks::Restore::ValidateInterfaces => :backup_dir,
+        Checks::Restore::ValidatePostgresqlDumpPermissions => :backup_dir,
         Procedures::Restore::Configs => :backup_dir,
         Procedures::Restore::DropDatabases => :backup_dir,
         Procedures::Restore::CandlepinDump => :backup_dir,
