@@ -72,6 +72,7 @@ module Scenarios::Satellite_6_11_z
     def compose
       add_step(Procedures::RefreshFeatures)
       add_step(Procedures::Service::Start.new)
+      add_step(Procedures::Pulpcore::ContainerRepairMediaType.new)
       add_steps(find_procedures(:post_migrations))
     end
   end
