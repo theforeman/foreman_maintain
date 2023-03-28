@@ -6,9 +6,8 @@ describe Checks::Disk::Performance do
   let(:check_disk_performance) { described_class.new }
 
   before do
-    assume_feature_absent(:mongo)
-    assume_feature_present(:pulp2)
-    check_disk_performance.stubs(:default_dirs).returns(:pulp2 => '/var/lib/pulp')
+    assume_feature_present(:pulpcore)
+    check_disk_performance.stubs(:default_dirs).returns(:pulpcore => '/var/lib/pulp')
   end
 
   it 'should confine existence of fio' do

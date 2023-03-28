@@ -8,7 +8,6 @@ module Procedures::Backup
 
     def run
       compress_file('pgsql_data.tar', 'Postgres DB')
-      compress_file('mongo_data.tar', 'Mongo DB')
     end
 
     private

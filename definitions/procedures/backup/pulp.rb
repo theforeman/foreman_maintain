@@ -10,7 +10,7 @@ module Procedures::Backup
       param :mount_dir, 'Snapshot mount directory'
 
       confine do
-        feature(:pulp2) || feature(:pulpcore_database)
+        feature(:pulpcore_database)
       end
     end
 
@@ -30,7 +30,7 @@ module Procedures::Backup
     private
 
     def any_pulp_feature
-      feature(:pulp2) || feature(:pulpcore_database)
+      feature(:pulpcore_database)
     end
 
     def pulp_backup

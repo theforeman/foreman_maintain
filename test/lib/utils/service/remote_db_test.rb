@@ -31,17 +31,17 @@ module ForemanMaintain
     let(:remote_db_feature) { RemoteDBFeature.new }
     let(:remote_db_service) do
       ForemanMaintain::Utils::Service::RemoteDB.new(
-        'mongod', 10, :component => 'Pulp', :db_feature => remote_db_feature
+        'postgresql', 10, :component => 'Pulp', :db_feature => remote_db_feature
       )
     end
     let(:remote_db_service_no_comp) do
       ForemanMaintain::Utils::Service::RemoteDB.new(
-        'mongod', 10, :db_feature => RemoteDBFeature.new
+        'postgresql', 10, :db_feature => RemoteDBFeature.new
       )
     end
     let(:remote_stopped_db_service) do
       ForemanMaintain::Utils::Service::RemoteDB.new(
-        'mongod', 10, :component => 'Pulp', :db_feature => RemoteStoppedDBFeature.new
+        'postgresql', 10, :component => 'Pulp', :db_feature => RemoteStoppedDBFeature.new
       )
     end
 
@@ -55,26 +55,26 @@ module ForemanMaintain
     end
 
     it 'interpolates to its name' do
-      _(remote_db_service_no_comp.to_s).must_equal 'mongod'
-      _(remote_db_service.to_s).must_equal 'mongod (Pulp)'
+      _(remote_db_service_no_comp.to_s).must_equal 'postgresql'
+      _(remote_db_service.to_s).must_equal 'postgresql (Pulp)'
     end
 
     it 'inspects itself nicely' do
-      _(remote_db_service.inspect).must_equal 'RemoteDB(mongod:Pulp [10])'
-      _(remote_db_service_no_comp.inspect).must_equal 'RemoteDB(mongod [10])'
+      _(remote_db_service.inspect).must_equal 'RemoteDB(postgresql:Pulp [10])'
+      _(remote_db_service_no_comp.inspect).must_equal 'RemoteDB(postgresql [10])'
     end
 
     it 'can tell the status for remote DB' do
-      _(remote_db_service.status).must_equal [0, 'mongod (Pulp) is remote and is UP.']
+      _(remote_db_service.status).must_equal [0, 'postgresql (Pulp) is remote and is UP.']
     end
 
     it 'prevents remote db from disabling' do
-      result = [0, "mongod (Pulp) is remote and is UP. It can't be disabled."]
+      result = [0, "postgresql (Pulp) is remote and is UP. It can't be disabled."]
       _(remote_db_service.disable).must_equal result
     end
 
     it 'prevents remote db from enabling' do
-      result = [0, "mongod (Pulp) is remote and is UP. It can't be enabled."]
+      result = [0, "postgresql (Pulp) is remote and is UP. It can't be enabled."]
       _(remote_db_service.enable).must_equal result
     end
 
@@ -84,34 +84,34 @@ module ForemanMaintain
     end
 
     it 'can handle remote db start' do
-      _(remote_db_service.start).must_equal [0, 'mongod (Pulp) is remote and is UP.']
+      _(remote_db_service.start).must_equal [0, 'postgresql (Pulp) is remote and is UP.']
       result = remote_stopped_db_service.start
       _(result[0]).must_equal 1
-      _(result[1]).must_match 'mongod (Pulp) is remote and is DOWN'
+      _(result[1]).must_match 'postgresql (Pulp) is remote and is DOWN'
       _(result[1]).must_match 'Unable to connect to the remote database'
       _(result[1]).must_match(/See the log \(.*\) for more details/)
     end
 
     it 'can handle remote db stop' do
-      _(remote_db_service.stop).must_equal [0, 'mongod (Pulp) is remote and is UP.']
+      _(remote_db_service.stop).must_equal [0, 'postgresql (Pulp) is remote and is UP.']
       result = remote_stopped_db_service.stop
       _(result[0]).must_equal 0
-      _(result[1]).must_match 'mongod (Pulp) is remote and is DOWN'
+      _(result[1]).must_match 'postgresql (Pulp) is remote and is DOWN'
       _(result[1]).must_match 'Unable to connect to the remote database'
       _(result[1]).must_match(/See the log \(.*\) for more details/)
     end
 
     describe 'matches?' do
-      let(:mongod_service) { ForemanMaintain::Utils::Service::Systemd.new('mongod', 10) }
+      let(:postgresql_service) { ForemanMaintain::Utils::Service::Systemd.new('postgresql', 10) }
 
       it 'can compare by name' do
-        _(remote_db_service.matches?('mongod')).must_equal true
+        _(remote_db_service.matches?('postgresql')).must_equal true
         _(remote_db_service.matches?('httpd')).must_equal false
       end
 
       it 'can compare by service' do
         _(remote_db_service.matches?(remote_db_service)).must_equal true
-        _(remote_db_service.matches?(mongod_service)).must_equal false
+        _(remote_db_service.matches?(postgresql_service)).must_equal false
       end
     end
   end
