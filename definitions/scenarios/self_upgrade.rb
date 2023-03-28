@@ -26,11 +26,7 @@ module ForemanMaintain::Scenarios
     end
 
     def maintenance_repo(version)
-      if el7?
-        "rhel-#{el_major_version}-server-satellite-maintenance-#{version}-rpms"
-      else
-        "satellite-maintenance-#{version}-for-rhel-#{el_major_version}-x86_64-rpms"
-      end
+      "satellite-maintenance-#{version}-for-rhel-#{el_major_version}-x86_64-rpms"
     end
 
     def use_rhsm?

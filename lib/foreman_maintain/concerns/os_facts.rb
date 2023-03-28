@@ -62,14 +62,6 @@ module ForemanMaintain
         os_id == 'ubuntu'
       end
 
-      def el7?
-        el_major_version == 7
-      end
-
-      def el8?
-        el_major_version == 8
-      end
-
       def el_major_version
         os_version_id.to_i if el?
       end

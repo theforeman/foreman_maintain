@@ -55,8 +55,7 @@ module Procedures::Restore
     def extract_pgsql_data(backup)
       pgsql_data_tar = base_tar.merge(
         :archive => backup.file_map[:pgsql_data][:path],
-        :gzip => true,
-        :transform => any_database.restore_transform
+        :gzip => true
       )
       feature(:tar).run(pgsql_data_tar)
       del_data_dir_param if el?

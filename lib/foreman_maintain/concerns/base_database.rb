@@ -2,9 +2,7 @@ module ForemanMaintain
   module Concerns
     module BaseDatabase
       def data_dir
-        if el7? && package_manager.installed?('rh-postgresql12-postgresql-server-syspaths')
-          '/var/opt/rh/rh-postgresql12/lib/pgsql/data/'
-        elsif debian_or_ubuntu?
+        if debian_or_ubuntu?
           deb_postgresql_data_dir
         else
           '/var/lib/pgsql/data/'
@@ -36,13 +34,6 @@ module ForemanMaintain
       def deb_postgresql_config_dirs
         deb_postgresql_versions.map do |ver|
           "/etc/postgresql/#{ver}/main/"
-        end
-      end
-
-      def restore_transform
-        if el8?
-          # this allows to transform an EL7 backup to EL8 paths
-          's,^var/opt/rh/rh-postgresql12/,var/,S'
         end
       end
 

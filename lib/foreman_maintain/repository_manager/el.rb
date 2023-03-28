@@ -4,11 +4,7 @@ module ForemanMaintain::RepositoryManager
     include ForemanMaintain::Concerns::SystemHelpers
 
     def disable_repos(repo_ids)
-      if el7?
-        execute!("yum-config-manager #{config_manager_options(repo_ids, 'disable')}")
-      else
-        execute!("dnf config-manager #{config_manager_options(repo_ids, 'set-disabled')}")
-      end
+      execute!("dnf config-manager #{config_manager_options(repo_ids, 'set-disabled')}")
     end
 
     def rhsm_disable_repos(repo_ids)
@@ -22,11 +18,7 @@ module ForemanMaintain::RepositoryManager
     end
 
     def enable_repos(repo_ids)
-      if el7?
-        execute!("yum-config-manager #{config_manager_options(repo_ids, 'enable')}")
-      else
-        execute!("dnf config-manager #{config_manager_options(repo_ids, 'enable')}")
-      end
+      execute!("dnf config-manager #{config_manager_options(repo_ids, 'enable')}")
     end
 
     def rhsm_enable_repos(repo_ids)

@@ -49,17 +49,13 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
       io.each do |line|
         repo, pkg = line.chomp.split
         next if repo.nil? || pkg.nil?
-        packages << pkg if /satellite|rhscl/.match?(repo.downcase)
+        packages << pkg if /satellite/.match?(repo.downcase)
       end
     end
     packages
   end
 
   def query_format
-    if el7?
-      return '%{ui_from_repo} %{name}-%{evr}.%{arch}'
-    end
-
     '%{from_repo} %{name}-%{evr}.%{arch}'
   end
 
