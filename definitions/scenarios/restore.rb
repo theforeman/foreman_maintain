@@ -32,8 +32,7 @@ module ForemanMaintain::Scenarios
         Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
       unless backup.incremental?
-        add_steps_with_context(Procedures::Restore::EnsureMongoEngineMatches,
-          Procedures::Restore::InstallerReset)
+        add_steps_with_context(Procedures::Restore::InstallerReset)
       end
       add_step_with_context(Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
@@ -45,17 +44,16 @@ module ForemanMaintain::Scenarios
       if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
         add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
-      restore_mongo_dump(backup)
 
       if feature(:instance).postgresql_local? && !backup.online_backup?
         add_step_with_context(Procedures::Restore::ReindexDatabases)
       end
 
-      add_steps_with_context(Procedures::Pulp::Migrate,
+      add_steps_with_context(
         Procedures::Pulpcore::Migrate,
-        Procedures::Restore::CandlepinResetMigrations)
+        Procedures::Restore::CandlepinResetMigrations
+      )
 
-      add_steps_with_context(Procedures::Restore::RegenerateQueues) if backup.online_backup?
       add_steps_with_context(Procedures::Service::Start,
         Procedures::Service::DaemonReload)
       add_step(Procedures::Installer::Upgrade.new(:assumeyes => true))
@@ -85,12 +83,6 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    def restore_mongo_dump(backup)
-      if backup.file_map[:mongo_dump][:present]
-        add_steps_with_context(Procedures::Restore::MongoDump)
-      end
-    end
-
     def supported_version_check
       if feature(:instance).downstream&.less_than_version?('6.3')
         msg = 'ERROR: Restore subcommand is supported by Satellite 6.3+. ' \
@@ -110,8 +102,7 @@ module ForemanMaintain::Scenarios
         Procedures::Restore::CandlepinDump => :backup_dir,
         Procedures::Restore::ForemanDump => :backup_dir,
         Procedures::Restore::PulpcoreDump => :backup_dir,
-        Procedures::Restore::ExtractFiles => :backup_dir,
-        Procedures::Restore::MongoDump => :backup_dir)
+        Procedures::Restore::ExtractFiles => :backup_dir)
 
       context.map(:incremental_backup,
         Procedures::Selinux::SetFileSecurity => :incremental_backup)

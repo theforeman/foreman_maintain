@@ -15,10 +15,6 @@ module Procedures::Restore
           spinner.update('Extracting pulp data')
           extract_pulp_data(backup)
         end
-        if backup.file_map[:mongo_data][:present]
-          spinner.update('Extracting mongo data')
-          extract_mongo_data(backup)
-        end
         if backup.file_map[:pgsql_data][:present]
           spinner.update('Extracting pgsql data')
           extract_pgsql_data(backup)
@@ -50,14 +46,6 @@ module Procedures::Restore
                       end
 
       feature(:tar).run(pulp_data_tar)
-    end
-
-    def extract_mongo_data(backup)
-      mongo_data_tar = base_tar.merge(
-        :archive => backup.file_map[:mongo_data][:path],
-        :gzip => true
-      )
-      feature(:tar).run(mongo_data_tar)
     end
 
     def any_database

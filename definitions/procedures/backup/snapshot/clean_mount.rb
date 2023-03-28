@@ -8,7 +8,7 @@ module Procedures::Backup
       end
 
       def run
-        %w[pulp mongodb pgsql].each do |database|
+        %w[pulp pgsql].each do |database|
           mount_point = File.join(@mount_dir, database)
 
           if File.exist?(mount_point) && !execute("mount|grep #{mount_point}").empty?

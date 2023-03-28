@@ -40,7 +40,7 @@ module Checks
       end
 
       def data_dirs
-        @data_dirs ||= %i[pulpcore_database mongo foreman_database].inject({}) do |dirs, f|
+        @data_dirs ||= %i[pulpcore_database foreman_database].inject({}) do |dirs, f|
           if feature(f) && File.directory?(feature(f).data_dir)
             dirs[feature(f).label_dashed] = feature(f).data_dir
           end
@@ -50,7 +50,7 @@ module Checks
 
       def pulp_dir
         @pulp_dir ||= begin
-          pulp_feature = feature(:pulp2) || feature(:pulpcore_database)
+          pulp_feature = feature(:pulpcore)
           { pulp_feature.label_dashed => pulp_feature.pulp_data_dir }
         end
       end
