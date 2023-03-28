@@ -192,7 +192,7 @@ module ForemanMaintain
     end
 
     def enable_maintenance_module
-      return unless el? && !el7?
+      return unless el?
 
       maintenance_module = 'satellite-maintenance:el8'
       package_manager = ForemanMaintain.package_manager

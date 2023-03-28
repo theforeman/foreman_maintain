@@ -17,12 +17,6 @@ boost-random
 boost-iostreams
 boost-thread
 yum-utils
-# el7 psql client dependencies
-rh-postgresql12-postgresql
-rh-postgresql12-postgresql-libs
-rh-postgresql12-postgresql-syspaths
-rh-postgresql12-runtime
-scl-utils
 # el8 psql client dependencies
 postgresql
 libpq

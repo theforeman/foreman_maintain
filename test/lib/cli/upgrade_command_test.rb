@@ -113,6 +113,7 @@ module ForemanMaintain
       end
 
       it 'runs the upgrade checks for version with disable-self-upgrade' do
+        foreman_maintain_update_available
         command << '--disable-self-upgrade'
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
         run_cmd(['--target-version=1.15'])

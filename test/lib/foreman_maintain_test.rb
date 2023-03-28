@@ -7,15 +7,8 @@ describe ForemanMaintain do
       subject.instance_variable_set(:@package_manager, nil)
     end
 
-    it 'instantiates correct yum manager implementation' do
-      subject.stubs(:el?).returns(true)
-      subject.stubs(:el7?).returns(true)
-      _(subject.package_manager).must_be_instance_of ForemanMaintain::PackageManager::Yum
-    end
-
     it 'instantiates correct dnf manager implementation' do
       subject.stubs(:el?).returns(true)
-      subject.stubs(:el7?).returns(false)
       _(subject.package_manager).must_be_instance_of ForemanMaintain::PackageManager::Dnf
     end
 
@@ -38,7 +31,6 @@ describe ForemanMaintain do
   describe 'enable_maintenance_module' do
     before do
       subject.stubs(:el?).returns(true)
-      subject.stubs(:el7?).returns(false)
     end
 
     let(:package_manager) { ForemanMaintain.package_manager }

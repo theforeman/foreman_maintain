@@ -191,11 +191,9 @@ module ForemanMaintain
         ForemanMaintain.repository_manager
       end
 
-      def ruby_prefix(scl = true)
+      def ruby_prefix
         if debian_or_ubuntu?
           'ruby-'
-        elsif el7? && scl
-          'tfm-rubygem-'
         else
           'rubygem-'
         end
@@ -213,8 +211,7 @@ module ForemanMaintain
         else
           proxy_plugin_prefix = 'smart_proxy_'
         end
-        scl = check_min_version('foreman-proxy', '2.0')
-        ruby_prefix(scl) + proxy_plugin_prefix + plugin
+        ruby_prefix + proxy_plugin_prefix + plugin
       end
 
       def hammer_plugin_name(plugin)
