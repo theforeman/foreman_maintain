@@ -27,6 +27,7 @@ the Foreman/Satellite up and running."
 
   s.add_development_dependency 'bundler', '>= 1.17'
   s.add_development_dependency 'minitest'
+  s.add_development_dependency 'minitest-reporters'
   s.add_development_dependency 'minitest-stub-const'
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'rake'

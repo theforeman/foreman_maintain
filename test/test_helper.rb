@@ -3,12 +3,14 @@ require 'minitest/spec'
 require 'minitest/autorun'
 require 'mocha/minitest'
 require 'stringio'
+require 'minitest/reporters'
 require File.dirname(__FILE__) + '/support/minitest_spec_context'
 require File.expand_path('lib/support/log_reporter', __dir__)
 
 Mocha.configure do |c|
   c.strict_keyword_argument_matching = true
 end
+Minitest::Reporters.use!
 
 module CliAssertions
   def assert_cmd(expected_output, args = [], ignore_whitespace: false)
