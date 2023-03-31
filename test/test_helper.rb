@@ -6,6 +6,10 @@ require 'stringio'
 require File.dirname(__FILE__) + '/support/minitest_spec_context'
 require File.expand_path('lib/support/log_reporter', __dir__)
 
+Mocha.configure do |c|
+  c.strict_keyword_argument_matching = true
+end
+
 module CliAssertions
   def assert_cmd(expected_output, args = [], ignore_whitespace: false)
     output = run_cmd(args)
