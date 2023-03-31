@@ -39,7 +39,7 @@ describe Procedures::HammerSetup do
       hammer_ins.stubs(:_check_connection).returns(true)
       result = run_procedure(subject)
       assert result.success?, 'the procedure was expected to succeed'
-      feature(:hammer).ready?.must_equal true
+      _(feature(:hammer).ready?).must_equal true
     end
   end
 

@@ -22,7 +22,7 @@ describe Features::Hammer do
       "#{data_dir}/hammer/sample_user_config/cli.modules.d/foreman.yml",
     ].map { |p| File.expand_path(p) }
 
-    subject.config_files.must_equal(expected_config_files)
+    _(subject.config_files).must_equal(expected_config_files)
   end
 
   it 'loads and merges hammer configuration' do
@@ -30,10 +30,10 @@ describe Features::Hammer do
                          "#{data_dir}/hammer/sample_user_config",
                          "#{data_dir}/hammer/sample_default_config",
                        ])
-    subject.configuration[:log_level].must_equal('error')
-    subject.configuration[:foreman][:username].must_equal('user')
-    subject.configuration[:foreman][:password].must_equal('password')
-    subject.configuration[:foreman][:host].must_equal('https://example.com/')
+    _(subject.configuration[:log_level]).must_equal('error')
+    _(subject.configuration[:foreman][:username]).must_equal('user')
+    _(subject.configuration[:foreman][:password]).must_equal('password')
+    _(subject.configuration[:foreman][:host]).must_equal('https://example.com/')
   end
 
   it 'can run commands' do
@@ -47,13 +47,13 @@ describe Features::Hammer do
       config = "#{data_dir}/hammer/sample_user_config/cli_config.yml"
       subject_ins.stubs(:custom_config_file).returns(config)
       expected_command = "RUBYOPT='-W0' LANG=en_US.utf-8 hammer -c \"#{config}\" --interactive=no"
-      subject.command_base.must_equal(expected_command)
+      _(subject.command_base).must_equal(expected_command)
     end
 
     it 'adds custom config when present' do
       config = 'missing'
       subject_ins.stubs(:custom_config_file).returns(config)
-      subject.command_base.must_equal("RUBYOPT='-W0' LANG=en_US.utf-8 hammer --interactive=no")
+      _(subject.command_base).must_equal("RUBYOPT='-W0' LANG=en_US.utf-8 hammer --interactive=no")
     end
   end
 
@@ -77,7 +77,7 @@ describe Features::Hammer do
       stub_connection_check(false, true)
 
       expect_custom_config(:foreman => { :username => 'admin' })
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
 
     it 'replaces different host' do
@@ -89,7 +89,7 @@ describe Features::Hammer do
       stub_connection_check(false, true)
 
       expect_custom_config(:foreman => { :username => 'admin', :host => subject.server_uri })
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
 
     it 'gets credentials from answer files when no password' do
@@ -98,7 +98,7 @@ describe Features::Hammer do
       stub_connection_check(false, true)
 
       expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
 
     it 'gets credentials from answer files when invalid password' do
@@ -109,7 +109,7 @@ describe Features::Hammer do
       stub_hostname
       stub_connection_check(false, false, true)
       expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
 
     it 'makes sure we use admin account and ignore the non-admin password' do
@@ -120,7 +120,7 @@ describe Features::Hammer do
       stub_hostname
       stub_connection_check(false, true)
       expect_custom_config(:foreman => { :username => 'admin', :password => 'inspasswd' })
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
 
     it 'asks if the installer stored password is wrong' do
@@ -131,8 +131,8 @@ describe Features::Hammer do
       stub_connection_check(false, false, true)
       log_reporter.input << 'manual'
       expect_custom_config(:foreman => { :username => 'admin', :password => 'manual' })
-      subject.setup_admin_access.must_equal true
-      log_reporter.output.must_equal "Hammer admin password:\n"
+      _(subject.setup_admin_access).must_equal true
+      _(log_reporter.output).must_equal "Hammer admin password:\n"
     end
 
     it 'fails when the interractive password is wrong' do
@@ -142,15 +142,19 @@ describe Features::Hammer do
       stub_hostname
       stub_connection_check(false, false)
       log_reporter.input << 'manual'
-      proc { subject.setup_admin_access }.must_raise(ForemanMaintain::HammerConfigurationError)
-      subject.ready?.must_equal false
+
+      assert_raises(ForemanMaintain::HammerConfigurationError) do
+        subject.setup_admin_access
+      end
+
+      _(subject.ready?).must_equal false
     end
 
     it 'uses stored values from last time if still valid' do
       hammer_config_dirs([])
       stub_connection_check(true)
       subject_ins.expects(:save_config).never
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
 
     it 'ignores stored values from last time if invalid' do
@@ -161,7 +165,7 @@ describe Features::Hammer do
       stub_hostname
       stub_connection_check(false, true)
       expect_custom_config(:foreman => { :username => 'admin' })
-      subject.setup_admin_access.must_equal true
+      _(subject.setup_admin_access).must_equal true
     end
   end
 end
