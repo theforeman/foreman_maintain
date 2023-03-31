@@ -105,9 +105,6 @@ Style/DoubleNegation:
   StyleGuide: '#no-bang-bang'
   Enabled: false
 
-Minitest/GlobalExpectations:
-  Enabled: false
-
 Metrics/PerceivedComplexity:
   Enabled: false
 

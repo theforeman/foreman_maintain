@@ -25,23 +25,23 @@ describe Features::Installer do
         '/opt/puppetlabs/puppet/cache/foreman_cache_data',
         '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
       ].sort
-      subject.config_files.sort.must_equal(expected_config_files)
+      _(subject.config_files.sort).must_equal(expected_config_files)
     end
 
     it 'can tell if we use scenarios or not' do
-      subject.with_scenarios?.must_equal true
+      _(subject.with_scenarios?).must_equal true
     end
 
     it 'can tell last used scenario from the link' do
-      subject.last_scenario.must_equal('foreman')
+      _(subject.last_scenario).must_equal('foreman')
     end
 
     it 'returns the last scenario answers as a hash' do
-      subject.answers['foreman']['admin_password'].must_equal('inspasswd')
+      _(subject.answers['foreman']['admin_password']).must_equal('inspasswd')
     end
 
     it 'has --upgrade' do
-      subject.can_upgrade?.must_equal true
+      _(subject.can_upgrade?).must_equal true
     end
 
     context '#upgrade' do

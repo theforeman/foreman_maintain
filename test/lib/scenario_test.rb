@@ -8,7 +8,7 @@ module ForemanMaintain
 
     it 'pass context params to the procedure' do
       runner.run
-      reporter.output.must_equal("value\n")
+      _(reporter.output).must_equal("value\n")
     end
   end
 end

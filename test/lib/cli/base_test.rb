@@ -19,35 +19,35 @@ module ForemanMaintain
     describe '.completion_dict' do
       it 'collects options with multiple names' do
         desc = CommandA.completion_map
-        desc.keys.must_include '--help'
-        desc.keys.must_include '-h'
-        desc['--help'].must_equal(:type => :flag)
+        _(desc.keys).must_include '--help'
+        _(desc.keys).must_include '-h'
+        _(desc['--help']).must_equal(:type => :flag)
       end
 
       it 'collects option with values' do
         desc = CommandA.completion_map
-        desc['--level'].must_equal(:type => :value)
+        _(desc['--level']).must_equal(:type => :value)
       end
 
       it 'collects flag options' do
         desc = CommandA.completion_map
-        desc['--flag'].must_equal(:type => :flag)
+        _(desc['--flag']).must_equal(:type => :flag)
       end
 
       it 'collects subcommands and their options' do
         desc = CommandA.completion_map
-        desc.keys.must_include 'b'
-        desc['b'].keys.must_include '--filename'
+        _(desc.keys).must_include 'b'
+        _(desc['b'].keys).must_include '--filename'
       end
 
       it 'collects parameters' do
         desc = CommandB.completion_map
-        desc[:params].must_equal([{ :type => :directory }, { :type => :value }])
+        _(desc[:params]).must_equal([{ :type => :directory }, { :type => :value }])
       end
 
       it 'has no params key when params are missing' do
         desc = CommandA.completion_map
-        desc.keys.wont_include :params
+        _(desc.keys).wont_include :params
       end
     end
   end

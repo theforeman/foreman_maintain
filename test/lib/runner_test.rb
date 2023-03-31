@@ -101,7 +101,7 @@ module ForemanMaintain
       it 'does not continue when the reporter does not confirm the scenario' do
         runner = Runner.new(reporter, [warn_scenario, success_scenario])
         runner.run
-        reporter.log.last.
+        _(reporter.log.last).
           must_equal(['ask', 'Continue with [Scenarios::Dummy::Success], [y(yes), n(no), q(quit)]'])
       end
     end
@@ -118,11 +118,11 @@ module ForemanMaintain
         new_reporter = Support::LogReporter.new
         new_runner = Runner.new(new_reporter, [scenario])
         new_runner.run
-        scenario.steps.map { |x| x.execution.status }.must_equal([:success, :fail])
-        reporter.executions.must_equal [['Procedures::RunOnce', :success],
-                                        ['Check that ends up with fail', :fail]]
-        new_reporter.executions.must_equal [['Procedures::RunOnce', :already_run],
-                                            ['Check that ends up with fail', :fail]]
+        _(scenario.steps.map { |x| x.execution.status }).must_equal([:success, :fail])
+        _(reporter.executions).must_equal [['Procedures::RunOnce', :success],
+                                           ['Check that ends up with fail', :fail]]
+        _(new_reporter.executions).must_equal [['Procedures::RunOnce', :already_run],
+                                               ['Check that ends up with fail', :fail]]
       end
 
       it 'runs the step marked as run_once if already run but called with --force' do
@@ -132,11 +132,11 @@ module ForemanMaintain
         new_reporter = Support::LogReporter.new
         new_runner = Runner.new(new_reporter, [scenario], :force => true)
         new_runner.run
-        scenario.steps.map { |x| x.execution.status }.must_equal([:success, :fail])
-        reporter.executions.must_equal [['Procedures::RunOnce', :success],
-                                        ['Check that ends up with fail', :fail]]
-        new_reporter.executions.must_equal [['Procedures::RunOnce', :success],
-                                            ['Check that ends up with fail', :fail]]
+        _(scenario.steps.map { |x| x.execution.status }).must_equal([:success, :fail])
+        _(reporter.executions).must_equal [['Procedures::RunOnce', :success],
+                                           ['Check that ends up with fail', :fail]]
+        _(new_reporter.executions).must_equal [['Procedures::RunOnce', :success],
+                                               ['Check that ends up with fail', :fail]]
       end
     end
 

@@ -12,14 +12,14 @@ describe Features::Instance do
       assume_feature_present(:foreman_proxy)
       assume_feature_present(:capsule)
       assume_feature_absent(:satellite)
-      subject.product_name.must_equal 'Capsule'
+      _(subject.product_name).must_equal 'Capsule'
     end
 
     it 'recognizes Foreman Proxy' do
       assume_feature_absent(:foreman_server)
       assume_feature_present(:foreman_proxy)
       assume_feature_absent(:capsule)
-      subject.product_name.must_equal 'Foreman Proxy'
+      _(subject.product_name).must_equal 'Foreman Proxy'
     end
 
     it 'recognizes Katello' do
@@ -27,7 +27,7 @@ describe Features::Instance do
       assume_feature_present(:foreman_proxy)
       assume_feature_present(:katello)
       assume_feature_absent(:satellite)
-      subject.product_name.must_equal 'Katello'
+      _(subject.product_name).must_equal 'Katello'
     end
 
     it 'recognizes Satellite' do
@@ -35,7 +35,7 @@ describe Features::Instance do
       assume_feature_present(:foreman_proxy)
       assume_feature_present(:katello)
       assume_feature_present(:satellite)
-      subject.product_name.must_equal 'Satellite'
+      _(subject.product_name).must_equal 'Satellite'
     end
 
     it 'recognizes Foreman' do
@@ -43,7 +43,7 @@ describe Features::Instance do
       assume_feature_present(:foreman_proxy)
       assume_feature_absent(:katello)
       assume_feature_absent(:satellite)
-      subject.product_name.must_equal 'Foreman'
+      _(subject.product_name).must_equal 'Foreman'
     end
   end
 
@@ -57,12 +57,12 @@ describe Features::Instance do
               db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
             end
           end
-          subject.database_local?(feature.to_sym).must_equal(true)
+          _(subject.database_local?(feature.to_sym)).must_equal(true)
         end
 
         it "is false when the #{feature} is not present" do
           assume_feature_absent(feature.to_sym)
-          subject.database_local?(feature.to_sym).must_equal(false)
+          _(subject.database_local?(feature.to_sym)).must_equal(false)
         end
 
         it "is false when the #{feature} is present and remote" do
@@ -72,7 +72,7 @@ describe Features::Instance do
               db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
             end
           end
-          subject.database_local?(feature.to_sym).must_equal(false)
+          _(subject.database_local?(feature.to_sym)).must_equal(false)
         end
       end
     end
@@ -88,12 +88,12 @@ describe Features::Instance do
               db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
             end
           end
-          subject.database_remote?(feature.to_sym).must_equal(false)
+          _(subject.database_remote?(feature.to_sym)).must_equal(false)
         end
 
         it "is false when the #{feature} is not present" do
           assume_feature_absent(feature.to_sym)
-          subject.database_remote?(feature.to_sym).must_equal(false)
+          _(subject.database_remote?(feature.to_sym)).must_equal(false)
         end
 
         it "is true when the #{feature} is present and remote" do
@@ -103,7 +103,7 @@ describe Features::Instance do
               db.any_instance.stubs(:config_file).returns("#{data_dir}/mongo/default_server.conf")
             end
           end
-          subject.database_remote?(feature.to_sym).must_equal(true)
+          _(subject.database_remote?(feature.to_sym)).must_equal(true)
         end
       end
     end
@@ -147,9 +147,9 @@ describe Features::Instance do
         subject.stubs(:server_connection).returns(connection)
 
         ping = subject.ping
-        ping.success?.must_equal false
-        ping.message.must_equal "Couldn't connect to the server: #{conn_error_msg}"
-        ping.data[:failing_services].must_be_nil
+        _(ping.success?).must_equal false
+        _(ping.message).must_equal "Couldn't connect to the server: #{conn_error_msg}"
+        _(ping.data[:failing_services]).must_be_nil
       end
 
       it 'succeeds when all the components are okay' do
@@ -158,9 +158,9 @@ describe Features::Instance do
         subject.stubs(:server_connection).returns(connection)
 
         ping = subject.ping
-        ping.success?.must_equal true
-        ping.message.must_equal 'Success'
-        ping.data[:failing_services].must_be_nil
+        _(ping.success?).must_equal true
+        _(ping.message).must_equal 'Success'
+        _(ping.data[:failing_services]).must_be_nil
       end
 
       it 'fails when some of the components fail' do
@@ -177,9 +177,9 @@ describe Features::Instance do
         subject.stubs(:server_connection).returns(connection)
 
         ping = subject.ping
-        ping.success?.must_equal false
-        ping.message.must_equal 'Some components are failing: pulp'
-        ping.data[:failing_services].must_equal [existing_httpd, existing_mongod]
+        _(ping.success?).must_equal false
+        _(ping.message).must_equal 'Some components are failing: pulp'
+        _(ping.data[:failing_services]).must_equal [existing_httpd, existing_mongod]
       end
     end
 
@@ -195,9 +195,9 @@ describe Features::Instance do
         end
 
         ping = subject.ping
-        ping.success?.must_equal false
-        ping.message.must_equal "Couldn't connect to the proxy: #{conn_error_msg}"
-        ping.data[:failing_services].must_be_nil
+        _(ping.success?).must_equal false
+        _(ping.message).must_equal "Couldn't connect to the proxy: #{conn_error_msg}"
+        _(ping.data[:failing_services]).must_be_nil
       end
 
       it 'succeeds when proxy responds' do
@@ -206,9 +206,9 @@ describe Features::Instance do
         end
 
         ping = subject.ping
-        ping.success?.must_equal true
-        ping.message.must_equal 'Success'
-        ping.data[:failing_services].must_be_nil
+        _(ping.success?).must_equal true
+        _(ping.message).must_equal 'Success'
+        _(ping.data[:failing_services]).must_be_nil
       end
     end
 
@@ -225,9 +225,9 @@ describe Features::Instance do
         subject.stubs(:server_connection).returns(connection)
 
         ping = subject.ping
-        ping.success?.must_equal false
-        ping.message.must_equal "Couldn't connect to the server: #{conn_error_msg}"
-        ping.data[:failing_services].must_be_nil
+        _(ping.success?).must_equal false
+        _(ping.message).must_equal "Couldn't connect to the server: #{conn_error_msg}"
+        _(ping.data[:failing_services]).must_be_nil
       end
 
       it 'succeeds when all the components are okay' do
@@ -236,9 +236,9 @@ describe Features::Instance do
         subject.stubs(:server_connection).returns(connection)
 
         ping = subject.ping
-        ping.success?.must_equal true
-        ping.message.must_equal 'Success'
-        ping.data[:failing_services].must_be_nil
+        _(ping.success?).must_equal true
+        _(ping.message).must_equal 'Success'
+        _(ping.data[:failing_services]).must_be_nil
       end
     end
   end
@@ -250,7 +250,7 @@ describe Features::Instance do
     let(:existing_qdrouterd) { existing_system_service('qdrouterd', 10) }
 
     it 'succeed with unknown service' do
-      subject.send(:component_services, ['unknown']).must_equal []
+      _(subject.send(:component_services, ['unknown'])).must_equal []
     end
 
     it 'succeed with pulp3' do
@@ -261,7 +261,7 @@ describe Features::Instance do
         feature_class.any_instance.stubs(:services).returns(existing_postgresql)
       end
 
-      subject.send(:component_services, ['pulp3']).
+      _(subject.send(:component_services, ['pulp3'])).
         must_equal [existing_pulpcore_api, existing_postgresql]
     end
     it 'succeed with katello_agent' do
@@ -269,7 +269,7 @@ describe Features::Instance do
         feature_class.any_instance.stubs(:services).returns([existing_qpidd, existing_qdrouterd])
       end
 
-      subject.send(:component_services, ['katello_agent']).
+      _(subject.send(:component_services, ['katello_agent'])).
         must_equal [existing_qpidd, existing_qdrouterd]
     end
   end
