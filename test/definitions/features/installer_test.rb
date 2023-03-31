@@ -49,7 +49,7 @@ describe Features::Installer do
         assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
           with('foreman-installer --disable-system-checks --upgrade',
-            :interactive => true).
+            { :interactive => true }).
           returns(true)
         subject.upgrade(:interactive => true)
       end
@@ -58,7 +58,7 @@ describe Features::Installer do
         assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
           with('satellite-installer --disable-system-checks --upgrade',
-            :interactive => true).
+            { :interactive => true }).
           returns(true)
         subject.upgrade(:interactive => true)
       end
@@ -68,7 +68,7 @@ describe Features::Installer do
       it 'runs the installer with correct params' do
         assume_feature_absent(:satellite)
         installer_inst.expects(:'execute!').
-          with('foreman-installer --password=changeme', :interactive => true).
+          with('foreman-installer --password=changeme', { :interactive => true }).
           returns(true)
         subject.run('--password=changeme', :interactive => true)
       end
@@ -76,7 +76,7 @@ describe Features::Installer do
       it 'runs the installer with correct params in satellite' do
         assume_feature_present(:satellite)
         installer_inst.expects(:'execute!').
-          with('satellite-installer --password=changeme', :interactive => true).
+          with('satellite-installer --password=changeme', { :interactive => true }).
           returns(true)
         subject.run('--password=changeme', :interactive => true)
       end
