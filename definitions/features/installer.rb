@@ -44,6 +44,8 @@ class Features::Installer < ForemanMaintain::Feature
 
   def config_directory
     case @installer_type
+    when :scenarios && File.exist?('/var/lib/foreman-installer')
+      '/var/lib/foreman-installer'
     when :scenarios
       '/etc/foreman-installer'
     when :legacy_katello
