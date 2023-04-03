@@ -8,11 +8,7 @@ class Features::Service < ForemanMaintain::Feature
     # { :only => ["httpd"] }
     # { :exclude => ["pulp-workers", "tomcat"] }
     # { :include => ["crond"] }
-    if feature(:instance).downstream&.less_than_version?('6.3')
-      use_katello_service(action, options)
-    else
-      use_system_service(action, options, spinner)
-    end
+    use_system_service(action, options, spinner)
   end
 
   def existing_services
@@ -180,44 +176,7 @@ class Features::Service < ForemanMaintain::Feature
     end
   end
 
-  def use_katello_service(action, options)
-    if %w[enable disable].include?(action)
-      raise 'Service enable and disable are only supported in Satellite 6.3+'
-    end
-
-    command = "katello-service #{action} "
-
-    # katello-service in 6.1 does not support --only
-    if feature(:instance).downstream.less_than_version?('6.2')
-      excluded_services = exclude_services_only(options)
-      command += "--exclude #{excluded_services.join(',')}" if excluded_services.any?
-    else
-      command += katello_service_filters(options)
-    end
-
-    run_katello_service(command)
-  end
-
-  def run_katello_service(command)
-    puts "Services are handled by katello-service in Satellite versions 6.2 and earlier. \n" \
-         "Flags --brief or --failing will be ignored if present. \n"\
-         "Similarly, services that are not listed by katello-service will get ignored. \n"\
-         "Redirecting to: \n#{command}\n"
-    puts execute(command)
-  end
-
   def exclude_services_only(options)
     existing_services - filtered_services(options)
-  end
-
-  def katello_service_filters(options)
-    filters = ''
-    if options[:exclude]&.any?
-      filters += "--exclude #{options[:exclude].join(',')}"
-    end
-    if options[:only]&.any?
-      filters += "--only #{options[:only].join(',')}"
-    end
-    filters
   end
 end
