@@ -20,6 +20,6 @@ class Features::PresentService < ForemanMaintain::Feature
   end
 
   def running?
-    false
+    TestHelper.present_service_is_running
   end
 end

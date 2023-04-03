@@ -5,6 +5,7 @@ class Checks::CheckUpstreamRepository < ForemanMaintain::Check
     label :check_upstream_repository
     description 'Check if any upstream repositories are enabled on system'
     tags :pre_upgrade
+    skippable
     preparation_steps do
       [Checks::Repositories::CheckNonRhRepository.new,
        Procedures::Packages::Install.new(:packages => %w[yum-utils])]

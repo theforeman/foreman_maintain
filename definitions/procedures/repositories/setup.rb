@@ -2,6 +2,7 @@ module Procedures::Repositories
   class Setup < ForemanMaintain::Procedure
     metadata do
       description 'Setup repositories'
+      skippable
       confine do
         feature(:instance).downstream || feature(:upstream)
       end

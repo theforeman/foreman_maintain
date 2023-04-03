@@ -52,6 +52,8 @@ module ForemanMaintain
       return if scenario.steps.empty?
       raise 'The runner is already in quit state' if quit? && !rescue?
 
+      validate_steps(scenario.steps)
+
       confirm_scenario(scenario)
       return if quit? && !rescue?
 
@@ -176,6 +178,14 @@ module ForemanMaintain
 
     def rerun_check?(step)
       @last_decision_step == step
+    end
+
+    def validate_steps(steps)
+      steps.each do |step|
+        if whitelisted_step?(step) && !step.metadata[:skippable]
+          raise "#{step} is not skippable. Please remove from whitelist."
+        end
+      end
     end
   end
 end
