@@ -7,7 +7,7 @@ class Checks::CheckForNewerPackages < ForemanMaintain::Check
       'package names to validate',
       :required => true
     param :manual_confirmation_version,
-      'Version of satellite (6.9) to ask the user if they are on the latest minor release of.',
+      'Version of satellite to ask the user if they are on the latest minor release of.',
       :required => false
     manual_detection
   end

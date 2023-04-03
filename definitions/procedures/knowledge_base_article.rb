@@ -25,7 +25,6 @@ class Procedures::KnowledgeBaseArticle < ForemanMaintain::Procedure
     {
       'fix_cpdb_validate_failure' => 'https://access.redhat.com/solutions/3362821',
       'fix_db_migrate_failure_on_duplicate_roles' => 'https://access.redhat.com/solutions/3998941',
-      'upgrade_puppet_guide_for_sat63' => 'https://access.redhat.com/documentation/en-us/red_hat_satellite/6.3/html/upgrading_and_updating_red_hat_satellite/upgrading_puppet-1',
       'many_fact_values' => 'https://access.redhat.com/solutions/4163891',
     }
   end

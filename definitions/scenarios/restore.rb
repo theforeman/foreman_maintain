@@ -16,7 +16,6 @@ module ForemanMaintain::Scenarios
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
       add_steps(find_checks(:root_user))
-      supported_version_check
       add_steps_with_context(Checks::Restore::ValidateBackup,
         Checks::Restore::ValidateHostname,
         Checks::Restore::ValidateInterfaces,
@@ -80,14 +79,6 @@ module ForemanMaintain::Scenarios
       end
       if feature(:pulpcore) && backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::PulpcoreDump)
-      end
-    end
-
-    def supported_version_check
-      if feature(:instance).downstream&.less_than_version?('6.3')
-        msg = 'ERROR: Restore subcommand is supported by Satellite 6.3+. ' \
-              'Please use katello-restore instead.'
-        abort(msg)
       end
     end
 
