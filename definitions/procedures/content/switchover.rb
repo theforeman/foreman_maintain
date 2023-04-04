@@ -9,7 +9,6 @@ module Procedures::Content
       end
 
       param :skip_deb, 'Do not run debian options in installer.'
-      do_not_whitelist
     end
 
     def run

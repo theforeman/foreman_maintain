@@ -4,7 +4,6 @@ module Procedures::Content
       description 'Prepare content for Pulp 3'
       for_feature :pulpcore
       param :quiet, 'Keep the output on a single line', :flag => true, :default => false
-      do_not_whitelist
     end
 
     def run

@@ -8,7 +8,6 @@ module Checks
         confine do
           feature(:katello)
         end
-        do_not_whitelist
       end
 
       def run

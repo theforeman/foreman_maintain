@@ -13,6 +13,7 @@ module Checks::Dummy
     metadata do
       label :dummy_check_fail
       description 'Check that ends up with fail'
+      skippable
     end
 
     def run
@@ -35,7 +36,6 @@ module Checks::Dummy
     metadata do
       label :dummy_check_fail_skipwhitelist
       description 'Check that ends up with fail'
-      do_not_whitelist
     end
 
     def run

@@ -100,8 +100,8 @@ module ForemanMaintain
           @data[:advanced_run] = advanced_run
         end
 
-        def do_not_whitelist
-          @data[:do_not_whitelist] = true
+        def skippable
+          @data[:skippable] = true
         end
 
         def self.eval_dsl(metadata, &block)

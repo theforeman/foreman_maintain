@@ -2,6 +2,8 @@ module Checks::Repositories
   class Validate < ForemanMaintain::Check
     metadata do
       description 'Validate availability of repositories'
+      skippable
+
       preparation_steps do
         Checks::Repositories::CheckNonRhRepository.new
       end

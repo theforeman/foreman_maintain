@@ -132,7 +132,7 @@ module ForemanMaintain
       contact Red Hat Technical Support.
 
       In case the failures are false positives, use
-      --whitelist="dummy-check-fail,dummy-check-fail2"
+      --whitelist="dummy-check-fail"
       MESSAGE
     end
 
@@ -160,7 +160,7 @@ module ForemanMaintain
 
       Resolve the failed steps and rerun the command.
       In case the failures are false positives, use
-      --whitelist="dummy-check-fail,dummy-check-fail2"
+      --whitelist="dummy-check-fail"
       MESSAGE
     end
 

@@ -42,8 +42,4 @@ describe Checks::Foreman::TuningRequirements do
     assert_includes result.output, 'The number of CPU cores for the system is 6 but the currently configured tuning profile requires 8.' # rubocop:disable Metrics/LineLength
     assert result.fail?
   end
-
-  it 'does not allow being whitelisted' do
-    assert subject.metadata[:do_not_whitelist]
-  end
 end

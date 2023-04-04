@@ -315,19 +315,17 @@ module ForemanMaintain
         end
 
         steps_with_error = scenario.steps_with_error(:whitelisted => false)
-        steps_with_skipped = scenario.steps_with_skipped(:whitelisted => true)
-        not_skippable_steps = scenario.steps_with_error.select do |step|
-          step.metadata[:do_not_whitelist] == true
+        skippable_steps = scenario.steps_with_error.select do |step|
+          step.metadata[:skippable] == true
         end
 
-        steps_to_whitelist = steps_with_error + steps_with_skipped - not_skippable_steps
         unless steps_with_error.empty?
           message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_error, "\n", 2))
           The following steps ended up in failing state:
 
           %s
           MESSAGE
-          whitelist_labels = steps_to_whitelist.map(&:label_dashed).join(',')
+          whitelist_labels = skippable_steps.map(&:label_dashed).join(',')
           unless whitelist_labels.empty?
             recommend << if scenario.detector.feature(:instance).downstream
                            format(<<-MESSAGE.strip_heredoc, whitelist_labels)
