@@ -27,7 +27,11 @@ module Procedures::Packages
     end
 
     def description
-      "Update package(s) #{@packages.join(', ')}"
+      if @yum_options.include?('--downloadonly')
+        "Download package(s) #{@packages.join(', ')}"
+      else
+        "Update package(s) #{@packages.join(', ')}"
+      end
     end
   end
 end
