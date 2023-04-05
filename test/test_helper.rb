@@ -83,6 +83,10 @@ class FakePackageManager < ForemanMaintain::PackageManager::Base
   def module_exists?(_name)
     false
   end
+
+  def clean_cache(_assumeyes)
+    true
+  end
 end
 
 module PackageManagerTestHelper

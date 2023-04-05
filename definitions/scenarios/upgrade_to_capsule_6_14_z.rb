@@ -40,7 +40,6 @@ module Scenarios::Capsule_6_14_z
 
     def compose
       add_steps(find_procedures(:pre_migrations))
-      add_step(Procedures::Service::Stop.new)
     end
   end
 
@@ -58,7 +57,9 @@ module Scenarios::Capsule_6_14_z
       add_step(Procedures::Repositories::Setup.new(:version => '6.14'))
       modules_to_enable = ["satellite-capsule:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
-      add_step(Procedures::Packages::UnlockVersions.new)
+      add_step(Procedures::Packages::Update.new(:assumeyes => true,
+        :yum_options => ['--downloadonly']))
+      add_step(Procedures::Service::Stop.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)
     end
