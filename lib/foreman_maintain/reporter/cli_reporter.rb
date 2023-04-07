@@ -150,7 +150,12 @@ module ForemanMaintain
       end
 
       def after_execution_finishes(execution)
-        puts_status(execution.status)
+        if execution.started_at
+          puts_status(execution.status, execution.ended_at - execution.started_at)
+        else
+          puts_status(execution.status)
+        end
+
         puts(execution.output) unless execution.output.empty?
         puts(already_run_msg) if execution.status == :already_run
         hline
@@ -258,14 +263,16 @@ module ForemanMaintain
         "#{prefix} #{text}"
       end
 
-      def puts_status(status)
-        label_offset = 10
+      def puts_status(status, runtime = nil)
+        label_offset = 12
         padding = @max_length - @last_line.to_s.size - label_offset
         if padding < 0
           new_line_if_needed
           padding = @max_length - label_offset
         end
-        @stdout.print(' ' * padding + status_label(status))
+        output = ' ' * padding + status_label(status)
+        output += runtime ? " [#{runtime.truncate(2).to_s}]" : ''
+        @stdout.print(output)
         @new_line_next_time = true
       end
 
