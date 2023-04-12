@@ -109,10 +109,9 @@ module ForemanMaintain::Scenarios
     private
 
     def prepare_directory
-      add_steps_with_context(
-        Procedures::Backup::PrepareDirectory,
-        Checks::Backup::DirectoryReady
-      )
+      add_step_with_context(Procedures::Backup::PrepareDirectory)
+      add_step_with_context(Checks::Backup::DirectoryReady,
+        :postgres_access => online_backup? || include_db_dumps?)
     end
 
     def logical_volume_confirmation
