@@ -10,7 +10,7 @@ require File.expand_path('lib/support/log_reporter', __dir__)
 Mocha.configure do |c|
   c.strict_keyword_argument_matching = true
 end
-Minitest::Reporters.use!
+Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new(:color => true)]
 
 module CliAssertions
   def assert_cmd(expected_output, args = [], ignore_whitespace: false)
