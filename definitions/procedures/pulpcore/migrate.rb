@@ -16,9 +16,8 @@ module Procedures::Pulpcore
         feature(:service).handle_services(spinner, 'stop', :only => pulp_services)
 
         spinner.update('Migrating pulpcore database')
-        execute!('sudo PULP_SETTINGS=/etc/pulp/settings.py '\
-          'DJANGO_SETTINGS_MODULE=pulpcore.app.settings '\
-          'pulpcore-manager migrate --noinput')
+        execute!('PULP_SETTINGS=/etc/pulp/settings.py '\
+          'runuser -u pulp -- pulpcore-manager migrate --noinput')
       end
     end
   end
