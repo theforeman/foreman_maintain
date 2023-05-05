@@ -13,9 +13,8 @@ describe Procedures::Pulpcore::TrimRpmChangelogs do
   end
 
   it 'trims RPM changelogs' do
-    trim_command = 'sudo PULP_SETTINGS=/etc/pulp/settings.py '\
-      'DJANGO_SETTINGS_MODULE=pulpcore.app.settings '\
-      'pulpcore-manager rpm-trim-changelogs'
+    trim_command = 'PULP_SETTINGS=/etc/pulp/settings.py '\
+      'runuser -u pulp -- pulpcore-manager rpm-trim-changelogs'
 
     subject.stubs(:'execute!').with(trim_command).returns(0)
     result = run_procedure(subject)
