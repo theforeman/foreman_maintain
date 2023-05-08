@@ -10,6 +10,10 @@ module ForemanMaintain
         # All below directories and their contents are regenerated on installer run
         %w[assets exports imports sync_imports tmp]
       end
+
+      def pulpcore_manager(command)
+        "PULP_SETTINGS=/etc/pulp/settings.py runuser -u pulp -- pulpcore-manager #{command}"
+      end
     end
   end
 end
