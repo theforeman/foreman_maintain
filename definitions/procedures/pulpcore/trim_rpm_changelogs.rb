@@ -1,6 +1,7 @@
 module Procedures::Pulpcore
   class TrimRpmChangelogs < ForemanMaintain::Procedure
     include ForemanMaintain::Concerns::SystemService
+    include ForemanMaintain::Concerns::PulpCommon
 
     metadata do
       description 'Trim RPM changelogs in the pulpcore db'
@@ -14,8 +15,7 @@ module Procedures::Pulpcore
         feature(:service).handle_services(spinner, 'start', :only => necessary_services)
 
         spinner.update('Trimming RPM changelogs')
-        execute!('PULP_SETTINGS=/etc/pulp/settings.py '\
-          'runuser -u pulp -- pulpcore-manager rpm-trim-changelogs')
+        execute!(pulpcore_manager('rpm-trim-changelogs'))
       end
     end
   end
