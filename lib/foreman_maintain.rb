@@ -143,7 +143,7 @@ module ForemanMaintain
       # convert size in KB to Bytes
       log_fsize = config.log_file_size.to_i * 1024
       @logger = Logger.new(config.log_filename, 10, log_fsize).tap do |logger|
-        logger.level = LOGGER_LEVEL_MAPPING[config.log_level] || Logger::DEBUG
+        logger.level = LOGGER_LEVEL_MAPPING[config.log_level] || Logger::INFO
         logger.datetime_format = '%Y-%m-%d %H:%M:%S%z '
       end
       pickup_log_messages

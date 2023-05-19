@@ -28,7 +28,7 @@ module ForemanMaintain
     private
 
     def load_log_configs
-      @log_level = @options.fetch(:log_level, ::Logger::DEBUG)
+      @log_level = @options.fetch(:log_level, ::Logger::INFO)
       @log_dir = find_dir_path(@options.fetch(:log_dir, 'log'))
       @log_file_size = @options.fetch(:log_file_size, 10_000)
       # Note - If timestamp added to filename then number of log files i.e second
