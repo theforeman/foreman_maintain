@@ -33,12 +33,13 @@ describe ForemanMaintain do
       subject.stubs(:el?).returns(true)
     end
 
-    let(:package_manager) { ForemanMaintain.package_manager }
+    let(:package_manager) { ForemanMaintain::PackageManager::Dnf }
 
     it 'should enable the maintenance module' do
-      package_manager.expects(:module_exists?).with('satellite-maintenance:el8').returns(true)
-      package_manager.expects(:module_enabled?).with('satellite-maintenance:el8').returns(false)
-      package_manager.expects(:enable_module).with('satellite-maintenance:el8').returns(true)
+      package_manager.any_instance.stubs(:module_exists?).returns(true)
+      package_manager.any_instance.stubs(:module_enabled?).returns(false)
+
+      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').once
 
       assert_output("\nEnabling satellite-maintenance:el8 module\n") do
         subject.enable_maintenance_module
@@ -46,7 +47,9 @@ describe ForemanMaintain do
     end
 
     it 'should not enable the maintenance module if module does not exist' do
-      package_manager.expects(:module_exists?).with('satellite-maintenance:el8').returns(false)
+      package_manager.any_instance.stubs(:module_exists?).returns(false)
+
+      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
 
       assert_output('') do
         subject.enable_maintenance_module
@@ -54,8 +57,10 @@ describe ForemanMaintain do
     end
 
     it 'should not enable the maintenance module if module is already enabled' do
-      package_manager.expects(:module_exists?).with('satellite-maintenance:el8').returns(true)
-      package_manager.expects(:module_enabled?).with('satellite-maintenance:el8').returns(true)
+      package_manager.any_instance.stubs(:module_exists?).returns(true)
+      package_manager.any_instance.stubs(:module_enabled?).returns(true)
+
+      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
 
       assert_output('') do
         subject.enable_maintenance_module

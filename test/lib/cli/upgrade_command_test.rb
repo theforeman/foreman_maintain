@@ -6,12 +6,12 @@ module ForemanMaintain
   describe Cli::UpgradeCommand do
     include CliAssertions
     before do
+      ForemanMaintain.stubs(:el?).returns(true)
       ForemanMaintain.detector.refresh
       UpgradeRunner.clear_current_target_version
     end
 
     def foreman_maintain_update_available
-      ForemanMaintain.stubs(:el?).returns(true)
       PackageManagerTestHelper.mock_package_manager
       FakePackageManager.any_instance.stubs(:update).with('rubygem-foreman_maintain',
         :assumeyes => true).returns(true)
@@ -21,34 +21,35 @@ module ForemanMaintain
     end
 
     def foreman_maintain_update_unavailable
-      ForemanMaintain.stubs(:el?).returns(true)
       PackageManagerTestHelper.mock_package_manager
       # rubocop:disable Layout/LineLength
       FakePackageManager.any_instance.stubs(:update_available?).with('rubygem-foreman_maintain').returns(false)
       # rubocop:enable Layout/LineLength
     end
 
-    let :command do
-      %w[upgrade]
-    end
+    describe 'help' do
+      let :command do
+        %w[upgrade]
+      end
 
-    it 'prints help' do
-      assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
-        Usage:
-            foreman-maintain upgrade [OPTIONS] SUBCOMMAND [ARG] ...
+      it 'prints help' do
+        assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
+          Usage:
+              foreman-maintain upgrade [OPTIONS] SUBCOMMAND [ARG] ...
 
-        Parameters:
-            SUBCOMMAND                    subcommand
-            [ARG] ...                     subcommand arguments
+          Parameters:
+              SUBCOMMAND                    subcommand
+              [ARG] ...                     subcommand arguments
 
-        Subcommands:
-            list-versions                 List versions this system is upgradable to
-            check                         Run pre-upgrade checks before upgrading to specified version
-            run                           Run full upgrade to a specified version
+          Subcommands:
+              list-versions                 List versions this system is upgradable to
+              check                         Run pre-upgrade checks before upgrading to specified version
+              run                           Run full upgrade to a specified version
 
-        Options:
-            -h, --help                    print help
-      OUTPUT
+          Options:
+              -h, --help                    print help
+        OUTPUT
+      end
     end
 
     describe 'list-versions' do
