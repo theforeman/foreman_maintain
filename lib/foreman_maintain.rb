@@ -180,10 +180,11 @@ module ForemanMaintain
       puts "Checking for new version of #{package_name}..."
 
       enable_maintenance_module
+      package_manager = ForemanMaintain.package_manager
 
-      if ForemanMaintain.package_manager.update_available?(main_package_name)
+      if package_manager.update_available?(main_package_name)
         puts "\nUpdating #{package_name} package."
-        ForemanMaintain.package_manager.update(main_package_name, :assumeyes => true)
+        package_manager.update(main_package_name, :assumeyes => true)
         puts "\nThe #{package_name} package successfully updated."\
              "\nRe-run #{command} with required options!"
         exit 75
