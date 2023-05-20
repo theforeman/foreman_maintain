@@ -33,6 +33,10 @@ module ForemanMaintain::Utils
         execute('stop')
       end
 
+      def restart
+        execute('restart')
+      end
+
       def enable
         execute('enable')
       end
