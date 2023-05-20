@@ -72,8 +72,8 @@ module ForemanMaintain::RepositoryManager
                         entry.split(':', 2).last.strip
                       end]
 
-      # The EL7 yum repolist output includes extra info in the output,
-      # as example
+      # repolist output includes extra info in the output
+      #
       # rhel-7-server-rpms/7Server/x86_64
       # rhel-server-rhscl-7-rpms/7Server/x86_64
       # This trims anything after first '/' to get correct repo label

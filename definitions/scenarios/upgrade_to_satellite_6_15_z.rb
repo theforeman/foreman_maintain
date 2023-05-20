@@ -58,7 +58,7 @@ module Scenarios::Satellite_6_15_z
       modules_to_enable = ["satellite:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       add_step(Procedures::Packages::Update.new(:assumeyes => true,
-        :yum_options => ['--downloadonly']))
+        :dnf_options => ['--downloadonly']))
       add_step(Procedures::Service::Stop.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)

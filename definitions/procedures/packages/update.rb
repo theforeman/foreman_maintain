@@ -6,13 +6,13 @@ module Procedures::Packages
       param :force, 'Do not skip if package is installed', :flag => true, :default => false
       param :warn_on_errors, 'Do not interrupt scenario on failure',
         :flag => true, :default => false
-      param :yum_options, 'Extra yum options if any', :array => true, :default => []
+      param :dnf_options, 'Extra dnf options if any', :array => true, :default => []
     end
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
       package_manager.clean_cache(:assumeyes => assumeyes_val)
-      opts = { :assumeyes => assumeyes_val, :yum_options => @yum_options }
+      opts = { :assumeyes => assumeyes_val, :dnf_options => @dnf_options }
       packages_action(:update, @packages, opts)
     rescue ForemanMaintain::Error::ExecutionError => e
       if @warn_on_errors
@@ -27,7 +27,7 @@ module Procedures::Packages
     end
 
     def description
-      if @yum_options.include?('--downloadonly')
+      if @dnf_options.include?('--downloadonly')
         "Download package(s) #{@packages.join(', ')}"
       else
         "Update package(s) #{@packages.join(', ')}"
