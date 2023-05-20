@@ -67,13 +67,11 @@ module ForemanMaintain::Scenarios
     def downstream_self_upgrade(pkgs_to_update)
       ForemanMaintain.enable_maintenance_module
 
-      if check_min_version('foreman', '2.5') || check_min_version('foreman-proxy', '2.5')
-        yum_options = req_repos_to_update_pkgs.map do |id|
-          "--enablerepo=#{id}"
-        end
-        add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true,
-          yum_options: yum_options))
+      dnf_options = req_repos_to_update_pkgs.map do |id|
+        "--enablerepo=#{id}"
       end
+      add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true,
+        dnf_options: dnf_options))
     end
 
     def upstream_self_upgrade(pkgs_to_update)

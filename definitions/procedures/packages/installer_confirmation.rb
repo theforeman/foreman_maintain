@@ -6,7 +6,7 @@ module Procedures::Packages
 
     def run
       question = "\nWARNING: This script runs #{feature(:installer).installer_command} " \
-        "after the yum execution \n" \
+        "after the dnf execution \n" \
         "to ensure the #{feature(:instance).product_name} " \
         "is in a consistent state.\n" \
         "As a result some of your services may be restarted. \n\n" \

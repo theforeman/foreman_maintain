@@ -4,8 +4,7 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
     description 'Check to verify if any hotfix installed on system'
     tags :pre_upgrade
     preparation_steps do
-      [Checks::Repositories::CheckNonRhRepository.new,
-       Procedures::Packages::Install.new(:packages => %w[yum-utils])]
+      [Checks::Repositories::CheckNonRhRepository.new]
     end
 
     confine do
@@ -45,7 +44,7 @@ class Checks::CheckHotfixInstalled < ForemanMaintain::Check
 
   def installed_packages
     packages = []
-    IO.popen(['repoquery', '-a', '--installed', '--qf', query_format]) do |io|
+    IO.popen(['dnf', 'repoquery', '-a', '--installed', '--qf', query_format]) do |io|
       io.each do |line|
         repo, pkg = line.chomp.split
         next if repo.nil? || pkg.nil?
