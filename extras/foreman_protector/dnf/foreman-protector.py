@@ -8,10 +8,6 @@ class ForemanProtector(dnf.Plugin):
     name = 'foreman-protector'
     config_name = 'foreman-protector'
 
-    def __init__(self,base,cli):
-        self.base = base
-        self.cli = cli
-
     def _get_whitelist_file_url(self):
         try:
              parser = self.read_config(self.base.conf)
