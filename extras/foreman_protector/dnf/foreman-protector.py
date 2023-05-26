@@ -4,6 +4,8 @@ from dnfpluginscore import _, logger
 
 import configparser
 
+PROTECT_COMMANDS = ('install', 'downgrade', 'reinstall', 'distro-sync', 'swap', 'upgrade', 'upgrade-minimal')
+
 class ForemanProtector(dnf.Plugin):
     name = 'foreman-protector'
     config_name = 'foreman-protector'
@@ -49,6 +51,8 @@ class ForemanProtector(dnf.Plugin):
         return final_query
 
     def sack(self):
+        if self.cli is not None and self.cli.command._basecmd not in PROTECT_COMMANDS:
+            return
         whitelist_and_obsoletes = self._add_obsoletes()
         all_available_packages = self.base.sack.query().available()
         excluded_pkgs_query = all_available_packages.difference(whitelist_and_obsoletes)
