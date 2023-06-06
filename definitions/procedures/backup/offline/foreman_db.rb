@@ -44,6 +44,7 @@ module Procedures::Backup
           :listed_incremental => File.join(@backup_dir, '.postgres.snar'),
           :volume_size => @tar_volume_size,
           :data_dir => pg_dir,
+          :restore_dir => feature(:foreman_database).data_dir,
           :command => cmd
         )
       end
