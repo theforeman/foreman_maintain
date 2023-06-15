@@ -73,7 +73,7 @@ module Scenarios::Capsule_6_13
     def compose
       add_step(Procedures::RefreshFeatures)
       add_step(Procedures::Service::Start.new)
-      add_step(Procedures::Pulpcore::ContainerRepairMediaType.new)
+      add_step(Procedures::Pulpcore::RepairContainerMediaType.new)
       add_steps(find_procedures(:post_migrations))
     end
   end
