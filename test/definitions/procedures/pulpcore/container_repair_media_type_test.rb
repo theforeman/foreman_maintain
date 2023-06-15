@@ -1,10 +1,10 @@
 require 'test_helper'
 
-describe Procedures::Pulpcore::RepairContainerMediaType do
+describe Procedures::Pulpcore::ContainerRepairMediaType do
   include DefinitionsTestHelper
 
   subject do
-    Procedures::Pulpcore::RepairContainerMediaType.new
+    Procedures::Pulpcore::ContainerRepairMediaType.new
   end
 
   before do
