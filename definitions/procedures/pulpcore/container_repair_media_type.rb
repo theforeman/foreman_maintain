@@ -1,5 +1,5 @@
 module Procedures::Pulpcore
-  class RepairContainerMediaType < ForemanMaintain::Procedure
+  class ContainerRepairMediaType < ForemanMaintain::Procedure
     include ForemanMaintain::Concerns::SystemService
 
     metadata do
