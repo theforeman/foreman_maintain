@@ -253,6 +253,18 @@ module ForemanMaintain
       def online_backup?
         !!metadata.fetch('online', false)
       end
+
+      def installed_rpms
+        metadata.fetch('rpms', metadata.fetch(:rpms, []))
+      end
+
+      def with_puppetserver?
+        installed_rpms.any? { |rpm| rpm.start_with?('puppetserver-') }
+      end
+
+      def with_qpidd?
+        installed_rpms.any? { |rpm| rpm.start_with?('qpid-cpp-server-') }
+      end
     end
   end
 end
