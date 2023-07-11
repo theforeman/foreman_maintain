@@ -80,9 +80,8 @@ describe 'Service procedures perform appropiate actions' do
       Procedures::Service::Restart.new
     end
 
-    it 'Stops and starts services' do
-      stub_systemctl_calls(@services, 'stop')
-      stub_systemctl_calls(@services, 'start')
+    it 'Restarts services' do
+      stub_systemctl_calls(@services, 'restart')
       result = run_procedure(subject)
       assert result.success?
     end
