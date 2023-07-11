@@ -28,6 +28,7 @@ module ForemanMaintain::Scenarios
 
       add_steps_with_context(Procedures::Restore::Confirmation,
                              Procedures::Selinux::SetFileSecurity,
+                             Procedures::Restore::RequiredPackages,
                              Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
       unless backup.incremental?
@@ -103,6 +104,7 @@ module ForemanMaintain::Scenarios
                   Checks::Restore::ValidateBackup => :backup_dir,
                   Checks::Restore::ValidateHostname => :backup_dir,
                   Checks::Restore::ValidateInterfaces => :backup_dir,
+                  Procedures::Restore::RequiredPackages => :backup_dir,
                   Procedures::Restore::Configs => :backup_dir,
                   Procedures::Restore::DropDatabases => :backup_dir,
                   Procedures::Restore::CandlepinDump => :backup_dir,
