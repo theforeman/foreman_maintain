@@ -378,5 +378,29 @@ module ForemanMaintain
       assert backup.validate_interfaces['dns']['configured'] = 'eth0'
       assert backup.validate_interfaces['dhcp']['configured'] = 'eth0'
     end
+
+    it 'detects backup with puppetserver installed' do
+      backup = subject.new(katello_standard_pulpcore_database)
+      backup.stubs(:metadata).returns('rpms' => ['puppetserver-7.4.2-1.el8.noarch'])
+      assert backup.with_puppetserver?
+    end
+
+    it 'detects backup without puppetserver installed' do
+      backup = subject.new(katello_standard_pulpcore_database)
+      backup.stubs(:metadata).returns('rpms' => ['ansible-core-2.14.2-4.el8_8.x86_64'])
+      refute backup.with_puppetserver?
+    end
+
+    it 'detects backup with qpidd installed' do
+      backup = subject.new(katello_standard_pulpcore_database)
+      backup.stubs(:metadata).returns('rpms' => ['qpid-cpp-server-1.36.0-32.el7_9amq.x86_64'])
+      assert backup.with_qpidd?
+    end
+
+    it 'detects backup without qpidd installed' do
+      backup = subject.new(katello_standard_pulpcore_database)
+      backup.stubs(:metadata).returns('rpms' => ['qpid-cpp-client-1.36.0-32.el7_9amq.x86_64'])
+      refute backup.with_qpidd?
+    end
   end
 end
