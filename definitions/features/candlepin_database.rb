@@ -22,24 +22,10 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
     @configuration || load_configuration
   end
 
-  def validate_available_in_cpdb?
-    check_option_using_cpdb_help('validate')
-  end
-
   def check_option_using_cpdb_help(option_name, parent_cmd = '')
     parent_cmd = '/usr/share/candlepin/cpdb' if parent_cmd.empty?
     help_cmd = "#{parent_cmd} --help |  grep -c '\\-\\-#{option_name}'"
     execute?(help_cmd)
-  end
-
-  def execute_cpdb_validate_cmd
-    main_cmd = cpdb_validate_cmd
-    return [true, nil] if main_cmd.empty?
-    main_cmd += format_shell_args(
-      '-u' => configuration['username'], '-p' => configuration[%(password)]
-    )
-    main_cmd += format_shell_args(extend_with_db_options)
-    execute_with_status(main_cmd, :hidden_patterns => [configuration['password']])
   end
 
   def env_content_ids_with_null_content
@@ -86,13 +72,5 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
     return nil unless query_string
     output = /#{key_name}=([^&]*)?/.match(query_string)
     output[1] if output
-  end
-
-  def cpdb_validate_cmd
-    return '' unless check_option_using_cpdb_help('validate')
-    cmd = '/usr/share/candlepin/cpdb --validate'
-    return cmd unless check_option_using_cpdb_help('verbose', cmd)
-    cmd += ' --verbose'
-    cmd
   end
 end
