@@ -3,20 +3,8 @@ class Features::Installer < ForemanMaintain::Feature
     label :installer
 
     confine do
-      find_package('foreman-installer') ||
-        find_package('katello-installer') ||
-        find_package('capsule-installer')
+      find_package('foreman-installer')
     end
-  end
-
-  def initialize
-    @installer_type = if find_package('foreman-installer')
-                        :scenarios
-                      elsif find_package('katello-installer')
-                        :legacy_katello
-                      elsif find_package('capsule-installer')
-                        :legacy_capsule
-                      end
   end
 
   def answers
@@ -28,37 +16,15 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def config_file
-    case @installer_type
-    when :scenarios
-      last_scenario_config
-    when :legacy_katello
-      File.join(config_directory, 'katello-installer.yaml')
-    when :legacy_capsule
-      File.join(config_directory, 'capsule-installer.yaml')
-    end
-  end
-
-  def with_scenarios?
-    @installer_type == :scenarios
+    last_scenario_config
   end
 
   def config_directory
-    case @installer_type
-    when :scenarios
-      '/etc/foreman-installer'
-    when :legacy_katello
-      '/etc/katello-installer'
-    when :legacy_capsule
-      '/etc/capsule-installer'
-    end
+    '/etc/foreman-installer'
   end
 
   def custom_hiera_file
     @custom_hiera_file ||= File.join(config_directory, 'custom-hiera.yaml')
-  end
-
-  def can_upgrade?
-    @installer_type == :scenarios || @installer_type == :legacy_katello
   end
 
   def config_files
@@ -71,23 +37,14 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def last_scenario
-    return nil unless with_scenarios?
-
     File.basename(last_scenario_config).split('.')[0]
   end
 
   def installer_command
-    case @installer_type
-    when :scenarios
-      if feature(:satellite)
-        'satellite-installer'
-      else
-        'foreman-installer'
-      end
-    when :legacy_katello
-      'katello-installer'
-    when :legacy_capsule
-      'capsule-installer'
+    if feature(:satellite)
+      'satellite-installer'
+    else
+      'foreman-installer'
     end
   end
 
@@ -105,22 +62,7 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def upgrade(exec_options = {})
-    run(installer_arguments, exec_options)
-  end
-
-  def installer_arguments
-    installer_args = ''
-
-    if feature(:foreman_proxy)&.with_content? &&
-       check_max_version('foreman-installer', '3.4')
-      installer_args += ' --disable-system-checks'
-    end
-
-    if !check_min_version('foreman-installer', '2.1') && can_upgrade?
-      installer_args += ' --upgrade'
-    end
-
-    installer_args
+    run('', exec_options)
   end
 
   def initial_admin_username
