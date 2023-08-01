@@ -11,8 +11,6 @@ describe Features::Installer do
     before do
       installer_config_dir(["#{data_dir}/installer/simple_config"])
       mock_installer_package('foreman-installer')
-      Features::Installer.any_instance.
-        stubs(:installer_arguments).returns('--disable-system-checks --upgrade')
     end
 
     it 'loads list of configs on the start' do
@@ -28,40 +26,12 @@ describe Features::Installer do
       _(subject.config_files.sort).must_equal(expected_config_files)
     end
 
-    it 'can tell if we use scenarios or not' do
-      _(subject.with_scenarios?).must_equal true
-    end
-
     it 'can tell last used scenario from the link' do
       _(subject.last_scenario).must_equal('foreman')
     end
 
     it 'returns the last scenario answers as a hash' do
       _(subject.answers['foreman']['admin_password']).must_equal('inspasswd')
-    end
-
-    it 'has --upgrade' do
-      _(subject.can_upgrade?).must_equal true
-    end
-
-    context '#upgrade' do
-      it '#upgrade runs the installer with correct params' do
-        assume_feature_absent(:satellite)
-        installer_inst.expects(:'execute!').
-          with('foreman-installer --disable-system-checks --upgrade',
-            { :interactive => true }).
-          returns(true)
-        subject.upgrade(:interactive => true)
-      end
-
-      it '#upgrade runs the installer with correct params in satellite' do
-        assume_feature_present(:satellite)
-        installer_inst.expects(:'execute!').
-          with('satellite-installer --disable-system-checks --upgrade',
-            { :interactive => true }).
-          returns(true)
-        subject.upgrade(:interactive => true)
-      end
     end
 
     context '#run' do
