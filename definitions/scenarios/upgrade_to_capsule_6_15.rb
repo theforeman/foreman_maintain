@@ -1,25 +1,25 @@
-module Scenarios::Satellite_6_14
+module Scenarios::Capsule_6_15
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:satellite) &&
-            (feature(:satellite).current_minor_version == '6.13' || \
-            ForemanMaintain.upgrade_in_progress == '6.14')
+          feature(:capsule) &&
+            (feature(:capsule).current_minor_version == '6.14' || \
+            ForemanMaintain.upgrade_in_progress == '6.15')
         end
         instance_eval(&block)
       end
     end
 
     def target_version
-      '6.14'
+      '6.15'
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Satellite 6.14'
+      description 'Checks before upgrading to Capsule 6.15'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -28,13 +28,13 @@ module Scenarios::Satellite_6_14
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
       add_step(Checks::Foreman::CheckpointSegments)
-      add_step(Checks::Repositories::Validate.new(:version => '6.14'))
+      add_step(Checks::Repositories::Validate.new(:version => '6.15'))
     end
   end
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before migrating to Satellite 6.14'
+      description 'Procedures before migrating to Capsule 6.15'
       tags :pre_migrations
     end
 
@@ -45,9 +45,8 @@ module Scenarios::Satellite_6_14
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Migration scripts to Satellite 6.14'
+      description 'Migration scripts to Capsule 6.15'
       tags :migrations
-      run_strategy :fail_fast
     end
 
     def set_context_mapping
@@ -55,21 +54,20 @@ module Scenarios::Satellite_6_14
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => '6.14'))
-      modules_to_enable = ["satellite:#{el_short_name}"]
+      add_step(Procedures::Repositories::Setup.new(:version => '6.15'))
+      modules_to_enable = ["satellite-capsule:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       add_step(Procedures::Packages::Update.new(:assumeyes => true,
         :yum_options => ['--downloadonly']))
       add_step(Procedures::Service::Stop.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::Upgrade)
-      add_step(Procedures::Installer::UpgradeRakeTask)
     end
   end
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures after migrating to Satellite 6.14'
+      description 'Procedures after migrating to Capsule 6.15'
       tags :post_migrations
     end
 
@@ -82,7 +80,7 @@ module Scenarios::Satellite_6_14
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Satellite 6.14'
+      description 'Checks after upgrading to Capsule 6.15'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end
