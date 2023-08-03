@@ -50,7 +50,7 @@ module DefinitionsTestHelper
   alias run_procedure run_step
 
   def mock_with_spinner(definition)
-    mock_spinner = MiniTest::Mock.new
+    mock_spinner = Minitest::Mock.new
     mock_spinner.expect(:update, nil)
 
     definition.stubs(:with_spinner).returns(mock_spinner)
