@@ -59,7 +59,7 @@ module ForemanMaintain
     end
 
     def feature_with_local_method(label, return_value)
-      fake_feature = MiniTest::Mock.new
+      fake_feature = Minitest::Mock.new
       ret_hash = { 'host' => 'abc.example.com' }
       fake_feature.expect(:configuration, ret_hash)
       fake_feature.expect(:local?, return_value)
