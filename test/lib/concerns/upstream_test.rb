@@ -150,7 +150,7 @@ module ForemanMaintain
       it 'returns repositories matching with regex' do
         stub_el(katello_system)
         katello_repo_url = 'https://yum.theforeman.org/katello/4.5/katello/el8/x86_64/'
-        repository_manager_obj = MiniTest::Mock.new
+        repository_manager_obj = Minitest::Mock.new
         system_repositories = { 'non_foreman' => 'abc.example.com',
                                 'katello' => katello_repo_url }
         repository_manager_obj.expect(:enabled_repos, system_repositories)

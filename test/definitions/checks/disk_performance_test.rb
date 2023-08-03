@@ -23,7 +23,7 @@ describe Checks::Disk::Performance do
     end
     check_disk_performance.stubs(:check_only_single_device?).returns(true)
 
-    io_obj = MiniTest::Mock.new
+    io_obj = Minitest::Mock.new
     io_obj.expect(:read_speed, 90)
     io_obj.expect(:slow_disk_error_msg, 'Slow disk')
     io_obj.expect(:name, '/dev/sda')
@@ -49,7 +49,7 @@ describe Checks::Disk::Performance do
 
     check_disk_performance.stubs(:check_only_single_device?).returns(true)
 
-    io_obj = MiniTest::Mock.new
+    io_obj = Minitest::Mock.new
     2.times { io_obj.expect(:read_speed, slow_speed) }
     io_obj.expect(:slow_disk_error_msg, err_msg)
     io_obj.expect(:name, '/dev/sda')

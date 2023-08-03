@@ -1,6 +1,6 @@
 require 'minitest/spec'
 
-module MiniTest
+module Minitest
   class Spec
     class << self
       alias_method :context, :describe
