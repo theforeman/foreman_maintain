@@ -28,6 +28,14 @@ class Features::Instance < ForemanMaintain::Feature
     end
   end
 
+  def project_support_entity
+    if feature(:satellite)
+      'Red Hat Technical Support'
+    else
+      'Foreman Community Support'
+    end
+  end
+
   def database_remote?(feature)
     !!feature(feature) && !feature(feature).local?
   end

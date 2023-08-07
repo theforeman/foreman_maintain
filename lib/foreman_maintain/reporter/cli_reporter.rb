@@ -330,20 +330,20 @@ module ForemanMaintain
           whitelist_labels = steps_to_whitelist.map(&:label_dashed).join(',')
           unless whitelist_labels.empty?
             recommend << if scenario.detector.feature(:instance).downstream
-                           format(<<-MESSAGE.strip_heredoc, whitelist_labels)
+                           format(<<-MESSAGE.strip_heredoc)
               Resolve the failed steps and rerun the command.
 
               If the situation persists and, you are unclear what to do next,
-              contact Red Hat Technical Support.
+              contact #{scenario.detector.feature(:instance).project_support_entity}.
 
               In case the failures are false positives, use
-              --whitelist="%s"
+              --whitelist="#{whitelist_labels}"
                            MESSAGE
                          else
-                           format(<<-MESSAGE.strip_heredoc, whitelist_labels)
+                           format(<<-MESSAGE.strip_heredoc)
               Resolve the failed steps and rerun the command.
               In case the failures are false positives, use
-              --whitelist="%s"
+              --whitelist="#{whitelist_labels}"
                            MESSAGE
                          end
           end
