@@ -9,6 +9,14 @@ module ForemanMaintain
     def downstream
       feature(:satellite) || feature(:capsule)
     end
+
+    def project_support_entity
+      if feature(:satellite)
+        'Red Hat Technical Support'
+      else
+        'Foreman community support'
+      end
+    end
   end
 
   describe Reporter::CLIReporter do
