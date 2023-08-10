@@ -45,7 +45,9 @@ module ForemanMaintain::Scenarios
         add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
 
-      if feature(:instance).postgresql_local? && !backup.online_backup?
+      if feature(:instance).postgresql_local? &&
+         !backup.online_backup? &&
+         backup.different_source_os?
         add_step_with_context(Procedures::Restore::ReindexDatabases)
       end
 

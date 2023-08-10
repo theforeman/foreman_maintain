@@ -265,6 +265,14 @@ module ForemanMaintain
       def with_qpidd?
         installed_rpms.any? { |rpm| rpm.start_with?('qpid-cpp-server-') }
       end
+
+      def source_os_version
+        metadata.fetch('os_version', 'unknown')
+      end
+
+      def different_source_os?
+        source_os_version != "#{os_name} #{os_version}"
+      end
     end
   end
 end

@@ -302,5 +302,21 @@ module ForemanMaintain
       backup.stubs(:metadata).returns('rpms' => ['qpid-cpp-client-1.36.0-32.el7_9amq.x86_64'])
       refute backup.with_qpidd?
     end
+
+    it 'detects backup from different OS' do
+      backup = subject.new(katello_standard)
+      backup.stubs(:metadata).returns('os_version' => 'TestOS 1.2')
+      backup.stubs(:os_name).returns('TestOS')
+      backup.stubs(:os_version).returns('2.0')
+      assert backup.different_source_os?
+    end
+
+    it 'detects backup from the same OS' do
+      backup = subject.new(katello_standard)
+      backup.stubs(:metadata).returns('os_version' => 'TestOS 1.2')
+      backup.stubs(:os_name).returns('TestOS')
+      backup.stubs(:os_version).returns('1.2')
+      refute backup.different_source_os?
+    end
   end
 end
