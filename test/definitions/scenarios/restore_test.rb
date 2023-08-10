@@ -25,20 +25,30 @@ module Scenarios
         assert_scenario_has_step(scenario, Procedures::Restore::Configs)
       end
 
-      it 'reindexes the DB if DB is local and offline backup' do
+      it 'reindexes the DB if DB is local and offline backup and OS change' do
         assume_feature_present(:instance, :postgresql_local? => true)
         ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(false)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:different_source_os?).returns(true)
         assert_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
+      end
+
+      it 'doesnt reindex the DB if DB is local and offline backup and no OS change' do
+        assume_feature_present(:instance, :postgresql_local? => true)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(false)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:different_source_os?).returns(false)
+        refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
       end
 
       it 'doesnt reindex the DB if DB is local and online backup' do
         assume_feature_present(:instance, :postgresql_local? => false)
         ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(true)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:different_source_os?).returns(true)
         refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
       end
 
       it 'doesnt reindex the DB if it is remote' do
         assume_feature_present(:instance, :postgresql_local? => false)
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:different_source_os?).returns(true)
         refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
       end
     end
