@@ -29,7 +29,7 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def project_support_entity
-    if feature(:satellite)
+    if downstream
       'Red Hat Technical Support'
     else
       'Foreman Community Support'
