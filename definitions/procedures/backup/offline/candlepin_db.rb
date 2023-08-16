@@ -36,7 +36,8 @@ module Procedures::Backup
             pg_backup_file,
             :listed_incremental => File.join(@backup_dir, '.postgres.snar'),
             :volume_size => @tar_volume_size,
-            :data_dir => pg_data_dir
+            :data_dir => pg_data_dir,
+            :restore_dir => feature(:candlepin_database).data_dir
           )
         end
       end
