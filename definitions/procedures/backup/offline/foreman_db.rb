@@ -39,12 +39,13 @@ module Procedures::Backup
       end
 
       def do_backup(pg_dir, cmd)
+        restore_dir = el? ? feature(:foreman_database).data_dir : pg_dir
         feature(:foreman_database).backup_local(
           pg_backup_file,
           :listed_incremental => File.join(@backup_dir, '.postgres.snar'),
           :volume_size => @tar_volume_size,
           :data_dir => pg_dir,
-          :restore_dir => feature(:foreman_database).data_dir,
+          :restore_dir => restore_dir,
           :command => cmd
         )
       end
