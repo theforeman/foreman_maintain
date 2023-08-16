@@ -101,13 +101,14 @@ module ForemanMaintain
 
       def backup_local(backup_file, extra_tar_options = {})
         dir = extra_tar_options.fetch(:data_dir, data_dir)
+        restore_dir = extra_tar_options.fetch(:restore_dir, data_dir)
         command = extra_tar_options.fetch(:command, 'create')
 
         FileUtils.cd(dir) do
           tar_options = {
             :archive => backup_file,
             :command => command,
-            :transform => "s,^,#{dir[1..]},S",
+            :transform => "s,^,#{restore_dir[1..]},S",
             :files => '*',
           }.merge(extra_tar_options)
           feature(:tar).run(tar_options)
