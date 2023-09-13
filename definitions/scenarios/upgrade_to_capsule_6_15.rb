@@ -27,7 +27,6 @@ module Scenarios::Capsule_6_15
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
-      add_step(Checks::Foreman::CheckpointSegments)
       add_step(Checks::Repositories::Validate.new(:version => '6.15'))
     end
   end
