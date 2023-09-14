@@ -64,7 +64,11 @@ module ForemanMaintain
     end
 
     def config_file_path
-      File.exist?(CONFIG_FILE) ? CONFIG_FILE : File.join(source_path, 'config/foreman_maintain.yml')
+      if defined?(CONFIG_FILE) && File.exist?(CONFIG_FILE)
+        CONFIG_FILE
+      else
+        File.join(source_path, 'config/foreman_maintain.yml')
+      end
     end
 
     def source_path
