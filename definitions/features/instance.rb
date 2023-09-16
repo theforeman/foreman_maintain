@@ -139,12 +139,6 @@ class Features::Instance < ForemanMaintain::Feature
   end
 
   def pick_failing_components(components)
-    if feature(:katello).current_version < Gem::Version.new('3.2.0')
-      # Note that katello_ping returns an empty result against foreman_auth.
-      # https://github.com/Katello/katello/commit/95d7b9067d38f269a5ec121fb73b5c19d4422baf
-      components.reject! { |n| n.eql?('foreman_auth') }
-    end
-
     components.each_with_object([]) do |(name, data), failing|
       failing << name unless data['status'] == 'ok'
     end
