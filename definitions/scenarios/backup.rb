@@ -49,7 +49,6 @@ module ForemanMaintain::Scenarios
     # rubocop:disable  Metrics/MethodLength
     def set_context_mapping
       context.map(:backup_dir,
-        Checks::Backup::DirectoryReady => :backup_dir,
         Procedures::Backup::PrepareDirectory => :backup_dir,
         Procedures::Backup::Metadata => :backup_dir,
         Procedures::Backup::ConfigFiles => :backup_dir,
@@ -66,7 +65,6 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Snapshot::MountForemanDB => :backup_dir,
         Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir)
       context.map(:preserve_dir,
-        Checks::Backup::DirectoryReady => :preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
         Procedures::Backup::PrepareDirectory => :incremental_dir,
@@ -104,8 +102,6 @@ module ForemanMaintain::Scenarios
 
     def prepare_directory
       add_step_with_context(Procedures::Backup::PrepareDirectory)
-      add_step_with_context(Checks::Backup::DirectoryReady,
-        :postgres_access => online_backup? || include_db_dumps?)
     end
 
     def logical_volume_confirmation

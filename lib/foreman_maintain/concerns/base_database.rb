@@ -75,11 +75,6 @@ module ForemanMaintain
           :hidden_patterns => [config['password']])
       end
 
-      def backup_file_path(config = configuration)
-        dump_file_name = "#{config['database']}_#{Time.now.strftime('%Y-%m-%d_%H-%M-%S')}.dump"
-        "#{backup_dir}/#{dump_file_name}.bz2"
-      end
-
       def dump_db(file, config = configuration)
         execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']])
       end
@@ -115,23 +110,9 @@ module ForemanMaintain
         end
       end
 
-      # TODO: refactor to use dump_db
-      def backup_db_command(file_path, config = configuration)
-        pg_dump_cmd = "pg_dump -Fc #{config['database']}"
-        "runuser - postgres -c '#{pg_dump_cmd}' | bzip2 -9 > #{file_path}"
-      end
-
       # TODO: remove the backup file path tools from here. Lib Utils::Backup?
       def backup_dir
         @backup_dir ||= File.expand_path(ForemanMaintain.config.db_backup_dir)
-      end
-
-      def perform_backup(config = configuration)
-        file_path = backup_file_path(config)
-        backup_cmd = backup_db_command(file_path, config)
-        execute!(backup_cmd, :hidden_patterns => [config['password']])
-        puts "\n Note: Database backup file path - #{file_path}"
-        puts "\n In case of any exception, use above dump file to restore DB."
       end
 
       def table_exist?(table_name)
