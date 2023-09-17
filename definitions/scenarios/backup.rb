@@ -25,7 +25,7 @@ module ForemanMaintain::Scenarios
       accessibility_confirmation
       prepare_directory
       logical_volume_confirmation
-      add_step_with_context(Procedures::Backup::Metadata)
+      add_step_with_context(Procedures::Backup::Metadata, :online_backup => online_backup?)
 
       case strategy
       when :online
@@ -199,7 +199,6 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::ForemanDB,
         Procedures::Backup::Online::PulpcoreDB
       )
-      add_step_with_context(Procedures::Backup::Metadata, :online_backup => true)
     end
 
     def strategy
