@@ -115,28 +115,6 @@ module ForemanMaintain
         @backup_dir ||= File.expand_path(ForemanMaintain.config.db_backup_dir)
       end
 
-      def table_exist?(table_name)
-        sql = <<-SQL
-          SELECT EXISTS ( SELECT *
-          FROM information_schema.tables WHERE table_name =  '#{table_name}' )
-        SQL
-        result = query(sql)
-        return false if result.nil? || (result && result.empty?)
-
-        result.first['exists'].eql?('t')
-      end
-
-      def delete_records_by_ids(tbl_name, rec_ids)
-        quotize_rec_ids = rec_ids.map { |el| "'#{el}'" }.join(',')
-        unless quotize_rec_ids.empty?
-          psql(<<-SQL)
-            BEGIN;
-             DELETE FROM #{tbl_name} WHERE id IN (#{quotize_rec_ids});
-            COMMIT;
-          SQL
-        end
-      end
-
       def find_base_directory(directory)
         find_dir_containing_file(directory, 'postgresql.conf')
       end
