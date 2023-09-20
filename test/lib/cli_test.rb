@@ -22,6 +22,7 @@ module ForemanMaintain
         Subcommands:
             health                        Health related commands
             upgrade                       Upgrade related commands
+            update                        Update related commands
             service                       Control applicable services
             backup                        Backup server
             restore                       Restore a backup
