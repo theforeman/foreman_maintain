@@ -163,14 +163,14 @@ module ForemanMaintain
       scenarios
     end
 
-    def add_steps(steps)
-      steps.each do |step|
+    def add_steps(*steps)
+      steps.flatten.each do |step|
         self.steps << step.ensure_instance
       end
     end
 
     def add_step(step)
-      add_steps([step]) unless step.nil?
+      add_steps(step) unless step.nil?
     end
 
     def add_step_with_context(definition, extra_params = {})

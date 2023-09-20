@@ -113,6 +113,10 @@ module ForemanMaintain::PackageManager
       dnf_action('module info', name, with_status: true, assumeyes: true)
     end
 
+    def package_version(package_name)
+      sys.execute!("rpm -q #{package_name} --qf '%{version}'").strip
+    end
+
     private
 
     # rubocop:disable Metrics/LineLength, Metrics/ParameterLists
