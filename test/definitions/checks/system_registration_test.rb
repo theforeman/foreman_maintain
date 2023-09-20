@@ -13,7 +13,8 @@ describe Checks::SystemRegistration do
     let(:rhsm_hostname_cmd) { "grep '\\bhostname\\b' < /etc/rhsm/rhsm.conf" }
 
     before do
-      subject.stubs(:file_exists?).returns(true)
+      subject.class.stubs(:file_exists?).returns(true)
+      subject.class.expects(:present?).returns(true)
     end
 
     context 'smart-proxy' do

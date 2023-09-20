@@ -6,7 +6,9 @@ describe Checks::Disk::AvailableSpacePostgresql13 do
   let(:check) { described_class.new }
 
   before do
-    assume_feature_present(:foreman_database)
+    assume_feature_present(:instance) do |feature|
+      feature.any_instance.stubs(:postgresql_local?).returns(true)
+    end
   end
 
   it 'executes successfully for disks with sufficient space' do

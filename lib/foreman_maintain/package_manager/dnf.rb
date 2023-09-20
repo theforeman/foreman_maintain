@@ -133,7 +133,7 @@ module ForemanMaintain::PackageManager
 
     private
 
-    # rubocop:disable Metrics/LineLength, Metrics/ParameterLists
+    # rubocop:disable Layout/LineLength, Metrics/ParameterLists
     def dnf_action(action, packages, with_status: false, assumeyes: false, dnf_options: [], valid_exit_statuses: [0], download_only: false)
       packages = [packages].flatten(1)
 
@@ -159,7 +159,7 @@ module ForemanMaintain::PackageManager
         )
       end
     end
-    # rubocop:enable Metrics/LineLength, Metrics/ParameterLists
+    # rubocop:enable Layout/LineLength, Metrics/ParameterLists
 
     def protector_config
       File.exist?(protector_config_file) ? File.read(protector_config_file) : ''
