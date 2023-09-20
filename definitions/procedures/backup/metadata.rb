@@ -64,9 +64,11 @@ module Procedures::Backup
     end
 
     def proxy_config(spinner)
-      spinner.update('Collecting proxy configuration')
-      feature(:installer).answers['foreman_proxy'].select do |key, _|
-        PROXY_CONFIG_ENTRIES.include?(key)
+      if feature(:installer)
+        spinner.update('Collecting proxy configuration')
+        feature(:installer).answers['foreman_proxy'].select do |key, _|
+          PROXY_CONFIG_ENTRIES.include?(key)
+        end
       end
     end
   end
