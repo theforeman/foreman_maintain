@@ -87,6 +87,7 @@ module Scenarios::Capsule_6_15_z
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
+      add_step(Procedures::Packages::CheckForReboot)
     end
   end
 end
