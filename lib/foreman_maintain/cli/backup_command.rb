@@ -155,7 +155,7 @@ module ForemanMaintain
     class BackupCommand < Base
       subcommand 'online', 'Keep services online during backup', OnlineBackupCommand
       subcommand 'offline', 'Shut down services to preserve consistent backup', OfflineBackupCommand
-      subcommand 'snapshot', 'Use snapshots of the databases to create backup', SnapshotBackupCommand
+      subcommand 'snapshot', 'Use snapshots of the databases to create backup (DEPRECATED)', SnapshotBackupCommand
     end
     # rubocop:enable Metrics/LineLength
   end

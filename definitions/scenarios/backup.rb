@@ -21,6 +21,7 @@ module ForemanMaintain::Scenarios
 
     def compose
       check_valid_startegy
+      snapshot_deprecation_warning
       safety_confirmation
       accessibility_confirmation
       prepare_directory
@@ -107,6 +108,12 @@ module ForemanMaintain::Scenarios
     def logical_volume_confirmation
       if strategy == :snapshot
         add_step_with_context(Procedures::Backup::Snapshot::LogicalVolumeConfirmation)
+      end
+    end
+
+    def snapshot_deprecation_warning
+      if strategy == :snapshot
+        add_step_with_context(Procedures::Backup::Snapshot::SnapshotDeprecationMessage)
       end
     end
 
