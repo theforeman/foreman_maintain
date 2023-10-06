@@ -18,9 +18,8 @@ describe Checks::Disk::Performance do
   end
 
   it 'executes successfully for disk with minimal speed' do
-    assume_satellite_present do |feature_class|
-      feature_class.any_instance.stubs(:at_least_version? => true)
-    end
+    assume_satellite_present
+
     check_disk_performance.stubs(:check_only_single_device?).returns(true)
 
     io_obj = Minitest::Mock.new
@@ -38,9 +37,7 @@ describe Checks::Disk::Performance do
   end
 
   it 'print warning if disk speed does not meet minimal requirement' do
-    assume_satellite_present do |feature_class|
-      feature_class.any_instance.stubs(:current_version => version('6.4.0'))
-    end
+    assume_satellite_present
 
     slow_speed = 59
     err_msg = 'Slow disk'
