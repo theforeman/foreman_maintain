@@ -53,3 +53,7 @@ grafana
 grafana-pcp
 # foreman-maintain
 rubygem-foreman_maintain
+# fapolicyd
+fapolicyd
+foreman-fapolicyd
+foreman-proxy-fapolicyd
