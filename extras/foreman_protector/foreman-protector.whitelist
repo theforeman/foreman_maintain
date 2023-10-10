@@ -39,5 +39,17 @@ python3-firewall
 python3-nftables
 python3-slip
 python3-slip-dbus
+# pcp
+pcp
+pcp-conf
+pcp-libs
+pcp-pmda-apache
+pcp-pmda-openmetrics
+pcp-pmda-postgresql
+pcp-pmda-redis
+pcp-system-tools
+python3-pcp
+grafana
+grafana-pcp
 # foreman-maintain
 rubygem-foreman_maintain
