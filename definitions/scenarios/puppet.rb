@@ -15,9 +15,6 @@ module ForemanMaintain::Scenarios
           add_step(Procedures::Puppet::RemovePuppet)
           add_step(Procedures::Puppet::RemovePuppetData) if context.get(:remove_data)
           add_step(Procedures::Service::Restart)
-          if server?
-            add_step(Procedures::Foreman::ApipieCache)
-          end
         end
       end
     end
