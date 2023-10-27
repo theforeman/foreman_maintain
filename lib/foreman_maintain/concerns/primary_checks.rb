@@ -2,7 +2,8 @@ module ForemanMaintain
   module Concerns
     module PrimaryChecks
       def validate_downstream_packages
-        return unless detector.feature(:installer)&.with_scenarios?
+        return unless detector.feature(:installer)
+
         if (package = package_name) && !package_manager.installed?(package)
           raise ForemanMaintain::Error::Fail,
             "Error: Important rpm package #{package} is not installed!"\
