@@ -1,5 +1,3 @@
-require 'yaml'
-
 class Checks::CheckKatelloAgentEnabled < ForemanMaintain::Check
   metadata do
     label :check_katello_agent_enabled
