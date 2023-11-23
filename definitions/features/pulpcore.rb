@@ -19,7 +19,7 @@ class Features::Pulpcore < ForemanMaintain::Feature
     names = names.map { |f| File.basename(f) }
     names.map do |name|
       system_service(name, 20, :skip_enablement => true,
-                               :instance_parent_unit => 'pulpcore-worker@')
+        :instance_parent_unit => 'pulpcore-worker@')
     end
   end
 
