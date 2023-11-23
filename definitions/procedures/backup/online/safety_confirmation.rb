@@ -5,7 +5,7 @@ module Procedures::Backup
         description 'Data consistency warning'
         tags :backup
         param :include_db_dumps, 'Are database dumps included in backup', :flag => true,
-                                                                          :default => false
+          :default => false
       end
 
       def run

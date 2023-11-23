@@ -14,7 +14,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   def services
     [
       system_service('postgresql', 10, :component => 'candlepin',
-                                       :db_feature => feature(:candlepin_database)),
+        :db_feature => feature(:candlepin_database)),
     ]
   end
 

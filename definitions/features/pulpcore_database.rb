@@ -20,7 +20,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
   def services
     [
       system_service('postgresql', 10, :component => 'pulpcore',
-                                       :db_feature => feature(:pulpcore_database)),
+        :db_feature => feature(:pulpcore_database)),
     ]
   end
 

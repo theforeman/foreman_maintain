@@ -90,7 +90,7 @@ module ForemanMaintain
                      ' --no-privileges --clean --disable-triggers -n public ' \
                      "-d #{config['database']} #{file}"
           execute!(dump_cmd, :hidden_patterns => [config['password']],
-                             :valid_exit_statuses => [0, 1])
+            :valid_exit_statuses => [0, 1])
         end
       end
 

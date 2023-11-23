@@ -106,7 +106,7 @@ module ForemanMaintain
           package_manager.install(packages, :assumeyes => options[:assumeyes])
         when :update
           package_manager.update(packages, :assumeyes => options[:assumeyes],
-                                           :dnf_options => options[:dnf_options])
+            :dnf_options => options[:dnf_options])
         when :remove
           package_manager.remove(packages, :assumeyes => options[:assumeyes])
         else

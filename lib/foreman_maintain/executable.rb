@@ -173,7 +173,7 @@ module ForemanMaintain
       raise "The step is not matching the hash #{hash.inspect}" unless matches_hash?(hash)
       raise "Can't update step that was already executed" if @_execution
       @_execution = Runner::StoredExecution.new(self, :status => hash[:status],
-                                                      :output => hash[:output])
+        :output => hash[:output])
     end
 
     def inspect
