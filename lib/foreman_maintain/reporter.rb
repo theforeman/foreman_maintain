@@ -113,7 +113,7 @@ module ForemanMaintain
         return steps.first
       end
       until_valid_decision do
-        actions = run_strategy == :fail_slow ? 'n(next)' : 'n(next), q(quit)'
+        actions = (run_strategy == :fail_slow) ? 'n(next)' : 'n(next), q(quit)'
 
         answer = ask("#{message}, [#{actions}]")
         if answer =~ /^\d+$/ && (answer.to_i - 1) < steps.size

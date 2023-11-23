@@ -14,7 +14,7 @@ module Procedures::Backup
 
       def mount_snapshot(database, lv_type)
         FileUtils.mkdir_p(mount_location(database))
-        options = lv_type == 'xfs' ? '-onouuid,ro' : '-oro'
+        options = (lv_type == 'xfs') ? '-onouuid,ro' : '-oro'
         lv_name = "#{database}-snap"
         execute!("mount #{get_lv_path(lv_name)} #{mount_location(database)} #{options}")
       end

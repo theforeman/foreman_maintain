@@ -19,7 +19,7 @@ module Checks::PackageManager
 
       # rubocop:disable Metrics/LineLength
       def failure_message(final_result)
-        verb_string = final_result[:matched_keys].length > 1 ? 'are' : 'is'
+        verb_string = (final_result[:matched_keys].length > 1) ? 'are' : 'is'
 
         "#{final_result[:matched_keys].join(',')} #{verb_string} set in /etc/dnf/dnf.conf as below:"\
         "\n#{final_result[:grep_output]}"\
