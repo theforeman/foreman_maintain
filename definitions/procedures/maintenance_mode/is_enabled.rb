@@ -12,7 +12,7 @@ module Procedures::MaintenanceMode
 
     def run
       @status_code = feature(:instance).firewall.maintenance_mode_status? ? 0 : 1
-      puts "Maintenance mode is #{@status_code == 1 ? 'Off' : 'On'}"
+      puts "Maintenance mode is #{(@status_code == 1) ? 'Off' : 'On'}"
     end
   end
 end

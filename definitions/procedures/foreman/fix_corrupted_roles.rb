@@ -26,7 +26,7 @@ module Procedures::Foreman
 
     def find_records_to_update(inconsistent_sets)
       largest_set = inconsistent_sets.reduce([]) do |memo, set|
-        set.count > memo.count ? set : memo
+        (set.count > memo.count) ? set : memo
       end
 
       inconsistent_sets.reject do |set|

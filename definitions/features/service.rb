@@ -15,7 +15,7 @@ class Features::Service < ForemanMaintain::Feature
     ForemanMaintain.available_features.flat_map(&:services).
       sort.
       inject([]) do |pool, service| # uniq(&:to_s) for ruby 1.8.7
-        pool.last.nil? || !pool.last.matches?(service) ? pool << service : pool
+        (pool.last.nil? || !pool.last.matches?(service)) ? pool << service : pool
       end.
       select(&:exist?)
   end
@@ -109,7 +109,7 @@ class Features::Service < ForemanMaintain::Feature
   end
 
   def format_brief_status(exit_code)
-    result = exit_code == 0 ? reporter.status_label(:success) : reporter.status_label(:fail)
+    result = (exit_code == 0) ? reporter.status_label(:success) : reporter.status_label(:fail)
     padding = reporter.max_length - reporter.last_line.to_s.length - 30
     "#{' ' * padding} #{result}"
   end

@@ -33,7 +33,7 @@ module Procedures::Backup
       def local_backup
         with_spinner("Collecting data from #{pg_data_dirs.join(',')}") do
           pg_data_dirs.each_with_index do |pg_dir, index|
-            do_backup(pg_dir, index == 0 ? 'create' : 'append')
+            do_backup(pg_dir, (index == 0) ? 'create' : 'append')
           end
         end
       end
