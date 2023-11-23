@@ -47,7 +47,7 @@ module ForemanMaintain
       end
 
       def save_all
-        storage_register.values.each(&:save)
+        storage_register.each_value(&:save)
       end
     end
   end
