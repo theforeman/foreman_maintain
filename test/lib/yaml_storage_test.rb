@@ -32,7 +32,7 @@ module ForemanMaintain
       sp_data = { :enabled => [], :disabled => [1] }
       old_storage[:sync_plans] = sp_data
       old_storage.save
-      assert_equal(YamlStorage, old_storage.class, 'expected YamlStorage object')
+      assert_instance_of(YamlStorage, old_storage, 'expected YamlStorage object')
       new_storage = ForemanMaintain.storage(:upgrade)
       sp_new_data = nested_hash_value(new_storage.data, :sync_plans)
       assert_equal([1], sp_new_data[:disabled], 'expected values should be match')
