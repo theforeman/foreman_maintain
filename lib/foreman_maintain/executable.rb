@@ -5,7 +5,7 @@ module ForemanMaintain
     attr_reader :options
 
     def_delegators :execution,
-      :success?, :skipped?, :fail?, :aborted?, :warning?, :output,
+      :success?, :skipped?, :fail?, :aborted?, :warning?, :info_warning?, :output,
       :assumeyes?, :whitelisted?, :ask_decision,
       :execution, :puts, :print, :with_spinner, :ask, :storage
 
@@ -89,6 +89,10 @@ module ForemanMaintain
 
     def set_warn(message)
       set_status(:warning, message)
+    end
+
+    def set_info_warn(message)
+      set_status(:info_warning, message)
     end
 
     def set_skip(message)

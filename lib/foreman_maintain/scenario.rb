@@ -119,6 +119,10 @@ module ForemanMaintain
       filter_whitelisted(executed_steps.find_all(&:warning?), options)
     end
 
+    def steps_with_info_warning(options = {})
+      filter_whitelisted(executed_steps.find_all(&:info_warning?), options)
+    end
+
     def steps_with_skipped(options = {})
       filter_whitelisted(executed_steps.find_all(&:skipped?), options)
     end
@@ -141,6 +145,10 @@ module ForemanMaintain
 
     def warning?
       !steps_with_warning(:whitelisted => false).empty?
+    end
+
+    def info_warning?
+      !steps_with_info_warning(:whitelisted => false).empty?
     end
 
     def failed?

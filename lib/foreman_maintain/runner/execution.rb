@@ -63,6 +63,10 @@ module ForemanMaintain
         @status == :warning
       end
 
+      def info_warning?
+        @status == :info_warning
+      end
+
       # yaml storage to preserve key/value pairs between runs.
       def storage
         @storage || ForemanMaintain.storage(:default)
