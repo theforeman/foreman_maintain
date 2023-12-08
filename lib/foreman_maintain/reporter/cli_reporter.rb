@@ -276,7 +276,8 @@ module ForemanMaintain
                     :running => { :label => '[RUNNING]', :color => :blue },
                     :skipped => { :label => '[SKIPPED]', :color => :yellow },
                     :already_run => { :label => '[ALREADY RUN]', :color => :yellow },
-                    :warning => { :label => '[WARNING]', :color => :yellow } }
+                    :warning => { :label => '[WARNING]', :color => :yellow },
+                    :info_warning => { :label => '[WARNING]', :color => :yellow } }
         properties = mapping[status]
         if @plaintext
           properties[:label]
