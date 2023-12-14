@@ -1,25 +1,25 @@
-module Scenarios::Satellite_6_15
+module Scenarios::Satellite_6_16_z
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
         tags :upgrade_scenario
         confine do
           feature(:satellite) &&
-            (feature(:satellite).current_minor_version == '6.14' || \
-            ForemanMaintain.upgrade_in_progress == '6.15')
+            (feature(:satellite).current_minor_version == '6.16' || \
+            ForemanMaintain.upgrade_in_progress == '6.16.z')
         end
         instance_eval(&block)
       end
     end
 
     def target_version
-      '6.15'
+      '6.16.z'
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Satellite 6.15'
+      description 'Checks before upgrading to Satellite 6.16.z'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -27,13 +27,13 @@ module Scenarios::Satellite_6_15
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
-      add_step(Checks::Repositories::Validate.new(:version => '6.15'))
+      add_step(Checks::Repositories::Validate.new(:version => '6.16'))
     end
   end
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before migrating to Satellite 6.15'
+      description 'Procedures before migrating to Satellite 6.16.z'
       tags :pre_migrations
     end
 
@@ -44,9 +44,8 @@ module Scenarios::Satellite_6_15
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Migration scripts to Satellite 6.15'
+      description 'Migration scripts to Satellite 6.16.z'
       tags :migrations
-      run_strategy :fail_fast
     end
 
     def set_context_mapping
@@ -54,7 +53,7 @@ module Scenarios::Satellite_6_15
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => '6.15'))
+      add_step(Procedures::Repositories::Setup.new(:version => '6.16'))
       modules_to_enable = ["satellite:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       add_step(Procedures::Packages::Update.new(:assumeyes => true,
@@ -68,7 +67,7 @@ module Scenarios::Satellite_6_15
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures after migrating to Satellite 6.15'
+      description 'Procedures after migrating to Satellite 6.16.z'
       tags :post_migrations
     end
 
@@ -81,7 +80,7 @@ module Scenarios::Satellite_6_15
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Satellite 6.15'
+      description 'Checks after upgrading to Satellite 6.16.z'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end
