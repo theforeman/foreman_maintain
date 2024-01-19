@@ -54,10 +54,12 @@ module Scenarios::Katello_Nightly
       add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
       modules_to_enable = ["katello:#{el_short_name}", "pulpcore:#{el_short_name}"]
       add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
-      add_step(Procedures::Packages::Update.new(:assumeyes => true,
-        :dnf_options => ['--downloadonly']))
+      add_step(Procedures::Packages::Update.new(
+        :assumeyes => true,
+        :dnf_options => ['--downloadonly']
+      ))
       add_step(Procedures::Service::Stop.new)
-      add_step(Procedures::Packages::Update.new(:assumeyes => true))
+      add_step(Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false))
       add_step_with_context(Procedures::Installer::Upgrade)
     end
   end

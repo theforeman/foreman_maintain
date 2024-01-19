@@ -92,7 +92,7 @@ module ForemanMaintain::PackageManager
     end
 
     def clean_cache(assumeyes: false)
-      dnf_action('clean', 'all', :assumeyes => assumeyes)
+      dnf_action('clean', 'metadata', :assumeyes => assumeyes)
     end
 
     def module_enabled?(name)

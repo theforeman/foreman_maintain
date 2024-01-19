@@ -148,7 +148,7 @@ module ForemanMaintain
     describe 'clean_cache' do
       it 'invokes dnf to clean cache' do
         expect_execute!(
-          'dnf -y --disableplugin=foreman-protector clean all',
+          'dnf -y --disableplugin=foreman-protector clean metadata',
           :interactive => false
         )
         subject.clean_cache(:assumeyes => true)
