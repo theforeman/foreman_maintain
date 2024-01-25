@@ -2,6 +2,10 @@ name: Ruby Tests
 on: pull_request
 
 jobs:
+  rubocop:
+    uses: theforeman/actions/.github/workflows/rubocop.yml@v0
+    with:
+      command: bundle exec rubocop --parallel --format github
   Test_ruby:
     runs-on: ubuntu-latest
     strategy:
