@@ -11,7 +11,7 @@ module Procedures::Packages
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
-      package_manager.clean_cache(:assumeyes => assumeyes_val)
+      package_manager.clean_cache(:assumeyes => assumeyes_val) if download_only?
       opts = { :assumeyes => assumeyes_val, :dnf_options => @dnf_options }
       packages_action(:update, @packages, opts)
     rescue ForemanMaintain::Error::ExecutionError => e
@@ -27,11 +27,15 @@ module Procedures::Packages
     end
 
     def description
-      if @dnf_options.include?('--downloadonly')
+      if download_only?
         "Download package(s) #{@packages.join(', ')}"
       else
         "Update package(s) #{@packages.join(', ')}"
       end
+    end
+
+    def download_only?
+      @dnf_options.include?('--downloadonly')
     end
   end
 end
