@@ -94,11 +94,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
   end
 
   def certs_param_name
-    if check_min_version('foreman', '1.21')
-      return { :param_section => 'certs', :param_key => 'tar_file' }
-    end
-
-    { :param_section => 'foreman_proxy_content', :param_key => 'certs_tar' }
+    { :param_section => 'certs', :param_key => 'tar_file' }
   end
 
   def certs_tar
