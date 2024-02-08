@@ -114,8 +114,6 @@ state of the system.
 
 #### Self-upgrade for rubygem-foreman_maintain package
 
-**Note:** This feature is available from `rubygem-foreman_maintain` version 0.6.4 and newer.
-
 When a user runs any `foreman-maintain upgrade` sub commands (e.g. `foreman-maintain upgrade check` or `foreman-maintain upgrade run`) then,
 
   * If update available for `rubygem-foreman_maintain` package, the sub command tries to update this package. After successful package update, it returns the exit code 75 and requests user to re-run with the updated source code.
