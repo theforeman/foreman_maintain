@@ -56,10 +56,6 @@ module ForemanMaintain
         rh_repos
       end
 
-      def use_beta_repos?
-        ENV['FOREMAN_MAINTAIN_USE_BETA'] == '1'
-      end
-
       def product_specific_repos(full_version)
         repos = ["#{package_name}-#{full_version}-for-rhel-#{el_major_version}-x86_64-rpms"]
         repos.concat(common_repos(full_version))
