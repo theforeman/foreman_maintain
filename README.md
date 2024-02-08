@@ -421,17 +421,6 @@ There are multiple kind of tests `foreman_maintain`:
 
 Execute `rake` to run the tests.
 
-## Planned commands:
-
-```
-foreman-maintain health [check|fix]
-foreman-maintain upgrade [check|run|abort] [foreman_1_14, satellite_6_1, satellite_6_2]
-foreman-maintain monitor [display|upload]
-foreman-maintain debug [save|upload|tail]
-foreman-maintain console
-foreman-maintain config
-```
-
 ## Bash completion
 
 The completion offers suggestion of possible command-line subcommands and their options
