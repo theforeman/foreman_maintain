@@ -4,8 +4,6 @@ module Procedures::SyncPlans
     metadata do
       for_feature :sync_plans
       description 're-enable sync plans'
-      tags :post_migrations, :maintenance_mode_off
-      before :disk_io
 
       confine do
         feature(:katello)
