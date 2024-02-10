@@ -7,8 +7,12 @@ describe Checks::Foreman::CheckCorruptedRoles do
     Checks::Foreman::CheckCorruptedRoles.new
   end
 
+  before do
+    subject.class.expects(:present?).returns(true)
+  end
+
   it 'passes when no corupted roles detected' do
-    assume_feature_present(:foreman_database, :query => [])
+    subject.expects(:find_filter_permissions).returns([])
     result = run_check(subject)
     assert result.success?, 'Check expected to succeed'
   end
