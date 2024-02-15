@@ -3,7 +3,7 @@ module Procedures::Repositories
     metadata do
       description 'Setup repositories'
       confine do
-        feature(:instance).downstream || feature(:upstream)
+        feature(:instance).downstream || feature(:instance).upstream_install
       end
       param :version,
         'Version for which repositories needs to be setup',
