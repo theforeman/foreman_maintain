@@ -1,23 +1,19 @@
-module Scenarios::Foreman_Nightly
+module Scenarios::ForemanUpgrade
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
         tags :upgrade_scenario
         confine do
-          feature(:foreman_install) || ForemanMaintain.upgrade_in_progress == 'nightly'
+          feature(:foreman_install)
         end
         instance_eval(&block)
       end
-    end
-
-    def target_version
-      'nightly'
     end
   end
 
   class PreUpgradeCheck < Abstract
     upgrade_metadata do
-      description 'Checks before upgrading to Foreman nightly'
+      description 'Checks before upgrading'
       tags :pre_upgrade_checks
       run_strategy :fail_slow
     end
@@ -30,7 +26,7 @@ module Scenarios::Foreman_Nightly
 
   class PreMigrations < Abstract
     upgrade_metadata do
-      description 'Procedures before upgrading to Foreman nightly'
+      description 'Procedures before upgrading'
       tags :pre_migrations
     end
 
@@ -41,7 +37,7 @@ module Scenarios::Foreman_Nightly
 
   class Migrations < Abstract
     upgrade_metadata do
-      description 'Upgrade steps for Foreman nightly'
+      description 'Upgrade steps'
       tags :migrations
       run_strategy :fail_fast
     end
@@ -51,19 +47,35 @@ module Scenarios::Foreman_Nightly
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
+      add_step(Procedures::Service::Stop.new)
+
       if el?
         modules_to_enable = ["foreman:#{el_short_name}"]
+
+        if feature(:katello)
+          modules_to_enable.append(
+            "katello:#{el_short_name}",
+            "pulpcore:#{el_short_name}"
+          )
+        end
+
         add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
+        add_step(Procedures::Packages::Update.new(
+          :assumeyes => true,
+          :dnf_options => ['--downloadonly']
+        ))
+        add_step(Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false))
+      else
+        add_step(Procedures::Packages::Update.new(:assumeyes => true))
       end
-      add_step(Procedures::Packages::Update.new(:assumeyes => true))
+
       add_step_with_context(Procedures::Installer::Upgrade)
     end
   end
 
   class PostMigrations < Abstract
     upgrade_metadata do
-      description 'Post upgrade procedures for Foreman nightly'
+      description 'Post upgrade procedures'
       tags :post_migrations
     end
 
@@ -76,7 +88,7 @@ module Scenarios::Foreman_Nightly
 
   class PostUpgradeChecks < Abstract
     upgrade_metadata do
-      description 'Checks after upgrading to Foreman nightly'
+      description 'Checks after upgrading'
       tags :post_upgrade_checks
       run_strategy :fail_slow
     end
