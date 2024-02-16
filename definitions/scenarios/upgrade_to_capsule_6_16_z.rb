@@ -56,13 +56,13 @@ module Scenarios::Capsule_6_16_z
     end
 
     def set_context_mapping
-      context.map(:assumeyes, Procedures::Installer::Upgrade => :assumeyes)
+      context.map(:assumeyes, Procedures::Installer::Run => :assumeyes)
     end
 
     def compose
       add_step(Procedures::Service::Stop.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false))
-      add_step_with_context(Procedures::Installer::Upgrade)
+      add_step_with_context(Procedures::Installer::Run)
     end
   end
 
