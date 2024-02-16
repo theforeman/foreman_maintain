@@ -9,7 +9,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
     label :pulpcore_database
 
     confine do
-      file_nonzero?(PULPCORE_DB_CONFIG) && check_min_version('katello-common', '3.18')
+      file_nonzero?(PULPCORE_DB_CONFIG)
     end
   end
 

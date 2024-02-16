@@ -6,8 +6,7 @@ module Checks
         tags :pre_upgrade
         label :validate_external_db_version
         confine do
-          feature(:foreman_database) && !feature(:foreman_database).local? &&
-            !check_min_version('foreman', '2.0')
+          feature(:foreman_database) && !feature(:foreman_database).local?
         end
       end
 

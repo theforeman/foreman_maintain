@@ -10,12 +10,10 @@ module ForemanMaintain::Scenarios
       end
 
       def compose
-        if check_min_version('foreman', '3.0') || check_min_version('foreman-proxy', '3.0')
-          add_step(Checks::CheckPuppetCapsules) if server?
-          add_step(Procedures::Puppet::RemovePuppet)
-          add_step(Procedures::Puppet::RemovePuppetData) if context.get(:remove_data)
-          add_step(Procedures::Service::Restart)
-        end
+        add_step(Checks::CheckPuppetCapsules) if server?
+        add_step(Procedures::Puppet::RemovePuppet)
+        add_step(Procedures::Puppet::RemovePuppetData) if context.get(:remove_data)
+        add_step(Procedures::Service::Restart)
       end
     end
   end

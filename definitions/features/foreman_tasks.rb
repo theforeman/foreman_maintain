@@ -93,10 +93,8 @@ class Features::ForemanTasks < ForemanMaintain::Feature
       DELETE FROM foreman_tasks_locks as ftl where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);
     SQL
 
-    if check_min_version(foreman_plugin_name('foreman-tasks'), '4.0.0')
-      sql += 'DELETE FROM foreman_tasks_links as ftl ' \
-             'where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);'
-    end
+    sql += 'DELETE FROM foreman_tasks_links as ftl ' \
+           'where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);'
 
     feature(:foreman_database).psql("BEGIN; #{sql}; COMMIT;")
 
@@ -134,7 +132,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
   end
 
   def service_name
-    check_min_version('foreman', '1.17') ? 'dynflowd' : 'foreman-tasks'
+    'dynflowd'
   end
 
   private

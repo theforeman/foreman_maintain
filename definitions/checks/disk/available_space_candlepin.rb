@@ -6,7 +6,7 @@ module Checks
         description 'Check to make sure /var/lib/candlepin has enough space'
         tags :pre_upgrade
         confine do
-          feature(:candlepin) && check_min_version('candlepin', '3.1')
+          feature(:candlepin)
         end
       end
 
