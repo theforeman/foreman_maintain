@@ -7,6 +7,10 @@ describe Procedures::ForemanTasks::Resume do
     Procedures::ForemanTasks::UiInvestigate.new('search_query' => 'state = paused')
   end
 
+  before do
+    assume_feature_present(:foreman_tasks)
+  end
+
   it 'prints information about where to look in UI for resolving the problem' do
     subject.stubs(:hostname => 'example.com')
     result = run_procedure(subject)
