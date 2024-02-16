@@ -60,10 +60,6 @@ class Features::Installer < ForemanMaintain::Feature
     [cmd_status, out]
   end
 
-  def upgrade(exec_options = {})
-    run('', exec_options)
-  end
-
   def initial_admin_username
     feature(:installer).answers['foreman']['initial_admin_username'] ||
       feature(:installer).answers['foreman']['admin_username']

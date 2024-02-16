@@ -47,7 +47,7 @@ module Scenarios::Foreman_Nightly
     end
 
     def set_context_mapping
-      context.map(:assumeyes, Procedures::Installer::Upgrade => :assumeyes)
+      context.map(:assumeyes, Procedures::Installer::Run => :assumeyes)
     end
 
     def compose
@@ -57,7 +57,7 @@ module Scenarios::Foreman_Nightly
         add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       end
       add_step(Procedures::Packages::Update.new(:assumeyes => true))
-      add_step_with_context(Procedures::Installer::Upgrade)
+      add_step_with_context(Procedures::Installer::Run)
     end
   end
 
