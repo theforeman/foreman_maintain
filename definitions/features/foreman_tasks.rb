@@ -91,10 +91,8 @@ class Features::ForemanTasks < ForemanMaintain::Feature
       DELETE FROM foreman_tasks_tasks WHERE #{tasks_condition};
       -- Delete locks and links which may now be orphaned
       DELETE FROM foreman_tasks_locks as ftl where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);
+      DELETE FROM foreman_tasks_links as ftl where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);
     SQL
-
-    sql += 'DELETE FROM foreman_tasks_links as ftl ' \
-           'where ftl.task_id NOT IN (SELECT id FROM foreman_tasks_tasks);'
 
     feature(:foreman_database).psql("BEGIN; #{sql}; COMMIT;")
 
