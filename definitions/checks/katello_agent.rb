@@ -5,7 +5,7 @@ class Checks::CheckKatelloAgentEnabled < ForemanMaintain::Check
     tags :pre_upgrade
 
     confine do
-      !feature(:capsule)
+      feature(:satellite) && feature(:satellite).current_minor_version == '6.14'
     end
   end
 
