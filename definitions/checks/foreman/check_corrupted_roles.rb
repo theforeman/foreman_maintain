@@ -6,9 +6,6 @@ module Checks
         for_feature :foreman_database
         description 'Check for roles that have filters with multiple resources attached'
         tags :pre_upgrade
-        confine do
-          check_min_version('foreman', '1.15')
-        end
       end
 
       def run

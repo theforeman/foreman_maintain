@@ -3,8 +3,7 @@ module Procedures::Puppet
     metadata do
       description 'Remove Puppet feature'
       confine do
-        feature(:puppet_server) &&
-          (check_min_version('foreman', '3.6') || check_min_version('foreman-proxy', '3.6'))
+        feature(:puppet_server)
       end
       advanced_run false
     end
