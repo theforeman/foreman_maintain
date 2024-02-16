@@ -6,7 +6,7 @@ class Features::ForemanInstall < ForemanMaintain::Feature
     label :foreman_install
 
     confine do
-      !feature(:instance).downstream && !feature(:katello) && feature(:foreman_server)
+      !feature(:instance).downstream && feature(:foreman_server)
     end
   end
 end
