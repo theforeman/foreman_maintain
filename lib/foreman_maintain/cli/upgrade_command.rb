@@ -44,7 +44,7 @@ module ForemanMaintain
         validate_target_version!
         @upgrade_runner = ForemanMaintain::UpgradeRunner.new(target_version, reporter,
           :assumeyes => assumeyes?,
-          :whitelist => whitelist || [],
+          :whitelist => skip || [],
           :force => force?).tap(&:load)
       end
 

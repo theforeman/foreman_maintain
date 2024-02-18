@@ -58,7 +58,7 @@ module ForemanMaintain
         @runner ||=
           ForemanMaintain::Runner.new(reporter, scenarios,
             :assumeyes => option_wrapper('assumeyes?'),
-            :whitelist => option_wrapper('whitelist') || [],
+            :whitelist => option_wrapper('skip') || [],
             :force => option_wrapper('force?'),
             :rescue_scenario => rescue_scenario)
         runner.run
@@ -153,7 +153,7 @@ module ForemanMaintain
       end
 
       # rubocop:disable  Metrics/MethodLength
-      def self.interactive_option(opts = %w[assumeyes whitelist force plaintext])
+      def self.interactive_option(opts = %w[assumeyes skip force plaintext])
         delete_duplicate_assumeyes_if_any
 
         if opts.include?('assumeyes')
@@ -163,11 +163,11 @@ module ForemanMaintain
           end
         end
 
-        if opts.include?('whitelist')
-          option(['-w', '--whitelist'], 'whitelist',
-            'Comma-separated list of labels of steps to be skipped') do |whitelist|
-            raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
-            whitelist.split(',').map(&:strip)
+        if opts.include?('skip')
+          option(['--skip'], 'steps',
+            'Comma-separated list of step labels to be skipped') do |steps|
+            raise ArgumentError, 'value not specified' if steps.nil? || steps.empty?
+            steps.split(',').map(&:strip)
           end
         end
 

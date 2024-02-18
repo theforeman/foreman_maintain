@@ -140,7 +140,7 @@ module ForemanMaintain
       contact Red Hat Technical Support.
 
       In case the failures are false positives, use
-      --whitelist="dummy-check-fail,dummy-check-fail2"
+      --skip="dummy-check-fail,dummy-check-fail2"
       MESSAGE
     end
 
@@ -168,7 +168,7 @@ module ForemanMaintain
 
       Resolve the failed steps and rerun the command.
       In case the failures are false positives, use
-      --whitelist="dummy-check-fail,dummy-check-fail2"
+      --skip="dummy-check-fail,dummy-check-fail2"
       MESSAGE
     end
 
@@ -219,7 +219,7 @@ module ForemanMaintain
 
         Resolve the failed steps and rerun the command.
         In case the failures are false positives, use
-        --whitelist="dummy-check-fail"
+        --skip="dummy-check-fail"
 
         The steps in warning state itself might not mean there is an error,
         but it should be reviewed to ensure the behavior is expected
@@ -256,7 +256,7 @@ module ForemanMaintain
         contact Red Hat Technical Support.
 
         In case the failures are false positives, use
-        --whitelist="dummy-check-fail"
+        --skip="dummy-check-fail"
 
         The steps in warning state itself might not mean there is an error,
         but it should be reviewed to ensure the behavior is expected
@@ -307,7 +307,7 @@ module ForemanMaintain
 
         Resolve the failed steps and rerun the command.
         In case the failures are false positives, use
-        --whitelist="dummy-check-fail"
+        --skip="dummy-check-fail"
 
         The steps in warning state itself might not mean there is an error,
         but it should be reviewed to ensure the behavior is expected
@@ -338,7 +338,7 @@ module ForemanMaintain
 
       Resolve the failed steps and rerun the command.
       In case the failures are false positives, use
-      --whitelist="dummy-check-fail"
+      --skip="dummy-check-fail"
       MESSAGE
     end
 

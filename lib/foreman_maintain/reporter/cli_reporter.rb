@@ -338,13 +338,13 @@ module ForemanMaintain
               contact #{scenario.detector.feature(:instance).project_support_entity}.
 
               In case the failures are false positives, use
-              --whitelist="#{whitelist_labels}"
+              --skip="%s"
                            MESSAGE
                          else
                            format(<<-MESSAGE.strip_heredoc)
               Resolve the failed steps and rerun the command.
               In case the failures are false positives, use
-              --whitelist="#{whitelist_labels}"
+              --skip="%s"
                            MESSAGE
                          end
           end
