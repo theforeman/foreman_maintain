@@ -52,7 +52,7 @@ module Scenarios::Foreman_Nightly
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
-      if el?
+      if el8?
         modules_to_enable = ["foreman:#{el_short_name}"]
         add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       end
