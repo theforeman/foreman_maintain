@@ -9,7 +9,6 @@ module Procedures::Backup
         preparation_steps { Checks::Foreman::DBUp.new unless feature(:foreman_database).local? }
         param :backup_dir, 'Directory where to backup to', :required => true
         param :tar_volume_size, 'Size of tar volume (indicates splitting)'
-        param :mount_dir, 'Snapshot mount directory'
       end
 
       def run
@@ -63,17 +62,11 @@ module Procedures::Backup
         # There could be situations where Foreman db is either of these versions
         # To be sure we backup the system correctly without missing anything
         # we backup all of the Postgresql dirs
-        # Yet to implement the snapshot backup!
         feature(:foreman_database).data_dir
       end
 
       def pg_data_dir_el
-        return feature(:foreman_database).data_dir if @mount_dir.nil?
-
-        mount_point = File.join(@mount_dir, 'pgsql')
-        dir = feature(:foreman_database).find_base_directory(mount_point)
-        fail!("Snapshot of Foreman DB was not found mounted in #{mount_point}") if dir.nil?
-        dir
+        feature(:foreman_database).data_dir
       end
     end
   end

@@ -9,7 +9,6 @@ module Procedures::Backup
         preparation_steps { Checks::Pulpcore::DBUp.new unless feature(:pulpcore_database).local? }
         param :backup_dir, 'Directory where to backup to', :required => true
         param :tar_volume_size, 'Size of tar volume (indicates splitting)'
-        param :mount_dir, 'Snapshot mount directory'
       end
 
       def run
@@ -47,11 +46,7 @@ module Procedures::Backup
       end
 
       def pg_data_dir
-        return feature(:pulpcore_database).data_dir if @mount_dir.nil?
-        mount_point = File.join(@mount_dir, 'pgsql')
-        dir = feature(:pulpcore_database).find_base_directory(mount_point)
-        fail!("Snapshot of Pulpcore DB was not found mounted in #{mount_point}") if dir.nil?
-        dir
+        feature(:pulpcore_database).data_dir
       end
     end
   end

@@ -7,7 +7,6 @@ module Procedures::Backup
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
       param :ensure_unchanged, 'Ensure the data did not change during backup'
       param :skip, 'Skip Pulp content during backup'
-      param :mount_dir, 'Snapshot mount directory'
 
       confine do
         feature(:pulpcore_database)
@@ -46,15 +45,7 @@ module Procedures::Backup
     end
 
     def pulp_dir
-      return any_pulp_feature.pulp_data_dir if @mount_dir.nil?
-
-      mount_point = File.join(@mount_dir, 'pulp')
-      dir = any_pulp_feature.find_marked_directory(mount_point)
-      unless dir
-        raise ForemanMaintain::Error::Fail,
-          "Pulp base directory not found in the mount point (#{mount_point})"
-      end
-      dir
+      any_pulp_feature.pulp_data_dir
     end
 
     def ensure_dir_unchanged
