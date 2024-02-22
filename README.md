@@ -41,7 +41,6 @@ Subcommands:
     backup                        Backup server
       online                        Keep services online during backup
       offline                       Shut down services to preserve consistent backup
-      snapshot                      Use snapshots of the databases to create backup
 
     restore                       Restore a backup
 

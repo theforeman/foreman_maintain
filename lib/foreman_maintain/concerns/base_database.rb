@@ -115,10 +115,6 @@ module ForemanMaintain
         @backup_dir ||= File.expand_path(ForemanMaintain.config.db_backup_dir)
       end
 
-      def find_base_directory(directory)
-        find_dir_containing_file(directory, 'postgresql.conf')
-      end
-
       def dropdb(config = configuration)
         if local?
           execute!("runuser - postgres -c 'dropdb #{config['database']}'")

@@ -127,36 +127,9 @@ module ForemanMaintain
       end
     end
 
-    class SnapshotBackupCommand < Base
-      include BackupCommon
-      interactive_option
-      common_backup_options
-      option '--include-db-dumps', :flag, 'Also dump full database schema before snapshot backup'
-      option ['-d', '--snapshot-mount-dir'], 'SNAPSHOT_MOUNT_DIR',
-        "Override default directory ('/var/snap/') where the snapshots will be mounted",
-        :default => '/var/snap/' do |dir|
-        unless File.directory?(dir)
-          raise ArgumentError, "Snapshot mount directory does not exist: #{dir}"
-        end
-        dir
-      end
-      option ['-b', '--snapshot-block-size'], 'SNAPSHOT_BLOCK_SIZE',
-        'Override default block size (2G)', :default => '2G'
-
-      def execute
-        perform_backup(:snapshot,
-          :snapshot_mount_dir => snapshot_mount_dir,
-          :snapshot_block_size => snapshot_block_size,
-          :include_db_dumps => include_db_dumps?)
-      end
-    end
-
-    # rubocop:disable Metrics/LineLength
     class BackupCommand < Base
       subcommand 'online', 'Keep services online during backup', OnlineBackupCommand
       subcommand 'offline', 'Shut down services to preserve consistent backup', OfflineBackupCommand
-      subcommand 'snapshot', 'Use snapshots of the databases to create backup (DEPRECATED)', SnapshotBackupCommand
     end
-    # rubocop:enable Metrics/LineLength
   end
 end

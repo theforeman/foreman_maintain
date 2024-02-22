@@ -163,18 +163,6 @@ module ForemanMaintain
         Dir.entries(dir).size <= 2
       end
 
-      def get_lv_info(dir)
-        execute("findmnt -n --target #{dir} -o SOURCE,FSTYPE").split
-      end
-
-      def create_lv_snapshot(name, block_size, path)
-        execute!("lvcreate -n#{name} -L#{block_size} -s #{path}")
-      end
-
-      def get_lv_path(lv_name)
-        execute("lvs --noheadings -o lv_path -S lv_name=#{lv_name}").strip
-      end
-
       def find_dir_containing_file(directory, target)
         result = nil
         Find.find(directory) do |path|

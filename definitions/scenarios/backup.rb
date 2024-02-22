@@ -5,27 +5,22 @@ module ForemanMaintain::Scenarios
       manual_detection
       tags :backup
       run_strategy :fail_fast
-      param :strategy, 'Backup strategy. One of [:online, :offline, :snapshot]',
+      param :strategy, 'Backup strategy. One of [:online, :offline]',
         :required => true
       param :backup_dir, 'Directory where to backup to', :required => true
-      param :mount_dir, 'Snapshot mount directory'
       param :include_db_dumps, 'Include dumps of local dbs as part of offline'
       param :preserve_dir, 'Directory where to backup to'
       param :incremental_dir, 'Changes since specified backup only'
       param :proxy_features, 'List of proxy features to backup (default: all)', :array => true
-      param :snapshot_mount_dir, 'Snapshot mount directory'
-      param :snapshot_block_size, 'Snapshot block size'
       param :skip_pulp_content, 'Skip Pulp content during backup'
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
     end
 
     def compose
       check_valid_strategy
-      snapshot_deprecation_warning
       safety_confirmation
       accessibility_confirmation
       prepare_directory
-      logical_volume_confirmation
       add_step_with_context(Procedures::Backup::Metadata, :online_backup => online_backup?)
 
       case strategy
@@ -33,18 +28,8 @@ module ForemanMaintain::Scenarios
         add_online_backup_steps
       when :offline
         add_offline_backup_steps
-      when :snapshot
-        deb_snapshot_msg
-        add_snapshot_backup_steps
       end
       add_step_with_context(Procedures::Backup::CompressData)
-    end
-
-    def deb_snapshot_msg
-      if debian_or_ubuntu?
-        puts 'The snapshot backup is not yet available for Debian based OSes!'
-        exit 0
-      end
     end
 
     # rubocop:disable  Metrics/MethodLength
@@ -60,11 +45,7 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::PulpcoreDB => :backup_dir,
         Procedures::Backup::Offline::CandlepinDB => :backup_dir,
         Procedures::Backup::Offline::ForemanDB => :backup_dir,
-        Procedures::Backup::Offline::PulpcoreDB => :backup_dir,
-        Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :backup_dir,
-        Procedures::Backup::Snapshot::MountCandlepinDB => :backup_dir,
-        Procedures::Backup::Snapshot::MountForemanDB => :backup_dir,
-        Procedures::Backup::Snapshot::MountPulpcoreDB => :backup_dir)
+        Procedures::Backup::Offline::PulpcoreDB => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
@@ -72,26 +53,8 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Metadata => :incremental_dir)
       context.map(:proxy_features,
         Procedures::Backup::ConfigFiles => :proxy_features)
-      context.map(:snapshot_mount_dir,
-        Procedures::Backup::Snapshot::PrepareMount => :mount_dir,
-        Procedures::Backup::Snapshot::MountPulp => :mount_dir,
-        Procedures::Backup::Snapshot::CleanMount => :mount_dir,
-        Procedures::Backup::Snapshot::MountCandlepinDB => :mount_dir,
-        Procedures::Backup::Snapshot::MountForemanDB => :mount_dir,
-        Procedures::Backup::Snapshot::MountPulpcoreDB => :mount_dir,
-        Procedures::Backup::Pulp => :mount_dir,
-        Procedures::Backup::Offline::CandlepinDB => :mount_dir,
-        Procedures::Backup::Offline::ForemanDB => :mount_dir,
-        Procedures::Backup::Offline::PulpcoreDB => :mount_dir)
-      context.map(:snapshot_block_size,
-        Procedures::Backup::Snapshot::MountPulp => :block_size,
-        Procedures::Backup::Snapshot::MountForemanDB => :block_size,
-        Procedures::Backup::Snapshot::MountCandlepinDB => :block_size,
-        Procedures::Backup::Snapshot::MountPulpcoreDB => :block_size)
       context.map(:skip_pulp_content,
-        Procedures::Backup::Pulp => :skip,
-        Procedures::Backup::Snapshot::LogicalVolumeConfirmation => :skip_pulp,
-        Procedures::Backup::Snapshot::MountPulp => :skip)
+        Procedures::Backup::Pulp => :skip)
       context.map(:tar_volume_size,
         Procedures::Backup::Pulp => :tar_volume_size)
       context.map(:include_db_dumps,
@@ -105,20 +68,8 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Backup::PrepareDirectory)
     end
 
-    def logical_volume_confirmation
-      if strategy == :snapshot
-        add_step_with_context(Procedures::Backup::Snapshot::LogicalVolumeConfirmation)
-      end
-    end
-
-    def snapshot_deprecation_warning
-      if strategy == :snapshot
-        add_step_with_context(Procedures::Backup::Snapshot::SnapshotDeprecationMessage)
-      end
-    end
-
     def accessibility_confirmation
-      if [:offline, :snapshot].include?(strategy)
+      if strategy == :offline
         add_step_with_context(Procedures::Backup::AccessibilityConfirmation)
       end
     end
@@ -130,7 +81,7 @@ module ForemanMaintain::Scenarios
     end
 
     def check_valid_strategy
-      unless [:online, :offline, :snapshot].include? strategy
+      unless [:online, :offline].include? strategy
         raise ArgumentError, "Unsupported strategy '#{strategy}'"
       end
     end
@@ -163,36 +114,6 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    # rubocop:disable  Metrics/MethodLength
-    def add_snapshot_backup_steps
-      include_dumps if include_db_dumps?
-      add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
-      add_steps_with_context(
-        Procedures::Backup::Snapshot::PrepareMount,
-        find_procedures(:maintenance_mode_on),
-        Procedures::Service::Stop,
-        Procedures::Backup::ConfigFiles,
-        Procedures::Backup::Snapshot::MountPulp,
-        Procedures::Backup::Snapshot::MountCandlepinDB,
-        Procedures::Backup::Snapshot::MountForemanDB,
-        Procedures::Backup::Snapshot::MountPulpcoreDB,
-        Procedures::Service::Start,
-        find_procedures(:maintenance_mode_off),
-        Procedures::Backup::Pulp
-      )
-      if feature(:instance).database_local?(:candlepin_database)
-        add_step_with_context(Procedures::Backup::Offline::CandlepinDB)
-      end
-      if feature(:instance).database_local?(:foreman_database)
-        add_step_with_context(Procedures::Backup::Offline::ForemanDB)
-      end
-      if feature(:instance).database_local?(:pulpcore_database)
-        add_step_with_context(Procedures::Backup::Offline::PulpcoreDB)
-      end
-      add_step_with_context(Procedures::Backup::Snapshot::CleanMount)
-    end
-    # rubocop:enable  Metrics/MethodLength
-
     def add_online_backup_steps
       add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true,
         :online_backup => true)
@@ -224,20 +145,16 @@ module ForemanMaintain::Scenarios
       run_strategy :fail_slow
       tags :backup
       param :backup_dir, 'Directory where to backup to', :required => true
-      param :mount_dir, 'Snapshot mount directory'
       param :preserve_dir, 'Directory where to backup to'
     end
 
     def compose
       add_step_with_context(Procedures::Service::Start) if strategy != :online
       add_steps_with_context(find_procedures(:maintenance_mode_off)) if strategy != :online
-      add_step_with_context(Procedures::Backup::Snapshot::CleanMount) if strategy == :snapshot
       add_step_with_context(Procedures::Backup::Clean)
     end
 
     def set_context_mapping
-      context.map(:snapshot_mount_dir,
-        Procedures::Backup::Snapshot::CleanMount => :mount_dir)
       context.map(:backup_dir,
         Procedures::Backup::Clean => :backup_dir)
       context.map(:preserve_dir,
