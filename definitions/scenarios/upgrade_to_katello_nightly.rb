@@ -52,8 +52,10 @@ module Scenarios::Katello_Nightly
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
-      modules_to_enable = ["katello:#{el_short_name}", "pulpcore:#{el_short_name}"]
-      add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
+      if el8?
+        modules_to_enable = ["katello:#{el_short_name}", "pulpcore:#{el_short_name}"]
+        add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
+      end
       add_step(Procedures::Packages::Update.new(
         :assumeyes => true,
         :dnf_options => ['--downloadonly']

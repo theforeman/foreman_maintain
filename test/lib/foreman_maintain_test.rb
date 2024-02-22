@@ -30,6 +30,7 @@ describe ForemanMaintain do
 
   describe 'enable_maintenance_module' do
     before do
+      subject.stubs(:el8?).returns(true)
       subject.stubs(:el?).returns(true)
     end
 
@@ -59,6 +60,18 @@ describe ForemanMaintain do
     it 'should not enable the maintenance module if module is already enabled' do
       package_manager.any_instance.stubs(:module_exists?).returns(true)
       package_manager.any_instance.stubs(:module_enabled?).returns(true)
+
+      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
+
+      assert_output('') do
+        subject.enable_maintenance_module
+      end
+    end
+
+    it 'should not enable the maintenance module on el9' do
+      subject.stubs(:el8?).returns(false)
+      package_manager.any_instance.stubs(:module_exists?).returns(false)
+      package_manager.any_instance.stubs(:module_enabled?).returns(false)
 
       package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
 
