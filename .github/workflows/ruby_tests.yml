@@ -6,7 +6,7 @@ jobs:
     uses: theforeman/actions/.github/workflows/rubocop.yml@v0
     with:
       command: bundle exec rubocop --parallel --format github
-  Test_ruby:
+  test_ruby:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -21,4 +21,4 @@ jobs:
           bundler-cache: true
       - name: Run tests
         run: |
-          bundle exec rake
+          bundle exec rake test
