@@ -12,6 +12,7 @@ require 'foreman_maintain/cli/maintenance_mode_command'
 require 'foreman_maintain/cli/packages_command'
 require 'foreman_maintain/cli/plugin_command'
 require 'foreman_maintain/cli/self_upgrade_command'
+require 'foreman_maintain/cli/update_command'
 
 Clamp.allow_options_after_parameters = true
 
@@ -22,6 +23,7 @@ module ForemanMaintain
 
       subcommand 'health', 'Health related commands', HealthCommand
       subcommand 'upgrade', 'Upgrade related commands', UpgradeCommand
+      subcommand 'update', 'Update related commands', UpdateCommand
       subcommand 'service', 'Control applicable services', ServiceCommand
       subcommand 'backup', 'Backup server', BackupCommand
       subcommand 'restore', 'Restore a backup', RestoreCommand

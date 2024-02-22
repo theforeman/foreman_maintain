@@ -138,7 +138,11 @@ module ForemanMaintain
     def __run__(execution)
       setup_execution_state(execution)
       unless skipped?
-        run
+        if defined?(self.class.present?)
+          run if self.class.present?
+        else
+          run
+        end
       end
     rescue Error::Skip => e
       set_skip(e.message)
