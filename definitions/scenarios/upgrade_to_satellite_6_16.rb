@@ -27,6 +27,7 @@ module Scenarios::Satellite_6_16
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
+      add_step(Checks::Disk::AvailableSpacePostgresql13)
       add_step(Checks::Repositories::Validate.new(:version => '6.16'))
     end
   end
