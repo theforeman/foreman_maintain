@@ -11,6 +11,7 @@ require 'foreman_maintain/cli/restore_command'
 require 'foreman_maintain/cli/maintenance_mode_command'
 require 'foreman_maintain/cli/packages_command'
 require 'foreman_maintain/cli/plugin_command'
+require 'foreman_maintain/cli/report_command'
 require 'foreman_maintain/cli/self_upgrade_command'
 require 'foreman_maintain/cli/update_command'
 
@@ -33,6 +34,7 @@ module ForemanMaintain
       subcommand 'self-upgrade', 'Perform major version self upgrade', SelfUpgradeCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
         MaintenanceModeCommand
+      subcommand 'report', 'Generate the usage report', ReportCommand
 
       def run(*arguments)
         logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")
