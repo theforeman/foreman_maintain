@@ -8,7 +8,6 @@ describe Procedures::Packages::EnableModules do
   end
 
   before do
-    ForemanMaintain.stubs(:el?).returns(true)
     PackageManagerTestHelper.mock_package_manager(ForemanMaintain::PackageManager::Dnf.new)
   end
 

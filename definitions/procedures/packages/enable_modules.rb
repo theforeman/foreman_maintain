@@ -3,7 +3,7 @@ module Procedures::Packages
     metadata do
       description 'Enable the given stream modules'
       confine do
-        package_manager.instance_of?(ForemanMaintain::PackageManager::Dnf)
+        package_manager.modules_supported?
       end
       param :module_names, 'Module names', :array => true, :required => true
       advanced_run false
