@@ -10,7 +10,7 @@ module Procedures::Packages
     end
 
     def run
-      execute!("dnf module enable #{@module_names.join(' ')} -y")
+      package_manager.enable_module(@module_names.join(' '))
     end
   end
 end
