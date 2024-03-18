@@ -41,6 +41,8 @@ module Scenarios::Capsule_6_16
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => '6.16'))
       if el8?
+        modules_to_switch = ['postgresql:13']
+        add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))
         modules_to_enable = ["satellite-capsule:#{el_short_name}"]
         add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       end
