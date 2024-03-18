@@ -108,6 +108,10 @@ module ForemanMaintain::PackageManager
       dnf_action('module enable', name, assumeyes: true)
     end
 
+    def switch_module(name)
+      dnf_action('module switch-to', name, assumeyes: true)
+    end
+
     def module_exists?(name)
       status, _result = info(name)
       status == 0
