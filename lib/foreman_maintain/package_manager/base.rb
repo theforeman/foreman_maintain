@@ -55,6 +55,11 @@ module ForemanMaintain::PackageManager
       raise NotImplementedError
     end
 
+    # confirms that Package Manager supports modules
+    def modules_supported?
+      false
+    end
+
     private
 
     def sys

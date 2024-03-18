@@ -95,6 +95,10 @@ module ForemanMaintain::PackageManager
       dnf_action('clean', 'metadata', :assumeyes => assumeyes)
     end
 
+    def modules_supported?
+      true
+    end
+
     def module_enabled?(name)
       _status, result = info(name)
       result.match?(/Stream.+\[e\].+/)
@@ -102,6 +106,10 @@ module ForemanMaintain::PackageManager
 
     def enable_module(name)
       dnf_action('module enable', name, assumeyes: true)
+    end
+
+    def switch_module(name)
+      dnf_action('module switch-to', name, assumeyes: true)
     end
 
     def module_exists?(name)

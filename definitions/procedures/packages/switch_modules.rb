@@ -1,7 +1,7 @@
 module Procedures::Packages
-  class EnableModules < ForemanMaintain::Procedure
+  class SwitchModules < ForemanMaintain::Procedure
     metadata do
-      description 'Enable the given stream modules'
+      description 'Switch the given stream modules'
       confine do
         package_manager.modules_supported?
       end
@@ -10,7 +10,7 @@ module Procedures::Packages
     end
 
     def run
-      package_manager.enable_module(@module_names.join(' '))
+      package_manager.switch_module(@module_names.join(' '))
     end
   end
 end
