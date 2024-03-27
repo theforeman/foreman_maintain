@@ -39,18 +39,6 @@ module Scenarios::Capsule_6_16
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => '6.16'))
-      if el8?
-        modules_to_switch = ['postgresql:13']
-        add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))
-        modules_to_enable = ["satellite-capsule:#{el_short_name}"]
-        add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
-      end
-      add_step(Procedures::Packages::Update.new(
-        :assumeyes => true,
-        :dnf_options => ['--downloadonly']
-      ))
-
       add_steps(find_procedures(:pre_migrations))
     end
   end
@@ -66,6 +54,17 @@ module Scenarios::Capsule_6_16
     end
 
     def compose
+      add_step(Procedures::Repositories::Setup.new(:version => '6.16'))
+      if el8?
+        modules_to_switch = ['postgresql:13']
+        add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))
+        modules_to_enable = ["satellite-capsule:#{el_short_name}"]
+        add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
+      end
+      add_step(Procedures::Packages::Update.new(
+        :assumeyes => true,
+        :dnf_options => ['--downloadonly']
+      ))
       add_step(Procedures::Service::Stop.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false))
       add_step_with_context(Procedures::Installer::Run)
