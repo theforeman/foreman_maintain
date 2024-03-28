@@ -44,15 +44,9 @@ module ForemanMaintain
         end
 
         return @exit_code
-      ensure
-        log_exit_code_info(@exit_code)
       end
 
       private
-
-      def log_exit_code_info(exit_code)
-        logger.info("foreman-maintain command finished with #{exit_code}")
-      end
 
       def process_standard_error(error)
         if error.is_a?(Clamp::HelpWanted) ||
@@ -68,7 +62,6 @@ module ForemanMaintain
       end
 
       def process_usage_error(error)
-        log_exit_code_info(1)
         $stderr.puts error.message
         exit!
       end
