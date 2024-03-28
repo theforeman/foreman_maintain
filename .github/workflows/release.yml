@@ -2,8 +2,9 @@
 name: Release
 
 on:
-  create:
-    ref_type: tag
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   release:
