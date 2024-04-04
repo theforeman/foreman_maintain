@@ -7,7 +7,6 @@ specfile_path: rubygem-foreman_maintain.spec
 files_to_sync:
   - rubygem-foreman_maintain.spec
   - foreman_maintain.logrotate
-  - .packit.yaml
 
 # name in upstream package repository or registry (e.g. in PyPI)
 upstream_package_name: foreman_maintain
