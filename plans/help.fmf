@@ -1,0 +1,11 @@
+summary: Run with --help
+prepare:
+  - how: ansible
+    playbook: playbooks/stagingyum.yml
+  - how: install
+    package:
+      # https://github.com/theforeman/foreman-packaging/pull/10670
+      - hostname
+      - foreman-maintain
+execute:
+  - script: foreman-maintain --help
