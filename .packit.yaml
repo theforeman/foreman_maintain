@@ -43,7 +43,7 @@ jobs:
       environments:
         - artifacts:
             - type: repository
-              id: https://yum.theforeman.org/foreman/nightly/el9/x86_64/
+              id: https://yum.theforeman.org/releases/nightly/el$releasever/$basearch/
               packages:
                 - foreman-release
 
