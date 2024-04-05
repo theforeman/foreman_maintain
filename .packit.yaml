@@ -39,6 +39,11 @@ jobs:
       rhel-9-x86_64:
         distros:
           - centos-stream-9
+    tf_extra_params:
+      environments:
+        - artifacts:
+            - type: repository
+              id: https://stagingyum.theforeman.org/foreman/nightly/el9/x86_64/
 
 srpm_build_deps:
   - wget
