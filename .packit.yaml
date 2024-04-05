@@ -44,6 +44,8 @@ jobs:
         - artifacts:
             - type: repository
               id: https://yum.theforeman.org/foreman/nightly/el$releasever/$basearch/
+              packages:
+                - foreman-release
 
 srpm_build_deps:
   - wget
