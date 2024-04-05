@@ -21,7 +21,7 @@ module ForemanMaintain
         @options.fetch(:completion_cache_file, '~/.cache/foreman_maintain_completion.yml')
       )
       @disable_commands = @options.fetch(:disable_commands, [])
-      @foreman_url = @options.fetch(:foreman_url, `hostname -f`.chomp)
+      @foreman_url = @options.fetch(:foreman_url) { `hostname -f`.chomp }
       @foreman_port = @options.fetch(:foreman_port, 443)
     end
 
