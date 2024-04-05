@@ -31,7 +31,7 @@ jobs:
     targets:
       rhel-9:
         additional_repos:
-          - https://yum.theforeman.org/releases/nightly/el9/x86_64/
+          - https://yum.theforeman.org/releases/nightly/el$releasever/$basearch/
     module_hotfixes: true
   - job: tests
     trigger: pull_request
@@ -43,7 +43,7 @@ jobs:
       environments:
         - artifacts:
             - type: repository
-              id: https://stagingyum.theforeman.org/foreman/nightly/el9/x86_64/
+              id: https://yum.theforeman.org/foreman/nightly/el$releasever/$basearch/
 
 srpm_build_deps:
   - wget
