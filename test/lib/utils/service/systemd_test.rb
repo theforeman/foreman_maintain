@@ -8,6 +8,12 @@ module ForemanMaintain
     let(:http_all_service) do
       ForemanMaintain::Utils::Service::Systemd.new('http*', 30, :all => true)
     end
+    let(:httpd_worker_service) do
+      ForemanMaintain::Utils::Service::Systemd.new('httpd@worker1.service', 30)
+    end
+    let(:crond_worker_service) do
+      ForemanMaintain::Utils::Service::Systemd.new('crond@worker-2', 30)
+    end
 
     it 'has name' do
       _(httpd_service.name).must_equal 'httpd'
@@ -108,6 +114,14 @@ module ForemanMaintain
 
       it 'can compare with other obejcts' do
         _(httpd_service.matches?(nil)).must_equal false
+      end
+
+      it 'can compare by wildcard service' do
+        _(httpd_worker_service.matches?('httpd@*.service')).must_equal true
+      end
+
+      it 'can compare by partial match service' do
+        _(crond_worker_service.matches?('crond@worker*')).must_equal true
       end
     end
   end

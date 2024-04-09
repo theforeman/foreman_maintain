@@ -63,6 +63,14 @@ module ForemanMaintain::Utils
         end
       end
 
+      def matches?(service)
+        if service.is_a? String
+          service == @name || File.fnmatch(service, @name)
+        else
+          super
+        end
+      end
+
       private
 
       def execute(action)
