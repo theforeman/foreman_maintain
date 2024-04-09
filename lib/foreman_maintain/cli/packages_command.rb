@@ -55,12 +55,15 @@ module ForemanMaintain
       subcommand 'update', 'Update packages in an unlocked session' do
         interactive_option(['assumeyes'])
         parameter '[PACKAGES] ...', 'packages to update', :attribute_name => :packages
+        option '--downloadonly', :flag, 'Downloads and caches package updates only',
+          :default => false
 
         def execute
           run_scenarios_and_exit(
             Scenarios::Packages::Update.new(
               :packages => packages,
-              :assumeyes => assumeyes?
+              :assumeyes => assumeyes?,
+              :downloadonly => @downloadonly
             )
           )
         end

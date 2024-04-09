@@ -97,25 +97,47 @@ module ForemanMaintain::Scenarios
         description 'update packages in unlocked session'
         param :packages, 'List of packages to Update', :array => true
         param :assumeyes, 'Do not ask for confirmation'
+        param :downloadonly, 'Download and cache packages'
         manual_detection
       end
 
+      # rubocop:disable  Metrics/MethodLength
       def compose
         if Packages.skip_installer_run?(context.get(:packages))
           add_step_with_context(Procedures::Packages::Update,
             :force => true, :warn_on_errors => true)
         else
-          add_steps_with_context(
-            Procedures::Packages::UpdateAllConfirmation,
-            Procedures::Packages::InstallerConfirmation
-          )
+          unless context.get(:downloadonly)
+            add_steps_with_context(
+              Procedures::Packages::UpdateAllConfirmation,
+              Procedures::Packages::InstallerConfirmation
+            )
+          end
+
           add_step_with_context(Procedures::Packages::UnlockVersions)
-          add_step_with_context(Procedures::Packages::Update,
-            :force => true, :warn_on_errors => true)
-          add_step_with_context(Procedures::Installer::Run)
+
+          if context.get(:downloadonly)
+            add_step_with_context(
+              Procedures::Packages::Update,
+              :force => true,
+              :warn_on_errors => true,
+              :dnf_options => ['--downloadonly']
+            )
+            add_step_with_context(Procedures::Packages::LockVersions)
+          else
+            add_step_with_context(
+              Procedures::Packages::Update,
+              :force => true,
+              :warn_on_errors => true
+            )
+
+            add_step_with_context(Procedures::Installer::Run)
+          end
+
           add_step(Procedures::Packages::LockingStatus)
         end
       end
+      # rubocop:enable  Metrics/MethodLength
 
       def set_context_mapping
         context.map(:packages,
