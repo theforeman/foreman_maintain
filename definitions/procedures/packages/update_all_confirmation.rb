@@ -13,10 +13,9 @@ module Procedures::Packages
           "It is recommended to update everything only as part of upgrade\n" \
           "of the #{feature(:instance).product_name} to the next version. \n" \
           "To Upgrade to next version use 'foreman-maintain upgrade'.\n\n" \
-          "NOTE: --assumeyes is not applicable for this check\n\n" \
           "Do you want to proceed with update of everything regardless\n" \
           'of the recommendations?'
-        answer = ask_decision(question, actions_msg: 'y(yes), q(quit)', ignore_assumeyes: true)
+        answer = ask_decision(question, actions_msg: 'y(yes), q(quit)')
         abort! unless answer == :yes
       end
     end
