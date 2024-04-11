@@ -17,9 +17,6 @@ Metrics/AbcSize:
 Metrics/CyclomaticComplexity:
   Max: 10
 
-Metrics/PerceivedComplexity:
-  Max: 10
-
 Style/ClassAndModuleChildren:
   Enabled: false
 
@@ -34,12 +31,6 @@ Naming/ClassAndModuleCamelCase:
   Exclude:
     - '**/definitions/**/*'
     - 'test/support/additional_definitions/**/*'
-
-# Offense count: 1
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
-  Exclude:
-    - 'lib/foreman_maintain/system_helpers.rb'
 
 Style/HashSyntax:
   EnforcedStyle: 'no_mixed_keys'
