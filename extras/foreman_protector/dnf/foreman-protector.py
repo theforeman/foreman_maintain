@@ -1,8 +1,10 @@
+import configparser
+import os
+
 import dnf
 import dnf.exceptions
 from dnfpluginscore import _, logger
 
-import configparser
 
 PROTECT_COMMANDS = ('install', 'downgrade', 'reinstall', 'distro-sync', 'swap', 'upgrade', 'upgrade-minimal')
 
@@ -52,6 +54,8 @@ class ForemanProtector(dnf.Plugin):
 
     def sack(self):
         if self.cli is not None and self.cli.command._basecmd not in PROTECT_COMMANDS:
+            return
+        if os.environ.get('LEAPP_IPU_IN_PROGRESS') is not None:
             return
         whitelist_and_obsoletes = self._add_obsoletes()
         all_available_packages = self.base.sack.query().available()
