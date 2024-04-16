@@ -98,6 +98,7 @@ module Scenarios::Satellite_6_16
       add_steps(find_checks(:default))
       add_steps(find_checks(:post_upgrade))
       add_step(Procedures::Packages::CheckForReboot)
+      add_step(Procedures::Pulpcore::ContainerHandleImageMetadata)
     end
   end
 end
