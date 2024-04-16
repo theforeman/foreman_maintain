@@ -134,7 +134,8 @@ module Scenarios::ForemanUpgrade
         Checks::ServerPing,
         Checks::ServicesUp,
         Checks::SystemRegistration,
-        Procedures::Packages::CheckForReboot
+        Procedures::Packages::CheckForReboot,
+        Procedures::Pulpcore::ContainerHandleImageMetadata
       )
     end
   end
