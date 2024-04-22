@@ -241,5 +241,15 @@ module ForemanMaintain
         assert subject.module_exists?('test-module:el8')
       end
     end
+
+    describe 'reboot_required?' do
+      it 'returns 1 if a reboot is not required' do
+        expect_execute_with_status(
+          'dnf needs-restarting --reboothint',
+          :interactive => false
+        )
+        assert subject.reboot_required?
+      end
+    end
   end
 end

@@ -60,6 +60,12 @@ module ForemanMaintain::PackageManager
       false
     end
 
+    def reboot_required?
+      status = File.exist?('/var/run/reboot-required') ? 1 : 0
+      output = ''
+      [status, output]
+    end
+
     def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
       apt_options = []
       packages = [packages].flatten(1)

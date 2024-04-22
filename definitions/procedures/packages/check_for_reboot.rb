@@ -5,7 +5,7 @@ module Procedures::Packages
     end
 
     def run
-      status, output = execute_with_status('dnf needs-restarting --reboothint')
+      status, output = package_manager.reboot_required?
       if status == 1
         set_info_warn(output)
       else
