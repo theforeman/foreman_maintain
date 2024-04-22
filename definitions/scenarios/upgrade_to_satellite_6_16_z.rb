@@ -45,7 +45,7 @@ module Scenarios::Satellite_6_16_z
       end
       add_step(Procedures::Packages::Update.new(
         :assumeyes => true,
-        :dnf_options => ['--downloadonly']
+        :download_only => true
       ))
       add_steps(find_procedures(:pre_migrations))
     end

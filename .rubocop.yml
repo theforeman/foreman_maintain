@@ -122,3 +122,6 @@ Style/OptionalBooleanParameter:
 
 Style/StderrPuts:
   Enabled: false
+
+Metrics/ParameterLists:
+  Max: 6

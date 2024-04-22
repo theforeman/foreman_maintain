@@ -59,8 +59,14 @@ module ForemanMaintain::PackageManager
       dnf_action('remove', packages, assumeyes: assumeyes)
     end
 
-    def update(packages = [], assumeyes: false, dnf_options: [])
-      dnf_action('update', packages, assumeyes: assumeyes, dnf_options: dnf_options)
+    def update(packages = [], assumeyes: false, options: [], download_only: false)
+      dnf_action(
+        'update',
+        packages,
+        assumeyes: assumeyes,
+        dnf_options: options,
+        download_only: download_only
+      )
     end
 
     def check_update(packages: nil, with_status: false)
@@ -128,10 +134,11 @@ module ForemanMaintain::PackageManager
     private
 
     # rubocop:disable Metrics/LineLength, Metrics/ParameterLists
-    def dnf_action(action, packages, with_status: false, assumeyes: false, dnf_options: [], valid_exit_statuses: [0])
+    def dnf_action(action, packages, with_status: false, assumeyes: false, dnf_options: [], valid_exit_statuses: [0], download_only: false)
       packages = [packages].flatten(1)
 
       dnf_options << '-y' if assumeyes
+      dnf_topions << '--downloadonly' if download_only
       dnf_options << '--disableplugin=foreman-protector'
 
       command = ['dnf', dnf_options.join(' '), action]

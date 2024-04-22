@@ -63,7 +63,7 @@ module Scenarios::Capsule_6_16
       end
       add_step(Procedures::Packages::Update.new(
         :assumeyes => true,
-        :dnf_options => ['--downloadonly']
+        :download_only => true
       ))
       add_step(Procedures::Service::Stop.new)
       add_step(Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false))
