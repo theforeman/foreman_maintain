@@ -19,10 +19,12 @@ module ForemanMaintain::PackageManager
       apt_action('remove', packages, :assumeyes => assumeyes)
     end
 
-    def update(packages = [], assumeyes: false)
+    # rubocop:disable Lint/UnusedMethodArgument
+    def update(packages = [], assumeyes: false, options: [], download_only: false)
       action = packages.any? ? '--only-upgrade install' : 'upgrade'
-      apt_action(action, packages, :assumeyes => assumeyes)
+      apt_action(action, packages, :assumeyes => assumeyes, :download_only => download_only)
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     def clean_cache(assumeyes: false)
       apt_action('clean', :assumeyes => assumeyes)
@@ -66,10 +68,12 @@ module ForemanMaintain::PackageManager
       [status, output]
     end
 
-    def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0])
+    # rubocop:disable Layout/LineLength
+    def apt_action(action, packages, with_status: false, assumeyes: false, valid_exit_statuses: [0], download_only: false)
       apt_options = []
       packages = [packages].flatten(1)
       apt_options << '-y' if assumeyes
+      apt_options << '--download-only' if download_only
       apt_options_s = apt_options.empty? ? '' : ' ' + apt_options.join(' ')
       packages_s = packages.empty? ? '' : ' ' + packages.join(' ')
       if with_status
@@ -80,5 +84,6 @@ module ForemanMaintain::PackageManager
           :interactive => !assumeyes, :valid_exit_statuses => valid_exit_statuses)
       end
     end
+    # rubocop:enable Layout/LineLength
   end
 end

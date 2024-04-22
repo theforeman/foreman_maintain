@@ -115,22 +115,16 @@ module ForemanMaintain::Scenarios
           end
 
           add_step_with_context(Procedures::Packages::UnlockVersions)
+          add_step_with_context(
+            Procedures::Packages::Update,
+            :force => true,
+            :warn_on_errors => true,
+            :download_only => context.get(:downloadonly)
+          )
 
           if context.get(:downloadonly)
-            add_step_with_context(
-              Procedures::Packages::Update,
-              :force => true,
-              :warn_on_errors => true,
-              :dnf_options => ['--downloadonly']
-            )
             add_step_with_context(Procedures::Packages::LockVersions)
           else
-            add_step_with_context(
-              Procedures::Packages::Update,
-              :force => true,
-              :warn_on_errors => true
-            )
-
             add_step_with_context(Procedures::Installer::Run)
           end
 

@@ -7,13 +7,18 @@ module Procedures::Packages
       param :warn_on_errors, 'Do not interrupt scenario on failure',
         :flag => true, :default => false
       param :dnf_options, 'Extra dnf options if any', :array => true, :default => []
+      param :download_only, 'Download and cache packages only', :flag => true, :default => false
       param :clean_cache, 'If true will cause a DNF cache clean', :flag => true, :default => true
     end
 
     def run
       assumeyes_val = @assumeyes.nil? ? assumeyes? : @assumeyes
       package_manager.clean_cache(:assumeyes => assumeyes_val) if @clean_cache
-      opts = { :assumeyes => assumeyes_val, :dnf_options => @dnf_options }
+      opts = {
+        :assumeyes => assumeyes_val,
+        :options => @dnf_options,
+        :download_only => @download_only,
+      }
       packages_action(:update, @packages, opts)
     rescue ForemanMaintain::Error::ExecutionError => e
       if @warn_on_errors
@@ -28,15 +33,11 @@ module Procedures::Packages
     end
 
     def description
-      if download_only?
+      if @download_only
         "Download package(s) #{@packages.join(', ')}"
       else
         "Update package(s) #{@packages.join(', ')}"
       end
-    end
-
-    def download_only?
-      @dnf_options.include?('--downloadonly')
     end
   end
 end
