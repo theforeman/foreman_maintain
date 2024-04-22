@@ -121,6 +121,10 @@ module ForemanMaintain::PackageManager
       dnf_action('module info', name, with_status: true, assumeyes: true)
     end
 
+    def reboot_required?
+      sys.execute_with_status('dnf needs-restarting --reboothint', :interactive => false)
+    end
+
     private
 
     # rubocop:disable Metrics/LineLength, Metrics/ParameterLists
