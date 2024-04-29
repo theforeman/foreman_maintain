@@ -138,7 +138,7 @@ module ForemanMaintain::PackageManager
       packages = [packages].flatten(1)
 
       dnf_options << '-y' if assumeyes
-      dnf_topions << '--downloadonly' if download_only
+      dnf_options << '--downloadonly' if download_only
       dnf_options << '--disableplugin=foreman-protector'
 
       command = ['dnf', dnf_options.join(' '), action]

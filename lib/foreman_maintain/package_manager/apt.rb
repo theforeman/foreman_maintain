@@ -27,7 +27,7 @@ module ForemanMaintain::PackageManager
     # rubocop:enable Lint/UnusedMethodArgument
 
     def clean_cache(assumeyes: false)
-      apt_action('clean', :assumeyes => assumeyes)
+      apt_action('clean', [], :assumeyes => assumeyes)
     end
 
     def find_installed_package(name, queryfm = '')

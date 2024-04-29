@@ -69,11 +69,15 @@ module DefinitionsTestHelper
 
   def setup
     reset_reporter
-    PackageManagerTestHelper.mock_package_manager
+    PackageManagerTestHelper.mock_package_manager unless skip_mock_package_manager
   end
 
   def teardown
     detector.refresh
+  end
+
+  def skip_mock_package_manager
+    false
   end
 
   # given the current feature assumptions (see assume_feature_present and
