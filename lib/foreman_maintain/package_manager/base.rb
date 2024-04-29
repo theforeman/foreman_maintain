@@ -60,8 +60,6 @@ module ForemanMaintain::PackageManager
       false
     end
 
-    private
-
     def sys
       ForemanMaintain::Utils::SystemHelpers
     end
