@@ -21,7 +21,7 @@ module Checks::Repositories
       if feature(:instance).downstream.subscribed_using_activation_key?
         skip 'Your system is subscribed using custom activation key'
       else
-        @version ||= package_version(feature(:instance).downstream.package_name)
+        @version ||= package_version(feature(:instance).downstream.package_name).version
 
         with_spinner("Validating availability of repositories for #{@version}") do |spinner|
           find_absent_repos(spinner)
