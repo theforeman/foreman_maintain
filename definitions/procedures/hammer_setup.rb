@@ -2,6 +2,9 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
   metadata do
     description 'Setup hammer'
     for_feature :hammer
+    preparation_steps do
+      Checks::ServicesUp.new
+    end
   end
 
   def run
