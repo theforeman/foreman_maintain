@@ -17,7 +17,6 @@ Subcommands:
         --tags tags                 Run only those with all specific set of tags
 
     upgrade                       Upgrade related commands
-      list-versions                 List versions this system is upgradable to
       check --target-version TARGET_VERSION   Run pre-upgrade checks for upgrading to specified version
             --disable-self-upgrade            Disable automatic self upgrade (default: false)
       run --target-version TARGET_VERSION     Run the full upgrade
@@ -56,12 +55,11 @@ Subcommands:
 Foreman-maintain implements upgrade tooling that helps the administrator to go
 through the upgrade process.
 
-Foreman-maintain scans the system to know, what versions are available
-for upgrade on the particular system. To see what versions are available
-for upgrade, run:
+The foreman-maintain tool is intended to self upgrade itself to the next major
+version of the project. This is needed before upgrading, run:
 
 ```
-foreman-maintain upgrade list-versions
+foreman-maintain self-upgrade
 ```
 
 To perform just the pre-upgrade checks for the system, run:
