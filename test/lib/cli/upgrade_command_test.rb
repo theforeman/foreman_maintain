@@ -42,45 +42,11 @@ module ForemanMaintain
               [ARG] ...                     subcommand arguments
 
           Subcommands:
-              list-versions                 List versions this system is upgradable to
               check                         Run pre-upgrade checks before upgrading to specified version
               run                           Run full upgrade to a specified version
 
           Options:
               -h, --help                    print help
-        OUTPUT
-      end
-    end
-
-    describe 'list-versions' do
-      let :command do
-        %w[upgrade list-versions]
-      end
-      it 'run self upgrade if upgrade available for foreman-maintain' do
-        foreman_maintain_update_available
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-
-        Updating rubygem-foreman_maintain package.
-
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
-        OUTPUT
-      end
-
-      it 'inform if no updates available for foreman-maintain' do
-        foreman_maintain_update_unavailable
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-        Nothing to update, can't find new version of rubygem-foreman_maintain.
-        1.15
-        OUTPUT
-      end
-
-      it 'skip self upgrade and lists the available versions' do
-        command << '--disable-self-upgrade'
-        assert_cmd <<-OUTPUT.strip_heredoc
-          1.15
         OUTPUT
       end
     end
