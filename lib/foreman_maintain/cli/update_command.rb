@@ -26,8 +26,9 @@ module ForemanMaintain
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_update?
-          update_runner.run_phase(:pre_update_checks)
-          exit update_runner.exit_code
+          runner = update_runner
+          runner.run_phase(:pre_update_checks)
+          exit runner.exit_code
         end
       end
 
@@ -38,9 +39,10 @@ module ForemanMaintain
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_update?
-          update_runner.run
-          update_runner.save
-          exit update_runner.exit_code
+          runner = update_runner
+          runner.run
+          runner.save
+          exit runner.exit_code
         end
       end
     end
