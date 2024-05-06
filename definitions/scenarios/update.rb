@@ -59,7 +59,7 @@ module Scenarios::Update
       add_steps(
         Procedures::Packages::Update.new(
           :assumeyes => true,
-          :dnf_options => ['--downloadonly']
+          :download_only => true
         ),
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,

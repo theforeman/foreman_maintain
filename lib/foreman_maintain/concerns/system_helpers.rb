@@ -108,7 +108,6 @@ module ForemanMaintain
           package_manager.update(
             packages,
             :assumeyes => options[:assumeyes],
-            :options => options[:options],
             :download_only => options[:download_only]
           )
         when :remove
