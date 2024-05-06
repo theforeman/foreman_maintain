@@ -64,10 +64,6 @@ module Scenarios::ForemanUpgrade
 
     def compose
       add_steps(
-        Procedures::Packages::Update.new(
-          :assumeyes => true,
-          :dnf_options => ['--downloadonly']
-        ),
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
         Procedures::SyncPlans::Disable
