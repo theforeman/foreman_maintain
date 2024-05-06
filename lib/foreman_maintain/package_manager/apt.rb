@@ -19,12 +19,10 @@ module ForemanMaintain::PackageManager
       apt_action('remove', packages, :assumeyes => assumeyes)
     end
 
-    # rubocop:disable Lint/UnusedMethodArgument
-    def update(packages = [], assumeyes: false, options: [], download_only: false)
+    def update(packages = [], assumeyes: false, download_only: false)
       action = packages.any? ? '--only-upgrade install' : 'upgrade'
       apt_action(action, packages, :assumeyes => assumeyes, :download_only => download_only)
     end
-    # rubocop:enable Lint/UnusedMethodArgument
 
     def clean_cache(assumeyes: false)
       apt_action('clean', [], :assumeyes => assumeyes)

@@ -59,12 +59,11 @@ module ForemanMaintain::PackageManager
       dnf_action('remove', packages, assumeyes: assumeyes)
     end
 
-    def update(packages = [], assumeyes: false, options: [], download_only: false)
+    def update(packages = [], assumeyes: false, download_only: false)
       dnf_action(
         'update',
         packages,
         assumeyes: assumeyes,
-        dnf_options: options,
         download_only: download_only
       )
     end

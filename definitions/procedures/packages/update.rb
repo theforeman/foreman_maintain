@@ -6,7 +6,6 @@ module Procedures::Packages
       param :force, 'Do not skip if package is installed', :flag => true, :default => false
       param :warn_on_errors, 'Do not interrupt scenario on failure',
         :flag => true, :default => false
-      param :dnf_options, 'Extra dnf options if any', :array => true, :default => []
       param :download_only, 'Download and cache packages only', :flag => true, :default => false
       param :clean_cache, 'If true will cause a DNF cache clean', :flag => true, :default => true
     end
@@ -16,7 +15,6 @@ module Procedures::Packages
       package_manager.clean_cache(:assumeyes => assumeyes_val) if @clean_cache
       opts = {
         :assumeyes => assumeyes_val,
-        :options => @dnf_options,
         :download_only => @download_only,
       }
       packages_action(:update, @packages, opts)
