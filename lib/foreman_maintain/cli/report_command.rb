@@ -7,7 +7,7 @@ module ForemanMaintain
         def execute
           scenario = run_scenario(Scenarios::Report::Generate.new(tags: :report)).first
           # description can be used too
-          report_data = scenario.steps.map(&:data).reduce(&:merge)
+          report_data = scenario.steps.map(&:data).reduce(&:merge).transform_keys(&:to_s)
 #require 'pry'
 #binding.pry
           puts report_data.to_yaml
