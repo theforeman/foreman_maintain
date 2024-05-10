@@ -9,6 +9,10 @@ module Checks
       # Do you use FreeIPA LDAP auth source?
       # Do you use AD LDAP auth source?
       # Do you use POSIX LDAP auth source?
+      # Do you use netgroups schema?
+      # Do you disable automatic account creation on any LDAP auth source?
+      # Do you disable user group syncrhonization on any LDAP auth source?
+      # Do you have external user groups mapping?
       def run
         result = {}
 
@@ -24,7 +28,23 @@ module Checks
           else
             result["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = nil
           end
+
+          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND use_netgroups = true")
+          result["ldap_auth_source_#{flavor}_with_net_groups_count"] = count.first['count'].to_i
+
+          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND use_netgroups = false")
+          result["ldap_auth_source_#{flavor}_with_posix_groups_count"] = count.first['count'].to_i
+
+          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND onthefly_register = false")
+          result["ldap_auth_source_#{flavor}_with_account_creation_disabled_count"] = count.first['count'].to_i
+
+          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND usergroup_sync = false")
+          result["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count.first['count'].to_i
         end
+
+
+        count = feature(:foreman_database).query("SELECT COUNT(*) FROM external_usergroups")
+        result["external_user_group_mapping_count"] = count.first['count'].to_i
 
         self.data = result
       end
