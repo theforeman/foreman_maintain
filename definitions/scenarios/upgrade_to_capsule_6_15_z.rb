@@ -27,6 +27,7 @@ module Scenarios::Capsule_6_15_z
     def compose
       add_steps(find_checks(:default))
       add_steps(find_checks(:pre_upgrade))
+      add_step(Checks::CheckIpv6Disable)
       add_step(Checks::Repositories::Validate.new(:version => '6.15'))
     end
   end
