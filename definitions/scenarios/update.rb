@@ -28,6 +28,7 @@ module Scenarios::Update
         Checks::SystemRegistration,
         Checks::CheckHotfixInstalled,
         Checks::CheckTmout,
+        Checks::CheckIpv6Disable,
         Checks::CheckUpstreamRepository,
         Checks::Disk::AvailableSpace,
         Checks::Disk::AvailableSpaceCandlepin, # if candlepin
