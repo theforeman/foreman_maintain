@@ -5,7 +5,7 @@ module ForemanMaintain
     include Concerns::Metadata
     include Concerns::Finders
 
-    attr_accessor :associated_feature, :data
+    attr_accessor :associated_feature
 
     # run condition and mark the check as failed when not passing
     #

@@ -1,21 +1,14 @@
 module Checks
   module Report
-    class CheckVmwareUsage < ForemanMaintain::Check
+    class CheckVmwareUsage < ForemanMaintain::ReportCheck
       metadata do
         description 'Check if vmware compute resource is used'
         tags :report
       end
 
       def run
-        count = feature(:foreman_database).query(self.class.query)
-        self.data = { "compute_resource_vmware_count": count.first['count'].to_i }
-      end
-
-
-      def self.query
-        <<-SQL
-          SELECT COUNT(*) FROM compute_resources WHERE type = 'Foreman::Model::Vmware'
-        SQL
+        count = sql_count("SELECT COUNT(*) FROM compute_resources WHERE type = 'Foreman::Model::Vmware'")
+        self.data = { "compute_resource_vmware_count": count }
       end
     end
   end
