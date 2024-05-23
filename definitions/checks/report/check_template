@@ -1,6 +1,7 @@
+# copy the file and add the .rb suffix
 module Checks
   module Report
-    class CheckTemplate < ForemanMaintain::Check
+    class CheckTemplate < ForemanMaintain::ReportCheck
       metadata do
         description 'One sentence description'
         tags :report
