@@ -1,6 +1,6 @@
 module Checks
   module Report
-    class CheckLDAPAuthSourceUsage < ForemanMaintain::Check
+    class CheckLDAPAuthSourceUsage < ForemanMaintain::ReportCheck
       metadata do
         description 'Checks the use of LDAP auth sources'
         tags :report
@@ -17,8 +17,8 @@ module Checks
         result = {}
 
         %w(free_ipa posix active_directory).each do |flavor|
-          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND server_type = '#{flavor}'")
-          result["ldap_auth_source_#{flavor}_count"] = count.first['count'].to_i
+          count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND server_type = '#{flavor}'")
+          result["ldap_auth_source_#{flavor}_count"] = count
 
           users = feature(:foreman_database).query("SELECT users.* FROM users INNER JOIN auth_sources ON (auth_sources.id = users.auth_source_id) WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND users.last_login_on IS NOT NULL ORDER BY users.last_login_on DESC")
           result["users_authenticated_through_ldap_auth_source_#{flavor}"] = users.count
@@ -29,17 +29,17 @@ module Checks
             result["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = nil
           end
 
-          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND use_netgroups = true")
-          result["ldap_auth_source_#{flavor}_with_net_groups_count"] = count.first['count'].to_i
+          count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND use_netgroups = true")
+          result["ldap_auth_source_#{flavor}_with_net_groups_count"] = count
 
-          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND use_netgroups = false")
-          result["ldap_auth_source_#{flavor}_with_posix_groups_count"] = count.first['count'].to_i
+          count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND use_netgroups = false")
+          result["ldap_auth_source_#{flavor}_with_posix_groups_count"] = count
 
-          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND onthefly_register = false")
-          result["ldap_auth_source_#{flavor}_with_account_creation_disabled_count"] = count.first['count'].to_i
+          count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND onthefly_register = false")
+          result["ldap_auth_source_#{flavor}_with_account_creation_disabled_count"] = count
 
-          count = feature(:foreman_database).query("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND usergroup_sync = false")
-          result["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count.first['count'].to_i
+          count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND usergroup_sync = false")
+          result["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count
         end
 
 
