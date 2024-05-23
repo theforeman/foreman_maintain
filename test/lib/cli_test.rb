@@ -31,6 +31,7 @@ module ForemanMaintain
             plugin                        Manage optional plugins on your server
             self-upgrade                  Perform major version self upgrade
             maintenance-mode              Control maintenance-mode for application
+            report                        Generate the usage reports
 
         Options:
             -h, --help                    print help
