@@ -23,7 +23,9 @@ module ForemanMaintain
         @definition_kinds = definition_kinds
         @steps = []
         @steps += checks(filter) if definition_kinds.include?(:check)
+        @steps += reports(filter) if definition_kinds.include?(:reports)
         @steps += procedures(filter) if definition_kinds.include?(:procedure)
+
         @steps = DependencyGraph.sort(@steps)
       end
 
@@ -55,6 +57,10 @@ module ForemanMaintain
 
       def checks(filter)
         ForemanMaintain.available_checks(filter).map(&:ensure_instance)
+      end
+
+      def reports(filter)
+        ForemanMaintain.available_reports(filter).map(&:ensure_instance)
       end
 
       def procedures(filter)

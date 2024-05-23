@@ -1,9 +1,8 @@
 module Checks
   module Report
-    class CheckLDAPAuthSourceUsage < ForemanMaintain::ReportCheck
+    class LDAPAuthSource < ForemanMaintain::Report
       metadata do
         description 'Checks the use of LDAP auth sources'
-        tags :report
       end
 
       # Do you use FreeIPA LDAP auth source?
