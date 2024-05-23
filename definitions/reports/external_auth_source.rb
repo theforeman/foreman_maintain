@@ -1,9 +1,8 @@
 module Checks
   module Report
-    class CheckExternalAuthSourceUsage < ForemanMaintain::ReportCheck
+    class ExternalAuthSource < ForemanMaintain::Report
       metadata do
         description 'Checks the use of External auth source'
-        tags :report
       end
 
       # Do you use external auth source?

@@ -36,7 +36,7 @@ module ForemanMaintain
   require 'foreman_maintain/feature'
   require 'foreman_maintain/executable'
   require 'foreman_maintain/check'
-  require 'foreman_maintain/report_check'
+  require 'foreman_maintain/report'
   require 'foreman_maintain/procedure'
   require 'foreman_maintain/scenario'
   require 'foreman_maintain/runner'
@@ -130,6 +130,10 @@ module ForemanMaintain
 
     def available_checks(*args)
       detector.available_checks(*args)
+    end
+
+    def available_reports(*args)
+      detector.available_reports(*args)
     end
 
     def available_procedures(*args)
