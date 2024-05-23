@@ -34,7 +34,7 @@ module ForemanMaintain
       subcommand 'self-upgrade', 'Perform major version self upgrade', SelfUpgradeCommand
       subcommand 'maintenance-mode', 'Control maintenance-mode for application',
         MaintenanceModeCommand
-      subcommand 'report', 'Generate the usage report', ReportCommand
+      subcommand 'report', 'Generate the usage reports', ReportCommand
 
       def run(*arguments)
         logger.info("Running foreman-maintain command with arguments #{arguments.inspect}")

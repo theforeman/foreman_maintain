@@ -1,9 +1,8 @@
 module Checks
   module Report
-    class CheckVmwareUsage < ForemanMaintain::ReportCheck
+    class Vmware < ForemanMaintain::Report
       metadata do
         description 'Check if vmware compute resource is used'
-        tags :report
       end
 
       def run
