@@ -1,6 +1,6 @@
 module Checks
   module Report
-    class CheckOIDCUsage < ForemanMaintain::Check
+    class CheckOIDCUsage < ForemanMaintain::ReportCheck
       metadata do
         description 'Checks the use of Keycloak/OIDC'
         tags :report

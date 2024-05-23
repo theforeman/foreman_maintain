@@ -1,6 +1,6 @@
 module Checks
   module Report
-    class CheckKerberosUsage < ForemanMaintain::Check
+    class CheckKerberosUsage < ForemanMaintain::ReportCheck
       metadata do
         description 'Checks the use of Kerberos'
         tags :report
