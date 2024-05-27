@@ -26,7 +26,6 @@ module ForemanMaintain
         [
           '/etc/httpd',
           '/var/www/html/pub/katello-*',
-          '/etc/squid',
           '/etc/foreman',
           '/etc/selinux/targeted/contexts/files/file_contexts.subs',
           '/etc/sysconfig/foreman',
