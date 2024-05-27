@@ -4,7 +4,7 @@ describe 'Service procedures perform appropiate actions' do
   include DefinitionsTestHelper
 
   before do
-    @services = { 10 => %w[tomcat qpidd httpd squid].map do |s|
+    @services = { 10 => %w[tomcat qpidd httpd].map do |s|
       ForemanMaintain::Utils.system_service(s, 10)
     end }
     Features::Service.any_instance.stubs(:filtered_services).returns(@services)
