@@ -162,7 +162,6 @@ class Features::Instance < ForemanMaintain::Feature
       'pulp3' => %w[pulpcore pulpcore_database],
       'pulp3_content' => %w[pulpcore pulpcore_database],
       'foreman_tasks' => %w[foreman_tasks],
-      'katello_agent' => %w[katello],
       'katello_events' => %w[katello],
     }
   end
