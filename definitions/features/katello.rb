@@ -27,7 +27,6 @@ class Features::Katello < ForemanMaintain::Feature
       '/etc/sysconfig/tomcat*',
       '/etc/tomcat*',
       '/var/lib/candlepin',
-      '/usr/share/foreman/bundler.d/katello.rb',
     ]
 
     if installer_scenario_answers['certs']
