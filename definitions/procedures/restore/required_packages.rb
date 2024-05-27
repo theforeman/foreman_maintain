@@ -12,7 +12,6 @@ module Procedures::Restore
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
       required_packages = []
       required_packages << 'puppetserver' if backup.with_puppetserver?
-      required_packages << 'qpid-cpp-server' if backup.with_qpidd?
       if required_packages.any?
         with_spinner('Installing required packages') do
           ForemanMaintain.package_manager.install(required_packages, assumeyes: true)

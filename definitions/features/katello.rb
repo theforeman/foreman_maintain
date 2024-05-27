@@ -17,14 +17,6 @@ class Features::Katello < ForemanMaintain::Feature
     @current_version ||= package_version('katello')
   end
 
-  def services
-    [
-      system_service('qpidd', 10),
-      system_service('qdrouterd', 10),
-    ]
-  end
-
-  # rubocop:disable  Metrics/MethodLength
   def config_files
     configs = [
       '/etc/pki/katello',
@@ -36,10 +28,6 @@ class Features::Katello < ForemanMaintain::Feature
       '/etc/tomcat*',
       '/var/lib/candlepin',
       '/usr/share/foreman/bundler.d/katello.rb',
-      '/etc/qpid',
-      '/etc/qpid-dispatch',
-      '/var/lib/qpidd',
-      '/etc/qpid-dispatch',
     ]
 
     if installer_scenario_answers['certs']
@@ -53,11 +41,9 @@ class Features::Katello < ForemanMaintain::Feature
 
     configs
   end
-  # rubocop:enable  Metrics/MethodLength
 
   def config_files_exclude_for_online
     [
-      '/var/lib/qpidd',
       '/var/lib/candlepin/activemq-artemis',
     ]
   end
