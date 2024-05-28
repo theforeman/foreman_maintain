@@ -125,14 +125,6 @@ class Features::ForemanTasks < ForemanMaintain::Feature
     puts "\nTimeout: #{e.message}. Try again."
   end
 
-  def services
-    feature(:dynflow_sidekiq) ? [] : [system_service(service_name, 30)]
-  end
-
-  def service_name
-    'dynflowd'
-  end
-
   private
 
   def check_task_count(state, spinner)
