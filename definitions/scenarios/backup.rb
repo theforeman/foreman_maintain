@@ -19,9 +19,9 @@ module ForemanMaintain::Scenarios
     def compose
       check_valid_strategy
       safety_confirmation
-      accessibility_confirmation
-      prepare_directory
-      add_step_with_context(Procedures::Backup::Metadata, :online_backup => online_backup?)
+      add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
+      add_step_with_context(Procedures::Backup::PrepareDirectory)
+      add_step_with_context(Procedures::Backup::Metadata, :online_backup => strategy == :online)
 
       case strategy
       when :online
@@ -29,6 +29,7 @@ module ForemanMaintain::Scenarios
       when :offline
         add_offline_backup_steps
       end
+
       add_step_with_context(Procedures::Backup::CompressData)
     end
 
@@ -64,18 +65,8 @@ module ForemanMaintain::Scenarios
 
     private
 
-    def prepare_directory
-      add_step_with_context(Procedures::Backup::PrepareDirectory)
-    end
-
-    def accessibility_confirmation
-      if strategy == :offline
-        add_step_with_context(Procedures::Backup::AccessibilityConfirmation)
-      end
-    end
-
     def safety_confirmation
-      if online_backup? || include_db_dumps?
+      if strategy == :online || include_db_dumps?
         add_step_with_context(Procedures::Backup::Online::SafetyConfirmation)
       end
     end
@@ -132,10 +123,6 @@ module ForemanMaintain::Scenarios
     def include_db_dumps?
       !!context.get(:include_db_dumps)
     end
-
-    def online_backup?
-      strategy == :online
-    end
   end
 
   class BackupRescueCleanup < ForemanMaintain::Scenario
@@ -149,8 +136,10 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_step_with_context(Procedures::Service::Start) if strategy != :online
-      add_steps_with_context(find_procedures(:maintenance_mode_off)) if strategy != :online
+      if strategy == :offline
+        add_step_with_context(Procedures::Service::Start)
+        add_steps_with_context(find_procedures(:maintenance_mode_off))
+      end
       add_step_with_context(Procedures::Backup::Clean)
     end
 
