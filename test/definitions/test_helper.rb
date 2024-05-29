@@ -104,8 +104,9 @@ module DefinitionsTestHelper
   end
 
   def assert_scenario_has_step(scenario, scenario_step)
-    assert(scenario.steps.find { |step| step.is_a? scenario_step },
-      "Expected scenario to have #{scenario_step}")
+    step = scenario.steps.find { |s| s.is_a? scenario_step }
+    assert(step, "Expected scenario to have #{scenario_step}")
+    yield step if block_given?
   end
 
   def refute_scenario_has_step(scenario, scenario_step)
