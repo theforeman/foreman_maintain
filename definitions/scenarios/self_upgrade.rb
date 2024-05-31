@@ -4,11 +4,11 @@ module ForemanMaintain::Scenarios
     include ForemanMaintain::Concerns::Versions
 
     def target_version
-      @target_version ||= Gem::Version.new(current_version).bump.to_s
+      feature(:instance).target_version
     end
 
     def current_version
-      feature(:instance).downstream.current_version.to_s[/^\d+\.\d+\.\d+/]
+      feature(:instance).current_version
     end
 
     def maintenance_repo_label
@@ -47,12 +47,11 @@ module ForemanMaintain::Scenarios
       end
     end
 
-    def upstream_target_version
-      if feature(:katello_install)
-        return foreman_version_by_katello(target_version)
-      else
-        target_version
-      end
+    def self_upgrade_allowed?
+      target = Gem::Version.new(target_version).version
+
+      Gem::Version.new(current_version).segments[0..1].join('.') == target ||
+        Gem::Version.new(current_version).bump.segments[0..1].join('.') == target
     end
   end
 
@@ -65,6 +64,16 @@ module ForemanMaintain::Scenarios
     end
 
     def downstream_self_upgrade(pkgs_to_update)
+      unless self_upgrade_allowed?
+        raise(
+          ForemanMaintain::Error::Warn,
+          "foreman-maintain is too many versions ahead. The target " \
+          "version is #{target_version} while the currently installed " \
+          "version is #{current_version}. Please rollback " \
+          "foreman-maintain to the proper version."
+        )
+      end
+
       ForemanMaintain.enable_maintenance_module
 
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true,
@@ -77,7 +86,7 @@ module ForemanMaintain::Scenarios
       # 2. Update the foreman-maintain packages from next major version repository
       # 3. Rollback the repository to current major version
 
-      add_step(Procedures::Repositories::Setup.new(:version => upstream_target_version))
+      add_step(Procedures::Repositories::Setup.new(:version => target_version))
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true))
     ensure
       rollback_repositories

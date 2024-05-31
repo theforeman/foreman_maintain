@@ -10,6 +10,10 @@ class Features::Satellite < ForemanMaintain::Feature
     end
   end
 
+  def target_version
+    '6.16'
+  end
+
   def current_version
     @current_version ||= package_version(package_name) || version_from_source
   end
