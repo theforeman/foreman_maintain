@@ -59,12 +59,13 @@ module ForemanMaintain::PackageManager
       dnf_action('remove', packages, assumeyes: assumeyes)
     end
 
-    def update(packages = [], assumeyes: false, download_only: false)
+    def update(packages = [], assumeyes: false, download_only: false, enabled_repos: [])
       dnf_action(
         'update',
         packages,
         assumeyes: assumeyes,
-        download_only: download_only
+        download_only: download_only,
+        enabled_repos: enabled_repos
       )
     end
 
@@ -132,13 +133,17 @@ module ForemanMaintain::PackageManager
 
     private
 
-    # rubocop:disable Layout/LineLength, Metrics/ParameterLists
-    def dnf_action(action, packages, with_status: false, assumeyes: false, dnf_options: [], valid_exit_statuses: [0], download_only: false)
+    # rubocop:disable Layout/LineLength, Metrics/ParameterLists, Metrics/MethodLength
+    def dnf_action(action, packages, with_status: false, assumeyes: false, dnf_options: [], valid_exit_statuses: [0], download_only: false, enabled_repos: [])
       packages = [packages].flatten(1)
 
       dnf_options << '-y' if assumeyes
       dnf_options << '--downloadonly' if download_only
       dnf_options << '--disableplugin=foreman-protector'
+
+      enabled_repos.map do |id|
+        dnf_options << "--enablerepo=#{id}"
+      end
 
       command = ['dnf', dnf_options.join(' '), action]
 
@@ -158,7 +163,7 @@ module ForemanMaintain::PackageManager
         )
       end
     end
-    # rubocop:enable Layout/LineLength, Metrics/ParameterLists
+    # rubocop:enable Layout/LineLength, Metrics/ParameterLists, Metrics/MethodLength
 
     def protector_config
       File.exist?(protector_config_file) ? File.read(protector_config_file) : ''

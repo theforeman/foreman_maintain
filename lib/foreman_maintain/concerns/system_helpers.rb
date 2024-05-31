@@ -100,7 +100,7 @@ module ForemanMaintain
       end
 
       def packages_action(action, packages, options = {})
-        options.validate_options!(:assumeyes, :options, :download_only)
+        options.validate_options!(:assumeyes, :options, :download_only, :enabled_repos)
         case action
         when :install
           package_manager.install(packages, :assumeyes => options[:assumeyes])
@@ -108,7 +108,8 @@ module ForemanMaintain
           package_manager.update(
             packages,
             :assumeyes => options[:assumeyes],
-            :download_only => options[:download_only]
+            :download_only => options[:download_only],
+            :enabled_repos => options[:enabled_repos]
           )
         when :remove
           package_manager.remove(packages, :assumeyes => options[:assumeyes])
