@@ -1,5 +1,6 @@
 require File.expand_path('../test_helper', File.dirname(__FILE__))
 require File.expand_path('assume_feature_dependencies_helper', File.dirname(__FILE__))
+
 module DefinitionsTestHelper
   include ForemanMaintain::Concerns::Finders
   include ForemanMaintain::Concerns::SystemService

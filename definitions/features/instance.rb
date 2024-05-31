@@ -91,6 +91,24 @@ class Features::Instance < ForemanMaintain::Feature
     feature(:foreman_install) || feature(:katello_install)
   end
 
+  def current_version
+    version = if feature(:instance).downstream
+                feature(:instance).downstream.current_version
+              else
+                feature(:foreman_install).current_version
+              end
+
+    version.to_s[/^\d+\.\d+\.\d+/]
+  end
+
+  def target_version
+    if feature(:instance).downstream
+      Features::Satellite.new.target_version
+    else
+      Features::ForemanInstall.new.target_version
+    end
+  end
+
   private
 
   # rubocop:disable Metrics/AbcSize
