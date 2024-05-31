@@ -8,6 +8,7 @@ module Procedures::Packages
         :flag => true, :default => false
       param :download_only, 'Download and cache packages only', :flag => true, :default => false
       param :clean_cache, 'If true will cause a DNF cache clean', :flag => true, :default => true
+      param :enabled_repos, 'List of repositories to enable', :array => true
     end
 
     def run
@@ -16,6 +17,7 @@ module Procedures::Packages
       opts = {
         :assumeyes => assumeyes_val,
         :download_only => @download_only,
+        :enabled_repos => @enabled_repos,
       }
       packages_action(:update, @packages, opts)
     rescue ForemanMaintain::Error::ExecutionError => e
