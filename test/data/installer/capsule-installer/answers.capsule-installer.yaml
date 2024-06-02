@@ -1,5 +1,0 @@
----
-certs:
-  generate: false
-  deploy: true
-capsule: true
