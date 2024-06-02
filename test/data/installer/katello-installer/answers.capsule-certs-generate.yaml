@@ -1,6 +1,0 @@
-certs:
-  generate: true
-  deploy: false
-  group: foreman
-  org: Default_Organization
-capsule_certs: true
