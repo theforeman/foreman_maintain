@@ -7,8 +7,7 @@ class Features::Capsule < ForemanMaintain::Feature
 
     confine do
       !package_manager.installed?(['satellite']) &&
-        package_manager.installed?(['satellite-capsule']) ||
-        package_manager.installed?(['capsule-installer'])
+        package_manager.installed?(['satellite-capsule'])
     end
   end
 
