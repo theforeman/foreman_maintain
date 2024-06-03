@@ -8,14 +8,9 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
   end
 
   def config_files
-    # Workaround until foreman-installer can deploy scaled workers
-    service_symlinks = configured_instances.map do |service|
-      "/etc/systemd/system/multi-user.target.wants/#{service}.service"
-    end
     [
       '/etc/foreman/dynflow',
-      service_symlinks,
-    ].flatten
+    ]
   end
 
   def services
