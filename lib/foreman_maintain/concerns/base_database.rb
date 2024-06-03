@@ -41,12 +41,6 @@ module ForemanMaintain
         raise NotImplementedError
       end
 
-      def config_files
-        [
-          '/etc/systemd/system/postgresql.service',
-        ]
-      end
-
       def local?(config = configuration)
         ['localhost', '127.0.0.1', `hostname`.strip].include? config['host']
       end
