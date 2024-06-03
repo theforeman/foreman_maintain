@@ -51,10 +51,7 @@ module ForemanMaintain::Scenarios
         add_step_with_context(Procedures::Restore::ReindexDatabases)
       end
 
-      add_steps_with_context(
-        Procedures::Pulpcore::Migrate,
-        Procedures::Restore::CandlepinResetMigrations
-      )
+      add_steps_with_context(Procedures::Pulpcore::Migrate)
 
       add_steps_with_context(Procedures::Service::Start,
         Procedures::Service::DaemonReload)
