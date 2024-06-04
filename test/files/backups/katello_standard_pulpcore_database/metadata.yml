@@ -1,0 +1,22 @@
+---
+os_version: CentOS Stream 8
+plugin_list:
+- foreman-tasks-9.1.1
+- foreman_puppet-6.3.0
+- foreman_remote_execution-13.1.0
+- katello-4.13.0.pre.master
+proxy_features:
+- dynflow
+- logs
+- pulpcore
+- puppet
+- puppetca
+- script
+incremental: false
+online: false
+hostname: sat-6.example.com
+proxy_config:
+  dhcp: false
+  dhcp_interface: eth0
+  dns: false
+  dns_interface: eth0
