@@ -183,24 +183,7 @@ module ForemanMaintain
 
       def validate_hostname?
         # make sure that the system hostname is the same as the backup
-        hostname_from_metadata = metadata.fetch('hostname', nil)
-        if hostname_from_metadata
-          hostname_from_metadata == hostname
-        else
-          config_tarball = file_map[:config_files][:path]
-          tar_cmd = "tar zxf #{config_tarball} etc/httpd/conf/httpd.conf --to-stdout --occurrence=1"
-          status, httpd_config = execute_with_status(tar_cmd)
-
-          # Incremental backups sometimes don't include httpd.conf. Since a "base" backup
-          # is restored before an incremental, we can assume that the hostname is checked
-          # during the base backup restore
-          if status == 0
-            match = httpd_config.match(/\s*ServerName\s+"*([^ "]+)"*\s*$/)
-            match ? match[1] == hostname : false
-          else
-            true
-          end
-        end
+        metadata.fetch('hostname', nil) == hostname
       end
 
       def validate_interfaces
