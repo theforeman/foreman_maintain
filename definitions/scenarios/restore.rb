@@ -51,8 +51,6 @@ module ForemanMaintain::Scenarios
         add_step_with_context(Procedures::Restore::ReindexDatabases)
       end
 
-      add_steps_with_context(Procedures::Service::Start,
-        Procedures::Service::DaemonReload)
       add_step(Procedures::Installer::Run.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::UpgradeRakeTask)
       add_step_with_context(Procedures::Crond::Start) if feature(:cron)
