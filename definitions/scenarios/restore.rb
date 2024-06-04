@@ -59,9 +59,7 @@ module ForemanMaintain::Scenarios
     # rubocop:enable Metrics/CyclomaticComplexity
 
     def drop_dbs(backup)
-      if backup.file_map[:candlepin_dump][:present] ||
-         backup.file_map[:foreman_dump][:present] ||
-         backup.file_map[:pulpcore_dump][:present]
+      if backup.sql_dump_files_exist?
         add_steps_with_context(Procedures::Restore::DropDatabases)
       end
     end
