@@ -11,7 +11,6 @@ module ForemanMaintain::Scenarios
     end
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
-    # rubocop:disable Metrics/CyclomaticComplexity
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
@@ -35,13 +34,10 @@ module ForemanMaintain::Scenarios
       end
       add_step_with_context(Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
-      drop_dbs(backup)
-      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
-        add_step(Procedures::Service::Start.new(:only => ['postgresql']))
-      end
-      restore_sql_dumps(backup)
-      if backup.sql_dump_files_exist? && feature(:instance).postgresql_local?
-        add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
+
+      if backup.sql_dump_files_exist?
+        add_steps_with_context(Procedures::Restore::DropDatabases)
+        restore_sql_dumps(backup)
       end
 
       if feature(:instance).postgresql_local? &&
@@ -55,15 +51,11 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Crond::Start) if feature(:cron)
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
-    # rubocop:enable Metrics/CyclomaticComplexity
-
-    def drop_dbs(backup)
-      if backup.sql_dump_files_exist?
-        add_steps_with_context(Procedures::Restore::DropDatabases)
-      end
-    end
 
     def restore_sql_dumps(backup)
+      if feature(:instance).postgresql_local?
+        add_step(Procedures::Service::Start.new(:only => ['postgresql']))
+      end
       if backup.file_map[:candlepin_dump][:present]
         add_steps_with_context(Procedures::Restore::CandlepinDump)
       end
@@ -72,6 +64,9 @@ module ForemanMaintain::Scenarios
       end
       if backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::PulpcoreDump)
+      end
+      if feature(:instance).postgresql_local?
+        add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
     end
 
