@@ -61,7 +61,7 @@ module ForemanMaintain::Scenarios
     def drop_dbs(backup)
       if backup.file_map[:candlepin_dump][:present] ||
          backup.file_map[:foreman_dump][:present] ||
-         (feature(:pulpcore) && backup.file_map[:pulpcore_dump][:present])
+         backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::DropDatabases)
       end
     end
@@ -73,7 +73,7 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:foreman_dump][:present]
         add_steps_with_context(Procedures::Restore::ForemanDump)
       end
-      if feature(:pulpcore) && backup.file_map[:pulpcore_dump][:present]
+      if backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::PulpcoreDump)
       end
     end
