@@ -19,9 +19,7 @@ module Procedures::Restore
         feature(:service).handle_services(spinner, 'start', :only => ['postgresql'])
         drop_foreman(backup, spinner)
         drop_candlepin(backup, spinner)
-        if feature(:pulpcore)
-          drop_pulpcore(backup, spinner)
-        end
+        drop_pulpcore(backup, spinner)
       end
     end
 

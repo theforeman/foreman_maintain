@@ -226,7 +226,7 @@ module ForemanMaintain
       def sql_dump_files_exist?
         file_map[:foreman_dump][:present] ||
           file_map[:candlepin_dump][:present] ||
-          (feature(:pulpcore_database) && file_map[:pulpcore_dump][:present])
+          file_map[:pulpcore_dump][:present]
       end
 
       def incremental?
