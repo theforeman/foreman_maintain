@@ -52,7 +52,30 @@ module Scenarios
         refute_scenario_has_step(scenario, Procedures::Restore::ReindexDatabases)
       end
 
-      it 'drops and restores DB dumps if present' do
+      it 'drops and restores DB dumps if present and no DB data present' do
+        assume_feature_present(:foreman_database, :configuration => {})
+        assume_feature_present(:candlepin_database, :configuration => {})
+        assume_feature_present(:pulpcore_database, :configuration => {})
+
+        ForemanMaintain::Utils::Backup.any_instance.stubs(:file_map).returns(
+          {
+            :foreman_dump => { :present => true },
+            :candlepin_dump => { :present => true },
+            :pulpcore_dump => { :present => true },
+            :pulp_data => { :present => true },
+            :pgsql_data => { :present => false },
+            :metadata => { :present => false },
+          }
+        )
+
+        assert_scenario_has_step(scenario, Procedures::Restore::ExtractFiles)
+        assert_scenario_has_step(scenario, Procedures::Restore::DropDatabases)
+        assert_scenario_has_step(scenario, Procedures::Restore::ForemanDump)
+        assert_scenario_has_step(scenario, Procedures::Restore::CandlepinDump)
+        assert_scenario_has_step(scenario, Procedures::Restore::PulpcoreDump)
+      end
+
+      it 'does not try to drop/restore DB dumps if present and DB data present' do
         assume_feature_present(:foreman_database, :configuration => {})
         assume_feature_present(:candlepin_database, :configuration => {})
         assume_feature_present(:pulpcore_database, :configuration => {})
@@ -68,10 +91,11 @@ module Scenarios
           }
         )
 
-        assert_scenario_has_step(scenario, Procedures::Restore::DropDatabases)
-        assert_scenario_has_step(scenario, Procedures::Restore::ForemanDump)
-        assert_scenario_has_step(scenario, Procedures::Restore::CandlepinDump)
-        assert_scenario_has_step(scenario, Procedures::Restore::PulpcoreDump)
+        assert_scenario_has_step(scenario, Procedures::Restore::ExtractFiles)
+        refute_scenario_has_step(scenario, Procedures::Restore::DropDatabases)
+        refute_scenario_has_step(scenario, Procedures::Restore::ForemanDump)
+        refute_scenario_has_step(scenario, Procedures::Restore::CandlepinDump)
+        refute_scenario_has_step(scenario, Procedures::Restore::PulpcoreDump)
       end
 
       it 'does not try to drop/restore DB dumps when these are absent' do
