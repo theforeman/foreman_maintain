@@ -27,7 +27,6 @@ module ForemanMaintain::Scenarios
       end
 
       add_steps_with_context(Procedures::Restore::Confirmation,
-        Procedures::Selinux::SetFileSecurity,
         Procedures::Restore::RequiredPackages,
         Procedures::Restore::Configs)
       add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
@@ -89,9 +88,6 @@ module ForemanMaintain::Scenarios
         Procedures::Restore::ForemanDump => :backup_dir,
         Procedures::Restore::PulpcoreDump => :backup_dir,
         Procedures::Restore::ExtractFiles => :backup_dir)
-
-      context.map(:incremental_backup,
-        Procedures::Selinux::SetFileSecurity => :incremental_backup)
     end
   end
 
