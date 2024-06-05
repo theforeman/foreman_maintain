@@ -35,7 +35,7 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Service::Stop)
       add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
 
-      if backup.sql_dump_files_exist?
+      if backup.sql_needs_dump_restore?
         add_steps_with_context(Procedures::Restore::DropDatabases)
         restore_sql_dumps(backup)
       end
