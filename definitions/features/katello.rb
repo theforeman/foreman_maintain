@@ -9,10 +9,6 @@ class Features::Katello < ForemanMaintain::Feature
     end
   end
 
-  def data_dirs
-    @dirs ||= ['/var/lib/pulp', '/var/lib/pgsql']
-  end
-
   def current_version
     @current_version ||= package_version('katello')
   end
