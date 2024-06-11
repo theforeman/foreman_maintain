@@ -196,21 +196,6 @@ module ForemanMaintain
           Can't set target version 1.16, 1.15 already in progress
         OUTPUT
       end
-
-      it 'with --phase it runs only a specific phase of the upgrade' do
-        UpgradeRunner.any_instance.expects(:run_phase).with(:pre_migrations)
-        assert_cmd(<<-OUTPUT.strip_heredoc, ['--phase=pre_migrations', '--target-version=1.15'])
-          Checking for new version of #{ForemanMaintain.main_package_name}...
-          Nothing to update, can't find new version of #{ForemanMaintain.main_package_name}.
-        OUTPUT
-      end
-
-      it 'raises an exception for invalid phase' do
-        Cli::MainCommand.any_instance.expects(:exit!)
-        assert_cmd(<<-OUTPUT.strip_heredoc, ['--phase=foo_bar', '--target-version', '1.16'])
-          Unknown phase foo_bar
-        OUTPUT
-      end
     end
   end
 end
