@@ -74,21 +74,10 @@ module ForemanMaintain
         interactive_option
         disable_self_upgrade_option
 
-        option '--phase', 'phase', 'run only a specific phase', :required => false do |phase|
-          unless UpgradeRunner::PHASES.include?(phase.to_sym)
-            raise Error::UsageError, "Unknown phase #{phase}"
-          end
-          phase
-        end
-
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade if allow_self_upgrade?
-          if phase
-            upgrade_runner.run_phase(phase.to_sym)
-          else
-            upgrade_runner.run
-          end
+          upgrade_runner.run
           upgrade_runner.save
           exit upgrade_runner.exit_code
         end
