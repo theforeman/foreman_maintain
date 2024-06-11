@@ -135,7 +135,8 @@ module Scenarios::ForemanUpgrade
         Checks::ServicesUp,
         Checks::SystemRegistration,
         Procedures::Packages::CheckForReboot,
-        Procedures::Pulpcore::ContainerHandleImageMetadata
+        Procedures::Pulpcore::ContainerHandleImageMetadata,
+        Procedures::Repositories::IndexKatelloRepositoriesContainerMetatdata
       )
     end
   end
