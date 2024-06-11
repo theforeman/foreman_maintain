@@ -17,9 +17,6 @@ module Procedures::Pulpcore
         spinner.update('Adding image metadata to pulp. You can continue using the ' \
                'system normally while the task runs in the background.')
         execute!(pulpcore_manager('container-handle-image-data'))
-        spinner.update('Adding image metadata to katello. You can continue using the ' \
-               'system normally while the task runs in the background.')
-        execute!('foreman-rake katello:import_container_manifest_labels')
       end
     end
   end

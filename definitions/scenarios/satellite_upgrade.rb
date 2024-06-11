@@ -99,6 +99,7 @@ module Scenarios::Satellite
       add_steps(find_checks(:post_upgrade))
       add_step(Procedures::Packages::CheckForReboot)
       add_step(Procedures::Pulpcore::ContainerHandleImageMetadata)
+      add_step(Procedures::Repositories::IndexKatelloRepositoriesContainerMetatdata)
     end
   end
 end
