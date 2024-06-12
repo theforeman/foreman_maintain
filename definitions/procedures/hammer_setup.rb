@@ -18,6 +18,10 @@ class Procedures::HammerSetup < ForemanMaintain::Procedure
   end
 
   def necessary?
-    !feature(:hammer).check_connection
+    if feature(:hammer)
+      !feature(:hammer).check_connection
+    else
+      false
+    end
   end
 end
