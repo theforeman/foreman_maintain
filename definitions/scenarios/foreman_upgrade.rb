@@ -11,7 +11,7 @@ module Scenarios::ForemanUpgrade
     end
 
     def target_version
-      'nightly'
+      feature(:instance).target_version
     end
   end
 
@@ -83,7 +83,7 @@ module Scenarios::ForemanUpgrade
     end
 
     def compose
-      add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
+      add_step(Procedures::Repositories::Setup.new(:version => target_version))
       if el8?
         modules_to_switch = ['postgresql:13']
         add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))

@@ -5,14 +5,14 @@ module Scenarios::Satellite
         tags :upgrade_scenario
         confine do
           (feature(:downstream).current_minor_version == '6.15' || \
-            ForemanMaintain.upgrade_in_progress == '6.16')
+            ForemanMaintain.upgrade_in_progress == target_version)
         end
         instance_eval(&block)
       end
     end
 
     def target_version
-      '6.16'
+      feature(:instance).target_version
     end
   end
 
