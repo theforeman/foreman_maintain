@@ -46,7 +46,7 @@ module ForemanMaintain
     def finish_update
       @finished = true
       @reporter.hline
-      @reporter.puts("Update finished.")
+      @reporter.puts("Update finished.\n")
     end
 
     def storage
