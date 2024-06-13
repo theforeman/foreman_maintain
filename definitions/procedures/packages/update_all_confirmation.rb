@@ -8,11 +8,18 @@ module Procedures::Packages
 
     def run
       if @packages.nil? || @packages.empty?
-        question = "\nWARNING: No specific packages to update were provided\n" \
-          "so we are going to update all available packages.\n" \
-          "To Upgrade to next version use 'foreman-maintain upgrade'.\n\n" \
-          "Do you want to proceed with update of everything regardless\n" \
-          'of the recommendations?'
+        command = ForemanMaintain.command_name
+
+        question = <<~MSG
+          WARNING: No specific packages to update were provided
+          so we are going to update all available packages. We
+          recommend using the update command to update to a minor
+          version and/or operating system using '#{command} update'.
+          To upgrade to the next #{feature(:instance).product_name} version use '#{command} upgrade'.
+          Do you want to proceed with update of everything regardless of
+          the recommendations?
+        MSG
+
         answer = ask_decision(question, actions_msg: 'y(yes), q(quit)')
         abort! unless answer == :yes
       end
