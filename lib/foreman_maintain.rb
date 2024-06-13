@@ -174,6 +174,10 @@ module ForemanMaintain
       [main_package_name, 'foreman-maintain']
     end
 
+    def command_name
+      pkg_and_cmd_name[1]
+    end
+
     def perform_self_upgrade
       package_name, command = pkg_and_cmd_name
 
