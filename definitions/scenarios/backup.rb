@@ -95,6 +95,8 @@ module ForemanMaintain::Scenarios
     end
 
     def add_online_backup_steps
+      add_step(Procedures::Service::Stop.new(:only => online_workers)) unless online_workers.empty?
+
       add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true,
         :online_backup => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
@@ -107,6 +109,8 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::ForemanDB,
         Procedures::Backup::Online::PulpcoreDB
       )
+
+      add_step(Procedures::Service::Start.new(:only => online_workers)) unless online_workers.empty?
     end
 
     def strategy
@@ -115,6 +119,13 @@ module ForemanMaintain::Scenarios
 
     def wait_for_tasks?
       !!context.get(:wait_for_tasks)
+    end
+
+    def online_workers
+      services = []
+      services += feature(:dynflow_sidekiq).workers if feature(:dynflow_sidekiq)
+      services += feature(:pulpcore).configured_workers if feature(:pulpcore)
+      services
     end
   end
 
@@ -129,9 +140,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      if strategy == :offline
-        add_step_with_context(Procedures::Service::Start)
-      end
+      add_step_with_context(Procedures::Service::Start)
       add_step_with_context(Procedures::Backup::Clean)
     end
 
@@ -140,12 +149,6 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Clean => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::Clean => :preserve_dir)
-    end
-
-    private
-
-    def strategy
-      context.get(:strategy)
     end
   end
 end
