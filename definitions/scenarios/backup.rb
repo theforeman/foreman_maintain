@@ -14,10 +14,13 @@ module ForemanMaintain::Scenarios
       param :proxy_features, 'List of proxy features to backup (default: all)', :array => true
       param :skip_pulp_content, 'Skip Pulp content during backup'
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
+      param :wait_for_tasks, 'Wait for running tasks to complete instead of aborting'
     end
 
     def compose
       check_valid_strategy
+      add_step(Checks::ForemanTasks::NotRunning.new(:wait_for_tasks => wait_for_tasks?))
+      add_step(Checks::Pulpcore::NoRunningTasks.new(:wait_for_tasks => wait_for_tasks?))
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory)
@@ -120,6 +123,10 @@ module ForemanMaintain::Scenarios
 
     def include_db_dumps?
       !!context.get(:include_db_dumps)
+    end
+
+    def wait_for_tasks?
+      !!context.get(:wait_for_tasks)
     end
   end
 
