@@ -20,6 +20,10 @@ class Features::DynflowSidekiq < ForemanMaintain::Feature
     end
   end
 
+  def workers
+    services.reject { |service| service.name.end_with?('@orchestrator') }
+  end
+
   private
 
   def instance_priority(instance)
