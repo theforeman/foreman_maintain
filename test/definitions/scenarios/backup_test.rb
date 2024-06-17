@@ -12,13 +12,30 @@ module Scenarios
       end
     end
 
+
+    let(:task_checks) do
+      [Checks::ForemanTasks::NotRunning,
+       Checks::Pulpcore::NoRunningTasks]
+    end
+
+    let(:checks) do
+      [Checks::Backup::IncrementalParentType] + task_checks
+    end
+
     describe 'offline' do
       let(:scenario) do
         ForemanMaintain::Scenarios::Backup.new(:backup_dir => '.', :strategy => :offline)
       end
 
       it 'composes all steps' do
-        assert_scenario_has_step(scenario, Checks::Backup::IncrementalParentType)
+        task_checks.each do |check|
+          assert_scenario_has_step(scenario, check) do |step|
+            refute step.options['wait_for_tasks']
+          end
+        end
+        checks.each do |check|
+          assert_scenario_has_step(scenario, check)
+        end
         assert_scenario_has_step(scenario, Procedures::Backup::AccessibilityConfirmation)
         assert_scenario_has_step(scenario, Procedures::Backup::PrepareDirectory)
         assert_scenario_has_step(scenario, Procedures::Backup::Metadata)
@@ -35,13 +52,35 @@ module Scenarios
       end
     end
 
+    describe 'offline with wait_for_tasks' do
+      let(:scenario) do
+        ForemanMaintain::Scenarios::Backup.new(:backup_dir => '.', :strategy => :offline,
+          :wait_for_tasks => true)
+      end
+
+      it 'composes all steps' do
+        task_checks.each do |check|
+          assert_scenario_has_step(scenario, check) do |step|
+            assert step.options['wait_for_tasks']
+          end
+        end
+      end
+    end
+
     describe 'online' do
       let(:scenario) do
         ForemanMaintain::Scenarios::Backup.new(:backup_dir => '.', :strategy => :online)
       end
 
       it 'composes all steps' do
-        assert_scenario_has_step(scenario, Checks::Backup::IncrementalParentType)
+        task_checks.each do |check|
+          assert_scenario_has_step(scenario, check) do |step|
+            refute step.options['wait_for_tasks']
+          end
+        end
+        checks.each do |check|
+          assert_scenario_has_step(scenario, check)
+        end
         assert_scenario_has_step(scenario, Procedures::Backup::Online::SafetyConfirmation)
         refute_scenario_has_step(scenario, Procedures::Backup::AccessibilityConfirmation)
         assert_scenario_has_step(scenario, Procedures::Backup::PrepareDirectory)
@@ -54,6 +93,21 @@ module Scenarios
         assert_scenario_has_step(scenario, Procedures::Backup::Online::PulpcoreDB)
         refute_scenario_has_step(scenario, Procedures::Service::Start)
         assert_scenario_has_step(scenario, Procedures::Backup::CompressData)
+      end
+    end
+
+    describe 'online with wait_for_tasks' do
+      let(:scenario) do
+        ForemanMaintain::Scenarios::Backup.new(:backup_dir => '.', :strategy => :online,
+          :wait_for_tasks => true)
+      end
+
+      it 'composes all steps' do
+        task_checks.each do |check|
+          assert_scenario_has_step(scenario, check) do |step|
+            assert step.options['wait_for_tasks']
+          end
+        end
       end
     end
   end
