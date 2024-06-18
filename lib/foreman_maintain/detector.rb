@@ -40,6 +40,14 @@ module ForemanMaintain
       filter(@available_checks, filter_conditions)
     end
 
+    def available_reports(filter_conditions = nil)
+      unless @available_reports
+        ensure_features_detected
+        @available_reports = find_present_classes(Report)
+      end
+      filter(@available_reports, filter_conditions)
+    end
+
     def available_procedures(filter_conditions = nil)
       unless @available_procedures
         ensure_features_detected
