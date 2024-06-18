@@ -136,7 +136,6 @@ module ForemanMaintain::Scenarios
     def compose
       if strategy == :offline
         add_step_with_context(Procedures::Service::Start)
-        add_steps_with_context(find_procedures(:maintenance_mode_off))
       end
       add_step_with_context(Procedures::Backup::Clean)
     end
