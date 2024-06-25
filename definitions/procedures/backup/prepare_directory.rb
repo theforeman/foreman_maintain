@@ -14,10 +14,10 @@ module Procedures::Backup
       unless @preserve_dir
         FileUtils.mkdir_p @backup_dir
         FileUtils.chmod_R 0o770, @backup_dir
-      end
 
-      if feature(:instance).postgresql_local? && !@preserve_dir
-        FileUtils.chown_R(nil, 'postgres', @backup_dir)
+        if feature(:instance).postgresql_local?
+          FileUtils.chown_R(nil, 'postgres', @backup_dir)
+        end
       end
 
       FileUtils.rm(Dir.glob(File.join(@backup_dir, '.*.snar'))) if @preserve_dir
