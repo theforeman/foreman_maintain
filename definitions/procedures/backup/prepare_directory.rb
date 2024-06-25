@@ -11,9 +11,9 @@ module Procedures::Backup
 
     # rubocop:disable Metrics/MethodLength
     def run
-      puts "Creating backup folder #{@backup_dir}"
-
       unless @preserve_dir
+        puts "Creating backup folder #{@backup_dir}"
+
         FileUtils.mkdir_p @backup_dir
         FileUtils.chmod_R 0o770, @backup_dir
 
