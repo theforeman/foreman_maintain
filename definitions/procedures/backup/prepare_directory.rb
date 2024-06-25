@@ -9,6 +9,7 @@ module Procedures::Backup
       param :online_backup, 'Select for online backup', :flag => true, :default => false
     end
 
+    # rubocop:disable Metrics/MethodLength
     def run
       puts "Creating backup folder #{@backup_dir}"
 
@@ -17,7 +18,16 @@ module Procedures::Backup
         FileUtils.chmod_R 0o770, @backup_dir
 
         if feature(:instance).postgresql_local? && @online_backup
-          FileUtils.chown_R(nil, 'postgres', @backup_dir)
+          begin
+            FileUtils.chown_R(nil, 'postgres', @backup_dir)
+          rescue Errno::EPERM
+            warn_msg = <<~MSG
+              #{@backup_dir} could not be made readable by the 'postgres' user.
+              This won't affect the backup procedure, but you have to ensure that
+              the 'postgres' user can read the data during restore.
+            MSG
+            set_status(:warning, warn_msg)
+          end
         end
       end
 
@@ -31,5 +41,6 @@ module Procedures::Backup
         end
       end
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end

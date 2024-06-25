@@ -49,6 +49,24 @@ describe Procedures::Backup::PrepareDirectory do
       assert result.success?, 'the procedure was expected to succeed'
     end
 
+    it 'does not fail when chown to postgres fails' do
+      assume_feature_present(:instance, :postgresql_local? => true)
+
+      FileUtils.expects(:mkdir_p).with(backup_dir).once
+      FileUtils.expects(:chmod_R).with(0o770, backup_dir).once
+      FileUtils.expects(:chown_R).with(nil, 'postgres', backup_dir).once.raises(Errno::EPERM)
+
+      result = run_procedure(subject)
+      assert result.warning?, 'the procedure was expected to warn'
+
+      warn_msg = <<~MSG
+        /mnt/backup could not be made readable by the 'postgres' user.
+        This won't affect the backup procedure, but you have to ensure that
+        the 'postgres' user can read the data during restore.
+      MSG
+      assert_equal warn_msg, result.output
+    end
+
     it 'creates backup directory for remote DB' do
       assume_feature_present(:instance, :postgresql_local? => false)
 
