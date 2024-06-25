@@ -20,7 +20,8 @@ module ForemanMaintain::Scenarios
       check_valid_strategy
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
-      add_step_with_context(Procedures::Backup::PrepareDirectory)
+      add_step_with_context(Procedures::Backup::PrepareDirectory,
+        :online_backup => strategy == :online)
       add_step_with_context(Procedures::Backup::Metadata, :online_backup => strategy == :online)
 
       case strategy
