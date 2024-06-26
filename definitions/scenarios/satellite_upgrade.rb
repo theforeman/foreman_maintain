@@ -60,7 +60,7 @@ module Scenarios::Satellite
       if el8?
         modules_to_switch = ['postgresql:13']
         add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))
-        modules_to_enable = ["satellite:#{el_short_name}"]
+        modules_to_enable = ["#{feature(:instance).downstream.module_name}:#{el_short_name}"]
         add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
       end
       add_step(Procedures::Packages::Update.new(
