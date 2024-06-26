@@ -19,8 +19,7 @@ module ForemanMaintain::Scenarios
     def compose
       check_valid_strategy
       add_step_with_context(Checks::Backup::IncrementalParentType,
-        :online_backup => strategy == :online,
-        :sql_tar => feature(:instance).postgresql_local?)
+        :online_backup => strategy == :online)
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory,
@@ -88,7 +87,14 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(
         Procedures::Service::Stop,
         Procedures::Backup::ConfigFiles,
-        Procedures::Backup::Pulp,
+        Procedures::Backup::Pulp
+      )
+
+      if feature(:instance).postgresql_local?
+        add_step(Procedures::Service::Start.new(:only => ['postgresql']))
+      end
+
+      add_steps_with_context(
         Procedures::Backup::Offline::CandlepinDB,
         Procedures::Backup::Offline::ForemanDB,
         Procedures::Backup::Offline::PulpcoreDB,

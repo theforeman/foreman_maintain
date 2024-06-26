@@ -6,47 +6,14 @@ module Procedures::Backup
         tags :backup
         label :backup_offline_pulpcore_db
         for_feature :pulpcore_database
-        preparation_steps { Checks::Pulpcore::DBUp.new unless feature(:pulpcore_database).local? }
+        preparation_steps { Checks::Pulpcore::DBUp.new }
         param :backup_dir, 'Directory where to backup to', :required => true
-        param :tar_volume_size, 'Size of tar volume (indicates splitting)'
       end
 
       def run
-        if feature(:pulpcore_database).local?
-          if File.exist?(pg_backup_file)
-            puts 'Already done'
-          else
-            local_backup
-          end
-        else
-          puts "Backup of #{pg_data_dir} is not supported for remote databases." \
-            ' Doing postgres dump instead...'
-          with_spinner('Getting Pulpcore DB dump') do
-            feature(:pulpcore_database).dump_db(File.join(@backup_dir, 'pulpcore.dump'))
-          end
+        with_spinner('Getting Pulpcore DB dump') do
+          feature(:pulpcore_database).dump_db(File.join(@backup_dir, 'pulpcore.dump'))
         end
-      end
-
-      private
-
-      def local_backup
-        with_spinner("Collecting data from #{pg_data_dir}") do
-          feature(:pulpcore_database).backup_local(
-            pg_backup_file,
-            :listed_incremental => File.join(@backup_dir, '.postgres.snar'),
-            :volume_size => @tar_volume_size,
-            :data_dir => pg_data_dir,
-            :restore_dir => feature(:pulpcore_database).data_dir
-          )
-        end
-      end
-
-      def pg_backup_file
-        File.join(@backup_dir, 'pgsql_data.tar')
-      end
-
-      def pg_data_dir
-        feature(:pulpcore_database).data_dir
       end
     end
   end
