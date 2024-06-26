@@ -18,4 +18,8 @@ class Features::Capsule < ForemanMaintain::Feature
   def package_name
     'satellite-capsule'
   end
+
+  def module_name
+    'satellite-capsule'
+  end
 end
