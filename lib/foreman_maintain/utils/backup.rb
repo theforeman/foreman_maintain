@@ -11,6 +11,9 @@ module ForemanMaintain
         :foreman_online_files, :foreman_offline_files, :fpc_offline_files,
         :fpc_online_files
 
+      ONLINE_BACKUP = 'online'.freeze
+      OFFLINE_BACKUP = 'offline'.freeze
+
       def initialize(backup_dir)
         # fpc stands for foreman proxy w/ content
         @backup_dir = backup_dir
@@ -259,6 +262,10 @@ module ForemanMaintain
 
       def different_source_os?
         source_os_version != "#{os_name} #{os_version}"
+      end
+
+      def backup_type
+        online_backup? ? ONLINE_BACKUP : OFFLINE_BACKUP
       end
     end
   end
