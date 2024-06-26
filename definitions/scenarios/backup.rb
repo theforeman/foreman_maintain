@@ -18,6 +18,9 @@ module ForemanMaintain::Scenarios
 
     def compose
       check_valid_strategy
+      add_step_with_context(Checks::Backup::IncrementalParentType,
+        :online_backup => strategy == :online,
+        :sql_tar => feature(:instance).postgresql_local?)
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory,
@@ -51,6 +54,7 @@ module ForemanMaintain::Scenarios
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
+        Checks::Backup::IncrementalParentType => :incremental_dir,
         Procedures::Backup::PrepareDirectory => :incremental_dir,
         Procedures::Backup::Metadata => :incremental_dir)
       context.map(:proxy_features,
