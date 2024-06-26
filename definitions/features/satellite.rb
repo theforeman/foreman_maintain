@@ -22,6 +22,10 @@ class Features::Satellite < ForemanMaintain::Feature
     'satellite'
   end
 
+  def module_name
+    'satellite'
+  end
+
   private
 
   def version_from_source
