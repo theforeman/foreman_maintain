@@ -14,13 +14,18 @@ module ForemanMaintain::Scenarios
       param :proxy_features, 'List of proxy features to backup (default: all)', :array => true
       param :skip_pulp_content, 'Skip Pulp content during backup'
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
+
+      preparation_steps do
+        Checks::Backup::IncrementalParentType.new(
+          :incremental_dir => @incremental_dir,
+          :online_backup => @strategy == :online,
+          :sql_tar => feature(:instance).postgresql_local?
+        )
+      end
     end
 
     def compose
       check_valid_strategy
-      add_step_with_context(Checks::Backup::IncrementalParentType,
-        :online_backup => strategy == :online,
-        :sql_tar => feature(:instance).postgresql_local?)
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory,

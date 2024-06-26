@@ -18,7 +18,7 @@ module Scenarios
       end
 
       it 'composes all steps' do
-        assert_scenario_has_step(scenario, Checks::Backup::IncrementalParentType)
+        assert_scenario_has_preparation_step(scenario, Checks::Backup::IncrementalParentType)
         assert_scenario_has_step(scenario, Procedures::Backup::AccessibilityConfirmation)
         assert_scenario_has_step(scenario, Procedures::Backup::PrepareDirectory)
         assert_scenario_has_step(scenario, Procedures::Backup::Metadata)
@@ -43,7 +43,7 @@ module Scenarios
       end
 
       it 'composes all steps' do
-        assert_scenario_has_step(scenario, Checks::Backup::IncrementalParentType)
+        assert_scenario_has_preparation_step(scenario, Checks::Backup::IncrementalParentType)
         assert_scenario_has_step(scenario, Procedures::Backup::Online::SafetyConfirmation)
         refute_scenario_has_step(scenario, Procedures::Backup::AccessibilityConfirmation)
         assert_scenario_has_step(scenario, Procedures::Backup::PrepareDirectory)
