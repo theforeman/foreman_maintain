@@ -2,7 +2,7 @@ module Procedures::Backup
   module Online
     class PulpcoreDB < ForemanMaintain::Procedure
       metadata do
-        description 'Backup Pulpcore database online'
+        description 'Backup Pulpcore database'
         tags :backup
         label :backup_online_pulpcore_db
         for_feature :pulpcore_database

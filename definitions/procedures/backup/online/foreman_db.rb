@@ -2,7 +2,7 @@ module Procedures::Backup
   module Online
     class ForemanDB < ForemanMaintain::Procedure
       metadata do
-        description 'Backup Foreman database online'
+        description 'Backup Foreman database'
         tags :backup
         label :backup_online_foreman_db
         for_feature :foreman_database

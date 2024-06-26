@@ -27,12 +27,10 @@ module Scenarios
         end
         assert_scenario_has_step(scenario, Procedures::Backup::ConfigFiles)
         assert_scenario_has_step(scenario, Procedures::Backup::Pulp)
-        assert_scenario_has_step(scenario, Procedures::Backup::Offline::CandlepinDB)
-        assert_scenario_has_step(scenario, Procedures::Backup::Offline::ForemanDB)
-        assert_scenario_has_step(scenario, Procedures::Backup::Offline::PulpcoreDB)
-        assert_scenario_has_step(scenario, Procedures::Service::Start) do |step|
-          assert_empty(step.common_options[:only])
-        end
+        assert_scenario_has_step(scenario, Procedures::Backup::Online::CandlepinDB)
+        assert_scenario_has_step(scenario, Procedures::Backup::Online::ForemanDB)
+        assert_scenario_has_step(scenario, Procedures::Backup::Online::PulpcoreDB)
+        assert_scenario_has_step(scenario, Procedures::Service::Start)
         assert_scenario_has_step(scenario, Procedures::Backup::CompressData)
       end
     end

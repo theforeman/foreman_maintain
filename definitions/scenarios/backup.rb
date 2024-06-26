@@ -45,10 +45,7 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Pulp => :backup_dir,
         Procedures::Backup::Online::CandlepinDB => :backup_dir,
         Procedures::Backup::Online::ForemanDB => :backup_dir,
-        Procedures::Backup::Online::PulpcoreDB => :backup_dir,
-        Procedures::Backup::Offline::CandlepinDB => :backup_dir,
-        Procedures::Backup::Offline::ForemanDB => :backup_dir,
-        Procedures::Backup::Offline::PulpcoreDB => :backup_dir)
+        Procedures::Backup::Online::PulpcoreDB => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
@@ -90,18 +87,19 @@ module ForemanMaintain::Scenarios
         add_step(Procedures::Service::Start.new(:only => ['postgresql']))
       end
 
-      add_steps_with_context(
-        Procedures::Backup::Offline::CandlepinDB,
-        Procedures::Backup::Offline::ForemanDB,
-        Procedures::Backup::Offline::PulpcoreDB,
-        Procedures::Service::Start
-      )
+      add_database_backup_steps
+
+      add_steps_with_context(Procedures::Service::Start)
     end
 
     def add_online_backup_steps
       add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true,
         :online_backup => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
+      add_database_backup_steps
+    end
+
+    def add_database_backup_steps
       add_steps_with_context(
         Procedures::Backup::Online::CandlepinDB,
         Procedures::Backup::Online::ForemanDB,
