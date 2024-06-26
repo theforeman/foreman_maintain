@@ -2,7 +2,7 @@ module Procedures::Backup
   module Online
     class CandlepinDB < ForemanMaintain::Procedure
       metadata do
-        description 'Backup Candlepin database online'
+        description 'Backup Candlepin database'
         tags :backup
         label :backup_online_candlepin_db
         for_feature :candlepin_database
