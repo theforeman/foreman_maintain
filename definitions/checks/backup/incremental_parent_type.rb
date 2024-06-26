@@ -5,7 +5,6 @@ module Checks::Backup
       tags :backup
       param :incremental_dir, 'Path to existing backup directory'
       param :online_backup, 'Select for online backup', :flag => true, :default => false
-      param :sql_tar, 'Will backup include PostgreSQL tarball', :flag => true, :default => false
       manual_detection
     end
 
@@ -25,11 +24,9 @@ module Checks::Backup
       assert(existing_type == new_type, msg)
 
       unless @online_backup
-        existing_sql = backup.sql_tar_files_exist? ? 'tarball' : 'dump'
-        new_sql = @sql_tar ? 'tarball' : 'dump'
-        msg = "The existing backup has PostgreSQL as a #{existing_sql}, "\
-          "but the new one will have a #{new_sql}."
-        assert(existing_sql == new_sql, msg)
+        msg = "The existing backup has PostgreSQL as a tarball, "\
+          "but the new one will have a dump."
+        assert(!backup.sql_tar_files_exist?, msg)
       end
     end
   end
