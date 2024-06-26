@@ -8,7 +8,6 @@ module ForemanMaintain::Scenarios
       param :strategy, 'Backup strategy. One of [:online, :offline]',
         :required => true
       param :backup_dir, 'Directory where to backup to', :required => true
-      param :include_db_dumps, 'Include dumps of local dbs as part of offline'
       param :preserve_dir, 'Directory where to backup to'
       param :incremental_dir, 'Changes since specified backup only'
       param :proxy_features, 'List of proxy features to backup (default: all)', :array => true
@@ -62,15 +61,13 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Pulp => :skip)
       context.map(:tar_volume_size,
         Procedures::Backup::Pulp => :tar_volume_size)
-      context.map(:include_db_dumps,
-        Procedures::Backup::Online::SafetyConfirmation => :include_db_dumps)
     end
     # rubocop:enable  Metrics/MethodLength
 
     private
 
     def safety_confirmation
-      if strategy == :online || include_db_dumps?
+      if strategy == :online
         add_step_with_context(Procedures::Backup::Online::SafetyConfirmation)
       end
     end
@@ -82,7 +79,6 @@ module ForemanMaintain::Scenarios
     end
 
     def add_offline_backup_steps
-      include_dumps if include_db_dumps?
       add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
       add_steps_with_context(
         Procedures::Service::Stop,
@@ -102,18 +98,6 @@ module ForemanMaintain::Scenarios
       )
     end
 
-    def include_dumps
-      if feature(:instance).database_local?(:candlepin_database)
-        add_step_with_context(Procedures::Backup::Online::CandlepinDB)
-      end
-      if feature(:instance).database_local?(:foreman_database)
-        add_step_with_context(Procedures::Backup::Online::ForemanDB)
-      end
-      if feature(:instance).database_local?(:pulpcore_database)
-        add_step_with_context(Procedures::Backup::Online::PulpcoreDB)
-      end
-    end
-
     def add_online_backup_steps
       add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true,
         :online_backup => true)
@@ -127,10 +111,6 @@ module ForemanMaintain::Scenarios
 
     def strategy
       context.get(:strategy)
-    end
-
-    def include_db_dumps?
-      !!context.get(:include_db_dumps)
     end
   end
 
