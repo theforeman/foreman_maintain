@@ -35,7 +35,12 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   private
 
   def load_configuration
-    config = YAML.load(File.read(FOREMAN_DB_CONFIG))
+    config = if File.exist?('/etc/foreman/database.yml')
+               YAML.load(File.read(FOREMAN_DB_CONFIG))
+             else
+               { 'production' => {} }
+             end
+
     @configuration = config['production']
     @configuration['host'] ||= 'localhost'
     @configuration
