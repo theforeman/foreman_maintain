@@ -1,20 +1,19 @@
 require 'test_helper'
 
-describe "satellite upgrade scenarios" do
+describe "katello upgrade scenarios" do
   include DefinitionsTestHelper
 
   before(:each) do
-    assume_satellite_present
-    ForemanMaintain.config.stubs(:manage_crond).returns(true)
+    assume_katello_present
   end
 
-  describe Scenarios::Satellite::PreUpgradeCheck do
+  describe Scenarios::Foreman::PreUpgradeCheck do
     let(:scenario) do
-      Scenarios::Satellite::PreUpgradeCheck.new
+      Scenarios::Foreman::PreUpgradeCheck.new
     end
 
-    it 'composes all steps for Satellite on EL8' do
-      Scenarios::Satellite::PreUpgradeCheck.any_instance.stubs(:el_major_version).returns(8)
+    it 'composes all steps for Foreman on EL8' do
+      Scenarios::Foreman::PreUpgradeCheck.any_instance.stubs(:el_major_version).returns(8)
 
       assert_scenario_has_steps(
         scenario,
@@ -38,15 +37,14 @@ describe "satellite upgrade scenarios" do
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
-        Checks::CheckIpv6Disable,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
         Checks::Repositories::Validate,
       )
     end
 
-    it 'composes all steps for Satellite on EL9' do
-      Scenarios::Satellite::PreUpgradeCheck.any_instance.stubs(:el_major_version).returns(9)
+    it 'composes all steps for Foreman on EL9' do
+      Scenarios::Foreman::PreUpgradeCheck.any_instance.stubs(:el_major_version).returns(9)
 
       assert_scenario_has_steps(
         scenario,
@@ -70,7 +68,6 @@ describe "satellite upgrade scenarios" do
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
-        Checks::CheckIpv6Disable,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
         Checks::Repositories::Validate,
@@ -78,13 +75,13 @@ describe "satellite upgrade scenarios" do
     end
   end
 
-  describe Scenarios::Satellite::PreMigrations do
+  describe Scenarios::Foreman::PreMigrations do
     let(:scenario) do
-      Scenarios::Satellite::PreMigrations.new
+      Scenarios::Foreman::PreMigrations.new
     end
 
-    it 'composes all steps for Satellite on EL8' do
-      Scenarios::Satellite::PreMigrations.any_instance.stubs(:el_major_version).returns(8)
+    it 'composes all steps for Foreman on EL8' do
+      Scenarios::Foreman::PreMigrations.any_instance.stubs(:el_major_version).returns(8)
 
       assert_scenario_has_steps(
         scenario,
@@ -94,8 +91,8 @@ describe "satellite upgrade scenarios" do
       )
     end
 
-    it 'composes all steps for Satellite on EL9' do
-      Scenarios::Satellite::PreMigrations.any_instance.stubs(:el_major_version).returns(9)
+    it 'composes all steps for Foreman on EL9' do
+      Scenarios::Foreman::PreMigrations.any_instance.stubs(:el_major_version).returns(9)
 
       assert_scenario_has_steps(
         scenario,
@@ -106,34 +103,27 @@ describe "satellite upgrade scenarios" do
     end
   end
 
-  describe Scenarios::Satellite::Migrations do
+  describe Scenarios::Foreman::Migrations do
     let(:scenario) do
-      Scenarios::Satellite::Migrations.new
+      Scenarios::Foreman::Migrations.new
     end
 
-    it 'composes all steps for Satellite on EL8' do
-      Scenarios::Satellite::Migrations.any_instance.stubs(:el_major_version).returns(8)
-      assert_scenario_has_step(scenario, Procedures::Packages::EnableModules) do |step|
-        assert_equal(['satellite:el8'], step.options['module_names'])
-      end
+    it 'composes all steps for Foreman on EL8' do
+      Scenarios::Foreman::Migrations.any_instance.stubs(:el_major_version).returns(8)
 
       assert_scenario_has_steps(
         scenario,
         Procedures::Repositories::Setup,
         Procedures::Packages::SwitchModules,
-        Procedures::Packages::EnableModules,
         Procedures::Packages::Update,
         Procedures::Service::Stop,
         Procedures::Packages::Update,
         Procedures::Installer::Run,
-        Procedures::Installer::UpgradeRakeTask,
       )
     end
 
-    it 'composes all steps for Satellite on EL9' do
-      Scenarios::Satellite::Migrations.any_instance.stubs(:el_major_version).returns(9)
-      refute_scenario_has_step(scenario, Procedures::Packages::EnableModules)
-      refute_scenario_has_step(scenario, Procedures::Packages::SwitchModules)
+    it 'composes all steps for Foreman on EL9' do
+      Scenarios::Foreman::Migrations.any_instance.stubs(:el_major_version).returns(9)
 
       assert_scenario_has_steps(
         scenario,
@@ -142,18 +132,17 @@ describe "satellite upgrade scenarios" do
         Procedures::Service::Stop,
         Procedures::Packages::Update,
         Procedures::Installer::Run,
-        Procedures::Installer::UpgradeRakeTask,
       )
     end
   end
 
-  describe Scenarios::Satellite::PostMigrations do
+  describe Scenarios::Foreman::PostMigrations do
     let(:scenario) do
-      Scenarios::Satellite::PostMigrations.new
+      Scenarios::Foreman::PostMigrations.new
     end
 
-    it 'composes all steps for Satellite on EL8' do
-      Scenarios::Satellite::PostMigrations.any_instance.stubs(:el_major_version).returns(8)
+    it 'composes all steps for Foreman on EL8' do
+      Scenarios::Foreman::PostMigrations.any_instance.stubs(:el_major_version).returns(8)
 
       assert_scenario_has_steps(
         scenario,
@@ -165,8 +154,8 @@ describe "satellite upgrade scenarios" do
       )
     end
 
-    it 'composes all steps for Satellite on EL9' do
-      Scenarios::Satellite::PostMigrations.any_instance.stubs(:el_major_version).returns(9)
+    it 'composes all steps for Foreman on EL9' do
+      Scenarios::Foreman::PostMigrations.any_instance.stubs(:el_major_version).returns(9)
 
       assert_scenario_has_steps(
         scenario,
@@ -179,13 +168,13 @@ describe "satellite upgrade scenarios" do
     end
   end
 
-  describe Scenarios::Satellite::PostUpgradeChecks do
+  describe Scenarios::Foreman::PostUpgradeChecks do
     let(:scenario) do
-      Scenarios::Satellite::PostUpgradeChecks.new
+      Scenarios::Foreman::PostUpgradeChecks.new
     end
 
-    it 'composes all steps for Satellite on EL8' do
-      Scenarios::Satellite::PostUpgradeChecks.any_instance.stubs(:el_major_version).returns(8)
+    it 'composes all steps for Foreman on EL8' do
+      Scenarios::Foreman::PostUpgradeChecks.any_instance.stubs(:el_major_version).returns(8)
 
       assert_scenario_has_steps(
         scenario,
@@ -200,8 +189,8 @@ describe "satellite upgrade scenarios" do
       )
     end
 
-    it 'composes all steps for Satellite on EL9' do
-      Scenarios::Satellite::PostUpgradeChecks.any_instance.stubs(:el_major_version).returns(9)
+    it 'composes all steps for Foreman on EL9' do
+      Scenarios::Foreman::PostUpgradeChecks.any_instance.stubs(:el_major_version).returns(9)
 
       assert_scenario_has_steps(
         scenario,

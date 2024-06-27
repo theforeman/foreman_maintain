@@ -10,6 +10,7 @@ describe Procedures::Restore::ReindexDatabases do
   before do
     assume_feature_present(:instance, :postgresql_local? => true)
     assume_feature_present(:foreman_database, :configuration => {})
+    Features::Service.any_instance.expects(:handle_services)
   end
 
   it 'reindexes all DBs if DB is local' do
