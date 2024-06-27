@@ -18,7 +18,7 @@ describe Checks::Disk::Performance do
   end
 
   it 'executes successfully for disk with minimal speed' do
-    assume_satellite_present
+    assume_feature_present(:satellite)
 
     check_disk_performance.stubs(:check_only_single_device?).returns(true)
 
@@ -37,7 +37,7 @@ describe Checks::Disk::Performance do
   end
 
   it 'print warning if disk speed does not meet minimal requirement' do
-    assume_satellite_present
+    assume_feature_present(:satellite)
 
     slow_speed = 59
     err_msg = 'Slow disk'

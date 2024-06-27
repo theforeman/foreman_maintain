@@ -1,10 +1,10 @@
 require 'test_helper'
 
-describe "satellite upgrade scenarios" do
+describe "capsule upgrade scenarios" do
   include DefinitionsTestHelper
 
   before(:each) do
-    assume_satellite_present
+    assume_feature_present(:capsule)
     ForemanMaintain.config.stubs(:manage_crond).returns(true)
   end
 
@@ -18,8 +18,6 @@ describe "satellite upgrade scenarios" do
 
       assert_scenario_has_steps(
         scenario,
-        Checks::Foreman::FactsNames,
-        Checks::ForemanTasks::NotPaused,
         Checks::ServerPing,
         Checks::ServicesUp,
         Checks::SystemRegistration,
@@ -27,14 +25,6 @@ describe "satellite upgrade scenarios" do
         Checks::CheckTmout,
         Checks::CheckUpstreamRepository,
         Checks::Disk::AvailableSpace,
-        Checks::Disk::AvailableSpaceCandlepin,
-        Checks::Foreman::CheckCorruptedRoles,
-        Checks::Foreman::CheckDuplicatePermissions,
-        Checks::Foreman::TuningRequirements,
-        Checks::ForemanTasks::Invalid::CheckOld,
-        Checks::ForemanTasks::Invalid::CheckPendingState,
-        Checks::ForemanTasks::Invalid::CheckPlanningState,
-        Checks::ForemanTasks::NotRunning,
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
@@ -50,8 +40,6 @@ describe "satellite upgrade scenarios" do
 
       assert_scenario_has_steps(
         scenario,
-        Checks::Foreman::FactsNames,
-        Checks::ForemanTasks::NotPaused,
         Checks::ServerPing,
         Checks::ServicesUp,
         Checks::SystemRegistration,
@@ -59,14 +47,6 @@ describe "satellite upgrade scenarios" do
         Checks::CheckTmout,
         Checks::CheckUpstreamRepository,
         Checks::Disk::AvailableSpace,
-        Checks::Disk::AvailableSpaceCandlepin,
-        Checks::Foreman::CheckCorruptedRoles,
-        Checks::Foreman::CheckDuplicatePermissions,
-        Checks::Foreman::TuningRequirements,
-        Checks::ForemanTasks::Invalid::CheckOld,
-        Checks::ForemanTasks::Invalid::CheckPendingState,
-        Checks::ForemanTasks::Invalid::CheckPlanningState,
-        Checks::ForemanTasks::NotRunning,
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
@@ -90,7 +70,6 @@ describe "satellite upgrade scenarios" do
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
-        Procedures::SyncPlans::Disable,
       )
     end
 
@@ -101,7 +80,6 @@ describe "satellite upgrade scenarios" do
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
-        Procedures::SyncPlans::Disable,
       )
     end
   end
@@ -111,10 +89,10 @@ describe "satellite upgrade scenarios" do
       Scenarios::Satellite::Migrations.new
     end
 
-    it 'composes all steps for Satellite on EL8' do
+    it 'composes all steps for Capsule on EL8' do
       Scenarios::Satellite::Migrations.any_instance.stubs(:el_major_version).returns(8)
       assert_scenario_has_step(scenario, Procedures::Packages::EnableModules) do |step|
-        assert_equal(['satellite:el8'], step.options['module_names'])
+        assert_equal(['satellite-capsule:el8'], step.options['module_names'])
       end
 
       assert_scenario_has_steps(
@@ -126,11 +104,10 @@ describe "satellite upgrade scenarios" do
         Procedures::Service::Stop,
         Procedures::Packages::Update,
         Procedures::Installer::Run,
-        Procedures::Installer::UpgradeRakeTask,
       )
     end
 
-    it 'composes all steps for Satellite on EL9' do
+    it 'composes all steps for Capsule on EL9' do
       Scenarios::Satellite::Migrations.any_instance.stubs(:el_major_version).returns(9)
       refute_scenario_has_step(scenario, Procedures::Packages::EnableModules)
       refute_scenario_has_step(scenario, Procedures::Packages::SwitchModules)
@@ -142,7 +119,6 @@ describe "satellite upgrade scenarios" do
         Procedures::Service::Stop,
         Procedures::Packages::Update,
         Procedures::Installer::Run,
-        Procedures::Installer::UpgradeRakeTask,
       )
     end
   end
@@ -160,7 +136,6 @@ describe "satellite upgrade scenarios" do
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
-        Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
       )
     end
@@ -173,7 +148,6 @@ describe "satellite upgrade scenarios" do
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
-        Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
       )
     end
@@ -189,8 +163,6 @@ describe "satellite upgrade scenarios" do
 
       assert_scenario_has_steps(
         scenario,
-        Checks::Foreman::FactsNames,
-        Checks::ForemanTasks::NotPaused,
         Checks::ServerPing,
         Checks::ServicesUp,
         Checks::SystemRegistration,
@@ -205,8 +177,6 @@ describe "satellite upgrade scenarios" do
 
       assert_scenario_has_steps(
         scenario,
-        Checks::Foreman::FactsNames,
-        Checks::ForemanTasks::NotPaused,
         Checks::ServerPing,
         Checks::ServicesUp,
         Checks::SystemRegistration,

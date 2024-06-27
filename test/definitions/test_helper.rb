@@ -110,6 +110,22 @@ module DefinitionsTestHelper
     yield step if block_given?
   end
 
+  def assert_scenario_has_steps(scenario, *expected_steps)
+    expected_steps.each do |step|
+      assert_scenario_has_step(scenario, step)
+    end
+
+    missing = scenario.steps.filter do |step|
+      !expected_steps.include?(step.class) && step.class.present?
+    end
+
+    assert_equal(
+      0,
+      missing.length,
+      "\nExpected: #{expected_steps}\nActual:   #{scenario.steps.map(&:class)}\nMissing: #{missing}"
+    )
+  end
+
   def refute_scenario_has_step(scenario, scenario_step)
     refute(scenario.steps.find { |step| step.is_a? scenario_step },
       "Expected scenario not to have #{scenario_step}")

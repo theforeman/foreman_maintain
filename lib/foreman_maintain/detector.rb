@@ -24,6 +24,7 @@ module ForemanMaintain
       @all_features_scanned = false
       @available_checks = nil
       @available_scenarios = nil
+      @available_procedures = nil
       @scenarios ||= Scenario.all_sub_classes.select(&:autodetect?)
     end
 

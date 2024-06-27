@@ -1,4 +1,4 @@
-module Scenarios::ForemanUpgrade
+module Scenarios::Foreman
   class Abstract < ForemanMaintain::Scenario
     def self.upgrade_metadata(&block)
       metadata do
@@ -38,6 +38,7 @@ module Scenarios::ForemanUpgrade
         Checks::CheckUpstreamRepository,
         Checks::Disk::AvailableSpace,
         Checks::Disk::AvailableSpaceCandlepin, # if candlepin
+        Checks::Disk::AvailableSpacePostgresql13,
         Checks::Foreman::ValidateExternalDbVersion, # if external database
         Checks::Foreman::CheckCorruptedRoles,
         Checks::Foreman::CheckDuplicatePermissions,
@@ -50,6 +51,7 @@ module Scenarios::ForemanUpgrade
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
+        Checks::CheckOrganizationContentAccessMode,
         Checks::Repositories::Validate
       )
     end
