@@ -50,11 +50,7 @@ module ForemanMaintain::Utils
       end
 
       def exist?
-        if @sys.systemd_installed?
-          ['enabled', 'disabled'].include?(service_enabled_status)
-        else
-          File.exist?("/etc/init.d/#{@name}")
-        end
+        ['enabled', 'disabled'].include?(service_enabled_status)
       end
 
       def enabled?
