@@ -8,7 +8,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_checks(:root_user))
+      add_step(Checks::RootUser)
       add_steps_with_context(Procedures::Service::Restart)
     end
 
@@ -33,7 +33,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_checks(:root_user))
+      add_step(Checks::RootUser)
       add_steps_with_context(Procedures::Service::Stop)
     end
 
@@ -55,7 +55,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_checks(:root_user))
+      add_step(Checks::RootUser)
       add_steps_with_context(Procedures::Service::Start)
     end
 
@@ -98,7 +98,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_checks(:root_user))
+      add_step(Checks::RootUser)
       add_steps_with_context(Procedures::Service::Enable)
     end
 
@@ -120,7 +120,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_checks(:root_user))
+      add_step(Checks::RootUser)
       add_steps_with_context(Procedures::Service::Disable)
     end
 
