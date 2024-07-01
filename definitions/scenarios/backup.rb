@@ -1,5 +1,20 @@
 module ForemanMaintain::Scenarios
-  class Backup < ForemanMaintain::Scenario
+  class BackupBase < ForemanMaintain::Scenario
+    private
+
+    def strategy
+      context.get(:strategy)
+    end
+
+    def online_worker_services
+      services = []
+      services += feature(:dynflow_sidekiq).workers if feature(:dynflow_sidekiq)
+      services += feature(:pulpcore).configured_workers if feature(:pulpcore)
+      services
+    end
+  end
+
+  class Backup < BackupBase
     metadata do
       description 'Backup'
       manual_detection
@@ -14,10 +29,13 @@ module ForemanMaintain::Scenarios
       param :proxy_features, 'List of proxy features to backup (default: all)', :array => true
       param :skip_pulp_content, 'Skip Pulp content during backup'
       param :tar_volume_size, 'Size of tar volume (indicates splitting)'
+      param :wait_for_tasks, 'Wait for running tasks to complete instead of aborting'
     end
 
     def compose
       check_valid_strategy
+      add_step(Checks::ForemanTasks::NotRunning.new(:wait_for_tasks => wait_for_tasks?))
+      add_step(Checks::Pulpcore::NoRunningTasks.new(:wait_for_tasks => wait_for_tasks?))
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory,
@@ -105,6 +123,9 @@ module ForemanMaintain::Scenarios
     end
 
     def add_online_backup_steps
+      services = online_worker_services
+      add_step(Procedures::Service::Stop.new(:only => services)) unless services.empty?
+
       add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true,
         :online_backup => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
@@ -113,18 +134,20 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::ForemanDB,
         Procedures::Backup::Online::PulpcoreDB
       )
-    end
 
-    def strategy
-      context.get(:strategy)
+      add_step(Procedures::Service::Start.new(:only => services)) unless services.empty?
     end
 
     def include_db_dumps?
       !!context.get(:include_db_dumps)
     end
+
+    def wait_for_tasks?
+      !!context.get(:wait_for_tasks)
+    end
   end
 
-  class BackupRescueCleanup < ForemanMaintain::Scenario
+  class BackupRescueCleanup < BackupBase
     metadata do
       description 'Failed backup cleanup'
       manual_detection
@@ -135,9 +158,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      if strategy == :offline
-        add_step_with_context(Procedures::Service::Start)
-      end
+      add_step_with_context(Procedures::Service::Start)
       add_step_with_context(Procedures::Backup::Clean)
     end
 
@@ -146,12 +167,6 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Clean => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::Clean => :preserve_dir)
-    end
-
-    private
-
-    def strategy
-      context.get(:strategy)
     end
   end
 end

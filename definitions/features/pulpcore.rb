@@ -3,8 +3,32 @@ require 'foreman_maintain/utils/service/systemd'
 class Features::Pulpcore < ForemanMaintain::Feature
   include ForemanMaintain::Concerns::PulpCommon
 
+  TIMEOUT_FOR_TASKS_STATUS = 300
+  RETRY_INTERVAL_FOR_TASKS_STATE = 10
+
   metadata do
     label :pulpcore
+  end
+
+  def cli(args)
+    parse_json(execute("pulp --format json #{args}"))
+  end
+
+  def running_tasks
+    cli('task list --state-in running --state-in canceling')
+  end
+
+  def wait_for_tasks(spinner, timeout_for_tasks_status = TIMEOUT_FOR_TASKS_STATUS)
+    Timeout.timeout(timeout_for_tasks_status) do
+      while (task_count = running_tasks.length) != 0
+        puts "\nThere are #{task_count} tasks."
+        spinner.update "Waiting #{RETRY_INTERVAL_FOR_TASKS_STATE} seconds before retry."
+        sleep RETRY_INTERVAL_FOR_TASKS_STATE
+      end
+    end
+  rescue Timeout::Error => e
+    logger.error(e.message)
+    puts "\nTimeout: #{e.message}. Try again."
   end
 
   def services
