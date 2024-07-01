@@ -8,7 +8,6 @@ module ForemanMaintain::Scenarios
       param :strategy, 'Backup strategy. One of [:online, :offline]',
         :required => true
       param :backup_dir, 'Directory where to backup to', :required => true
-      param :include_db_dumps, 'Include dumps of local dbs as part of offline'
       param :preserve_dir, 'Directory where to backup to'
       param :incremental_dir, 'Changes since specified backup only'
       param :proxy_features, 'List of proxy features to backup (default: all)', :array => true
@@ -18,6 +17,8 @@ module ForemanMaintain::Scenarios
 
     def compose
       check_valid_strategy
+      add_step_with_context(Checks::Backup::IncrementalParentType,
+        :online_backup => strategy == :online)
       safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory,
@@ -44,13 +45,11 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Pulp => :backup_dir,
         Procedures::Backup::Online::CandlepinDB => :backup_dir,
         Procedures::Backup::Online::ForemanDB => :backup_dir,
-        Procedures::Backup::Online::PulpcoreDB => :backup_dir,
-        Procedures::Backup::Offline::CandlepinDB => :backup_dir,
-        Procedures::Backup::Offline::ForemanDB => :backup_dir,
-        Procedures::Backup::Offline::PulpcoreDB => :backup_dir)
+        Procedures::Backup::Online::PulpcoreDB => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
+        Checks::Backup::IncrementalParentType => :incremental_dir,
         Procedures::Backup::PrepareDirectory => :incremental_dir,
         Procedures::Backup::Metadata => :incremental_dir)
       context.map(:proxy_features,
@@ -59,15 +58,13 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Pulp => :skip)
       context.map(:tar_volume_size,
         Procedures::Backup::Pulp => :tar_volume_size)
-      context.map(:include_db_dumps,
-        Procedures::Backup::Online::SafetyConfirmation => :include_db_dumps)
     end
     # rubocop:enable  Metrics/MethodLength
 
     private
 
     def safety_confirmation
-      if strategy == :online || include_db_dumps?
+      if strategy == :online
         add_step_with_context(Procedures::Backup::Online::SafetyConfirmation)
       end
     end
@@ -79,35 +76,30 @@ module ForemanMaintain::Scenarios
     end
 
     def add_offline_backup_steps
-      include_dumps if include_db_dumps?
       add_step_with_context(Procedures::ForemanProxy::Features, :load_only => true)
       add_steps_with_context(
         Procedures::Service::Stop,
         Procedures::Backup::ConfigFiles,
-        Procedures::Backup::Pulp,
-        Procedures::Backup::Offline::CandlepinDB,
-        Procedures::Backup::Offline::ForemanDB,
-        Procedures::Backup::Offline::PulpcoreDB,
-        Procedures::Service::Start
+        Procedures::Backup::Pulp
       )
-    end
 
-    def include_dumps
-      if feature(:instance).database_local?(:candlepin_database)
-        add_step_with_context(Procedures::Backup::Online::CandlepinDB)
+      if feature(:instance).postgresql_local?
+        add_step(Procedures::Service::Start.new(:only => ['postgresql']))
       end
-      if feature(:instance).database_local?(:foreman_database)
-        add_step_with_context(Procedures::Backup::Online::ForemanDB)
-      end
-      if feature(:instance).database_local?(:pulpcore_database)
-        add_step_with_context(Procedures::Backup::Online::PulpcoreDB)
-      end
+
+      add_database_backup_steps
+
+      add_steps_with_context(Procedures::Service::Start)
     end
 
     def add_online_backup_steps
       add_step_with_context(Procedures::Backup::ConfigFiles, :ignore_changed_files => true,
         :online_backup => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
+      add_database_backup_steps
+    end
+
+    def add_database_backup_steps
       add_steps_with_context(
         Procedures::Backup::Online::CandlepinDB,
         Procedures::Backup::Online::ForemanDB,
@@ -117,10 +109,6 @@ module ForemanMaintain::Scenarios
 
     def strategy
       context.get(:strategy)
-    end
-
-    def include_db_dumps?
-      !!context.get(:include_db_dumps)
     end
   end
 

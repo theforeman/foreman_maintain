@@ -119,11 +119,9 @@ module ForemanMaintain
       include BackupCommon
       interactive_option
       common_backup_options
-      option '--include-db-dumps', :flag, 'Also dump full database schema before offline backup'
 
       def execute
-        perform_backup(:offline,
-          :include_db_dumps => include_db_dumps?)
+        perform_backup(:offline)
       end
     end
 
