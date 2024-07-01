@@ -110,6 +110,12 @@ module DefinitionsTestHelper
     yield step if block_given?
   end
 
+  def assert_scenario_has_preparation_step(scenario, scenario_step)
+    step = scenario.preparation_steps.find { |s| s.is_a? scenario_step }
+    assert(step, "Expected scenario to have #{scenario_step}")
+    yield step if block_given?
+  end
+
   def refute_scenario_has_step(scenario, scenario_step)
     refute(scenario.steps.find { |step| step.is_a? scenario_step },
       "Expected scenario not to have #{scenario_step}")
