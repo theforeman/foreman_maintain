@@ -13,7 +13,11 @@ module Scenarios::MissingUpgrade
     end
 
     def compose
-      add_steps(find_checks(:default))
+      add_steps(
+        Checks::PresentServiceIsRunning,
+        Checks::ServiceIsStopped,
+        Checks::MissingServiceIsRunning,
+      )
     end
   end
 end

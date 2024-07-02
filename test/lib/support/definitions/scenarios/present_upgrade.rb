@@ -15,8 +15,11 @@ module Scenarios::PresentUpgrade
     end
 
     def compose
-      add_steps(find_checks(:default))
-      add_step(procedure(Procedures::PresentServiceRestart))
+      add_steps(
+        Checks::PresentServiceIsRunning,
+        Checks::ServiceIsStopped,
+        Procedures::PresentServiceRestart,
+      )
     end
   end
 
@@ -35,7 +38,10 @@ module Scenarios::PresentUpgrade
     end
 
     def compose
-      add_steps(find_procedures(:pre_migrations))
+      add_steps(
+        Procedures::StopService,
+        Procedures::Upgrade::PreMigration
+      )
     end
   end
 
@@ -54,7 +60,9 @@ module Scenarios::PresentUpgrade
     end
 
     def compose
-      add_steps(find_procedures(:migrations))
+      add_steps(
+        Procedures::Upgrade::Migration,
+      )
     end
   end
 
@@ -73,7 +81,9 @@ module Scenarios::PresentUpgrade
     end
 
     def compose
-      add_steps(find_procedures(:post_migrations))
+      add_steps(
+        Procedures::Upgrade::PostMigration,
+      )
     end
   end
 
@@ -92,7 +102,9 @@ module Scenarios::PresentUpgrade
     end
 
     def compose
-      add_steps(find_checks(:post_upgrade_checks))
+      add_steps(
+        Procedures::Upgrade::PostUpgradeCheck,
+      )
     end
   end
 end
