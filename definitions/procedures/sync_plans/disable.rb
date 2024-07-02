@@ -4,7 +4,6 @@ module Procedures::SyncPlans
     metadata do
       for_feature :sync_plans
       description 'disable active sync plans'
-      tags :pre_migrations, :maintenance_mode_on
 
       confine do
         feature(:katello)

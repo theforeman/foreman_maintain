@@ -14,7 +14,7 @@ module ForemanMaintain::Scenarios
     def compose
       backup = ForemanMaintain::Utils::Backup.new(context.get(:backup_dir))
 
-      add_steps(find_checks(:root_user))
+      add_step(Checks::RootUser)
       add_steps_with_context(Checks::Restore::ValidateBackup,
         Checks::Restore::ValidateHostname,
         Checks::Restore::ValidateInterfaces,
