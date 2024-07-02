@@ -13,10 +13,6 @@ module ForemanMaintain
         ensure_one_object(:check, label)
       end
 
-      def find_checks(conditions)
-        detector.available_checks(conditions)
-      end
-
       def procedure(label)
         ensure_one_object(:procedure, label)
       end
