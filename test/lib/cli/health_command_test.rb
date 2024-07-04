@@ -40,10 +40,10 @@ module ForemanMaintain
           [dummy-check-fail-skipwhitelist] Check that ends up with fail
           [dummy-check-success] Check that ends up with success
           [dummy-check-warn] Check that ends up with warning
-          [external-service-is-accessible] External_service_is_accessible         [pre-upgrade-check]
-          [present-service-is-running] Present service run check                  [default]
-          [service-is-stopped] Service not running check                          [default]
-          [upgrade-post-upgrade-check] Procedures::Upgrade::PostUpgradeCheck      [post-upgrade-checks]
+          [external-service-is-accessible] External_service_is_accessible                  [pre-upgrade-check]
+          [present-service-is-running] Present service run check                           [default]
+          [service-is-stopped] Service not running check                                   [default]
+          [upgrade-post-upgrade-check] Procedures::Upgrade::PostUpgradeCheck               [post-upgrade-checks]
         OUTPUT
       end
     end

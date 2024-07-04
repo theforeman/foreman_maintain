@@ -64,6 +64,7 @@ module ForemanMaintain
 
       # using a queue, we can log the messages which are generated before initializing logger
       self.config = Config.new(options)
+      configure_highline
       load_definitions
       init_logger
       update_path
@@ -96,6 +97,10 @@ module ForemanMaintain
         file_paths = File.expand_path(File.join(definitions_dir, '**', '*.rb'))
         Dir.glob(file_paths).sort.each { |f| require f }
       end
+    end
+
+    def configure_highline
+      HighLine.use_color = config.use_color?
     end
 
     def cache
