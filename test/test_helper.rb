@@ -1,3 +1,4 @@
+ENV['NO_COLOR'] = '1'
 require 'foreman_maintain'
 require 'minitest/spec'
 require 'minitest/autorun'
@@ -19,7 +20,7 @@ module CliAssertions
       expected_output = expected_output.gsub(/\s+/, ' ')
       output = output.gsub(/\s+/, ' ')
     end
-    assert_equal expected_output, remove_colors(simulate_carriage_returns(output))
+    assert_equal expected_output, simulate_carriage_returns(output)
   end
 
   def capture_io_with_stderr
@@ -47,10 +48,6 @@ module CliAssertions
 
   def simulate_carriage_returns(output)
     output.gsub(/^.*\r/, '')
-  end
-
-  def remove_colors(output)
-    output.gsub(/\e.*?m/, '')
   end
 end
 
