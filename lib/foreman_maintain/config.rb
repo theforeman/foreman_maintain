@@ -25,6 +25,11 @@ module ForemanMaintain
       @foreman_port = @options.fetch(:foreman_port, 443)
     end
 
+    def use_color?
+      ENV['TERM'] && ENV.fetch('NO_COLOR', '') == '' && \
+        system('command -v tput', out: File.open('/dev/null')) && `tput colors`.to_i > 0
+    end
+
     private
 
     def load_log_configs
