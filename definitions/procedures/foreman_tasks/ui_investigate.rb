@@ -10,7 +10,7 @@ module Procedures::ForemanTasks
     attr_reader :search_query
 
     def run
-      ask(<<-MESSAGE.strip_heredoc)
+      ask(<<~MESSAGE)
         Go to https://#{hostname}/foreman_tasks/tasks?search=#{CGI.escape(@search_query.to_s)}
         press ENTER after the tasks are resolved.
       MESSAGE

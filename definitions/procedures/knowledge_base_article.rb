@@ -12,7 +12,7 @@ class Procedures::KnowledgeBaseArticle < ForemanMaintain::Procedure
   end
 
   def run
-    ask(<<-MESSAGE.strip_heredoc)
+    ask(<<~MESSAGE)
       Go to #{kcs_documents[@doc]}
       please follow steps from above article to resolve this issue
       press ENTER once done.

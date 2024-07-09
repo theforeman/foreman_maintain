@@ -10,7 +10,7 @@ module ForemanMaintain
     end
 
     it 'prints help' do
-      assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
+      assert_cmd <<~OUTPUT, :ignore_whitespace => true
         Usage:
             foreman-maintain plugin [OPTIONS] SUBCOMMAND [ARG] ...
 

@@ -301,17 +301,17 @@ module ForemanMaintain
         return if scenario.passed? && !scenario.warning?
 
         message = []
-        message << <<-MESSAGE.strip_heredoc
+        message << <<~MESSAGE
           Scenario [#{scenario.description}] failed.
         MESSAGE
         recommend = []
 
         steps_with_abort = scenario.steps_with_abort(:whitelisted => false)
         unless steps_with_abort.empty?
-          message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_abort, "\n", 2))
-          The processing was aborted by user during the following steps:
+          message << format(<<~MESSAGE, format_steps(steps_with_abort, "\n", 2))
+            The processing was aborted by user during the following steps:
 
-          %s
+            %s
           MESSAGE
         end
 
@@ -323,28 +323,28 @@ module ForemanMaintain
 
         steps_to_whitelist = steps_with_error + steps_with_skipped - not_skippable_steps
         unless steps_with_error.empty?
-          message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_error, "\n", 2))
-          The following steps ended up in failing state:
+          message << format(<<~MESSAGE, format_steps(steps_with_error, "\n", 2))
+            The following steps ended up in failing state:
 
-          %s
+            %s
           MESSAGE
           whitelist_labels = steps_to_whitelist.map(&:label_dashed).join(',')
           unless whitelist_labels.empty?
             recommend << if scenario.detector.feature(:instance).downstream
-                           format(<<-MESSAGE.strip_heredoc)
-              Resolve the failed steps and rerun the command.
+                           format(<<~MESSAGE)
+                             Resolve the failed steps and rerun the command.
 
-              If the situation persists and, you are unclear what to do next,
-              contact #{scenario.detector.feature(:instance).project_support_entity}.
+                             If the situation persists and, you are unclear what to do next,
+                             contact #{scenario.detector.feature(:instance).project_support_entity}.
 
-              In case the failures are false positives, use
-              --whitelist="#{whitelist_labels}"
+                             In case the failures are false positives, use
+                             --whitelist="#{whitelist_labels}"
                            MESSAGE
                          else
-                           format(<<-MESSAGE.strip_heredoc)
-              Resolve the failed steps and rerun the command.
-              In case the failures are false positives, use
-              --whitelist="#{whitelist_labels}"
+                           format(<<~MESSAGE)
+                             Resolve the failed steps and rerun the command.
+                             In case the failures are false positives, use
+                             --whitelist="#{whitelist_labels}"
                            MESSAGE
                          end
           end
@@ -352,15 +352,15 @@ module ForemanMaintain
 
         steps_with_warning = scenario.steps_with_warning(:whitelisted => false)
         unless steps_with_warning.empty?
-          message << format(<<-MESSAGE.strip_heredoc, format_steps(steps_with_warning, "\n", 2))
-          The following steps ended up in warning state:
+          message << format(<<~MESSAGE, format_steps(steps_with_warning, "\n", 2))
+            The following steps ended up in warning state:
 
-          %s
+            %s
           MESSAGE
 
-          recommend << <<-MESSAGE.strip_heredoc
-          The steps in warning state itself might not mean there is an error,
-          but it should be reviewed to ensure the behavior is expected
+          recommend << <<~MESSAGE
+            The steps in warning state itself might not mean there is an error,
+            but it should be reviewed to ensure the behavior is expected
           MESSAGE
         end
         puts((message + recommend).join("\n"))
