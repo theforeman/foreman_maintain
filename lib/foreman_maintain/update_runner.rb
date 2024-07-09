@@ -133,10 +133,10 @@ module ForemanMaintain
       decision = super(scenario)
       # we have not asked the user already about next steps
       if decision.nil? && @ask_to_confirm_update
-        response = reporter.ask_decision(<<-MESSAGE.strip_heredoc.strip)
-            The pre-update checks indicate that the system is ready for update.
-            It's recommended to perform a backup at this stage.
-            Confirm to continue with the modification part of the update
+        response = reporter.ask_decision(<<~MESSAGE.strip)
+          The pre-update checks indicate that the system is ready for update.
+          It's recommended to perform a backup at this stage.
+          Confirm to continue with the modification part of the update
         MESSAGE
         if [:no, :quit].include?(response)
           ask_to_quit

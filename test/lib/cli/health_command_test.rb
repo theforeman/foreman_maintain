@@ -11,7 +11,7 @@ module ForemanMaintain
     end
 
     it 'prints help' do
-      assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
+      assert_cmd <<~OUTPUT, :ignore_whitespace => true
         Usage:
             foreman-maintain health [OPTIONS] SUBCOMMAND [ARG] ...
 
@@ -34,7 +34,7 @@ module ForemanMaintain
         %w[health list]
       end
       it 'lists the defined checks' do
-        assert_cmd <<-OUTPUT.strip_heredoc
+        assert_cmd <<~OUTPUT
           [dummy-check-fail] Check that ends up with fail
           [dummy-check-fail2] Check that ends up with fail
           [dummy-check-fail-skipwhitelist] Check that ends up with fail
@@ -53,7 +53,7 @@ module ForemanMaintain
         %w[health list-tags]
       end
       it 'lists the defined tags' do
-        assert_cmd <<-OUTPUT.strip_heredoc
+        assert_cmd <<~OUTPUT
           [default]
           [post-upgrade-checks]
           [pre-upgrade-check]
@@ -88,13 +88,13 @@ module ForemanMaintain
       end
 
       it 'raises errors on empty arguments' do
-        assert_cmd <<-OUTPUT.strip_heredoc, %w[--label]
+        assert_cmd <<~OUTPUT, %w[--label]
           ERROR: option '--label': value not specified
 
           See: 'foreman-maintain health check --help'
         OUTPUT
 
-        assert_cmd <<-OUTPUT.strip_heredoc, %w[--tags]
+        assert_cmd <<~OUTPUT, %w[--tags]
           ERROR: option '--tags': value not specified
 
           See: 'foreman-maintain health check --help'

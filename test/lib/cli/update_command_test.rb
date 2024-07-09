@@ -32,7 +32,7 @@ module ForemanMaintain
       end
 
       it 'prints help' do
-        assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
+        assert_cmd <<~OUTPUT, :ignore_whitespace => true
           Usage:
               foreman-maintain update [OPTIONS] SUBCOMMAND [ARG] ...
 
@@ -63,22 +63,22 @@ module ForemanMaintain
 
       it 'run self update if update available for foreman-maintain' do
         foreman_maintain_update_available
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
       end
 
       it 'runs the update checks when update is not available for foreman-maintain' do
         foreman_maintain_update_unavailable
         UpdateRunner.any_instance.expects(:run_phase).with(:pre_update_checks)
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-        Nothing to update, can't find new version of rubygem-foreman_maintain.
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
         OUTPUT
       end
 
@@ -97,22 +97,22 @@ module ForemanMaintain
 
       it 'run self update if update available for foreman-maintain' do
         foreman_maintain_update_available
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
       end
 
       it 'runs the update when update is not available for foreman-maintain' do
         foreman_maintain_update_unavailable
         UpdateRunner.any_instance.expects(:run)
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-        Nothing to update, can't find new version of rubygem-foreman_maintain.
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
         OUTPUT
       end
 
@@ -124,24 +124,24 @@ module ForemanMaintain
 
       it 'runs the self update when update available for rubygem-foreman_maintain' do
         foreman_maintain_update_available
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
 
         run_cmd
 
-        assert_cmd(<<-OUTPUT.strip_heredoc)
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd(<<~OUTPUT)
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
       end
     end

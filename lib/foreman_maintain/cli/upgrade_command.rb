@@ -30,7 +30,7 @@ module ForemanMaintain
                           else
                             '--target-version not specified'
                           end
-          message = <<-MESSAGE.strip_heredoc
+          message = <<~MESSAGE
             #{message_start}
             Possible target versions are:
           MESSAGE

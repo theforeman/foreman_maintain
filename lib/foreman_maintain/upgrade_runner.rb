@@ -94,7 +94,7 @@ module ForemanMaintain
     def finish_upgrade
       @finished = true
       @reporter.hline
-      @reporter.puts <<-MESSAGE.strip_heredoc
+      @reporter.puts <<~MESSAGE
         Upgrade finished.
       MESSAGE
     end
@@ -136,7 +136,7 @@ module ForemanMaintain
     def skip_phase(skipped_phase)
       with_non_empty_scenario(skipped_phase) do |scenario|
         @reporter.before_scenario_starts(scenario)
-        @reporter.puts <<-MESSAGE.strip_heredoc
+        @reporter.puts <<~MESSAGE
           Skipping #{skipped_phase} phase as it was already run before.
           To enforce to run the phase, use `upgrade run --phase #{skipped_phase}`
         MESSAGE
@@ -164,7 +164,7 @@ module ForemanMaintain
         end
       end
       self.phase = :pre_upgrade_checks # rollback finished
-      @reporter.puts <<-MESSAGE.strip_heredoc
+      @reporter.puts <<~MESSAGE
         The upgrade failed and system was restored to pre-upgrade state.
       MESSAGE
     end
@@ -199,10 +199,10 @@ module ForemanMaintain
       decision = super(scenario)
       # we have not asked the user already about next steps
       if decision.nil? && @ask_to_confirm_upgrade
-        response = reporter.ask_decision(<<-MESSAGE.strip_heredoc.strip)
-            The pre-upgrade checks indicate that the system is ready for upgrade.
-            It's recommended to perform a backup at this stage.
-            Confirm to continue with the modification part of the upgrade
+        response = reporter.ask_decision(<<~MESSAGE.strip)
+          The pre-upgrade checks indicate that the system is ready for upgrade.
+          It's recommended to perform a backup at this stage.
+          Confirm to continue with the modification part of the upgrade
         MESSAGE
         if [:no, :quit].include?(response)
           ask_to_quit
