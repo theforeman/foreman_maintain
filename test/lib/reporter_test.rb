@@ -82,7 +82,7 @@ module ForemanMaintain
       reporter.before_scenario_starts(fail_scenario)
       run_scenario(fail_scenario)
 
-      assert_equal <<-STR.strip_heredoc, captured_out
+      assert_equal <<~STR, captured_out
         Running Scenarios::Dummy::Fail
         ================================================================================
         Check that ends up with fail:                                         [FAIL]
@@ -102,7 +102,7 @@ module ForemanMaintain
 
       will_press('2')
       assert_equal restart_step, reporter.on_next_steps([start_step, restart_step])
-      assert_equal <<-STR.strip_heredoc.strip, captured_out(false).strip
+      assert_equal <<~STR.strip, captured_out(false).strip
         There are multiple steps to proceed:
         1) Start the present service
         2) Restart present service
@@ -118,29 +118,29 @@ module ForemanMaintain
       fake_instance_feature
       run_scenario(fail_multiple_scenario)
       reporter.after_scenario_finishes(fail_multiple_scenario)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-      Check that ends up with fail:                                         [FAIL]
-      this check is always causing failure
-      --------------------------------------------------------------------------------
-      Check that ends up with fail:                                         [FAIL]
-      this check is always causing failure
-      --------------------------------------------------------------------------------
-      Check that ends up with success:                                      [OK]
-      --------------------------------------------------------------------------------
-      Scenario [Scenarios::Dummy::FailMultiple] failed.
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::Dummy::FailMultiple] failed.
 
-      The following steps ended up in failing state:
+        The following steps ended up in failing state:
 
-        [dummy-check-fail]
-        [dummy-check-fail2]
+          [dummy-check-fail]
+          [dummy-check-fail2]
 
-      Resolve the failed steps and rerun the command.
+        Resolve the failed steps and rerun the command.
 
-      If the situation persists and, you are unclear what to do next,
-      contact Red Hat Technical Support.
+        If the situation persists and, you are unclear what to do next,
+        contact Red Hat Technical Support.
 
-      In case the failures are false positives, use
-      --whitelist="dummy-check-fail,dummy-check-fail2"
+        In case the failures are false positives, use
+        --whitelist="dummy-check-fail,dummy-check-fail2"
       MESSAGE
     end
 
@@ -150,32 +150,32 @@ module ForemanMaintain
       fake_instance_feature
       run_scenario(fail_multiple_scenario)
       reporter.after_scenario_finishes(fail_multiple_scenario)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-      Check that ends up with fail:                                         [FAIL]
-      this check is always causing failure
-      --------------------------------------------------------------------------------
-      Check that ends up with fail:                                         [FAIL]
-      this check is always causing failure
-      --------------------------------------------------------------------------------
-      Check that ends up with success:                                      [OK]
-      --------------------------------------------------------------------------------
-      Scenario [Scenarios::Dummy::FailMultiple] failed.
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::Dummy::FailMultiple] failed.
 
-      The following steps ended up in failing state:
+        The following steps ended up in failing state:
 
-        [dummy-check-fail]
-        [dummy-check-fail2]
+          [dummy-check-fail]
+          [dummy-check-fail2]
 
-      Resolve the failed steps and rerun the command.
-      In case the failures are false positives, use
-      --whitelist="dummy-check-fail,dummy-check-fail2"
+        Resolve the failed steps and rerun the command.
+        In case the failures are false positives, use
+        --whitelist="dummy-check-fail,dummy-check-fail2"
       MESSAGE
     end
 
     it 'informs the user about warnings of the last scenario' do
       run_scenario(warn_scenario)
       reporter.after_scenario_finishes(warn_scenario)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
         Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ module ForemanMaintain
       fake_instance_feature
       run_scenario(warn_and_fail_scenario)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
         Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ module ForemanMaintain
       fake_instance_feature
       run_scenario(warn_and_fail_scenario)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
         Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ module ForemanMaintain
     it 'skips whitelisted warnings and failures of the last scenario' do
       run_scenario(warn_and_fail_scenario, :whitelisted => true)
       reporter.after_scenario_finishes(warn_and_fail_scenario)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
         Check that ends up with warning:                                      [SKIPPED]
         --------------------------------------------------------------------------------
         Check that ends up with fail:                                         [SKIPPED]
@@ -282,7 +282,7 @@ module ForemanMaintain
       fake_instance_feature
       run_scenario(warn_and_fail_skipwhitelist)
       reporter.after_scenario_finishes(warn_and_fail_skipwhitelist)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
         Check that ends up with warning:                                      [WARNING]
         this check is always causing warnings
         --------------------------------------------------------------------------------
@@ -320,25 +320,25 @@ module ForemanMaintain
       fake_instance_feature
       run_scenario(fail_multiple_skipwhitelist)
       reporter.after_scenario_finishes(fail_multiple_skipwhitelist)
-      assert_equal <<-MESSAGE.strip_heredoc.strip, captured_out(false).strip
-      Check that ends up with fail:                                         [FAIL]
-      this check is always causing failure
-      --------------------------------------------------------------------------------
-      Check that ends up with fail:                                         [FAIL]
-      this check is always causing failure
-      --------------------------------------------------------------------------------
-      Check that ends up with success:                                      [OK]
-      --------------------------------------------------------------------------------
-      Scenario [Scenarios::DummySkipWhitelist::FailMultiple] failed.
+      assert_equal <<~MESSAGE.strip, captured_out(false).strip
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with fail:                                         [FAIL]
+        this check is always causing failure
+        --------------------------------------------------------------------------------
+        Check that ends up with success:                                      [OK]
+        --------------------------------------------------------------------------------
+        Scenario [Scenarios::DummySkipWhitelist::FailMultiple] failed.
 
-      The following steps ended up in failing state:
+        The following steps ended up in failing state:
 
-        [dummy-check-fail]
-        [dummy-check-fail-skipwhitelist]
+          [dummy-check-fail]
+          [dummy-check-fail-skipwhitelist]
 
-      Resolve the failed steps and rerun the command.
-      In case the failures are false positives, use
-      --whitelist="dummy-check-fail"
+        Resolve the failed steps and rerun the command.
+        In case the failures are false positives, use
+        --whitelist="dummy-check-fail"
       MESSAGE
     end
 
@@ -358,11 +358,11 @@ module ForemanMaintain
         start_step = Procedures::PresentServiceStart.new
         restart_step = Procedures::PresentServiceRestart.new
         assert_equal start_step, reporter.on_next_steps([start_step, restart_step])
-        assert_equal <<-STR.strip_heredoc.strip, captured_out(false).strip
-        There are multiple steps to proceed:
-        1) Start the present service
-        2) Restart present service
-        (assuming option 1)
+        assert_equal <<~STR.strip, captured_out(false).strip
+          There are multiple steps to proceed:
+          1) Start the present service
+          2) Restart present service
+          (assuming option 1)
         STR
       end
     end

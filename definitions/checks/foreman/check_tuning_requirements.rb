@@ -70,8 +70,8 @@ module Checks
       end
 
       def failure_message(tuning_profile)
-        <<-MESSAGE.strip_heredoc
-        \nERROR: The installer is configured to use the #{tuning_profile} tuning profile and does not meet the requirements.
+        <<~MESSAGE
+          \nERROR: The installer is configured to use the #{tuning_profile} tuning profile and does not meet the requirements.
         MESSAGE
       end
     end

@@ -33,7 +33,7 @@ module ForemanMaintain
       end
 
       it 'prints help' do
-        assert_cmd <<-OUTPUT.strip_heredoc, :ignore_whitespace => true
+        assert_cmd <<~OUTPUT, :ignore_whitespace => true
           Usage:
               foreman-maintain upgrade [OPTIONS] SUBCOMMAND [ARG] ...
 
@@ -59,13 +59,13 @@ module ForemanMaintain
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
         command << '--target-version=1.15'
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
       end
 
@@ -73,9 +73,9 @@ module ForemanMaintain
         foreman_maintain_update_unavailable
         command << '--target-version=1.15'
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-        Nothing to update, can't find new version of rubygem-foreman_maintain.
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
         OUTPUT
       end
 
@@ -101,13 +101,13 @@ module ForemanMaintain
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
         command << '--target-version=1.15'
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
       end
 
@@ -115,9 +115,9 @@ module ForemanMaintain
         foreman_maintain_update_unavailable
         command << '--target-version=1.15'
         UpgradeRunner.any_instance.expects(:run)
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-        Nothing to update, can't find new version of rubygem-foreman_maintain.
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
         OUTPUT
       end
 
@@ -129,38 +129,38 @@ module ForemanMaintain
 
       it 'runs the self upgrade when update available for rubygem-foreman_maintain' do
         foreman_maintain_update_available
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
 
         UpgradeRunner.current_target_version = '1.15'
 
         run_cmd
 
-        assert_cmd(<<-OUTPUT.strip_heredoc, ['--target-version', '1.16'])
-        Checking for new version of rubygem-foreman_maintain...
+        assert_cmd(<<~OUTPUT, ['--target-version', '1.16'])
+          Checking for new version of rubygem-foreman_maintain...
 
-        Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain package.
 
-        The rubygem-foreman_maintain package successfully updated.
-        Re-run foreman-maintain with required options!
+          The rubygem-foreman_maintain package successfully updated.
+          Re-run foreman-maintain with required options!
         OUTPUT
       end
 
       it 'remembers the current target version and informs no update available' do
         foreman_maintain_update_unavailable
         Cli::MainCommand.any_instance.expects(:exit!).twice
-        assert_cmd <<-OUTPUT.strip_heredoc
-        Checking for new version of rubygem-foreman_maintain...
-        Nothing to update, can't find new version of rubygem-foreman_maintain.
-        --target-version not specified
-        Possible target versions are:
-        1.15
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
+          --target-version not specified
+          Possible target versions are:
+          1.15
         OUTPUT
 
         UpgradeRunner.current_target_version = '1.15'
@@ -168,7 +168,7 @@ module ForemanMaintain
 
         run_cmd
 
-        assert_cmd(<<-OUTPUT.strip_heredoc, ['--target-version', '1.16'])
+        assert_cmd(<<~OUTPUT, ['--target-version', '1.16'])
           Checking for new version of rubygem-foreman_maintain...
           Nothing to update, can't find new version of rubygem-foreman_maintain.
           Can't set target version 1.16, 1.15 already in progress
@@ -178,7 +178,7 @@ module ForemanMaintain
       it 'remembers the current target version when self upgrade disabled' do
         command << '--disable-self-upgrade'
         Cli::MainCommand.any_instance.expects(:exit!)
-        assert_cmd <<-OUTPUT.strip_heredoc
+        assert_cmd <<~OUTPUT
           --target-version not specified
           Possible target versions are:
           1.15
@@ -190,7 +190,7 @@ module ForemanMaintain
         UpgradeRunner.current_target_version = '1.15'
         Cli::MainCommand.any_instance.expects(:exit!)
 
-        assert_cmd(<<-OUTPUT.strip_heredoc, ['--target-version', '1.16'])
+        assert_cmd(<<~OUTPUT, ['--target-version', '1.16'])
           Checking for new version of rubygem-foreman_maintain...
           Nothing to update, can't find new version of rubygem-foreman_maintain.
           Can't set target version 1.16, 1.15 already in progress
