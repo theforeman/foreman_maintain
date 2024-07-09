@@ -1,7 +1,3 @@
-if RUBY_VERSION <= '1.8.7'
-  require 'rubygems'
-end
-
 require 'forwardable'
 require 'json'
 require 'logger'
