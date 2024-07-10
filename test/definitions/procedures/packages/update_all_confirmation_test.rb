@@ -24,11 +24,11 @@ describe Procedures::Packages::UpdateAllConfirmation do
       To upgrade to the next Foreman version use 'foreman-maintain upgrade'.
       Do you want to proceed with update of everything regardless of
       the recommendations?
+      , [y(yes), q(quit)]
     MSG
 
-    subject.expects(:ask_decision).with(question, :actions_msg => "y(yes), q(quit)").returns(:yes)
-
-    run_procedure(subject)
+    answer = run_procedure(subject)
+    assert_equal answer.reporter.output, question
   end
 
   it 'contains the proper message for Satellite' do
@@ -42,10 +42,10 @@ describe Procedures::Packages::UpdateAllConfirmation do
       To upgrade to the next Satellite version use 'satellite-maintain upgrade'.
       Do you want to proceed with update of everything regardless of
       the recommendations?
+      , [y(yes), q(quit)]
     MSG
 
-    subject.expects(:ask_decision).with(question, :actions_msg => "y(yes), q(quit)").returns(:yes)
-
-    run_procedure(subject)
+    answer = run_procedure(subject)
+    assert_equal answer.reporter.output, question
   end
 end
