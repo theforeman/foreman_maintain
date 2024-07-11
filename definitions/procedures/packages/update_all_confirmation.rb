@@ -20,7 +20,7 @@ module Procedures::Packages
           the recommendations?
         MSG
 
-        answer = ask_decision(question, actions_msg: 'y(yes), q(quit)')
+        answer = ask_decision(question.strip, actions_msg: 'y(yes), q(quit)')
         abort! unless answer == :yes
       end
     end

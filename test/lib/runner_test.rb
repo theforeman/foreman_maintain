@@ -102,7 +102,7 @@ module ForemanMaintain
         runner = Runner.new(reporter, [warn_scenario, success_scenario])
         runner.run
         _(reporter.log.last).
-          must_equal(['ask', 'Continue with [Scenarios::Dummy::Success], [y(yes), n(no), q(quit)]'])
+          must_equal(['ask', "Continue with [Scenarios::Dummy::Success]\n[y(yes), n(no), q(quit)]"])
       end
     end
 
