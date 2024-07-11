@@ -67,7 +67,7 @@ module ForemanMaintain
       end
 
       until_valid_decision do
-        filter_decision(ask("#{message}, [#{actions_msg}]"))
+        filter_decision(ask("#{message}\n[#{actions_msg}]"))
       end
     end
     # rubocop:enable Metrics/LineLength

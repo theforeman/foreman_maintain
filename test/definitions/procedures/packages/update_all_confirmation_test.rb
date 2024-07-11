@@ -24,7 +24,7 @@ describe Procedures::Packages::UpdateAllConfirmation do
       To upgrade to the next Foreman version use 'foreman-maintain upgrade'.
       Do you want to proceed with update of everything regardless of
       the recommendations?
-      , [y(yes), q(quit)]
+      [y(yes), q(quit)]
     MSG
 
     answer = run_procedure(subject)
@@ -42,7 +42,7 @@ describe Procedures::Packages::UpdateAllConfirmation do
       To upgrade to the next Satellite version use 'satellite-maintain upgrade'.
       Do you want to proceed with update of everything regardless of
       the recommendations?
-      , [y(yes), q(quit)]
+      [y(yes), q(quit)]
     MSG
 
     answer = run_procedure(subject)

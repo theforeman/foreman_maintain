@@ -40,7 +40,8 @@ module ForemanMaintain
       _(reporter.log.last).must_equal ['ask', <<~MESSAGE.strip]
         The pre-upgrade checks indicate that the system is ready for upgrade.
         It's recommended to perform a backup at this stage.
-        Confirm to continue with the modification part of the upgrade, [y(yes), n(no), q(quit)]
+        Confirm to continue with the modification part of the upgrade
+        [y(yes), n(no), q(quit)]
       MESSAGE
       assert_equal(:pre_upgrade_checks, upgrade_runner_with_whitelist.phase,
         'The phase should not be switched until confirmed')
