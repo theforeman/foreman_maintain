@@ -32,6 +32,7 @@ describe "capsule upgrade scenarios" do
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
         Checks::Repositories::Validate,
+        Checks::Pulpcore::NoRunningTasks,
       )
     end
 
@@ -54,6 +55,7 @@ describe "capsule upgrade scenarios" do
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
         Checks::Repositories::Validate,
+        Checks::Pulpcore::NoRunningTasks,
       )
     end
   end
