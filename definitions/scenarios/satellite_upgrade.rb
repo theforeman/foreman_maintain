@@ -48,6 +48,7 @@ module Scenarios::Satellite
         Checks::ForemanTasks::Invalid::CheckPendingState, # if foreman-tasks
         Checks::ForemanTasks::Invalid::CheckPlanningState, # if foreman-tasks
         Checks::ForemanTasks::NotRunning, # if foreman-tasks
+        Checks::Pulpcore::NoRunningTasks, # if pulpcore
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
