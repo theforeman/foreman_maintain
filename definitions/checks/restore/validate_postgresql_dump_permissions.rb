@@ -11,7 +11,7 @@ module Checks::Restore
 
     def run
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
-      if feature(:instance).postgresql_local? && backup.online_backup?
+      if feature(:instance).postgresql_local?
         errors = []
         [:candlepin_dump, :foreman_dump, :pulpcore_dump].each do |dump|
           next unless backup.file_map[dump][:present]
