@@ -13,7 +13,7 @@ module Checks::Restore
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
       if feature(:instance).postgresql_local?
         errors = []
-        [:candlepin_dump, :foreman_dump, :pulpcore_dump].each do |dump|
+        [:candlepin_dump, :foreman_dump, :pulpcore_dump, :container_gateway_dump].each do |dump|
           next unless backup.file_map[dump][:present]
 
           unless system("runuser - postgres -c 'test -r #{backup.file_map[dump][:path]}'")

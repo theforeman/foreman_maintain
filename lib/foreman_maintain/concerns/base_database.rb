@@ -42,8 +42,9 @@ module ForemanMaintain
         raise NotImplementedError
       end
 
-      def local?
-        ['localhost', '127.0.0.1', `hostname`.strip].include?(configuration['host'])
+      def local?(config = configuration)
+        ['localhost', '127.0.0.1', `hostname`.strip].include?(configuration['host']) ||
+          config['host'].nil?
       end
 
       def query(sql)
@@ -57,24 +58,40 @@ module ForemanMaintain
       def psql(query)
         ping!
 
-        execute('psql',
-          :stdin => query,
-          :env => base_env)
+        if local?
+          execute("runuser - postgres -c 'psql -d #{configuration['database']}' -c '#{query}'")
+        else
+          execute('psql',
+            :stdin => query,
+            :env => base_env)
+        end
       end
 
       def ping
-        execute?('psql',
-          :stdin => 'SELECT 1 as ping',
-          :env => base_env)
+        if local?
+          execute?(
+            "runuser - postgres -c 'psql -d #{configuration['database']} -c \"SELECT 1 as ping\"'"
+          )
+        else
+          execute?('psql',
+            :stdin => 'SELECT 1 as ping',
+            :env => base_env)
+        end
       end
 
       def dump_db(file)
-        dump_command = "pg_dump -Fc -f #{file}"
-        execute!(dump_command, :env => base_env)
+        if local?
+          dump_command = "pg_dump --format=c #{configuration['connection_string']}"
+          execute!("chown -R postgres:postgres #{File.dirname(file)}")
+          execute!("runuser - postgres -c '#{dump_command} -f #{file}'")
+        else
+          dump_command = "pg_dump -Fc -f #{file}"
+          execute!(dump_command, :env => base_env)
+        end
       end
 
       def restore_dump(file, localdb)
-        if localdb
+        if local?
           dump_cmd = "runuser - postgres -c 'pg_restore -C -d postgres #{file}'"
           execute!(dump_cmd)
         else
@@ -126,7 +143,11 @@ module ForemanMaintain
 
         query = 'SHOW server_version'
         server_version_cmd = 'psql --tuples-only --no-align'
-        version_string = execute!(server_version_cmd, :stdin => query, :env => base_env)
+        if local?
+          version_string = execute!("runuser - postgres -c '#{server_version_cmd} -c \"#{query}\"'")
+        else
+          version_string = execute!(server_version_cmd, :stdin => query, :env => base_env)
+        end
         version(version_string)
       end
 
