@@ -6,7 +6,6 @@ module Procedures::Backup
       param :backup_dir, 'Directory where to backup to', :required => true
       param :preserve_dir, 'Directory where to backup to', :flag => true
       param :incremental_dir, 'Changes since specified backup only'
-      param :online_backup, 'Select for online backup', :flag => true, :default => false
     end
 
     # rubocop:disable Metrics/MethodLength
@@ -17,7 +16,7 @@ module Procedures::Backup
         FileUtils.mkdir_p @backup_dir
         FileUtils.chmod_R 0o770, @backup_dir
 
-        if feature(:instance).postgresql_local? && @online_backup
+        if feature(:instance).postgresql_local?
           begin
             FileUtils.chown_R(nil, 'postgres', @backup_dir)
           rescue Errno::EPERM
