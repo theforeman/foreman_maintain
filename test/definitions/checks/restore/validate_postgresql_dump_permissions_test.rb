@@ -19,6 +19,7 @@ describe Checks::Restore::ValidatePostgresqlDumpPermissions do
   it 'passes when backup is offline and DB is local' do
     assume_feature_present(:instance, :postgresql_local? => true)
     ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(false)
+    subject.stubs(:system).returns(true)
     result = run_check(subject)
     assert result.success?, 'Check expected to succeed'
   end
