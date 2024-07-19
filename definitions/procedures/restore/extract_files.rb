@@ -49,7 +49,7 @@ module Procedures::Restore
     end
 
     def any_database
-      feature(:foreman_database) || feature(:candlepin_database) || feature(:pulpcore_database)
+      feature(:foreman_database) || feature(:candlepin_database) || feature(:pulpcore_database) || feature(:container_gateway_database)
     end
 
     def extract_pgsql_data(backup)
