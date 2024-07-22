@@ -31,12 +31,9 @@ class Features::ContainerGatewayDatabase < ForemanMaintain::Feature
     connection_string = config[:db_connection_string]
     if connection_string
       uri = URI.parse(connection_string)
-      @configuration['adapter'] = uri.scheme
-      @configuration['host'] = uri.host
-      @configuration['port'] = uri.port
-      @configuration['database'] = uri.path[1..-1]
-      @configuration['username'] = uri.user
-      @configuration['password'] = uri.password
+      @configuration['connection_string'] = connection_string
+      @configuration['user'] = 'foreman-proxy'
+      @configuration['database'] = uri.path[1..]
     end
     @configuration
   end

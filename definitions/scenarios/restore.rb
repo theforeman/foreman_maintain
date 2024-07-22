@@ -65,6 +65,9 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::PulpcoreDump)
       end
+      if backup.file_map[:container_gateway_dump][:present]
+        add_steps_with_context(Procedures::Restore::ContainerGatewayDump)
+      end
       if feature(:instance).postgresql_local?
         add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
@@ -82,6 +85,7 @@ module ForemanMaintain::Scenarios
         Procedures::Restore::CandlepinDump => :backup_dir,
         Procedures::Restore::ForemanDump => :backup_dir,
         Procedures::Restore::PulpcoreDump => :backup_dir,
+        Procedures::Restore::ContainerGatewayDump => :backup_dir,
         Procedures::Restore::ExtractFiles => :backup_dir)
     end
   end

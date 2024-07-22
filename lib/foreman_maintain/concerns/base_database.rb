@@ -42,7 +42,8 @@ module ForemanMaintain
       end
 
       def local?(config = configuration)
-        ['localhost', '127.0.0.1', `hostname`.strip].include?(config['host'])
+        ['localhost', '127.0.0.1', `hostname`.strip].include?(config['host']) ||
+          config['host'].nil?
       end
 
       def query(sql, config = configuration)
@@ -57,7 +58,8 @@ module ForemanMaintain
         if ping(config)
           execute(psql_command(config),
             :stdin => query,
-            :hidden_patterns => [config['password']])
+            :hidden_patterns => [config['password']],
+            :config => user)
         else
           raise_service_error
         end
@@ -66,11 +68,12 @@ module ForemanMaintain
       def ping(config = configuration)
         execute?(psql_command(config),
           :stdin => 'SELECT 1 as ping',
-          :hidden_patterns => [config['password']])
+          :hidden_patterns => [config['password']],
+          :user => config['user'])
       end
 
       def dump_db(file, config = configuration)
-        execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']])
+        execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']], :user => config['user'])
       end
 
       def restore_dump(file, localdb, config = configuration)
@@ -80,11 +83,16 @@ module ForemanMaintain
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
-          dump_cmd = base_command(config, 'pg_restore') +
-                     ' --no-privileges --clean --disable-triggers -n public ' \
-                     "-d #{config['database']} #{file}"
+          dump_cmd = ''
+          if config['connection_string']
+            dump_cmd = "pg_restore --no-privileges --clean --disable-triggers -n public -d #{config['database']} #{file}"
+          else
+            dump_cmd = base_command(config, 'pg_restore') +
+                      ' --no-privileges --clean --disable-triggers -n public ' \
+                      "-d #{config['database']} #{file}"
+          end
           execute!(dump_cmd, :hidden_patterns => [config['password']],
-            :valid_exit_statuses => [0, 1])
+            :valid_exit_statuses => [0, 1], :user => config['user'])
         end
       end
 
@@ -152,11 +160,19 @@ module ForemanMaintain
       end
 
       def psql_command(config)
-        base_command(config, 'psql') + " -d #{config['database']}"
+        if config['connection_string']
+          "psql #{config['connection_string']}"
+        else
+          base_command(config, 'psql') + " -d #{config['database']}"
+        end
       end
 
       def dump_command(config)
-        base_command(config, 'pg_dump') + " -Fc #{config['database']}"
+        if config['connection_string']
+          "pg_dump -Fc #{config['connection_string']}"
+        else
+          base_command(config, 'pg_dump') + " -Fc #{config['database']}"
+        end
       end
 
       def raise_service_error
