@@ -23,7 +23,8 @@ module Procedures::Restore
       if backup.file_map[:container_gateway_dump][:present]
         spinner.update('Restoring container gateway dump')
         local = feature(:container_gateway_database).local?
-        feature(:container_gateway_database).restore_dump(backup.file_map[:container_gateway_dump][:path], local)
+        feature(:container_gateway_database).
+          restore_dump(backup.file_map[:container_gateway_dump][:path], local)
       end
     end
   end

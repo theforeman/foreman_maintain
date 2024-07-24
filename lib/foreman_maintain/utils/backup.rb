@@ -235,7 +235,7 @@ module ForemanMaintain
       def sql_dump_files_exist?
         file_map[:foreman_dump][:present] ||
           file_map[:candlepin_dump][:present] ||
-          file_map[:pulpcore_dump][:present]
+          file_map[:pulpcore_dump][:present] ||
           file_map[:container_gateway_dump][:present]
       end
 

@@ -13,7 +13,7 @@ module ForemanMaintain
         @logger = logger
         @user = options[:user]
         if @user && !@user.empty?
-          @command = "sudo -u #{@user} -- " + command
+          @command = "runuser -u #{@user} -- " + command
         else
           @command = command
         end

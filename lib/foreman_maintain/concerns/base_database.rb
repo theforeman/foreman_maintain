@@ -66,14 +66,17 @@ module ForemanMaintain
       end
 
       def ping(config = configuration)
-        execute?(psql_command(config),
-          :stdin => 'SELECT 1 as ping',
+        execute?(psql_command(config) + ' -c "SELECT 1 as ping"',
           :hidden_patterns => [config['password']],
           :user => config['user'])
       end
 
       def dump_db(file, config = configuration)
-        execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']], :user => config['user'])
+        if config['user']
+          execute!("chown -R #{config['user']}:#{config['user']} #{File.dirname(file)}")
+        end
+        execute!(dump_command(config) + " -f #{file}",
+                 :hidden_patterns => [config['password']], :user => config['user'])
       end
 
       def restore_dump(file, localdb, config = configuration)
@@ -83,13 +86,17 @@ module ForemanMaintain
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
-          dump_cmd = ''
-          if config['connection_string']
-            dump_cmd = "pg_restore --no-privileges --clean --disable-triggers -n public -d #{config['database']} #{file}"
-          else
-            dump_cmd = base_command(config, 'pg_restore') +
-                      ' --no-privileges --clean --disable-triggers -n public ' \
-                      "-d #{config['database']} #{file}"
+          base_cmd = ''
+          base_cmd = if config['connection_string']
+                       'pg_restore'
+                     else
+                       base_command(config, 'pg_restore')
+                     end
+          dump_cmd = base_cmd +
+                    ' --no-privileges --clean --disable-triggers -n public ' \
+                    "-d #{config['database']} #{file}"
+          if config['user']
+            execute!("chown -R #{config['user']}:#{config['user']} #{File.dirname(file)}")
           end
           execute!(dump_cmd, :hidden_patterns => [config['password']],
             :valid_exit_statuses => [0, 1], :user => config['user'])
@@ -169,9 +176,9 @@ module ForemanMaintain
 
       def dump_command(config)
         if config['connection_string']
-          "pg_dump -Fc #{config['connection_string']}"
+          "pg_dump --format=c #{config['connection_string']}"
         else
-          base_command(config, 'pg_dump') + " -Fc #{config['database']}"
+          base_command(config, 'pg_dump') + " --format=c #{config['database']}"
         end
       end
 

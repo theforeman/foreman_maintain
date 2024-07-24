@@ -12,7 +12,8 @@ module Procedures::Backup
 
       def run
         with_spinner('Getting Container Gateway DB dump') do
-          feature(:container_gateway_database).dump_db(File.join(@backup_dir, 'container_gateway.dump'))
+          feature(:container_gateway_database).
+            dump_db(File.join(@backup_dir, 'container_gateway.dump'))
         end
       end
     end
