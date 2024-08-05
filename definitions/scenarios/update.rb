@@ -3,6 +3,11 @@ module Scenarios::Update
     def self.update_metadata(&block)
       metadata do
         tags :update_scenario
+
+        confine do
+          feature(:instance).target_version == feature(:instance).current_version.to_s[/^\d+\.\d+/]
+        end
+
         instance_eval(&block)
       end
     end
