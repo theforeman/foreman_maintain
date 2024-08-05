@@ -57,6 +57,7 @@ module ForemanMaintain
           option '--features', 'FEATURES',
             "#{proxy_name} features to include in the backup. " \
                 'Valid features are tftp, dns, dhcp, openscap, and all.', :multivalued => true
+          option '--wait-for-tasks', :flag, 'Wait for running tasks to complete instead of aborting'
         end
         # rubocop:enable  Metrics/MethodLength
 
@@ -89,6 +90,7 @@ module ForemanMaintain
           :tar_volume_size => split_pulp_tar,
           :skip_pulp_content => skip_pulp_content?,
           :incremental_dir => incremental,
+          :wait_for_tasks => wait_for_tasks?,
         }.merge(options))
       end
 

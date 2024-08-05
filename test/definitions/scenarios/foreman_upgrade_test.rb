@@ -27,6 +27,7 @@ describe "foreman upgrade scenarios" do
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::Repositories::Validate,
+        Checks::Pulpcore::NoRunningTasks,
       )
     end
 
@@ -45,6 +46,7 @@ describe "foreman upgrade scenarios" do
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::Repositories::Validate,
+        Checks::Pulpcore::NoRunningTasks,
       )
     end
   end
