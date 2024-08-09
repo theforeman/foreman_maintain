@@ -44,7 +44,8 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Pulp => :backup_dir,
         Procedures::Backup::Online::CandlepinDB => :backup_dir,
         Procedures::Backup::Online::ForemanDB => :backup_dir,
-        Procedures::Backup::Online::PulpcoreDB => :backup_dir)
+        Procedures::Backup::Online::PulpcoreDB => :backup_dir,
+        Procedures::Backup::Online::ContainerGatewayDB => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
@@ -102,7 +103,8 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(
         Procedures::Backup::Online::CandlepinDB,
         Procedures::Backup::Online::ForemanDB,
-        Procedures::Backup::Online::PulpcoreDB
+        Procedures::Backup::Online::PulpcoreDB,
+        Procedures::Backup::Online::ContainerGatewayDB
       )
     end
 
