@@ -19,4 +19,3 @@ module Checks
     end
   end
 end
-

@@ -76,7 +76,7 @@ module ForemanMaintain
           execute!("chown -R #{config['user']}:#{config['user']} #{File.dirname(file)}")
         end
         execute!(dump_command(config) + " -f #{file}",
-                 :hidden_patterns => [config['password']], :user => config['user'])
+          :hidden_patterns => [config['password']], :user => config['user'])
       end
 
       def restore_dump(file, localdb, config = configuration)
@@ -86,15 +86,14 @@ module ForemanMaintain
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
-          base_cmd = ''
           base_cmd = if config['connection_string']
                        'pg_restore'
                      else
                        base_command(config, 'pg_restore')
                      end
           dump_cmd = base_cmd +
-                    ' --no-privileges --clean --disable-triggers -n public ' \
-                    "-d #{config['database']} #{file}"
+                     ' --no-privileges --clean --disable-triggers -n public ' \
+                     "-d #{config['database']} #{file}"
           if config['user']
             execute!("chown -R #{config['user']}:#{config['user']} #{File.dirname(file)}")
           end
