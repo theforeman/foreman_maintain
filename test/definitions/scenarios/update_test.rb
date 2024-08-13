@@ -55,6 +55,7 @@ describe "update scenarios" do
           Checks::Repositories::CheckNonRhRepository,
           Checks::CheckIpv6Disable,
           Checks::Repositories::Validate,
+          Checks::Pulpcore::NoRunningTasks,
         )
       end
 
@@ -85,6 +86,7 @@ describe "update scenarios" do
           Checks::Repositories::CheckNonRhRepository,
           Checks::CheckIpv6Disable,
           Checks::Repositories::Validate,
+          Checks::Pulpcore::NoRunningTasks,
         )
       end
     end
@@ -254,6 +256,7 @@ describe "update scenarios" do
           Checks::Repositories::CheckNonRhRepository,
           Checks::CheckIpv6Disable,
           Checks::Repositories::Validate,
+          Checks::Pulpcore::NoRunningTasks,
         )
       end
 
@@ -284,6 +287,7 @@ describe "update scenarios" do
           Checks::Repositories::CheckNonRhRepository,
           Checks::CheckIpv6Disable,
           Checks::Repositories::Validate,
+          Checks::Pulpcore::NoRunningTasks,
         )
       end
     end
@@ -453,6 +457,7 @@ describe "update scenarios" do
           Checks::Repositories::CheckNonRhRepository,
           Checks::CheckIpv6Disable,
           Checks::Repositories::Validate,
+          Checks::Pulpcore::NoRunningTasks,
         )
       end
 
@@ -483,6 +488,7 @@ describe "update scenarios" do
           Checks::Repositories::CheckNonRhRepository,
           Checks::CheckIpv6Disable,
           Checks::Repositories::Validate,
+          Checks::Pulpcore::NoRunningTasks,
         )
       end
     end
