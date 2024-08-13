@@ -22,7 +22,6 @@ module ForemanMaintain::Scenarios
         :online_backup => strategy == :online)
       add_step(Checks::ForemanTasks::NotRunning.new(:wait_for_tasks => wait_for_tasks?))
       add_step(Checks::Pulpcore::NoRunningTasks.new(:wait_for_tasks => wait_for_tasks?))
-      safety_confirmation
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
       add_step_with_context(Procedures::Backup::PrepareDirectory)
       add_step_with_context(Procedures::Backup::Metadata, :online_backup => strategy == :online)
@@ -64,12 +63,6 @@ module ForemanMaintain::Scenarios
     # rubocop:enable  Metrics/MethodLength
 
     private
-
-    def safety_confirmation
-      if strategy == :online
-        add_step_with_context(Procedures::Backup::Online::SafetyConfirmation)
-      end
-    end
 
     def check_valid_strategy
       unless [:online, :offline].include? strategy
