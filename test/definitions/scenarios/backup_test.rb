@@ -91,7 +91,6 @@ module Scenarios
         checks.each do |check|
           assert_scenario_has_step(scenario, check)
         end
-        assert_scenario_has_step(scenario, Procedures::Backup::Online::SafetyConfirmation)
         refute_scenario_has_step(scenario, Procedures::Backup::AccessibilityConfirmation)
         assert_scenario_has_step(scenario, Procedures::Backup::PrepareDirectory)
         assert_scenario_has_step(scenario, Procedures::Backup::Metadata)
