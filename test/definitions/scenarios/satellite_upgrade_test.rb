@@ -5,7 +5,6 @@ describe "satellite upgrade scenarios" do
 
   before(:each) do
     assume_satellite_present
-    ForemanMaintain.config.stubs(:manage_crond).returns(true)
   end
 
   describe Scenarios::Satellite::PreUpgradeCheck do
