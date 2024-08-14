@@ -48,7 +48,7 @@ module Checks::MaintenanceMode
     end
 
     def check_for_cron(is_mode_on)
-      unless ForemanMaintain.config.manage_crond && feature(:cron)
+      unless feature(:cron)
         return ['cron jobs: not managed', []]
       end
 
