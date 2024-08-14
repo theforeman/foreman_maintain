@@ -2,7 +2,7 @@ class Features::Cron < ForemanMaintain::Feature
   metadata do
     label :cron
     confine do
-      ForemanMaintain.config.manage_crond && feature(:instance).downstream
+      ForemanMaintain.config.manage_crond
     end
   end
 
