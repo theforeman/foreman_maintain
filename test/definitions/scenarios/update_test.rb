@@ -20,7 +20,6 @@ describe "update scenarios" do
   context 'Satellite update' do
     before(:each) do
       assume_satellite_present
-      ForemanMaintain.config.stubs(:manage_crond).returns(true)
     end
 
     describe Scenarios::Update::PreUpdateCheck do
@@ -221,7 +220,6 @@ describe "update scenarios" do
   context 'Foreman update' do
     before(:each) do
       assume_foreman_present
-      ForemanMaintain.config.stubs(:manage_crond).returns(true)
     end
 
     describe Scenarios::Update::PreUpdateCheck do
@@ -422,7 +420,6 @@ describe "update scenarios" do
   context 'Katello update' do
     before(:each) do
       assume_katello_present
-      ForemanMaintain.config.stubs(:manage_crond).returns(true)
     end
 
     describe Scenarios::Update::PreUpdateCheck do

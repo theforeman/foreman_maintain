@@ -5,7 +5,6 @@ describe "capsule upgrade scenarios" do
 
   before(:each) do
     assume_feature_present(:capsule)
-    ForemanMaintain.config.stubs(:manage_crond).returns(true)
   end
 
   describe Scenarios::Satellite::PreUpgradeCheck do
