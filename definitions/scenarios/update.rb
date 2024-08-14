@@ -5,7 +5,7 @@ module Scenarios::Update
         tags :update_scenario
 
         confine do
-          feature(:instance).target_version == feature(:instance).current_version.to_s[/^\d+\.\d+/]
+          feature(:instance).target_version == feature(:instance).current_major_version
         end
 
         instance_eval(&block)

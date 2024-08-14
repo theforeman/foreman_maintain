@@ -34,30 +34,29 @@ module ForemanMaintain
 
     attr_reader :version, :tag, :phase
 
-    def initialize(version, reporter, options = {})
+    def initialize(reporter, options = {})
       super(reporter, [], options)
-      @version = version
-      scenarios_present = find_scenarios(:tags => :upgrade_scenario).any?(&matching_version_test)
-      raise "Unknown version #{version}" unless scenarios_present
-
       @scenario_cache = {}
-      self.phase = :pre_upgrade_checks
+      @phase = :pre_upgrade_checks
+      condition = { :tags => [:upgrade_scenario, phase] }
+      matching_scenarios = find_scenarios(condition)
+      @version = matching_scenarios.first&.target_version
+    end
+
+    def available?
+      condition = { :tags => [:upgrade_scenario, :pre_upgrade_check] }
+      matching_scenarios = find_scenarios(condition)
+      !matching_scenarios.empty?
     end
 
     def scenario(phase)
       return @scenario_cache[phase] if @scenario_cache.key?(phase)
 
       condition = { :tags => [:upgrade_scenario, phase] }
-      matching_scenarios = find_scenarios(condition).select(&matching_version_test)
+      matching_scenarios = find_scenarios(condition)
       raise "Too many scenarios match #{condition.inspect}" if matching_scenarios.size > 1
 
       @scenario_cache[phase] = matching_scenarios.first
-    end
-
-    def matching_version_test
-      proc do |scenario|
-        scenario.respond_to?(:target_version) && scenario.target_version == @version
-      end
     end
 
     def run
