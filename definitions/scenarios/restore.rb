@@ -28,7 +28,7 @@ module ForemanMaintain::Scenarios
       add_steps_with_context(Procedures::Restore::Confirmation,
         Procedures::Restore::RequiredPackages,
         Procedures::Restore::Configs)
-      add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
+      add_step_with_context(Procedures::Crond::Stop)
       unless backup.incremental?
         add_steps_with_context(Procedures::Restore::InstallerReset)
       end
@@ -48,7 +48,7 @@ module ForemanMaintain::Scenarios
 
       add_step(Procedures::Installer::Run.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::UpgradeRakeTask)
-      add_step_with_context(Procedures::Crond::Start) if feature(:cron)
+      add_step_with_context(Procedures::Crond::Start)
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
@@ -93,7 +93,7 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_step_with_context(Procedures::Crond::Stop) if feature(:cron)
+      add_step_with_context(Procedures::Crond::Stop)
     end
   end
 end
