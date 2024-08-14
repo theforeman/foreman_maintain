@@ -101,6 +101,10 @@ class Features::Instance < ForemanMaintain::Feature
     version.to_s[/^\d+\.\d+\.\d+/]
   end
 
+  def current_major_version
+    current_version.to_s[/^\d+\.\d+/]
+  end
+
   def target_version
     if feature(:instance).downstream
       Features::Satellite.new.target_version

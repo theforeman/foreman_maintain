@@ -1,85 +1,72 @@
 module ForemanMaintain
   module Cli
     class UpgradeCommand < Base
-      def self.target_version_option
-        option '--target-version', 'TARGET_VERSION', 'Target version of the upgrade',
-          :required => false
-      end
-
       def self.disable_self_upgrade_option
         option '--disable-self-upgrade', :flag, 'Disable automatic self upgrade',
           :default => false
       end
 
-      def current_target_version
-        current_target_version = ForemanMaintain::UpgradeRunner.current_target_version
-        if current_target_version && target_version && target_version != current_target_version
-          raise Error::UsageError,
-            "Can't set target version #{target_version}, "\
-            "#{current_target_version} already in progress"
-        end
-        @target_version = current_target_version if current_target_version
-        return true if current_target_version
-      end
-
-      def validate_target_version!
-        return if current_target_version
-        unless UpgradeRunner.available_targets.include?(target_version)
-          message_start = if target_version
-                            "Can't upgrade to #{target_version}"
-                          else
-                            '--target-version not specified'
-                          end
-          message = <<~MESSAGE
-            #{message_start}
-            Possible target versions are:
-          MESSAGE
-          versions = UpgradeRunner.available_targets.join("\n")
-          raise Error::UsageError, message + versions
-        end
-      end
-
       def upgrade_runner
         return @upgrade_runner if defined? @upgrade_runner
-        validate_target_version!
-        @upgrade_runner = ForemanMaintain::UpgradeRunner.new(target_version, reporter,
+        @upgrade_runner = ForemanMaintain::UpgradeRunner.new(reporter,
           :assumeyes => assumeyes?,
           :whitelist => whitelist || [],
           :force => force?).tap(&:load)
-      end
-
-      def print_versions(target_versions)
-        target_versions.sort.each { |version| puts version }
       end
 
       def allow_self_upgrade?
         !disable_self_upgrade?
       end
 
+      def try_upgrade
+        if upgrade_runner.available?
+          yield
+        else
+          instance = ForemanMaintain.detector.feature(:instance)
+          msg = <<~BANNER
+
+            There are no upgrades available.
+            The current version of #{instance.product_name} is #{instance.current_major_version}.
+            Consider using the update command.
+          BANNER
+
+          puts msg
+          ForemanMaintain::UpgradeRunner::WARNING_EXIT_CODE
+        end
+      end
+
       subcommand 'check', 'Run pre-upgrade checks before upgrading to specified version' do
-        target_version_option
         interactive_option
         disable_self_upgrade_option
 
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade if allow_self_upgrade?
-          upgrade_runner.run_phase(:pre_upgrade_checks)
-          exit upgrade_runner.exit_code
+
+          exit_code = try_upgrade do
+            upgrade_runner.run_phase(:pre_upgrade_checks)
+            upgrade_runner.exit_code
+          end
+
+          exit exit_code
         end
       end
 
       subcommand 'run', 'Run full upgrade to a specified version' do
-        target_version_option
         interactive_option
         disable_self_upgrade_option
 
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade if allow_self_upgrade?
-          upgrade_runner.run
-          upgrade_runner.save
-          exit upgrade_runner.exit_code
+
+          exit_code = try_upgrade do
+            upgrade_runner.run
+            upgrade_runner.save
+            upgrade_runner.exit_code
+          end
+
+          exit exit_code
         end
       end
     end
