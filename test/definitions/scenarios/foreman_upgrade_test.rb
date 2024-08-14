@@ -62,6 +62,7 @@ describe "foreman upgrade scenarios" do
       assert_scenario_has_steps(
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
+        Procedures::Crond::Stop,
       )
     end
 
@@ -71,6 +72,7 @@ describe "foreman upgrade scenarios" do
       assert_scenario_has_steps(
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
+        Procedures::Crond::Stop,
       )
     end
   end
@@ -121,6 +123,7 @@ describe "foreman upgrade scenarios" do
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
+        Procedures::Crond::Start,
       )
     end
 
@@ -132,6 +135,7 @@ describe "foreman upgrade scenarios" do
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
+        Procedures::Crond::Start,
       )
     end
   end
