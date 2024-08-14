@@ -12,11 +12,11 @@ module ForemanMaintain
     end
 
     let(:upgrade_runner) do
-      UpgradeRunner.new('1.15', reporter)
+      UpgradeRunner.new(reporter)
     end
 
     let(:upgrade_runner_with_whitelist) do
-      UpgradeRunner.new('1.15', reporter,
+      UpgradeRunner.new(reporter,
         :whitelist => %w[present-service-is-running service-is-stopped])
     end
 
@@ -56,7 +56,7 @@ module ForemanMaintain
       original_scenario = upgrade_runner_with_whitelist.scenario(:pre_upgrade_checks)
 
       ForemanMaintain.detector.refresh
-      new_upgrade_runner = UpgradeRunner.new('1.15', reporter)
+      new_upgrade_runner = UpgradeRunner.new(reporter)
       new_upgrade_runner.load
       _(new_upgrade_runner.phase).must_equal :migrations
       restored_scenario = new_upgrade_runner.scenario(:pre_upgrade_checks)
@@ -87,7 +87,7 @@ module ForemanMaintain
       upgrade_runner_with_whitelist.run
       upgrade_runner_with_whitelist.save
 
-      new_upgrade_runner = UpgradeRunner.new('1.15', reporter)
+      new_upgrade_runner = UpgradeRunner.new(reporter)
       new_upgrade_runner.load
       _(new_upgrade_runner.phase).must_equal :pre_upgrade_checks
       _(UpgradeRunner.current_target_version).must_be_nil

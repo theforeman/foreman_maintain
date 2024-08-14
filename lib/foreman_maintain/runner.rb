@@ -4,6 +4,9 @@ module ForemanMaintain
     include Concerns::Logger
     attr_reader :reporter, :exit_code
 
+    WARNING_EXIT_CODE = 78
+    FAILURE_EXIT_CODE = 1
+
     require 'foreman_maintain/runner/execution'
     require 'foreman_maintain/runner/stored_execution'
     def initialize(reporter, scenarios, options = {})
@@ -61,8 +64,8 @@ module ForemanMaintain
         @last_scenario = scenario
         @last_scenario_continuation_confirmed = false
       end
-      @exit_code = 78 if scenario.warning?
-      @exit_code = 1 if scenario.failed?
+      @exit_code = WARNING_EXIT_CODE if scenario.warning?
+      @exit_code = FAILURE_EXIT_CODE if scenario.failed?
     end
 
     def whitelisted_step?(step)

@@ -58,7 +58,6 @@ module ForemanMaintain
 
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
-        command << '--target-version=1.15'
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
 
@@ -71,8 +70,8 @@ module ForemanMaintain
 
       it 'runs the upgrade checks when update is not available for foreman-maintain' do
         foreman_maintain_update_unavailable
-        command << '--target-version=1.15'
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
+        UpgradeRunner.any_instance.expects(:available?).returns(true)
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
           Nothing to update, can't find new version of rubygem-foreman_maintain.
@@ -83,11 +82,22 @@ module ForemanMaintain
         foreman_maintain_update_available
         command << '--disable-self-upgrade'
         UpgradeRunner.any_instance.expects(:run_phase).with(:pre_upgrade_checks)
-        run_cmd(['--target-version=1.15'])
+        UpgradeRunner.any_instance.expects(:available?).returns(true)
+        run_cmd([])
       end
 
-      it 'should raise UsageError and exit with code 1' do
-        Cli::MainCommand.any_instance.stubs(:exit!)
+      it 'throws an error message if no upgrade is available' do
+        foreman_maintain_update_unavailable
+        UpgradeRunner.any_instance.expects(:available?).twice.returns(false)
+
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
+
+          There are no upgrades available.
+          The current version of FakeyFakeFake is 3.14.
+          Consider using the update command.
+        OUTPUT
 
         run_cmd([])
       end
@@ -100,7 +110,6 @@ module ForemanMaintain
 
       it 'run self upgrade if upgrade available for foreman-maintain' do
         foreman_maintain_update_available
-        command << '--target-version=1.15'
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
 
@@ -113,8 +122,8 @@ module ForemanMaintain
 
       it 'runs the full upgrade when update is not available for foreman-maintain' do
         foreman_maintain_update_unavailable
-        command << '--target-version=1.15'
         UpgradeRunner.any_instance.expects(:run)
+        UpgradeRunner.any_instance.expects(:available?).returns(true)
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
           Nothing to update, can't find new version of rubygem-foreman_maintain.
@@ -124,7 +133,24 @@ module ForemanMaintain
       it 'skip self upgrade and runs the full upgrade for version' do
         command << '--disable-self-upgrade'
         UpgradeRunner.any_instance.expects(:run)
-        run_cmd(['--target-version=1.15'])
+        UpgradeRunner.any_instance.expects(:available?).returns(true)
+        run_cmd([])
+      end
+
+      it 'throws an error message if no upgrade is available' do
+        foreman_maintain_update_unavailable
+        UpgradeRunner.any_instance.expects(:available?).twice.returns(false)
+
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
+
+          There are no upgrades available.
+          The current version of FakeyFakeFake is 3.14.
+          Consider using the update command.
+        OUTPUT
+
+        run_cmd([])
       end
 
       it 'runs the self upgrade when update available for rubygem-foreman_maintain' do
@@ -142,58 +168,13 @@ module ForemanMaintain
 
         run_cmd
 
-        assert_cmd(<<~OUTPUT, ['--target-version', '1.16'])
+        assert_cmd(<<~OUTPUT, [])
           Checking for new version of rubygem-foreman_maintain...
 
           Updating rubygem-foreman_maintain package.
 
           The rubygem-foreman_maintain package successfully updated.
           Re-run foreman-maintain with required options!
-        OUTPUT
-      end
-
-      it 'remembers the current target version and informs no update available' do
-        foreman_maintain_update_unavailable
-        Cli::MainCommand.any_instance.expects(:exit!).twice
-        assert_cmd <<~OUTPUT
-          Checking for new version of rubygem-foreman_maintain...
-          Nothing to update, can't find new version of rubygem-foreman_maintain.
-          --target-version not specified
-          Possible target versions are:
-          1.15
-        OUTPUT
-
-        UpgradeRunner.current_target_version = '1.15'
-        UpgradeRunner.any_instance.expects(:run)
-
-        run_cmd
-
-        assert_cmd(<<~OUTPUT, ['--target-version', '1.16'])
-          Checking for new version of rubygem-foreman_maintain...
-          Nothing to update, can't find new version of rubygem-foreman_maintain.
-          Can't set target version 1.16, 1.15 already in progress
-        OUTPUT
-      end
-
-      it 'remembers the current target version when self upgrade disabled' do
-        command << '--disable-self-upgrade'
-        Cli::MainCommand.any_instance.expects(:exit!)
-        assert_cmd <<~OUTPUT
-          --target-version not specified
-          Possible target versions are:
-          1.15
-        OUTPUT
-      end
-
-      it 'does not allow the another upgrade when one is going on' do
-        foreman_maintain_update_unavailable
-        UpgradeRunner.current_target_version = '1.15'
-        Cli::MainCommand.any_instance.expects(:exit!)
-
-        assert_cmd(<<~OUTPUT, ['--target-version', '1.16'])
-          Checking for new version of rubygem-foreman_maintain...
-          Nothing to update, can't find new version of rubygem-foreman_maintain.
-          Can't set target version 1.16, 1.15 already in progress
         OUTPUT
       end
     end
