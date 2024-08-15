@@ -8,7 +8,7 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def answers
-    load_answers(configuration)
+    YAML.load_file(answer_file)
   end
 
   def configuration
@@ -28,11 +28,13 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def config_files
-    Dir.glob(File.join(config_directory, '**/*')) +
-      [
-        '/opt/puppetlabs/puppet/cache/foreman_cache_data',
-        '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
-      ]
+    paths = [
+      config_directory,
+      '/opt/puppetlabs/puppet/cache/foreman_cache_data',
+      '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
+    ]
+    paths << answer_file unless answer_file.start_with?("#{config_directory}/")
+    paths
   end
 
   def last_scenario
@@ -80,8 +82,8 @@ class Features::Installer < ForemanMaintain::Feature
 
   private
 
-  def load_answers(config)
-    YAML.load_file(config[:answer_file])
+  def answer_file
+    configuration[:answer_file]
   end
 
   def last_scenario_config
