@@ -112,6 +112,13 @@ module ForemanMaintain
       interactive_option
       common_backup_options
 
+      banner <<-BANNER
+      Create a backup with most services still running.
+
+      The only services that are shut down are workers that can influence
+      the consistency of the backup.
+      BANNER
+
       def execute
         perform_backup(:online)
       end
@@ -122,14 +129,18 @@ module ForemanMaintain
       interactive_option
       common_backup_options
 
+      banner <<-BANNER
+      Create a backup with all services shut down.
+      BANNER
+
       def execute
         perform_backup(:offline)
       end
     end
 
     class BackupCommand < Base
-      subcommand 'online', 'Keep services online during backup', OnlineBackupCommand
-      subcommand 'offline', 'Shut down services to preserve consistent backup', OfflineBackupCommand
+      subcommand 'online', 'Create backup with most services still running', OnlineBackupCommand
+      subcommand 'offline', 'Create backup with all services shut down', OfflineBackupCommand
     end
   end
 end
