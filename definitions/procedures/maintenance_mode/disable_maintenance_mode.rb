@@ -4,7 +4,7 @@ module Procedures::MaintenanceMode
     metadata do
       label :disable_maintenance_mode
       description 'Remove maintenance mode table/chain from nftables/iptables'
-      tags :post_migrations, :maintenance_mode_off
+      tags :post_migrations
       after :sync_plans_enable
     end
 
