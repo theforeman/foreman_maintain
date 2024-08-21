@@ -8,7 +8,9 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_procedures(:maintenance_mode_on))
+      add_step(Procedures::MaintenanceMode::EnableMaintenanceMode)
+      add_step(Procedures::Crond::Stop)
+      add_step(Procedures::SyncPlans::Disable)
     end
   end
 
@@ -21,7 +23,9 @@ module ForemanMaintain::Scenarios
     end
 
     def compose
-      add_steps(find_procedures(:maintenance_mode_off))
+      add_step(Procedures::SyncPlans::Enable)
+      add_step(Procedures::Crond::Start)
+      add_step(Procedures::MaintenanceMode::DisableMaintenanceMode)
     end
   end
 

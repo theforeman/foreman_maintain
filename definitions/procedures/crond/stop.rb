@@ -4,7 +4,7 @@ module Procedures::Crond
   class Stop < Procedures::Service::Base
     metadata do
       description 'Stop cron service'
-      tags :pre_migrations, :maintenance_mode_on
+      tags :pre_migrations
       for_feature :cron
 
       after :iptables_add_maintenance_mode_chain

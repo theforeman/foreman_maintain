@@ -4,7 +4,7 @@ module Procedures::MaintenanceMode
     metadata do
       label :enable_maintenance_mode
       description 'Add maintenance_mode tables/chain to nftables/iptables'
-      tags :pre_migrations, :maintenance_mode_on
+      tags :pre_migrations
       after :sync_plans_disable
     end
 
