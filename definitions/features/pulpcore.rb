@@ -5,9 +5,14 @@ class Features::Pulpcore < ForemanMaintain::Feature
 
   TIMEOUT_FOR_TASKS_STATUS = 300
   RETRY_INTERVAL_FOR_TASKS_STATE = 10
+  PULP_SETTINGS = '/etc/pulp/settings.py'.freeze
 
   metadata do
     label :pulpcore
+
+    confine do
+      File.exist?(PULP_SETTINGS)
+    end
   end
 
   def cli(args)
@@ -49,7 +54,7 @@ class Features::Pulpcore < ForemanMaintain::Feature
 
   def config_files
     [
-      '/etc/pulp/settings.py',
+      PULP_SETTINGS,
       '/etc/pulp/certs/database_fields.symmetric.key',
     ]
   end
