@@ -44,7 +44,7 @@ module ForemanMaintain
     end
 
     def available?
-      condition = { :tags => [:upgrade_scenario, :pre_upgrade_check] }
+      condition = { :tags => [:upgrade_scenario, :pre_upgrade_checks] }
       matching_scenarios = find_scenarios(condition)
       !matching_scenarios.empty?
     end
