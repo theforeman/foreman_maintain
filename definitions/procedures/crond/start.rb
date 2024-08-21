@@ -6,7 +6,7 @@ module Procedures::Crond
       description 'Start cron service'
 
       for_feature :cron
-      tags :post_migrations, :maintenance_mode_off
+      tags :post_migrations
 
       after :iptables_remove_maintenance_mode_chain
       advanced_run false
