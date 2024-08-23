@@ -19,6 +19,27 @@ module ForemanMaintain
         update_runner
       end
 
+      def try_update
+        if update_runner.available?
+          yield
+        else
+          instance = ForemanMaintain.detector.feature(:instance)
+          msg = <<~BANNER
+
+            This version of #{ForemanMaintain.command_name} only supports #{instance.target_version},
+            but the installed version of #{instance.product_name} is #{instance.current_major_version}.
+
+            Therefore the update command is not available right now.
+
+            Please install a version of #{ForemanMaintain.command_name} that supports #{instance.current_major_version}
+            or perform an upgrade to #{instance.target_version} using the upgrade command.
+          BANNER
+
+          puts msg
+          ForemanMaintain::UpdateRunner::WARNING_EXIT_CODE
+        end
+      end
+
       subcommand 'check', 'Run pre-update checks before updating' do
         interactive_option
         disable_self_update_option
@@ -26,9 +47,14 @@ module ForemanMaintain
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_update?
-          runner = update_runner
-          runner.run_phase(:pre_update_checks)
-          exit runner.exit_code
+
+          exit_code = try_update do
+            runner = update_runner
+            runner.run_phase(:pre_update_checks)
+            runner.exit_code
+          end
+
+          exit exit_code
         end
       end
 
@@ -39,10 +65,15 @@ module ForemanMaintain
         def execute
           ForemanMaintain.validate_downstream_packages
           ForemanMaintain.perform_self_upgrade unless disable_self_update?
-          runner = update_runner
-          runner.run
-          runner.save
-          exit runner.exit_code
+
+          exit_code = try_update do
+            runner = update_runner
+            runner.run
+            runner.save
+            runner.exit_code
+          end
+
+          exit exit_code
         end
       end
     end
