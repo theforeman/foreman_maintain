@@ -19,6 +19,10 @@ class Features::FakeInstance < ForemanMaintain::Feature
     '3.14.2'
   end
 
+  def target_version
+    '3.15.0'
+  end
+
   def current_major_version
     current_version.to_s[/^\d+\.\d+/]
   end

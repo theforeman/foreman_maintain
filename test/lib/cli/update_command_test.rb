@@ -76,6 +76,7 @@ module ForemanMaintain
       it 'runs the update checks when update is not available for foreman-maintain' do
         foreman_maintain_update_unavailable
         UpdateRunner.any_instance.expects(:run_phase).with(:pre_update_checks)
+        UpdateRunner.any_instance.expects(:available?).returns(true)
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
           Nothing to update, can't find new version of rubygem-foreman_maintain.
@@ -86,7 +87,28 @@ module ForemanMaintain
         foreman_maintain_update_available
         command << '--disable-self-update'
         UpdateRunner.any_instance.expects(:run_phase).with(:pre_update_checks)
+        UpdateRunner.any_instance.expects(:available?).returns(true)
         run_cmd
+      end
+
+      it 'throws an error message if no update is available' do
+        foreman_maintain_update_unavailable
+        UpdateRunner.any_instance.expects(:available?).twice.returns(false)
+
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
+
+          This version of foreman-maintain only supports 3.15.0,
+          but the installed version of FakeyFakeFake is 3.14.
+
+          Therefore the update command is not available right now.
+
+          Please install a version of foreman-maintain that supports 3.14
+          or perform an upgrade to 3.15.0 using the upgrade command.
+        OUTPUT
+
+        run_cmd([])
       end
     end
 
@@ -109,6 +131,7 @@ module ForemanMaintain
 
       it 'runs the update when update is not available for foreman-maintain' do
         foreman_maintain_update_unavailable
+        UpdateRunner.any_instance.expects(:available?).returns(true)
         UpdateRunner.any_instance.expects(:run)
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
@@ -119,7 +142,28 @@ module ForemanMaintain
       it 'skip self update and runs the full update for version' do
         command << '--disable-self-update'
         UpdateRunner.any_instance.expects(:run)
+        UpdateRunner.any_instance.expects(:available?).returns(true)
         run_cmd
+      end
+
+      it 'throws an error message if no update is available' do
+        foreman_maintain_update_unavailable
+        UpdateRunner.any_instance.expects(:available?).twice.returns(false)
+
+        assert_cmd <<~OUTPUT
+          Checking for new version of rubygem-foreman_maintain...
+          Nothing to update, can't find new version of rubygem-foreman_maintain.
+
+          This version of foreman-maintain only supports 3.15.0,
+          but the installed version of FakeyFakeFake is 3.14.
+
+          Therefore the update command is not available right now.
+
+          Please install a version of foreman-maintain that supports 3.14
+          or perform an upgrade to 3.15.0 using the upgrade command.
+        OUTPUT
+
+        run_cmd([])
       end
 
       it 'runs the self update when update available for rubygem-foreman_maintain' do

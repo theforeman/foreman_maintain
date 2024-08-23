@@ -18,6 +18,12 @@ module ForemanMaintain
       self.phase = :pre_update_checks
     end
 
+    def available?
+      condition = { :tags => [:update_scenario, :pre_update_checks] }
+      matching_scenarios = find_scenarios(condition)
+      !matching_scenarios.empty?
+    end
+
     def find_scenario(phase)
       return @scenario_cache[phase] if @scenario_cache.key?(phase)
 
