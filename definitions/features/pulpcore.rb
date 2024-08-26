@@ -6,6 +6,7 @@ class Features::Pulpcore < ForemanMaintain::Feature
   TIMEOUT_FOR_TASKS_STATUS = 300
   RETRY_INTERVAL_FOR_TASKS_STATE = 10
   PULP_SETTINGS = '/etc/pulp/settings.py'.freeze
+  PULP_CLI_SETTINGS = '/etc/pulp/cli.toml'.freeze
 
   metadata do
     label :pulpcore
@@ -13,6 +14,10 @@ class Features::Pulpcore < ForemanMaintain::Feature
     confine do
       File.exist?(PULP_SETTINGS)
     end
+  end
+
+  def cli_available?
+    File.exist?(PULP_CLI_SETTINGS)
   end
 
   def cli(args)

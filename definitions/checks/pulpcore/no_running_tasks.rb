@@ -2,6 +2,9 @@ module Checks::Pulpcore
   class NoRunningTasks < ForemanMaintain::Check
     metadata do
       for_feature :pulpcore
+      confine do
+        feature(:pulpcore)&.cli_available?
+      end
       description 'Check for running pulpcore tasks'
       tags :pre_upgrade
       param :wait_for_tasks,
