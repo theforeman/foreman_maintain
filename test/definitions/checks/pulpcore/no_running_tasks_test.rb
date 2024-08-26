@@ -8,14 +8,26 @@ describe Checks::Pulpcore::NoRunningTasks do
       Checks::Pulpcore::NoRunningTasks.new
     end
 
+    it 'passes when no cli is installed' do
+      assume_feature_present(:pulpcore, :running_tasks => []) do |feature|
+        feature.any_instance.stubs(:cli_available?).returns(false)
+      end
+      result = run_check(subject)
+      assert result.success?, 'Check expected to succeed'
+    end
+
     it 'passes when not active tasks are present' do
-      assume_feature_present(:pulpcore, :running_tasks => [])
+      assume_feature_present(:pulpcore, :running_tasks => []) do |feature|
+        feature.any_instance.stubs(:cli_available?).returns(true)
+      end
       result = run_check(subject)
       assert result.success?, 'Check expected to succeed'
     end
 
     it 'fails when running/paused tasks are present' do
-      assume_feature_present(:pulpcore, :running_tasks => ['a_task'])
+      assume_feature_present(:pulpcore, :running_tasks => ['a_task']) do |feature|
+        feature.any_instance.stubs(:cli_available?).returns(true)
+      end
       result = run_check(subject)
       assert result.fail?, 'Check expected to fail'
       msg = 'There are 1 active task(s) in the system.'
@@ -31,13 +43,17 @@ describe Checks::Pulpcore::NoRunningTasks do
     end
 
     it 'passes when not active tasks are present' do
-      assume_feature_present(:pulpcore, :running_tasks => [])
+      assume_feature_present(:pulpcore, :running_tasks => []) do |feature|
+        feature.any_instance.stubs(:cli_available?).returns(true)
+      end
       result = run_check(subject)
       assert result.success?, 'Check expected to succeed'
     end
 
     it 'fails when running/paused tasks are present' do
-      assume_feature_present(:pulpcore, :running_tasks => ['a_task'])
+      assume_feature_present(:pulpcore, :running_tasks => ['a_task']) do |feature|
+        feature.any_instance.stubs(:cli_available?).returns(true)
+      end
       result = run_check(subject)
       assert result.fail?, 'Check expected to fail'
       msg = 'There are 1 active task(s) in the system.'
