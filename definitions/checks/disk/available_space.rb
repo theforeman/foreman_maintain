@@ -3,7 +3,6 @@ module Checks
     class AvailableSpace < ForemanMaintain::Check
       metadata do
         label :available_space
-        # /var/cache usually contains the cache for the most used package-managers (rpm, apt...)
         description 'Check if /var/cache partition has enough space for transaction'
         tags :pre_upgrade
       end
