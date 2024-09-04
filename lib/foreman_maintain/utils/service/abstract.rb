@@ -55,6 +55,10 @@ module ForemanMaintain::Utils
         raise NotImplementedError
       end
 
+      def restart
+        raise NotImplementedError
+      end
+
       def enable
         raise NotImplementedError
       end
