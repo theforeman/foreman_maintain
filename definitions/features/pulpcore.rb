@@ -21,11 +21,13 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def cli(args)
-    parse_json(execute("pulp --format json #{args}"))
+    parse_json(execute!("pulp --format json #{args}"))
   end
 
   def running_tasks
     cli('task list --state-in running --state-in canceling')
+  rescue ForemanMaintain::Error::ExecutionError
+    []
   end
 
   def wait_for_tasks(spinner, timeout_for_tasks_status = TIMEOUT_FOR_TASKS_STATUS)
