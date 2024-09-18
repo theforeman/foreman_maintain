@@ -1,6 +1,6 @@
 module Checks
   module Report
-    class Provisioning < ForemanMaintain::Report
+    class ProvisioningUsage < ForemanMaintain::Report
       metadata do
         description 'Count hosts that have been provisioned in the last 3 months.'
       end
