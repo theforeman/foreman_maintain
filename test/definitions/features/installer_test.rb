@@ -9,18 +9,16 @@ describe Features::Installer do
 
   context 'installer with scenarios' do
     before do
-      installer_config_dir(["#{data_dir}/installer/simple_config"])
+      installer_config_dir("#{data_dir}/installer/simple_config")
       mock_installer_package('foreman-installer')
     end
 
     it 'loads list of configs on the start' do
       expected_config_files = [
-        "#{data_dir}/installer/simple_config/scenarios.d",
-        "#{data_dir}/installer/simple_config/scenarios.d/foreman-answers.yaml",
-        "#{data_dir}/installer/simple_config/scenarios.d/foreman.yaml",
-        "#{data_dir}/installer/simple_config/scenarios.d/last_scenario.yaml",
+        "#{data_dir}/installer/simple_config",
         '/opt/puppetlabs/puppet/cache/foreman_cache_data',
         '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
+        'test/data/installer/simple_config/scenarios.d/foreman-answers.yaml',
       ].sort
       _(subject.config_files.sort).must_equal(expected_config_files)
     end
