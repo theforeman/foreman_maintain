@@ -36,7 +36,11 @@ module ForemanMaintain
       PHASES.each do |phase|
         return run_rollback if quit?
 
-        run_phase(phase)
+        if skip?(phase)
+          skip_phase(phase)
+        else
+          run_phase(phase)
+        end
       end
 
       finish_update unless quit?
@@ -90,6 +94,16 @@ module ForemanMaintain
       @ask_to_confirm_update = phase == :pre_update_checks
     end
 
+    def skip_phase(skipped_phase)
+      with_non_empty_scenario(skipped_phase) do |scenario|
+        @reporter.before_scenario_starts(scenario)
+        @reporter.puts <<~MESSAGE
+          Skipping #{skipped_phase} phase as it was already run before.
+        MESSAGE
+        @reporter.after_scenario_finishes(scenario)
+      end
+    end
+
     private
 
     def rollback_pre_migrations
@@ -110,7 +124,7 @@ module ForemanMaintain
     end
 
     def with_non_empty_scenario(phase)
-      next_scenario = scenario(phase)
+      next_scenario = find_scenario(phase)
       unless next_scenario.nil? || next_scenario.steps.empty?
         yield next_scenario
       end
@@ -151,6 +165,11 @@ module ForemanMaintain
       response
     ensure
       @ask_to_confirm_update = false
+    end
+
+    def skip?(next_phase)
+      # the next_phase was run before the current phase
+      PHASES.index(next_phase) < PHASES.index(phase)
     end
 
     def phase=(phase)
