@@ -7,8 +7,11 @@ module Checks
 
       # Do you use OIDC/keycloak?
       def run
-        oidc_issuer = feature(:foreman_database).query("SELECT value FROM settings WHERE name = 'oidc_issuer'").first
-        result = (oidc_issuer && YAML.load(oidc_issuer['value']).is_a?(String) && YAML.load(oidc_issuer['value']) != '')
+        oidc_issuer = sql_setting('oidc_issuer')
+        result = if oidc_issuer
+                   loaded = YAML.load(oidc_issuer)
+                   loaded.is_a?(String) && loaded != ''
+                 end
 
         self.data = { oidc_use: !!result }
       end
