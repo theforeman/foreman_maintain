@@ -6,7 +6,7 @@ module Checks
       end
 
       def run
-        count = sql_count("SELECT COUNT(*) FROM compute_resources WHERE type = 'Foreman::Model::Vmware'")
+        count = sql_count("compute_resources WHERE type = 'Foreman::Model::Vmware'")
         self.data = { "compute_resource_vmware_count": count }
       end
     end

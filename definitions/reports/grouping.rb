@@ -6,17 +6,17 @@ module Checks
       end
 
       def run
-        collection_count = sql_count('SELECT COUNT(*) FROM katello_host_collections')
-        collection_count_with_limit = sql_count("SELECT COUNT(*) FROM katello_host_collections
+        collection_count = sql_count('katello_host_collections')
+        collection_count_with_limit = sql_count("katello_host_collections
                                                  WHERE unlimited_hosts = 'f'")
-        hostgroup = sql_count('SELECT COUNT(*) FROM hostgroups')
+        hostgroup = sql_count('hostgroups')
         sql = <<~SQL
           SELECT COALESCE(MAX((CHAR_LENGTH(ancestry) - CHAR_LENGTH(REPLACE(ancestry, '/', '')))) + 2, 1) AS count
           FROM hostgroups
         SQL
         hostgroup_nest_level = sql_count(sql)
-        table_preference_count = sql_count('SELECT COUNT(*) FROM table_preferences')
-        config_group_count = sql_count('SELECT COUNT(*) FROM config_groups')
+        table_preference_count = sql_count('table_preferences')
+        config_group_count = sql_count('config_groups')
         self.data = { 'host_collections_count': collection_count,
                       'host_collections_count_with_limit': collection_count_with_limit,
                       'hostgroup_count': hostgroup,
