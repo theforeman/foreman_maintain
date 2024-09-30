@@ -13,7 +13,8 @@ module Checks
 
         users = feature(:foreman_database).query("SELECT users.* FROM users INNER JOIN auth_sources ON (auth_sources.id = users.auth_source_id) WHERE auth_sources.type = 'AuthSourceExternal' AND users.last_login_on IS NOT NULL ORDER BY users.last_login_on DESC")
         if (user = users.first)
-          result["last_login_on_through_external_auth_source_in_days"] = (Date.today - Date.parse(user['last_login_on'])).to_i
+          result["last_login_on_through_external_auth_source_in_days"] =
+            (Date.today - Date.parse(user['last_login_on'])).to_i
         end
 
         self.data = result
