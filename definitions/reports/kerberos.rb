@@ -9,12 +9,15 @@ module Checks
       # Do you use kerberos?
       # Do you use kerberos also for API authentication?
       def run
-        authorize_login_delegation = feature(:foreman_database).query("SELECT value FROM settings WHERE name = 'authorize_login_delegation'").first
-        authorize_login_delegation_api = feature(:foreman_database).query("SELECT value FROM settings WHERE name = 'authorize_login_delegation_api'").first
-        oidc_issuer = feature(:foreman_database).query("SELECT value FROM settings WHERE name = 'oidc_issuer'").first
-        kerberos_result = authorize_login_delegation && YAML.load(authorize_login_delegation['value']) == true &&
-                          (oidc_issuer.nil? || YAML.load(oidc_issuer['value']) == '')
-        kerberos_api_result = kerberos_result && authorize_login_delegation_api && YAML.load(authorize_login_delegation_api['value']) == true
+        authorize_login_delegation = sql_setting('authorize_login_delegation')
+        authorize_login_delegation_api = sql_setting('authorize_login_delegation_api')
+        oidc_issuer = sql_setting('oidc_issuer')
+        kerberos_result = authorize_login_delegation &&
+                          YAML.load(authorize_login_delegation) == true &&
+                          (oidc_issuer.nil? || YAML.load(oidc_issuer) == '')
+        kerberos_api_result = kerberos_result &&
+                              authorize_login_delegation_api &&
+                              YAML.load(authorize_login_delegation_api) == true
 
         self.data = {
           kerberos_use: !!kerberos_result,

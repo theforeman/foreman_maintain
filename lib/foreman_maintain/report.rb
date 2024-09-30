@@ -9,6 +9,11 @@ module ForemanMaintain
 
     def sql_count(sql)
       feature(:foreman_database).query(sql).first['count'].to_i
+
+    def sql_setting(name)
+      sql = "SELECT value FROM settings WHERE name = '#{name}'"
+      result = feature(:foreman_database).query(sql).first
+      (result || {})['value']
     end
 
     def run
