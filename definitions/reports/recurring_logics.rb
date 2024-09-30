@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Checks
   module Report
     class RecurringLogics < ForemanMaintain::Report
@@ -24,8 +26,8 @@ module Checks
       SQL
 
       def run
-        count = sql_count('SELECT COUNT(*) FROM indefinite_rex_recurring_logics')
-        ansible_count = sql_count("SELECT COUNT(*) FROM indefinite_rex_recurring_logics WHERE purpose LIKE 'ansible-%'")
+        count = sql_count('indefinite_rex_recurring_logics')
+        ansible_count = sql_count("indefinite_rex_recurring_logics WHERE purpose LIKE 'ansible-%'")
         self.data = { "recurring_logics_indefinite_rex_count": count,
                       "recurring_logics_indefinite_rex_ansible_count": ansible_count }
       end

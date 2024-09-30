@@ -7,8 +7,9 @@ module ForemanMaintain
 
     attr_accessor :data
 
-    def sql_count(sql)
-      feature(:foreman_database).query(sql).first['count'].to_i
+    def sql_count(sql, column: '*')
+      feature(:foreman_database).query("SELECT COUNT(#{column}) FROM #{sql}").first['count'].to_i
+    end
 
     def sql_setting(name)
       sql = "SELECT value FROM settings WHERE name = '#{name}'"
