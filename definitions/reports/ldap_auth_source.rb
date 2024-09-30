@@ -15,7 +15,7 @@ module Checks
       def run
         result = {}
 
-        %w(free_ipa posix active_directory).each do |flavor|
+        %w[free_ipa posix active_directory].each do |flavor|
           count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND server_type = '#{flavor}'")
           result["ldap_auth_source_#{flavor}_count"] = count
 
@@ -23,7 +23,8 @@ module Checks
           result["users_authenticated_through_ldap_auth_source_#{flavor}"] = users.count
           # nil means no user for a given LDAP type was found
           if (user = users.first)
-            result["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = (Date.today - Date.parse(user['last_login_on'])).to_i
+            result["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] =
+              (Date.today - Date.parse(user['last_login_on'])).to_i
           else
             result["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = nil
           end
@@ -40,7 +41,6 @@ module Checks
           count = sql_count("SELECT COUNT(*) FROM auth_sources WHERE auth_sources.type = 'AuthSourceLdap' AND auth_sources.server_type = '#{flavor}' AND usergroup_sync = false")
           result["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count
         end
-
 
         count = feature(:foreman_database).query("SELECT COUNT(*) FROM external_usergroups")
         result["external_user_group_mapping_count"] = count.first['count'].to_i
