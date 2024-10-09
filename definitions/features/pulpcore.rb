@@ -68,8 +68,8 @@ class Features::Pulpcore < ForemanMaintain::Feature
 
   def self.pulpcore_common_services
     [
-      ForemanMaintain::Utils.system_service('pulpcore-api', 10, :socket => 'pulpcore-api'),
-      ForemanMaintain::Utils.system_service('pulpcore-content', 10, :socket => 'pulpcore-content'),
+      ForemanMaintain::Utils.system_service('pulpcore-api', 20, :socket => 'pulpcore-api'),
+      ForemanMaintain::Utils.system_service('pulpcore-content', 20, :socket => 'pulpcore-content'),
     ]
   end
 end
