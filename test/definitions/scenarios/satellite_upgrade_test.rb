@@ -7,6 +7,43 @@ describe "satellite upgrade scenarios" do
     assume_satellite_present
   end
 
+  describe Scenarios::Satellite::Abstract do
+    let(:expected_scenarios) do
+      [Scenarios::Satellite::Migrations, Scenarios::Satellite::PostMigrations,
+       Scenarios::Satellite::PostUpgradeChecks, Scenarios::Satellite::PreMigrations,
+       Scenarios::Satellite::PreUpgradeCheck]
+    end
+
+    it 'is present when running 6.15' do
+      Features::Satellite.any_instance.stubs(:current_version).returns('6.15')
+
+      scenarios = find_scenarios({ :tags => [:upgrade_scenario] })
+
+      expected_scenarios.each do |exp|
+        assert scenarios.find { |s| s.is_a? exp }, "Expected #{exp} to be present"
+      end
+    end
+
+    it 'is not present when already on 6.16' do
+      Features::Satellite.any_instance.stubs(:current_version).returns('6.16')
+
+      scenarios = find_scenarios({ :tags => [:upgrade_scenario] })
+
+      assert_empty scenarios
+    end
+
+    it 'is present when 6.16 upgrade in progress' do
+      Features::Satellite.any_instance.stubs(:current_version).returns('6.16')
+      ForemanMaintain.stubs(:upgrade_in_progress).returns('6.16')
+
+      scenarios = find_scenarios({ :tags => [:upgrade_scenario] })
+
+      expected_scenarios.each do |exp|
+        assert scenarios.find { |s| s.is_a? exp }, "Expected #{exp} to be present"
+      end
+    end
+  end
+
   describe Scenarios::Satellite::PreUpgradeCheck do
     let(:scenario) do
       Scenarios::Satellite::PreUpgradeCheck.new
