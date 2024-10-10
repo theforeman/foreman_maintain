@@ -42,6 +42,16 @@ describe "satellite upgrade scenarios" do
         assert scenarios.find { |s| s.is_a? exp }, "Expected #{exp} to be present"
       end
     end
+
+    it 'sets target_version to 6.16' do
+      Features::Satellite.any_instance.stubs(:current_version).returns('6.15')
+
+      scenarios = find_scenarios({ :tags => [:upgrade_scenario] })
+
+      scenarios.each do |scenario|
+        assert_equal '6.16', scenario.target_version
+      end
+    end
   end
 
   describe Scenarios::Satellite::PreUpgradeCheck do
