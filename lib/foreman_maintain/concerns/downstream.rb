@@ -71,10 +71,6 @@ module ForemanMaintain
           "rhel-#{el_major_version}-for-x86_64-appstream-rpms",
         ]
       end
-
-      def version_from_source
-        raise NotImplementedError
-      end
     end
   end
 end
