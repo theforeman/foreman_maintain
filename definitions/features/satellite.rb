@@ -15,7 +15,7 @@ class Features::Satellite < ForemanMaintain::Feature
   end
 
   def current_version
-    @current_version ||= package_version(package_name) || version_from_source
+    @current_version ||= package_version(package_name)
   end
 
   def package_name
@@ -24,11 +24,5 @@ class Features::Satellite < ForemanMaintain::Feature
 
   def module_name
     'satellite'
-  end
-
-  private
-
-  def version_from_source
-    version(File.read('/usr/share/foreman/lib/satellite/version.rb')[/6\.\d\.\d/])
   end
 end
