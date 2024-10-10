@@ -18,8 +18,7 @@ the Foreman/Satellite up and running."
   s.files += `git ls-files extras`.split("\n")
   s.extra_rdoc_files = ['LICENSE', 'README.md']
   s.require_paths = ['lib']
-  s.executables = ['foreman-maintain',
-                   'foreman-maintain-complete', 'foreman-maintain-rotate-tar']
+  s.executables = ['foreman-maintain', 'foreman-maintain-complete']
   s.required_ruby_version = ">= 2.7", "< 4"
 
   s.add_dependency 'clamp'
