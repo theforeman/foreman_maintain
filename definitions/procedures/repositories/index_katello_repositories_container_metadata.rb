@@ -2,6 +2,7 @@ module Procedures::Repositories
   class IndexKatelloRepositoriesContainerMetatdata < ForemanMaintain::Procedure
     metadata do
       description 'Import container manifest metadata'
+      for_feature :repositories
       confine do
         feature(:katello)
       end

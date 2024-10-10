@@ -169,6 +169,7 @@ module ForemanMaintain
 
     it 'Validates fpc standard backup' do
       assume_feature_present(:pulpcore_database)
+      assume_feature_present(:container_gateway_database)
       fpc_standard_backup = subject.new(fpc_standard)
       refute fpc_standard_backup.katello_online_backup?
       refute fpc_standard_backup.katello_logical_backup?
@@ -181,6 +182,7 @@ module ForemanMaintain
 
     it 'Validates fpc online backup' do
       assume_feature_present(:pulpcore_database)
+      assume_feature_present(:container_gateway_database)
       fpc_online_backup = subject.new(fpc_online)
       refute fpc_online_backup.katello_standard_backup?
       refute fpc_online_backup.katello_online_backup?
@@ -195,6 +197,7 @@ module ForemanMaintain
 
     it 'Validates fpc logical backup' do
       assume_feature_present(:pulpcore_database)
+      assume_feature_present(:container_gateway_database)
       fpc_logical_backup = subject.new(fpc_logical)
       refute fpc_logical_backup.katello_standard_backup?
       refute fpc_logical_backup.katello_online_backup?
@@ -209,6 +212,7 @@ module ForemanMaintain
 
     it 'Validates fpc hybrid db backup' do
       feature_with_local_method(:pulpcore_database, true)
+      feature_with_local_method(:container_gateway_database, true)
       fpc_hybrid_db_backup = subject.new(fpc_hybrid)
       assert fpc_hybrid_db_backup.katello_standard_backup?
       refute fpc_hybrid_db_backup.katello_online_backup?
