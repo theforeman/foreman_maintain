@@ -11,7 +11,7 @@ class Features::Satellite < ForemanMaintain::Feature
   end
 
   def target_version
-    '6.16'
+    satellite_maintain_target_version
   end
 
   def current_version

@@ -1,6 +1,8 @@
 module ForemanMaintain
   module Concerns
     module Downstream
+      SATELLITE_MAINTAIN_CONFIG = '/usr/share/satellite-maintain/config.yml'.freeze
+
       def current_version
         raise NotImplementedError
       end
@@ -46,7 +48,24 @@ module ForemanMaintain
         %w[satellite-maintain satellite-maintain]
       end
 
+      def satellite_maintain_target_version
+        satellite_maintain_config['current_satellite_version']
+      end
+
+      def satellite_upgrade_allowed?
+        current_minor_version == satellite_maintain_config['previous_satellite_version'] ||
+          ForemanMaintain.upgrade_in_progress == satellite_maintain_target_version
+      end
+
       private
+
+      def satellite_maintain_config
+        if File.exist?(SATELLITE_MAINTAIN_CONFIG)
+          YAML.load_file(SATELLITE_MAINTAIN_CONFIG)
+        else
+          raise "Could not load satellite-maintain configuration file #{SATELLITE_MAINTAIN_CONFIG}."
+        end
+      end
 
       def rh_repos(server_version)
         server_version = version(server_version)

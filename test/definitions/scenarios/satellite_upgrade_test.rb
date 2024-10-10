@@ -5,6 +5,7 @@ describe "satellite upgrade scenarios" do
 
   before(:each) do
     assume_satellite_present
+    mock_satellite_maintain_config
   end
 
   describe Scenarios::Satellite::Abstract do
