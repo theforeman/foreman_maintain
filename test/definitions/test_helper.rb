@@ -209,6 +209,15 @@ module DefinitionsTestHelper
       yield service if block_given?
     end
   end
+
+  def mock_satellite_maintain_config
+    config = {
+      'current_satellite_version' => '6.16',
+      'previous_satellite_version' => '6.15',
+    }
+    Features::Satellite.any_instance.stubs(:satellite_maintain_config).returns(config)
+    Features::Capsule.any_instance.stubs(:satellite_maintain_config).returns(config)
+  end
 end
 
 TEST_DIR = File.dirname(__FILE__)

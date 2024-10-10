@@ -7,6 +7,7 @@ describe ForemanMaintain::Scenarios::SelfUpgradeBase do
 
   before do
     File.stubs(:exist?).with('/etc/redhat-release').returns(true)
+    mock_satellite_maintain_config
   end
 
   let(:scenario) do
@@ -59,6 +60,7 @@ describe ForemanMaintain::Scenarios::SelfUpgrade do
 
   before do
     File.stubs(:exist?).with('/etc/redhat-release').returns(true)
+    mock_satellite_maintain_config
   end
 
   it 'runs successfully for downstream Satellite' do

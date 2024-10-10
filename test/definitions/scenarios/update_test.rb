@@ -3,6 +3,10 @@ require 'test_helper'
 describe "update scenarios" do
   include DefinitionsTestHelper
 
+  before(:each) do
+    mock_satellite_maintain_config
+  end
+
   it 'runs if versions match' do
     assume_satellite_present
     Features::Instance.any_instance.expects(:current_version).returns('6.16')

@@ -5,6 +5,7 @@ describe "capsule upgrade scenarios" do
 
   before(:each) do
     assume_feature_present(:capsule)
+    mock_satellite_maintain_config
   end
 
   describe Scenarios::Satellite::PreUpgradeCheck do
