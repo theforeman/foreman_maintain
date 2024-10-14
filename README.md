@@ -20,7 +20,6 @@ Subcommands:
       check --target-version TARGET_VERSION   Run pre-upgrade checks for upgrading to specified version
             --disable-self-upgrade            Disable automatic self upgrade (default: false)
       run --target-version TARGET_VERSION     Run the full upgrade
-          [--phase=phase TARGET_VERSION]      Run just a specific phase of the upgrade
           --disable-self-upgrade              Disable automatic self upgrade (default: false)
 
     advanced                      Advanced tools for server maintenance

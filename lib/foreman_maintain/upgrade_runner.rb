@@ -137,7 +137,6 @@ module ForemanMaintain
         @reporter.before_scenario_starts(scenario)
         @reporter.puts <<~MESSAGE
           Skipping #{skipped_phase} phase as it was already run before.
-          To enforce to run the phase, use `upgrade run --phase #{skipped_phase}`
         MESSAGE
         @reporter.after_scenario_finishes(scenario)
       end
