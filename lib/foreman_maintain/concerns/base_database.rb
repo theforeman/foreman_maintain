@@ -55,22 +55,25 @@ module ForemanMaintain
 
       def psql(query, config = configuration)
         if ping(config)
-          execute(psql_command(config),
+          cmd, env = psql_command(config)
+          execute(cmd,
             :stdin => query,
-            :hidden_patterns => [config['password']])
+            :env => env)
         else
           raise_service_error
         end
       end
 
       def ping(config = configuration)
-        execute?(psql_command(config),
+        cmd, env = psql_command(config)
+        execute?(cmd,
           :stdin => 'SELECT 1 as ping',
-          :hidden_patterns => [config['password']])
+          :env => env)
       end
 
       def dump_db(file, config = configuration)
-        execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']])
+        cmd, env = dump_command(config)
+        execute!(cmd + " > #{file}", :env => env)
       end
 
       def restore_dump(file, localdb, config = configuration)
@@ -80,11 +83,10 @@ module ForemanMaintain
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
-          dump_cmd = base_command(config, 'pg_restore') +
-                     ' --no-privileges --clean --disable-triggers -n public ' \
-                     "-d #{config['database']} #{file}"
-          execute!(dump_cmd, :hidden_patterns => [config['password']],
-            :valid_exit_statuses => [0, 1])
+          cmd, env = base_command(config, 'pg_restore')
+          cmd += ' --no-privileges --clean --disable-triggers -n public ' \
+                 "-d #{config['database']} #{file}"
+          execute!(cmd, :valid_exit_statuses => [0, 1], :env => env)
         end
       end
 
@@ -125,8 +127,9 @@ module ForemanMaintain
       def db_version(config = configuration)
         if ping(config)
           # Note - t removes headers, -A removes alignment whitespace
-          server_version_cmd = psql_command(config) + ' -c "SHOW server_version" -t -A'
-          version_string = execute!(server_version_cmd, :hidden_patterns => [config['password']])
+          cmd, env = psql_command(config)
+          cmd += ' -c "SHOW server_version" -t -A'
+          version_string = execute!(cmd, :env => env)
           version(version_string)
         else
           raise_service_error
@@ -146,17 +149,20 @@ module ForemanMaintain
       private
 
       def base_command(config, command = 'psql')
-        "PGPASSWORD='#{config[%(password)]}' "\
-        "#{command} -h #{config['host'] || 'localhost'} "\
+        env = { 'PGPASSWORD' => config['password'] }
+        cmd = "#{command} -h #{config['host'] || 'localhost'} "\
         " -p #{config['port'] || '5432'} -U #{config['username']}"
+        return cmd, env
       end
 
       def psql_command(config)
-        base_command(config, 'psql') + " -d #{config['database']}"
+        cmd, env = base_command(config, 'psql')
+        return cmd + " -d #{config['database']}", env
       end
 
       def dump_command(config)
-        base_command(config, 'pg_dump') + " -Fc #{config['database']}"
+        cmd, env = base_command(config, 'pg_dump')
+        return cmd + " -Fc #{config['database']}", env
       end
 
       def raise_service_error
