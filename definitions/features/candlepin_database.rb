@@ -28,15 +28,6 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
     execute?(help_cmd)
   end
 
-  def env_content_ids_with_null_content
-    sql = <<-SQL
-      SELECT ec.id
-      FROM cp_env_content ec
-      LEFT JOIN cp_content c ON ec.contentid = c.id WHERE c.id IS NULL
-    SQL
-    query(sql).map { |r| r['id'] }
-  end
-
   private
 
   def load_configuration
