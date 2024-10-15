@@ -8,8 +8,10 @@ module ForemanMaintain
       attr_reader :logger, :command
 
       def initialize(logger, command, options)
-        options.validate_options!(:stdin, :hidden_patterns, :interactive, :valid_exit_statuses)
+        options.validate_options!(:stdin, :hidden_patterns, :interactive, :valid_exit_statuses,
+          :env)
         options[:valid_exit_statuses] ||= [0]
+        options[:env] ||= {}
         @logger = logger
         @command = command
         @stdin = options[:stdin]
@@ -17,6 +19,7 @@ module ForemanMaintain
         @interactive = options[:interactive]
         @options = options
         @valid_exit_statuses = options[:valid_exit_statuses]
+        @env = options[:env]
         raise ArgumentError, 'Can not pass stdin for interactive command' if @interactive && @stdin
       end
 
@@ -81,7 +84,7 @@ module ForemanMaintain
       end
 
       def run_non_interactively
-        IO.popen(full_command, 'r+') do |f|
+        IO.popen(@env, full_command, 'r+') do |f|
           if @stdin
             f.puts(@stdin)
             f.close_write
