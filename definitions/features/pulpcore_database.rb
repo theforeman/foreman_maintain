@@ -26,18 +26,21 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
 
   private
 
-  # rubocop:disable Metrics/AbcSize
   def load_configuration
-    full_config = File.read(PULPCORE_DB_CONFIG).split(/[\s,'":]/).reject(&:empty?)
+    python_command = <<~PYTHON.strip
+      from django.conf import settings; import json; print(json.dumps(settings.DATABASES["default"]))
+    PYTHON
+    manager_command = pulpcore_manager("shell --command '#{python_command}'")
+    manager_result = execute!(manager_command)
+    db_config = JSON.parse(manager_result)
 
     @configuration = {}
     @configuration['adapter'] = 'postgresql'
-    @configuration['host'] = full_config[full_config.index('HOST') + 1]
-    @configuration['port'] = full_config[full_config.index('PORT') + 1]
-    @configuration['database'] = full_config[full_config.index('NAME') + 1]
-    @configuration['username'] = full_config[full_config.index('USER') + 1]
-    @configuration['password'] = full_config[full_config.index('PASSWORD') + 1]
+    @configuration['host'] = db_config['HOST']
+    @configuration['port'] = db_config['PORT']
+    @configuration['database'] = db_config['NAME']
+    @configuration['username'] = db_config['USER']
+    @configuration['password'] = db_config['PASSWORD']
     @configuration
   end
-  # rubocop:enable Metrics/AbcSize
 end
