@@ -16,11 +16,12 @@ module ForemanMaintain
       end
 
       def deb_postgresql_versions
-        installed_pkgs = package_manager.list_installed_packages('${binary:Package}\n')
-        @deb_postgresql_versions ||= installed_pkgs.grep(/^postgresql-\d+$/).map do |name|
-          name.split('-').last
+        @deb_postgresql_versions ||= begin
+          installed_pkgs = package_manager.list_installed_packages('${binary:Package}\n')
+          installed_pkgs.grep(/^postgresql-\d+$/).map do |name|
+            name.split('-').last
+          end
         end
-        @deb_postgresql_versions
       end
 
       def postgresql_conf
