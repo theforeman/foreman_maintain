@@ -70,8 +70,8 @@ module ForemanMaintain
       end
 
       def dump_db(file)
-        dump_command = base_command('pg_dump') + " -Fc #{configuration['database']}"
-        execute!(dump_command + " > #{file}", :hidden_patterns => [configuration['password']])
+        dump_command = base_command('pg_dump') + " -Fc #{configuration['database']} -f #{file}"
+        execute!(dump_command, :hidden_patterns => [configuration['password']])
       end
 
       def restore_dump(file, localdb)
