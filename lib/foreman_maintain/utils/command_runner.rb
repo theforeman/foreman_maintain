@@ -8,26 +8,27 @@ module ForemanMaintain
       attr_reader :logger, :command
 
       def initialize(logger, command, options)
-        options.validate_options!(:stdin, :hidden_patterns, :interactive, :valid_exit_statuses)
+        options.validate_options!(:stdin, :interactive, :valid_exit_statuses, :env)
         options[:valid_exit_statuses] ||= [0]
+        options[:env] ||= {}
         @logger = logger
         @command = command
         @stdin = options[:stdin]
-        @hidden_patterns = Array(options[:hidden_patterns]).compact
         @interactive = options[:interactive]
         @options = options
         @valid_exit_statuses = options[:valid_exit_statuses]
+        @env = options[:env]
         raise ArgumentError, 'Can not pass stdin for interactive command' if @interactive && @stdin
       end
 
       def run
-        logger&.debug(hide_strings("Running command #{@command} with stdin #{@stdin.inspect}"))
+        logger&.debug("Running command #{@command} with stdin #{@stdin.inspect}")
         if @interactive
           run_interactively
         else
           run_non_interactively
         end
-        logger&.debug("output of the command:\n #{hide_strings(output)}")
+        logger&.debug("output of the command:\n #{output}")
       end
 
       def interactive?
@@ -49,10 +50,10 @@ module ForemanMaintain
       end
 
       def execution_error
-        raise Error::ExecutionError.new(hide_strings(@command),
+        raise Error::ExecutionError.new(@command,
           exit_status,
-          hide_strings(@stdin),
-          @interactive ? nil : hide_strings(@output))
+          @stdin,
+          @interactive ? nil : @output)
       end
 
       private
@@ -81,7 +82,7 @@ module ForemanMaintain
       end
 
       def run_non_interactively
-        IO.popen(full_command, 'r+') do |f|
+        IO.popen(@env, full_command, 'r+') do |f|
           if @stdin
             f.puts(@stdin)
             f.close_write
@@ -93,13 +94,6 @@ module ForemanMaintain
 
       def full_command
         "#{@command} 2>&1"
-      end
-
-      def hide_strings(string)
-        return unless string
-        @hidden_patterns.reduce(string) do |result, hidden_pattern|
-          result.gsub(hidden_pattern, '[FILTERED]')
-        end
       end
     end
   end
