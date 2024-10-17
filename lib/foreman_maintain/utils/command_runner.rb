@@ -8,10 +8,17 @@ module ForemanMaintain
       attr_reader :logger, :command
 
       def initialize(logger, command, options)
-        options.validate_options!(:stdin, :hidden_patterns, :interactive, :valid_exit_statuses)
+        options.validate_options!(
+          :stdin, :hidden_patterns, :interactive, :valid_exit_statuses, :user
+        )
         options[:valid_exit_statuses] ||= [0]
         @logger = logger
-        @command = command
+        @user = options[:user]
+        @command = if @user && !@user.empty?
+                     "runuser -u #{@user} -- " + command
+                   else
+                     command
+                   end
         @stdin = options[:stdin]
         @hidden_patterns = Array(options[:hidden_patterns]).compact
         @interactive = options[:interactive]

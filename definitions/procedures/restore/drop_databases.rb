@@ -20,6 +20,7 @@ module Procedures::Restore
         drop_foreman(backup, spinner)
         drop_candlepin(backup, spinner)
         drop_pulpcore(backup, spinner)
+        drop_container_gateway(backup, spinner)
       end
     end
 
@@ -41,6 +42,13 @@ module Procedures::Restore
       if backup.file_map[:pulpcore_dump][:present]
         spinner.update('Dropping pulpcore database')
         feature(:pulpcore_database).dropdb
+      end
+    end
+
+    def drop_container_gateway(backup, spinner)
+      if backup.file_map[:container_gateway_dump][:present]
+        spinner.update('Dropping container gateway database')
+        feature(:container_gateway_database).dropdb
       end
     end
   end
