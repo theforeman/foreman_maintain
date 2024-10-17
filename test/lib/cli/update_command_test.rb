@@ -12,17 +12,26 @@ module ForemanMaintain
 
     def foreman_maintain_update_available
       PackageManagerTestHelper.mock_package_manager
-      FakePackageManager.any_instance.stubs(:update).with('rubygem-foreman_maintain',
+      FakePackageManager.any_instance.stubs(:update).with(['rubygem-foreman_maintain'],
         :assumeyes => true).returns(true)
       # rubocop:disable Layout/LineLength
-      FakePackageManager.any_instance.stubs(:update_available?).with('rubygem-foreman_maintain').returns(true)
+      FakePackageManager.any_instance.stubs(:update_available?).with(['rubygem-foreman_maintain']).returns(true)
       # rubocop:enable Layout/LineLength
+    end
+
+    def satellite_maintain_update_available
+      ForemanMaintain.stubs(:pkg_and_cmd_name).returns(%w[satellite-maintain satellite-maintain])
+      PackageManagerTestHelper.mock_package_manager
+      FakePackageManager.any_instance.stubs(:update).
+        with(['satellite-maintain', 'rubygem-foreman_maintain'], :assumeyes => true).returns(true)
+      FakePackageManager.any_instance.stubs(:update_available?).
+        with(['satellite-maintain', 'rubygem-foreman_maintain']).returns(true)
     end
 
     def foreman_maintain_update_unavailable
       PackageManagerTestHelper.mock_package_manager
       # rubocop:disable Layout/LineLength
-      FakePackageManager.any_instance.stubs(:update_available?).with('rubygem-foreman_maintain').returns(false)
+      FakePackageManager.any_instance.stubs(:update_available?).with(['rubygem-foreman_maintain']).returns(false)
       # rubocop:enable Layout/LineLength
     end
 
@@ -66,10 +75,22 @@ module ForemanMaintain
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
 
-          Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain.
 
-          The rubygem-foreman_maintain package successfully updated.
+          Successfully updated rubygem-foreman_maintain.
           Re-run foreman-maintain with required options!
+        OUTPUT
+      end
+
+      it 'run self update if update available for satellite-maintain' do
+        satellite_maintain_update_available
+        assert_cmd <<~OUTPUT
+          Checking for new version of satellite-maintain, rubygem-foreman_maintain...
+
+          Updating satellite-maintain, rubygem-foreman_maintain.
+
+          Successfully updated satellite-maintain, rubygem-foreman_maintain.
+          Re-run satellite-maintain with required options!
         OUTPUT
       end
 
@@ -122,9 +143,9 @@ module ForemanMaintain
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
 
-          Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain.
 
-          The rubygem-foreman_maintain package successfully updated.
+          Successfully updated rubygem-foreman_maintain.
           Re-run foreman-maintain with required options!
         OUTPUT
       end
@@ -171,9 +192,9 @@ module ForemanMaintain
         assert_cmd <<~OUTPUT
           Checking for new version of rubygem-foreman_maintain...
 
-          Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain.
 
-          The rubygem-foreman_maintain package successfully updated.
+          Successfully updated rubygem-foreman_maintain.
           Re-run foreman-maintain with required options!
         OUTPUT
 
@@ -182,9 +203,9 @@ module ForemanMaintain
         assert_cmd(<<~OUTPUT)
           Checking for new version of rubygem-foreman_maintain...
 
-          Updating rubygem-foreman_maintain package.
+          Updating rubygem-foreman_maintain.
 
-          The rubygem-foreman_maintain package successfully updated.
+          Successfully updated rubygem-foreman_maintain.
           Re-run foreman-maintain with required options!
         OUTPUT
       end
