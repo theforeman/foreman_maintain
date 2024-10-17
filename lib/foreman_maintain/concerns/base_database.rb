@@ -112,7 +112,7 @@ module ForemanMaintain
         if local?
           execute!("runuser - postgres -c 'dropdb #{configuration['database']}'")
         else
-          delete_statement = psql(<<-SQL)
+          delete_statement = psql(<<~SQL)
             select string_agg('drop table if exists \"' || tablename || '\" cascade;', '')
             from pg_tables
             where schemaname = 'public';
