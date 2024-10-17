@@ -181,20 +181,22 @@ module ForemanMaintain
 
     def perform_self_upgrade
       package_name, command = pkg_and_cmd_name
+      packages_to_update = [package_name, main_package_name].uniq
+      packages_to_update_str = packages_to_update.join(', ')
 
-      puts "Checking for new version of #{package_name}..."
+      puts "Checking for new version of #{packages_to_update_str}..."
 
       enable_maintenance_module
       package_manager = ForemanMaintain.package_manager
 
-      if package_manager.update_available?(main_package_name)
-        puts "\nUpdating #{package_name} package."
-        package_manager.update(main_package_name, :assumeyes => true)
-        puts "\nThe #{package_name} package successfully updated."\
+      if package_manager.update_available?(packages_to_update)
+        puts "\nUpdating #{packages_to_update_str}."
+        package_manager.update(packages_to_update, :assumeyes => true)
+        puts "\nSuccessfully updated #{packages_to_update_str}."\
              "\nRe-run #{command} with required options!"
         exit 75
       end
-      puts "Nothing to update, can't find new version of #{package_name}."
+      puts "Nothing to update, can't find new version of #{packages_to_update_str}."
     end
 
     def enable_maintenance_module
