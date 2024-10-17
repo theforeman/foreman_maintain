@@ -55,7 +55,7 @@ module ForemanMaintain
 
       def psql(query)
         if ping
-          execute(psql_command,
+          execute('psql',
             :stdin => query,
             :env => base_env)
         else
@@ -64,13 +64,13 @@ module ForemanMaintain
       end
 
       def ping
-        execute?(psql_command,
+        execute?('psql',
           :stdin => 'SELECT 1 as ping',
           :env => base_env)
       end
 
       def dump_db(file)
-        dump_command = "pg_dump -Fc #{configuration['database']} -f #{file}"
+        dump_command = "pg_dump -Fc -f #{file}"
         execute!(dump_command, :env => base_env)
       end
 
@@ -125,7 +125,7 @@ module ForemanMaintain
       def db_version
         if ping
           # Note - t removes headers, -A removes alignment whitespace
-          server_version_cmd = psql_command + ' -c "SHOW server_version" -t -A'
+          server_version_cmd = 'psql -c "SHOW server_version" -t -A'
           version_string = execute!(server_version_cmd, :env => base_env)
           version(version_string)
         else
@@ -151,11 +151,8 @@ module ForemanMaintain
           'PGPORT' => configuration['port']&.to_s,
           'PGUSER' => configuration['username'],
           'PGPASSWORD' => configuration['password'],
+          'PGDATABASE' => configuration['database'],
         }
-      end
-
-      def psql_command
-        "psql -d #{configuration['database']}"
       end
 
       def raise_service_error
