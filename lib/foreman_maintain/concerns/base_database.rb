@@ -70,7 +70,7 @@ module ForemanMaintain
       end
 
       def dump_db(file)
-        dump_command = base_command('pg_dump') + " -Fc #{configuration['database']} -f #{file}"
+        dump_command = "pg_dump -Fc #{configuration['database']} -f #{file}"
         execute!(dump_command, :env => base_env)
       end
 
@@ -81,8 +81,7 @@ module ForemanMaintain
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
-          dump_cmd = base_command('pg_restore') +
-                     ' --no-privileges --clean --disable-triggers -n public ' \
+          dump_cmd = 'pg_restore --no-privileges --clean --disable-triggers -n public ' \
                      "-d #{configuration['database']} #{file}"
           execute!(dump_cmd, :env => base_env,
             :valid_exit_statuses => [0, 1])
@@ -148,17 +147,15 @@ module ForemanMaintain
 
       def base_env
         {
+          'PGHOST' => configuration.fetch('host', 'localhost'),
+          'PGPORT' => configuration['port']&.to_s,
+          'PGUSER' => configuration['username'],
           'PGPASSWORD' => configuration['password'],
         }
       end
 
-      def base_command(command = 'psql')
-        "#{command} -h #{configuration['host'] || 'localhost'} "\
-        " -p #{configuration['port'] || '5432'} -U #{configuration['username']}"
-      end
-
       def psql_command
-        base_command('psql') + " -d #{configuration['database']}"
+        "psql -d #{configuration['database']}"
       end
 
       def raise_service_error
