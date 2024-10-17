@@ -70,6 +70,7 @@ module ForemanMaintain
       end
 
       def dump_db(file)
+        dump_command = base_command('pg_dump') + " -Fc #{configuration['database']}"
         execute!(dump_command + " > #{file}", :hidden_patterns => [configuration['password']])
       end
 
@@ -153,10 +154,6 @@ module ForemanMaintain
 
       def psql_command
         base_command('psql') + " -d #{configuration['database']}"
-      end
-
-      def dump_command
-        base_command('pg_dump') + " -Fc #{configuration['database']}"
       end
 
       def raise_service_error
