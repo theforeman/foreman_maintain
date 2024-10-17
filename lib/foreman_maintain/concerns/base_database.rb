@@ -112,7 +112,7 @@ module ForemanMaintain
       end
 
       def dropdb(config = configuration)
-        if local?
+        if local?(config)
           execute!("runuser - postgres -c 'dropdb #{config['database']}'")
         else
           delete_statement = psql(<<-SQL)
