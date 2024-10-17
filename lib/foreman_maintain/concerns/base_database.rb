@@ -41,49 +41,49 @@ module ForemanMaintain
         raise NotImplementedError
       end
 
-      def local?(config = configuration)
-        ['localhost', '127.0.0.1', `hostname`.strip].include?(config['host'])
+      def local?
+        ['localhost', '127.0.0.1', `hostname`.strip].include?(configuration['host'])
       end
 
-      def query(sql, config = configuration)
-        parse_csv(query_csv(sql, config))
+      def query(sql)
+        parse_csv(query_csv(sql))
       end
 
-      def query_csv(sql, config = configuration)
-        psql(%{COPY (#{sql}) TO STDOUT WITH CSV HEADER}, config)
+      def query_csv(sql)
+        psql(%{COPY (#{sql}) TO STDOUT WITH CSV HEADER})
       end
 
-      def psql(query, config = configuration)
-        if ping(config)
-          execute(psql_command(config),
+      def psql(query)
+        if ping
+          execute(psql_command,
             :stdin => query,
-            :hidden_patterns => [config['password']])
+            :hidden_patterns => [configuration['password']])
         else
           raise_service_error
         end
       end
 
-      def ping(config = configuration)
-        execute?(psql_command(config),
+      def ping
+        execute?(psql_command,
           :stdin => 'SELECT 1 as ping',
-          :hidden_patterns => [config['password']])
+          :hidden_patterns => [configuration['password']])
       end
 
-      def dump_db(file, config = configuration)
-        execute!(dump_command(config) + " > #{file}", :hidden_patterns => [config['password']])
+      def dump_db(file)
+        execute!(dump_command + " > #{file}", :hidden_patterns => [configuration['password']])
       end
 
-      def restore_dump(file, localdb, config = configuration)
+      def restore_dump(file, localdb)
         if localdb
           dump_cmd = "runuser - postgres -c 'pg_restore -C -d postgres #{file}'"
           execute!(dump_cmd)
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
-          dump_cmd = base_command(config, 'pg_restore') +
+          dump_cmd = base_command('pg_restore') +
                      ' --no-privileges --clean --disable-triggers -n public ' \
-                     "-d #{config['database']} #{file}"
-          execute!(dump_cmd, :hidden_patterns => [config['password']],
+                     "-d #{configuration['database']} #{file}"
+          execute!(dump_cmd, :hidden_patterns => [configuration['password']],
             :valid_exit_statuses => [0, 1])
         end
       end
@@ -109,9 +109,9 @@ module ForemanMaintain
         @backup_dir ||= File.expand_path(ForemanMaintain.config.db_backup_dir)
       end
 
-      def dropdb(config = configuration)
+      def dropdb
         if local?
-          execute!("runuser - postgres -c 'dropdb #{config['database']}'")
+          execute!("runuser - postgres -c 'dropdb #{configuration['database']}'")
         else
           delete_statement = psql(<<-SQL)
             select string_agg('drop table if exists \"' || tablename || '\" cascade;', '')
@@ -122,11 +122,11 @@ module ForemanMaintain
         end
       end
 
-      def db_version(config = configuration)
-        if ping(config)
+      def db_version
+        if ping
           # Note - t removes headers, -A removes alignment whitespace
-          server_version_cmd = psql_command(config) + ' -c "SHOW server_version" -t -A'
-          version_string = execute!(server_version_cmd, :hidden_patterns => [config['password']])
+          server_version_cmd = psql_command + ' -c "SHOW server_version" -t -A'
+          version_string = execute!(server_version_cmd, :hidden_patterns => [configuration['password']])
           version(version_string)
         else
           raise_service_error
@@ -145,18 +145,18 @@ module ForemanMaintain
 
       private
 
-      def base_command(config, command = 'psql')
-        "PGPASSWORD='#{config[%(password)]}' "\
-        "#{command} -h #{config['host'] || 'localhost'} "\
-        " -p #{config['port'] || '5432'} -U #{config['username']}"
+      def base_command(command = 'psql')
+        "PGPASSWORD='#{configuration[%(password)]}' "\
+        "#{command} -h #{configuration['host'] || 'localhost'} "\
+        " -p #{configuration['port'] || '5432'} -U #{configuration['username']}"
       end
 
-      def psql_command(config)
-        base_command(config, 'psql') + " -d #{config['database']}"
+      def psql_command
+        base_command('psql') + " -d #{configuration['database']}"
       end
 
-      def dump_command(config)
-        base_command(config, 'pg_dump') + " -Fc #{config['database']}"
+      def dump_command
+        base_command('pg_dump') + " -Fc #{configuration['database']}"
       end
 
       def raise_service_error
