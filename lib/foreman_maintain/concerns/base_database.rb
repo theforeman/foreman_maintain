@@ -57,7 +57,7 @@ module ForemanMaintain
         if ping
           execute(psql_command,
             :stdin => query,
-            :hidden_patterns => [configuration['password']])
+            :env => base_env)
         else
           raise_service_error
         end
@@ -66,12 +66,12 @@ module ForemanMaintain
       def ping
         execute?(psql_command,
           :stdin => 'SELECT 1 as ping',
-          :hidden_patterns => [configuration['password']])
+          :env => base_env)
       end
 
       def dump_db(file)
         dump_command = base_command('pg_dump') + " -Fc #{configuration['database']} -f #{file}"
-        execute!(dump_command, :hidden_patterns => [configuration['password']])
+        execute!(dump_command, :env => base_env)
       end
 
       def restore_dump(file, localdb)
@@ -84,7 +84,7 @@ module ForemanMaintain
           dump_cmd = base_command('pg_restore') +
                      ' --no-privileges --clean --disable-triggers -n public ' \
                      "-d #{configuration['database']} #{file}"
-          execute!(dump_cmd, :hidden_patterns => [configuration['password']],
+          execute!(dump_cmd, :env => base_env,
             :valid_exit_statuses => [0, 1])
         end
       end
@@ -127,7 +127,7 @@ module ForemanMaintain
         if ping
           # Note - t removes headers, -A removes alignment whitespace
           server_version_cmd = psql_command + ' -c "SHOW server_version" -t -A'
-          version_string = execute!(server_version_cmd, :hidden_patterns => [configuration['password']])
+          version_string = execute!(server_version_cmd, :env => base_env)
           version(version_string)
         else
           raise_service_error
@@ -146,8 +146,13 @@ module ForemanMaintain
 
       private
 
+      def base_env
+        {
+          'PGPASSWORD' => configuration['password'],
+        }
+      end
+
       def base_command(command = 'psql')
-        "PGPASSWORD='#{configuration[%(password)]}' "\
         "#{command} -h #{configuration['host'] || 'localhost'} "\
         " -p #{configuration['port'] || '5432'} -U #{configuration['username']}"
       end
