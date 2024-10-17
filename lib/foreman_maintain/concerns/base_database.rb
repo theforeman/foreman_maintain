@@ -54,13 +54,11 @@ module ForemanMaintain
       end
 
       def psql(query)
-        if ping
-          execute('psql',
-            :stdin => query,
-            :env => base_env)
-        else
-          raise_service_error
-        end
+        ping!
+
+        execute('psql',
+          :stdin => query,
+          :env => base_env)
       end
 
       def ping
@@ -123,14 +121,12 @@ module ForemanMaintain
       end
 
       def db_version
-        if ping
-          query = 'SHOW server_version'
-          server_version_cmd = 'psql --tuples-only --no-align'
-          version_string = execute!(server_version_cmd, :stdin => query, :env => base_env)
-          version(version_string)
-        else
-          raise_service_error
-        end
+        ping!
+
+        query = 'SHOW server_version'
+        server_version_cmd = 'psql --tuples-only --no-align'
+        version_string = execute!(server_version_cmd, :stdin => query, :env => base_env)
+        version(version_string)
       end
 
       def psql_cmd_available?
@@ -155,8 +151,10 @@ module ForemanMaintain
         }
       end
 
-      def raise_service_error
-        raise Error::Fail, 'Please check whether database service is up & running state.'
+      def ping!
+        unless ping
+          raise Error::Fail, 'Please check whether database service is up & running state.'
+        end
       end
     end
   end
