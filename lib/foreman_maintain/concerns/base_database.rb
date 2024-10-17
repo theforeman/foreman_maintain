@@ -124,9 +124,10 @@ module ForemanMaintain
 
       def db_version
         if ping
+          query = 'SHOW server_version'
           # Note - t removes headers, -A removes alignment whitespace
-          server_version_cmd = 'psql -c "SHOW server_version" -t -A'
-          version_string = execute!(server_version_cmd, :env => base_env)
+          server_version_cmd = 'psql -t -A'
+          version_string = execute!(server_version_cmd, :stdin => query, :env => base_env)
           version(version_string)
         else
           raise_service_error
