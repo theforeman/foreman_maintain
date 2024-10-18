@@ -19,7 +19,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   end
 
   def configuration
-    @configuration || load_configuration
+    @configuration ||= load_configuration
   end
 
   def check_option_using_cpdb_help(option_name, parent_cmd = '')
@@ -36,7 +36,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
     uri_regexp = %r{://(([^/:]*):?([^/]*))/([^?]*)\??(ssl=([^&]*))?}
     url = full_config['jpa.config.hibernate.connection.url']
     uri = uri_regexp.match(url)
-    @configuration = {
+    {
       'username' => full_config['jpa.config.hibernate.connection.username'],
       'password' => full_config['jpa.config.hibernate.connection.password'],
       'database' => uri[4],
