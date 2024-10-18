@@ -30,8 +30,11 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
 
   private
 
+  def raw_config
+    File.read(CANDLEPIN_DB_CONFIG)
+  end
+
   def load_configuration
-    raw_config = File.read(CANDLEPIN_DB_CONFIG)
     full_config = Hash[raw_config.scan(/(^[^#\n][^=]*)=(.*)/)]
     uri_regexp = %r{://(([^/:]*):?([^/]*))/([^?]*)\??(ssl=([^&]*))?}
     url = full_config['jpa.config.hibernate.connection.url']
