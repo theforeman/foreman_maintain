@@ -1,0 +1,11 @@
+---
+- hosts: all
+  vars:
+    foreman_repositories_version: nightly
+  tasks:
+    - name: 'Foreman {{ foreman_repositories_version }} Staging repository'
+      yum_repository:
+        name: foreman-staging
+        description: "Foreman {{ foreman_repositories_version }} Staging Repository"
+        baseurl: "https://stagingyum.theforeman.org/foreman/{{ foreman_repositories_version }}/el$releasever_major/$basearch/"
+        gpgcheck: false

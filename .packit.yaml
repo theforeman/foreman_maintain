@@ -5,9 +5,8 @@ specfile_path: rubygem-foreman_maintain.spec
 
 # add or remove files that should be synced
 files_to_sync:
-    - rubygem-foreman_maintain.spec
-    - foreman_maintain.logrotate
-    - .packit.yaml
+  - rubygem-foreman_maintain.spec
+  - foreman_maintain.logrotate
 
 # name in upstream package repository or registry (e.g. in PyPI)
 upstream_package_name: foreman_maintain
@@ -30,14 +29,23 @@ jobs:
   - job: copr_build
     trigger: pull_request
     targets:
-      rhel-8:
-        additional_modules: "foreman:el8"
-        additional_repos:
-          - https://yum.theforeman.org/releases/nightly/el8/x86_64/
       rhel-9:
         additional_repos:
-          - https://yum.theforeman.org/releases/nightly/el9/x86_64/
+          - https://yum.theforeman.org/releases/nightly/el$releasever/$basearch/
     module_hotfixes: true
+  - job: tests
+    trigger: pull_request
+    targets:
+      rhel-9-x86_64:
+        distros:
+          - centos-stream-9
+    tf_extra_params:
+      environments:
+        - artifacts:
+            - type: repository
+              id: https://yum.theforeman.org/releases/nightly/el9/x86_64/
+              packages:
+                - foreman-release
 
 srpm_build_deps:
   - wget
