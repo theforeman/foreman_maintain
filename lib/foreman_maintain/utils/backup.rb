@@ -67,14 +67,11 @@ module ForemanMaintain
       end
 
       def valid_fpc_backup?
-        fpc_online_backup? || fpc_standard_backup? || fpc_logical_backup? || \
-          fpc_hybrid_db_backup?
+        fpc_online_backup? || fpc_standard_backup? || fpc_logical_backup?
       end
 
       def valid_katello_backup?
-        katello_online_backup? || katello_standard_backup? || katello_logical_backup? || \
-          # Katello can have setup where some of dbs are external but not all
-          katello_hybrid_db_backup?
+        katello_online_backup? || katello_standard_backup? || katello_logical_backup?
       end
 
       def valid_foreman_backup?
@@ -118,12 +115,6 @@ module ForemanMaintain
           :absent => absent)
       end
 
-      def katello_hybrid_db_backup?
-        all_dbs = { :pgsql_data => %w[candlepin foreman pulpcore] }
-        present, absent = dumps_for_hybrid_db_setup(all_dbs)
-        check_file_existence(:present => present, :absent => absent)
-      end
-
       def fpc_standard_backup?
         present = [:pgsql_data]
         absent = [:candlepin_dump, :foreman_dump, :pulpcore_dump]
@@ -143,13 +134,6 @@ module ForemanMaintain
         check_file_existence(:present => present, :absent => absent)
       end
 
-      def fpc_hybrid_db_backup?
-        all_dbs = { :pgsql_data => ['pulpcore'] }
-        present, absent = dumps_for_hybrid_db_setup(all_dbs)
-        absent.concat [:candlepin_dump, :foreman_dump]
-        check_file_existence(:present => present, :absent => absent)
-      end
-
       def foreman_standard_backup?
         check_file_existence(:present => [:pgsql_data],
           :absent => [:candlepin_dump, :foreman_dump, :pulpcore_dump])
@@ -163,25 +147,6 @@ module ForemanMaintain
       def foreman_logical_backup?
         check_file_existence(:present => [:pgsql_data, :foreman_dump],
           :absent => [:candlepin_dump, :pulpcore_dump])
-      end
-
-      def dumps_for_hybrid_db_setup(dbs_hash)
-        present = []
-        absent = []
-        dbs_hash.each do |data_file, dbs|
-          dbs.each do |db|
-            feature_label = "#{db}_database"
-            dump_file = "#{db}_dump"
-            if feature(feature_label.to_sym).local?
-              present |= [data_file]
-              absent << dump_file.to_sym
-            else
-              present << dump_file.to_sym
-            end
-          end
-          absent |= [data_file] unless present.include?(data_file)
-        end
-        [present, absent]
       end
 
       def validate_hostname?
