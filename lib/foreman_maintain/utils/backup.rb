@@ -67,15 +67,15 @@ module ForemanMaintain
       end
 
       def valid_fpc_backup?
-        fpc_online_backup? || fpc_standard_backup? || fpc_logical_backup?
+        fpc_online_backup? || fpc_standard_backup?
       end
 
       def valid_katello_backup?
-        katello_online_backup? || katello_standard_backup? || katello_logical_backup?
+        katello_online_backup? || katello_standard_backup?
       end
 
       def valid_foreman_backup?
-        foreman_standard_backup? || foreman_online_backup? || foreman_logical_backup?
+        foreman_standard_backup? || foreman_online_backup?
       end
 
       def check_file_existence(existence_map)
@@ -108,13 +108,6 @@ module ForemanMaintain
           :absent => absent)
       end
 
-      def katello_logical_backup?
-        present = [:pgsql_data, :candlepin_dump, :foreman_dump, :pulpcore_dump]
-        absent = []
-        check_file_existence(:present => present,
-          :absent => absent)
-      end
-
       def fpc_standard_backup?
         present = [:pgsql_data]
         absent = [:candlepin_dump, :foreman_dump, :pulpcore_dump]
@@ -128,12 +121,6 @@ module ForemanMaintain
         check_file_existence(:present => present, :absent => absent)
       end
 
-      def fpc_logical_backup?
-        present = [:pulpcore_dump, :pgsql_data]
-        absent = [:candlepin_dump, :foreman_dump]
-        check_file_existence(:present => present, :absent => absent)
-      end
-
       def foreman_standard_backup?
         check_file_existence(:present => [:pgsql_data],
           :absent => [:candlepin_dump, :foreman_dump, :pulpcore_dump])
@@ -142,11 +129,6 @@ module ForemanMaintain
       def foreman_online_backup?
         check_file_existence(:present => [:foreman_dump],
           :absent => [:candlepin_dump, :pgsql_data, :pulpcore_dump])
-      end
-
-      def foreman_logical_backup?
-        check_file_existence(:present => [:pgsql_data, :foreman_dump],
-          :absent => [:candlepin_dump, :pulpcore_dump])
       end
 
       def validate_hostname?
