@@ -41,14 +41,6 @@ module ForemanMaintain
       ForemanMaintain.detector.stubs(:feature).with(label).returns(false)
     end
 
-    def feature_with_local_method(label, return_value)
-      fake_feature = Minitest::Mock.new
-      ret_hash = { 'host' => 'abc.example.com' }
-      fake_feature.expect(:configuration, ret_hash)
-      fake_feature.expect(:local?, return_value)
-      ForemanMaintain.detector.stubs(:feature).with(label).returns(fake_feature)
-    end
-
     it 'Validates katello standard backup' do
       assume_feature_present(:pulpcore_database)
       kat_stand_backup = subject.new(katello_standard)
