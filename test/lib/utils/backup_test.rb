@@ -21,10 +21,6 @@ module ForemanMaintain
       file_path = '../../files/backups/katello_logical_pulpcore_database'
       File.expand_path(file_path, File.dirname(__FILE__))
     end
-    let(:katello_hybrid_db_backup) do
-      file_path = '../../files/backups/katello_hybrid_db_backup/'
-      File.expand_path(file_path, File.dirname(__FILE__))
-    end
     let(:foreman_standard) do
       File.expand_path('../../files/backups/foreman_standard', File.dirname(__FILE__))
     end
@@ -42,9 +38,6 @@ module ForemanMaintain
     end
     let(:fpc_logical) do
       File.expand_path('../../files/backups/fpc_logical_pulpcore_database', File.dirname(__FILE__))
-    end
-    let(:fpc_hybrid) do
-      File.expand_path('../../files/backups/fpc_hybrid_database_backup', File.dirname(__FILE__))
     end
     let(:no_configs) do
       File.expand_path('../../files/backups/no_configs', File.dirname(__FILE__))
@@ -104,26 +97,6 @@ module ForemanMaintain
       refute kat_logical_backup.fpc_standard_backup?
       refute kat_logical_backup.fpc_online_backup?
       refute kat_logical_backup.fpc_logical_backup?
-    end
-
-    it 'Validates katello hybrid db backup' do
-      assume_feature_present(:pulpcore_database)
-      assume_feature_present(:candlepin_database)
-      assume_feature_present(:foreman_database)
-      feature_with_local_method(:pulpcore_database, true)
-      feature_with_local_method(:candlepin_database, false)
-      feature_with_local_method(:foreman_database, false)
-      kat_hybrid_db_backup = subject.new(katello_hybrid_db_backup)
-      refute kat_hybrid_db_backup.katello_standard_backup?
-      refute kat_hybrid_db_backup.katello_online_backup?
-      refute kat_hybrid_db_backup.katello_logical_backup?
-      assert kat_hybrid_db_backup.katello_hybrid_db_backup?
-      refute kat_hybrid_db_backup.foreman_standard_backup?
-      refute kat_hybrid_db_backup.foreman_online_backup?
-      refute kat_hybrid_db_backup.foreman_logical_backup?
-      refute kat_hybrid_db_backup.fpc_standard_backup?
-      refute kat_hybrid_db_backup.fpc_online_backup?
-      refute kat_hybrid_db_backup.fpc_logical_backup?
     end
 
     it 'Validates foreman standard backup' do
@@ -205,21 +178,6 @@ module ForemanMaintain
       refute fpc_logical_backup.fpc_standard_backup?
       refute fpc_logical_backup.fpc_online_backup?
       assert fpc_logical_backup.fpc_logical_backup?
-    end
-
-    it 'Validates fpc hybrid db backup' do
-      feature_with_local_method(:pulpcore_database, true)
-      fpc_hybrid_db_backup = subject.new(fpc_hybrid)
-      assert fpc_hybrid_db_backup.katello_standard_backup?
-      refute fpc_hybrid_db_backup.katello_online_backup?
-      refute fpc_hybrid_db_backup.katello_logical_backup?
-      assert fpc_hybrid_db_backup.foreman_standard_backup?
-      refute fpc_hybrid_db_backup.foreman_online_backup?
-      refute fpc_hybrid_db_backup.foreman_logical_backup?
-      assert fpc_hybrid_db_backup.fpc_standard_backup?
-      refute fpc_hybrid_db_backup.fpc_online_backup?
-      refute fpc_hybrid_db_backup.fpc_logical_backup?
-      assert fpc_hybrid_db_backup.fpc_hybrid_db_backup?
     end
 
     it 'does not validate backup without config_files.tar.gz' do
