@@ -8,8 +8,7 @@ module Procedures::Repositories
     end
 
     def run
-      with_spinner(('Adding image metadata. You can continue using the ' \
-                    'system normally while the task runs in the background.')) do
+      with_spinner('Adding image metadata to Katello.') do
         execute!('foreman-rake katello:import_container_manifest_labels')
       end
     end
