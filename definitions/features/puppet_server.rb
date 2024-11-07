@@ -26,10 +26,6 @@ class Features::PuppetServer < ForemanMaintain::Feature
     find_package('puppetserver') ? [system_service('puppetserver', 30)] : []
   end
 
-  def puppet_version
-    version(execute!("#{puppet_path} --version"))
-  end
-
   def find_empty_cacert_request_files
     cmd_output = execute!("find #{cacert_requests_directory} -type f -size 0 | paste -d, -s")
     cmd_output.split(',')
