@@ -14,8 +14,7 @@ module Procedures::Pulpcore
 
         feature(:service).handle_services(spinner, 'start', :only => necessary_services)
 
-        spinner.update('Adding image metadata to pulp. You can continue using the ' \
-               'system normally while the task runs in the background.')
+        spinner.update('Adding image metadata to pulp.')
         execute!(pulpcore_manager('container-handle-image-data'))
       end
     end
