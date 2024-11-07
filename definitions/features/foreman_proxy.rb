@@ -70,6 +70,7 @@ class Features::ForemanProxy < ForemanMaintain::Feature
       configs += ['/var/lib/dhcpd', File.dirname(dhcpd_config_file)]
     end
     configs.push('/usr/share/xml/scap') if backup_features.include?('openscap')
+    configs.push('/etc/ansible') if backup_features.include?('ansible')
     configs
   end
 
