@@ -40,6 +40,7 @@ module Scenarios::Foreman
         Checks::Disk::AvailableSpaceCandlepin, # if candlepin
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::Foreman::ValidateExternalDbVersion, # if external database
+        Checks::Foreman::CheckExternalDbEvrPermissions, # if external database
         Checks::Foreman::CheckCorruptedRoles,
         Checks::Foreman::CheckDuplicatePermissions,
         Checks::Foreman::TuningRequirements, # if katello present
