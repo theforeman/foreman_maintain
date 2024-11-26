@@ -55,6 +55,7 @@ module Scenarios::Satellite
         Checks::CheckIpv6Disable,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
+        Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate.new(:version => target_version),
       )
     end
