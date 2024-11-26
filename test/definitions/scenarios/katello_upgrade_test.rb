@@ -40,6 +40,7 @@ describe "katello upgrade scenarios" do
         Checks::Repositories::CheckNonRhRepository,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
+        Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate,
       )
     end
@@ -72,6 +73,7 @@ describe "katello upgrade scenarios" do
         Checks::Repositories::CheckNonRhRepository,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
+        Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate,
       )
     end

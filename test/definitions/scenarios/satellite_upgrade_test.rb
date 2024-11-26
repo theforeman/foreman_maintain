@@ -41,6 +41,7 @@ describe "satellite upgrade scenarios" do
         Checks::CheckIpv6Disable,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
+        Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate,
       )
     end
@@ -74,6 +75,7 @@ describe "satellite upgrade scenarios" do
         Checks::CheckIpv6Disable,
         Checks::Disk::AvailableSpacePostgresql13,
         Checks::CheckOrganizationContentAccessMode,
+        Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate,
       )
     end
