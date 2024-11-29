@@ -25,7 +25,14 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def running_tasks
-    cli('task list --state-in running --state-in canceling')
+    tasks = cli('task list --state-in running --state-in canceling')
+    # cli() uses parse_json() which swallows JSON::ParserError and returns nil
+    # but running_tasks should return an Array
+    if tasks.nil?
+      []
+    else
+      tasks
+    end
   rescue ForemanMaintain::Error::ExecutionError
     []
   end
