@@ -34,6 +34,12 @@ describe Features::Pulpcore do
         raises(ForemanMaintain::Error::ExecutionError.new('', 1, '', ''))
       assert_empty subject.running_tasks
     end
+
+    it 'returns an empty list when pulp cli returned unparseable json' do
+      subject.expects(:execute!).
+        with('pulp --format json task list --state-in running --state-in canceling').returns('JZon')
+      assert_empty subject.running_tasks
+    end
   end
 
   describe '.cli_available?' do
