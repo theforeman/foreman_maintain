@@ -18,8 +18,8 @@ upstream_tag_template: v{version}
 
 actions:
   post-upstream-clone:
-    - "wget https://raw.githubusercontent.com/theforeman/foreman-packaging/rpm/develop/packages/foreman/rubygem-foreman_maintain/rubygem-foreman_maintain.spec -O rubygem-foreman_maintain.spec"
-    - "wget https://raw.githubusercontent.com/theforeman/foreman-packaging/rpm/develop/packages/foreman/rubygem-foreman_maintain/foreman_maintain.logrotate -O foreman_maintain.logrotate"
+    - "wget https://raw.githubusercontent.com/theforeman/foreman-packaging/rpm/3.12/packages/foreman/rubygem-foreman_maintain/rubygem-foreman_maintain.spec -O rubygem-foreman_maintain.spec"
+    - "wget https://raw.githubusercontent.com/theforeman/foreman-packaging/rpm/3.12/packages/foreman/rubygem-foreman_maintain/foreman_maintain.logrotate -O foreman_maintain.logrotate"
   get-current-version:
     - ruby -rrubygems -e 'puts Gem::Specification::load(Dir.glob("*.gemspec").first).version'
   create-archive:
@@ -33,10 +33,10 @@ jobs:
       rhel-8:
         additional_modules: "foreman:el8"
         additional_repos:
-          - https://yum.theforeman.org/releases/nightly/el8/x86_64/
+          - https://yum.theforeman.org/releases/3.12/el8/x86_64/
       rhel-9:
         additional_repos:
-          - https://yum.theforeman.org/releases/nightly/el9/x86_64/
+          - https://yum.theforeman.org/releases/3.12/el9/x86_64/
     module_hotfixes: true
 
 srpm_build_deps:
