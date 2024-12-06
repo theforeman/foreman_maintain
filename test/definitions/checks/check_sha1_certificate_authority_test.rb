@@ -43,4 +43,15 @@ describe Checks::CheckSha1CertificateAuthority do
 
     assert result.fail?
   end
+
+  it 'succeeds when using default certificates' do
+    assume_feature_present(:katello)
+    assume_feature_present(
+      :installer,
+      answers: { 'certs' => { 'server_ca_cert' => nil } }
+    )
+    result = run_step(subject)
+
+    assert result.success?
+  end
 end
