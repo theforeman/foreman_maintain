@@ -14,6 +14,8 @@ class Checks::CheckSha1CertificateAuthority < ForemanMaintain::Check
     installer_answers = feature(:installer).answers
     server_ca = installer_answers['certs']['server_ca_cert']
 
+    return unless server_ca
+
     certificate = OpenSSL::X509::Certificate.new(File.read(server_ca))
 
     msg = <<~MSG
