@@ -16,14 +16,17 @@ module Checks
         SQL
         hostgroup_nest_level = sql_count(sql)
         table_preference_count = sql_count('table_preferences')
-        config_group_count = sql_count('config_groups')
+
+        if table_exists('config_groups')
+          config_group_count = sql_count('config_groups')
+        end
         self.data = { 'host_collections_count': collection_count,
                       'host_collections_count_with_limit': collection_count_with_limit,
                       'hostgroup_count': hostgroup,
                       'hostgroup_nesting': hostgroup_nest_level > 1,
                       'hostgroup_max_nesting_level': hostgroup.zero? ? 0 : hostgroup_nest_level,
                       'use_selectable_columns': table_preference_count > 0,
-                      'config_group_count': config_group_count }
+                      'config_group_count': config_group_count || 0 }
       end
     end
   end
