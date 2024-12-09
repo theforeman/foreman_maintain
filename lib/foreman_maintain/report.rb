@@ -18,9 +18,7 @@ module ForemanMaintain
     end
 
     def table_exists(table)
-      subquery = "SELECT 1 FROM information_schema.tables WHERE table_name = '#{table}'"
-      sql = "SELECT EXISTS (#{subquery}) AS table_existence"
-      feature(:foreman_database).query(sql).first['table_existence'] != 'f'
+      sql_count("information_schema.tables WHERE table_name = '#{table}'").positive?
     end
 
     def run
