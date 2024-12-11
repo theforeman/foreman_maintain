@@ -35,7 +35,7 @@ module Checks
       private
 
       def sql_count(query)
-        super(REX_TASK_GROUP_CTE + query)
+        super(query, cte: REX_TASK_GROUP_CTE)
       end
     end
   end
