@@ -7,12 +7,13 @@ module ForemanMaintain
 
     attr_accessor :data
 
-    def sql_count(sql, column: '*')
-      sql_as_count("COUNT(#{column})", sql)
+    def sql_count(sql, column: '*', cte: '')
+      sql_as_count("COUNT(#{column})", sql, cte: cte)
     end
 
-    def sql_as_count(selection, sql)
-      feature(:foreman_database).query("SELECT #{selection} AS COUNT FROM #{sql}").first['count'].to_i
+    def sql_as_count(selection, sql, cte: '')
+      query = "#{cte} SELECT #{selection} AS COUNT FROM #{sql}"
+      feature(:foreman_database).query(query).first['count'].to_i
     end
 
     def sql_setting(name)
