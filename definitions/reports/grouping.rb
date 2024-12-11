@@ -10,11 +10,10 @@ module Checks
         collection_count_with_limit = sql_count("katello_host_collections
                                                  WHERE unlimited_hosts = 'f'")
         hostgroup = sql_count('hostgroups')
-        sql = <<~SQL
-          SELECT COALESCE(MAX((CHAR_LENGTH(ancestry) - CHAR_LENGTH(REPLACE(ancestry, '/', '')))) + 2, 1) AS count
-          FROM hostgroups
-        SQL
-        hostgroup_nest_level = sql_count(sql)
+        hostgroup_nest_level = sql_as_count(
+          "COALESCE(MAX((CHAR_LENGTH(ancestry) - CHAR_LENGTH(REPLACE(ancestry, '/', '')))) + 2, 1)",
+          'hostgroups'
+        )
         table_preference_count = sql_count('table_preferences')
 
         if table_exists('config_groups')
