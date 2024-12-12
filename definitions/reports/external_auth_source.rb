@@ -7,9 +7,9 @@ module Checks
 
       # Do you use external auth source?
       def run
-        result = {}
+        self.data = {}
         # nil means no user linked to external auth source ever logged in
-        result["last_login_on_through_external_auth_source_in_days"] = nil
+        data["last_login_on_through_external_auth_source_in_days"] = nil
 
         sql = <<~SQL
           SELECT users.* FROM users
@@ -19,11 +19,9 @@ module Checks
         SQL
         users = feature(:foreman_database).query(sql)
         if (user = users.first)
-          result["last_login_on_through_external_auth_source_in_days"] =
+          data["last_login_on_through_external_auth_source_in_days"] =
             (Date.today - Date.parse(user['last_login_on'])).to_i
         end
-
-        self.data = result
       end
     end
   end

@@ -6,7 +6,8 @@ module Checks
       end
 
       def run
-        data = {
+        self.data = {}
+        mapping = {
           'policy':
             'foreman_openscap_policies',
           'policy_with_tailoring_file':
@@ -20,7 +21,9 @@ module Checks
                        AND reported_at < NOW() - INTERVAL '1 year'",
         }
 
-        self.data = data.to_h { |k, v| ["compliance_#{k}_count", sql_count(v)] }
+        mapping.each do |k, query|
+          data["compliance_#{k}_count"] = sql_count(query)
+        end
       end
     end
   end
