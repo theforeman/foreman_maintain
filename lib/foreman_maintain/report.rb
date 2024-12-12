@@ -35,7 +35,7 @@ module ForemanMaintain
       super
     rescue Error::Fail => e
       set_fail(e.message)
-    rescue Error::Warn => e
+    rescue StandardError => e
       set_warn(e.message)
     end
   end
