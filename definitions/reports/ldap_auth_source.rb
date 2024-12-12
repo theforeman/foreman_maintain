@@ -13,41 +13,38 @@ module Checks
       # Do you disable user group syncrhonization on any LDAP auth source?
       # Do you have external user groups mapping?
       def run
-        result = %w[free_ipa posix active_directory].reduce({}) do |acc, flavor|
-          acc.merge(flavor_usage(flavor))
+        self.data = {}
+        data["external_user_group_mapping_count"] = sql_count('external_usergroups')
+        %w[free_ipa posix active_directory].reduce({}) do |_acc, flavor|
+          record_flavor_usage(flavor)
         end
-
-        result["external_user_group_mapping_count"] = sql_count('external_usergroups')
-
-        self.data = result
       end
 
       private
 
-      def flavor_usage(flavor)
-        result = {}
+      # rubocop:disable Metrics/AbcSize
+      def record_flavor_usage(flavor)
         query_base = query_base(flavor)
-        result["ldap_auth_source_#{flavor}_count"] = sql_count(query_base)
+        data["ldap_auth_source_#{flavor}_count"] = sql_count(query_base)
 
         users = feature(:foreman_database).query(user_query(flavor))
-        result["users_authenticated_through_ldap_auth_source_#{flavor}"] = users.count
+        data["users_authenticated_through_ldap_auth_source_#{flavor}"] = users.count
 
-        result["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = last_login(users)
+        data["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = last_login(users)
 
-        result["ldap_auth_source_#{flavor}_with_net_groups_count"] =
+        data["ldap_auth_source_#{flavor}_with_net_groups_count"] =
           sql_count("#{query_base} AND use_netgroups = true")
 
-        result["ldap_auth_source_#{flavor}_with_posix_groups_count"] =
+        data["ldap_auth_source_#{flavor}_with_posix_groups_count"] =
           sql_count("#{query_base} AND use_netgroups = false")
 
         count = sql_count("#{query_base} AND onthefly_register = false")
-        result["ldap_auth_source_#{flavor}_with_account_creation_disabled_count"] = count
+        data["ldap_auth_source_#{flavor}_with_account_creation_disabled_count"] = count
 
         count = sql_count("#{query_base} AND usergroup_sync = false")
-        result["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count
-
-        result
+        data["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count
       end
+      # rubocop:enable Metrics/AbcSize
 
       def last_login(users)
         # nil means no user for a given LDAP type was found
