@@ -11,23 +11,40 @@ describe Checks::CheckSha1CertificateAuthority do
   let(:ca_cert) do
     <<~CERT
       -----BEGIN CERTIFICATE-----
-      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
+      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
+      -----END CERTIFICATE-----
+      -----BEGIN CERTIFICATE-----
+      MIICwzCCAasCFCfqmT5iimHv5Qw7DMKZztytQza5MA0GCSqGSIb3DQEBBQUAMB4x
+      HDAaBgNVBAMME1Rlc3QgU2VsZi1TaWduZWQgQ0EwHhcNMjQxMjA2MTk1NzM2WhcN
+      MzQxMjA0MTk1NzM2WjAeMRwwGgYDVQQDDBNUZXN0IFNlbGYtU2lnbmVkIENBMIIB
+      IjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2SygWdi+BjZRyo8G5WW/527S
+      JB3Mpkc35G0RQ+hszXlH6XqFw5NTcTebF5UnJ/DtuKQ0r4FAmJopH5/bejysb7xe
+      tV6vgjcga3C7XVuHs1dbU7NUVWEiy0VvhI/znIK7HQ2AI//5v8CaDMxnBD4El55Y
+      dagpBFCKuiuKTy4G1l4opeZGJe5ZFs10bPX5VbrqJs6l1p5C+ylrJmMxAwTtnq1Y
+      qFu9B8k9wjZYTBFcEAO4CEAs/EAIfQZcd6XCq2L/YhofqBXy7Nr97NZgPUH8UtZA
+      nTbG0P0dEBiSEx0rbbIg2ToAhcgLAgzPZbVV+fon/V2K7yq/Y+XQWMMGqTeuZwID
+      AQABMA0GCSqGSIb3DQEBBQUAA4IBAQB7UCCFbs2kkpFR2epS97Zc7/OBd1M9ZLCh
+      YRLJEjywrEnc/m8KQ9TqVSxWnk8O2Ld7hkrME4fZ+S8riXXrjv8kfRImoZE/3h2f
+      QDmKOS10d79ehEtgSKBToukEcwgL5q/PjQ840wEjJK5gEG3UoFXIl3/EkvPi8Vrq
+      ELBKYJhzaJA1g0ziOZWJh/sXI9ryIJ9XHUPwx5elqdtXMR0SRpvo1FmtATgBtPga
+      wQ6H2KHLnas9h1owoyPETxYnd7qgbNORGSglhH0PiUTbucD6ozU+VcBuq9qPJnwZ
+      76lKsVXoyGQydEuEYOmYstJqE+nBfVgPG4OwgHHHt99htimjCcn3
       -----END CERTIFICATE-----
     CERT
   end
@@ -38,7 +55,7 @@ describe Checks::CheckSha1CertificateAuthority do
       :installer,
       answers: { 'certs' => { 'server_ca_cert' => 'ca-sha1.crt' } }
     )
-    File.expects(:read).with('ca-sha1.crt').returns(ca_cert)
+    File.expects(:binread).with('ca-sha1.crt').returns(ca_cert)
     result = run_step(subject)
 
     assert result.fail?
@@ -53,5 +70,17 @@ describe Checks::CheckSha1CertificateAuthority do
     result = run_step(subject)
 
     assert result.success?
+  end
+
+  it 'throws an error if the certificate is incorrectly formatted' do
+    assume_feature_present(:katello)
+    assume_feature_present(
+      :installer,
+      answers: { 'certs' => { 'server_ca_cert' => 'ca-sha1.crt' } }
+    )
+    File.expects(:binread).with('ca-sha1.crt').returns('15231421')
+    result = run_step(subject)
+
+    assert result.fail?
   end
 end
