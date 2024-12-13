@@ -16,14 +16,33 @@ class Checks::CheckSha1CertificateAuthority < ForemanMaintain::Check
 
     return unless server_ca
 
-    certificate = OpenSSL::X509::Certificate.new(File.read(server_ca))
+    begin
+      certificates = load_fullchain(server_ca)
+    rescue OpenSSL::X509::CertificateError
+      assert(false, "Error reading server CA certificate #{server_ca}.")
+    else
+      msg = <<~MSG
+        Server CA certificate #{server_ca} signed with sha1 which will break on upgrade.
+        Update the server CA certificate with one signed with sha256 or
+        stronger then proceed with the upgrade.
+      MSG
 
-    msg = <<~MSG
-      Server CA certificate signed with sha1 which will break on upgrade.
-      Update the server CA certificate with one signed with sha256 or
-      stronger then proceed with the upgrade.
-    MSG
+      assert(
+        certificates.all? { |cert| cert.signature_algorithm != 'sha1WithRSAEncryption' },
+        msg
+      )
+    end
+  end
 
-    assert(certificate.signature_algorithm != 'sha1WithRSAEncryption', msg)
+  def load_fullchain(bundle_pem)
+    if OpenSSL::X509::Certificate.respond_to?(:load_file)
+      OpenSSL::X509::Certificate.load_file(bundle_pem)
+    else
+      # Can be removed when only Ruby with load_file support is supported
+      File.binread(bundle_pem).
+        lines.
+        slice_after(/END CERTIFICATE/).
+        map { |pem| OpenSSL::X509::Certificate.new(pem.join) }
+    end
   end
 end
