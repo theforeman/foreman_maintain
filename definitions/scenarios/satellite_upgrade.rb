@@ -39,6 +39,7 @@ module Scenarios::Satellite
         Checks::CheckUpstreamRepository,
         Checks::Disk::AvailableSpace,
         Checks::Disk::AvailableSpaceCandlepin, # if candlepin
+        Checks::Disk::PostgresqlMountpoint,
         Checks::Foreman::ValidateExternalDbVersion, # if external database
         Checks::Foreman::CheckCorruptedRoles,
         Checks::Foreman::CheckDuplicatePermissions,
