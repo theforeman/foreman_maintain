@@ -42,7 +42,7 @@ class Checks::CheckSha1CertificateAuthority < ForemanMaintain::Check
       File.binread(bundle_pem).
         lines.
         slice_after(/END CERTIFICATE/).
-        map { |pem| OpenSSL::X509::Certificate.new(pem.join) }
+        map { |pem| OpenSSL::X509::Certificate.new(pem.join) if pem.join =~ /-+BEGIN .+-+END/m }
     end
   end
 end
