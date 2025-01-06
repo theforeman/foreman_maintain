@@ -18,8 +18,8 @@ class Checks::CheckSha1CertificateAuthority < ForemanMaintain::Check
 
     begin
       certificates = load_fullchain(server_ca)
-    rescue OpenSSL::X509::CertificateError
-      assert(false, "Error reading server CA certificate #{server_ca}.")
+    rescue OpenSSL::X509::CertificateError => e
+      assert(false, "Error reading server CA certificate #{server_ca}.\n #{e.message}")
     else
       msg = <<~MSG
         Server CA certificate #{server_ca} signed with sha1 which will break on upgrade.
@@ -41,7 +41,8 @@ class Checks::CheckSha1CertificateAuthority < ForemanMaintain::Check
       # Can be removed when only Ruby with load_file support is supported
       File.binread(bundle_pem).
         lines.
-        slice_after(/END CERTIFICATE/).
+        slice_after(/^-----END CERTIFICATE-----/).
+        filter { |pem| pem.join.include?('-----END CERTIFICATE-----') }.
         map { |pem| OpenSSL::X509::Certificate.new(pem.join) }
     end
   end
