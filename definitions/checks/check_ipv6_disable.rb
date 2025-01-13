@@ -12,7 +12,7 @@ class Checks::CheckIpv6Disable < ForemanMaintain::Check
 
   def error_message
     base = "\nThe kernel contains ipv6.disable=1 which is known to break installation and upgrade"\
-           ", remove and reboot before continuining."
+           ", remove and reboot before continuing."
 
     if feature(:instance).downstream
       base += " See https://access.redhat.com/solutions/5045841 for more details."
