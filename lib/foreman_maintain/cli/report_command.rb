@@ -9,6 +9,7 @@ module ForemanMaintain
 
           # description can be used too
           report_data = scenario.steps.map(&:data).compact.reduce(&:merge).transform_keys(&:to_s)
+          report_data['version'] = 1
           puts report_data.to_yaml
           exit runner.exit_code
         end
