@@ -94,6 +94,8 @@ module ForemanMaintain::Scenarios
         :online_backup => true)
       add_step_with_context(Procedures::Backup::Pulp, :ensure_unchanged => true)
       add_database_backup_steps
+
+      add_step(Procedures::Service::Start.new(:only => online_workers)) unless online_workers.empty?
     end
 
     def add_database_backup_steps
@@ -102,8 +104,6 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::ForemanDB,
         Procedures::Backup::Online::PulpcoreDB
       )
-
-      add_step(Procedures::Service::Start.new(:only => online_workers)) unless online_workers.empty?
     end
 
     def strategy
