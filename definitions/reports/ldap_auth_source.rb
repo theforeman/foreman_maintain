@@ -24,8 +24,8 @@ module Checks
 
       # rubocop:disable Metrics/AbcSize
       def record_flavor_usage(flavor)
-        query_base = query_base(flavor)
-        data["ldap_auth_source_#{flavor}_count"] = sql_count(query_base)
+        flavored_query_base = query_base(flavor)
+        data["ldap_auth_source_#{flavor}_count"] = sql_count(flavored_query_base)
 
         users = feature(:foreman_database).query(user_query(flavor))
         data["users_authenticated_through_ldap_auth_source_#{flavor}"] = users.count
@@ -33,15 +33,15 @@ module Checks
         data["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = last_login(users)
 
         data["ldap_auth_source_#{flavor}_with_net_groups_count"] =
-          sql_count("#{query_base} AND use_netgroups = true")
+          sql_count("#{flavored_query_base} AND use_netgroups = true")
 
         data["ldap_auth_source_#{flavor}_with_posix_groups_count"] =
-          sql_count("#{query_base} AND use_netgroups = false")
+          sql_count("#{flavored_query_base} AND use_netgroups = false")
 
-        count = sql_count("#{query_base} AND onthefly_register = false")
+        count = sql_count("#{flavored_query_base} AND onthefly_register = false")
         data["ldap_auth_source_#{flavor}_with_account_creation_disabled_count"] = count
 
-        count = sql_count("#{query_base} AND usergroup_sync = false")
+        count = sql_count("#{flavored_query_base} AND usergroup_sync = false")
         data["ldap_auth_source_#{flavor}_with_user_group_sync_disabled_count"] = count
       end
       # rubocop:enable Metrics/AbcSize
