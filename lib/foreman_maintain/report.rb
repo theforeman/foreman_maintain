@@ -39,6 +39,22 @@ module ForemanMaintain
       sql_count("information_schema.tables WHERE table_name = '#{table}'").positive?
     end
 
+    def data_field(field_name)
+      self.data ||= {}
+      value = yield
+      self.data[field_name] = value
+    rescue StandardError
+      nil
+    end
+
+    def merge_data(prefix)
+      self.data ||= {}
+      data_hash = yield
+      self.data.merge!(flatten(data_hash, prefix))
+    rescue StandardError
+      nil
+    end
+
     def run
       raise NotImplementedError
     end
