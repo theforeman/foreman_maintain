@@ -1,22 +1,29 @@
-module Checks
-  module Report
-    class Provisioning < ForemanMaintain::Report
-      metadata do
-        description 'Provisioning facts about the system'
+module Reports
+  class Provisioning < ForemanMaintain::Report
+    metadata do
+      description 'Provisioning facts about the system'
+    end
+
+    def run
+      data_field('managed_hosts_created_in_last_3_months') do
+        sql_count(
+          <<-SQL
+            hosts WHERE managed = true AND created_at >= current_date - interval '3 months'
+          SQL
+        )
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
-      def run
-        hosts_in_3_months =
-          sql_count(
-            <<-SQL
-              hosts WHERE managed = true AND created_at >= current_date - interval '3 months'
-            SQL
-          )
+      compute_resources_fields
+      bare_metal_fields
+      templates_fields
+    end
 
-        # Compute resources
-        compute_resources_by_type =
-          feature(:foreman_database).
+    def compute_resources_fields
+      hosts_by_compute_resources_type
+      hosts_by_compute_profile
+
+      merge_data('compute_resources_by_type') do
+        feature(:foreman_database).
           query(
             <<-SQL
               select type, count(*)
@@ -25,9 +32,12 @@ module Checks
             SQL
           ).
           to_h { |row| [row['type'], row['count'].to_i] }
+      end
+    end
 
-        hosts_by_compute_resources_type =
-          feature(:foreman_database).
+    def hosts_by_compute_resources_type
+      merge_data('hosts_by_compute_resources_type') do
+        feature(:foreman_database).
           query(
             <<-SQL
               select compute_resources.type, count(hosts.id)
@@ -36,8 +46,12 @@ module Checks
             SQL
           ).
           to_h { |row| [row['type'] || 'baremetal', row['count'].to_i] }
-        hosts_by_compute_profile =
-          feature(:foreman_database).
+      end
+    end
+
+    def hosts_by_compute_profile
+      merge_data('hosts_by_compute_profile') do
+        feature(:foreman_database).
           query(
             <<-SQL
               select max(compute_profiles.name) as name, count(hosts.id)
@@ -46,10 +60,19 @@ module Checks
             SQL
           ).
           to_h { |row| [row['name'] || 'none', row['count'].to_i] }
+      end
+    end
 
-        # Bare metal
-        nics_by_type_count =
-          feature(:foreman_database).
+    def bare_metal_fields
+      nics_by_type_count
+      hosts_by_managed_count
+
+      data_field('discovery_rules_count') { sql_count('discovery_rules') }
+    end
+
+    def nics_by_type_count
+      merge_data('nics_by_type_count') do
+        feature(:foreman_database).
           query(
             <<-SQL
               select type, count(*)
@@ -58,9 +81,12 @@ module Checks
             SQL
           ).
           to_h { |row| [(row['type'] || 'none').sub('Nic::', ''), row['count'].to_i] }
-        discovery_rules_count = sql_count('discovery_rules')
-        hosts_by_managed_count =
-          feature(:foreman_database).
+      end
+    end
+
+    def hosts_by_managed_count
+      merge_data('hosts_by_managed_count') do
+        feature(:foreman_database).
           query(
             <<-SQL
               select managed, count(*)
@@ -69,10 +95,12 @@ module Checks
             SQL
           ).
           to_h { |row| [row['managed'] == 't' ? 'managed' : 'unmanaged', row['count'].to_i] }
+      end
+    end
 
-        # Templates
-        non_default_templates_per_type =
-          feature(:foreman_database).
+    def templates_fields
+      merge_data('non_default_templates_per_type') do
+        feature(:foreman_database).
           query(
             <<-SQL
               select type, count(*) from templates
@@ -81,21 +109,7 @@ module Checks
             SQL
           ).
           to_h { |row| [row['type'], row['count'].to_i] }
-
-        data = {
-          discovery_rules_count: discovery_rules_count,
-          managed_hosts_created_in_last_3_months: hosts_in_3_months,
-        }
-        data.merge!(flatten(compute_resources_by_type, 'compute_resources_by_type'))
-        data.merge!(flatten(hosts_by_compute_resources_type, 'hosts_by_compute_resources_type'))
-        data.merge!(flatten(hosts_by_compute_profile, 'hosts_by_compute_profile'))
-        data.merge!(flatten(nics_by_type_count, 'nics_by_type'))
-        data.merge!(flatten(hosts_by_managed_count, 'managed_hosts_count'))
-        data.merge!(flatten(non_default_templates_per_type, 'non_default_templates_per_type'))
-
-        self.data = data
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
     end
   end
 end
