@@ -7,13 +7,14 @@ module Checks
       end
 
       def run
-        # make sure to populate data with the hash, that will be merged into the result set
-        self.data = { template: 5 }
-
-        # SQL example
-        # count = feature(:foreman_database).query("SELECT COUNT(*) FROM hosts WHERE managed = true AND created_at >= current_date - interval '3 months'")
-        # result = count.first['count'].to_i
-        # self.data = result
+        data_field('some_value') { 'hello' }
+        merge_data('key_prefix') do
+          {
+            'key1': 'value1',
+            'key2': 'value2',
+            'nested': { 'another_key': 'another_value', 'more': 'more_value' }
+          }
+        end
       end
     end
   end
