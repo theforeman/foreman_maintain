@@ -39,9 +39,8 @@ module ForemanMaintain::Utils
       end
 
       def restart
-        command_name = ForemanMaintain.command_name
         db_status(<<~MSG
-          Remote databases are not managed by #{command_name} and therefore was not restarted.
+          Remote databases are not managed and therefore no restart was performed.
         MSG
                  )
       end
