@@ -16,7 +16,6 @@ module Reports
     def mail_notification_fields
       # Mail notifications
       # users_per_mail_notification =
-      #   feature(:foreman_database).
       #   query(
       #     <<-SQL
       #       select
@@ -39,8 +38,7 @@ module Reports
     def general_fields
       data_field('smart_proxies_count') { sql_count('smart_proxies') }
       merge_data('smart_proxies_creation_date') do
-        feature(:foreman_database).
-          query("select id, created_at from smart_proxies").
+        query("select id, created_at from smart_proxies").
           to_h { |row| [row['id'], row['created_at']] }
       end
     end
@@ -52,16 +50,14 @@ module Reports
       data_field('custom_roles_count') { sql_count('roles where origin = null') }
 
       merge_data('taxonomies_counts') do
-        feature(:foreman_database).
-          query("select type, count(*) from taxonomies group by type").
+        query("select type, count(*) from taxonomies group by type").
           to_h { |row| [row['type'], row['count'].to_i] }
       end
     end
 
     def settings_fields
       data_field('modified_settings') do
-        feature(:foreman_database).
-          query("select name from settings").
+        query("select name from settings").
           map { |setting_line| setting_line['name'] }.
           join(',')
       end
@@ -69,23 +65,21 @@ module Reports
 
     def bookmarks_fields
       merge_data('bookmarks_by_public_by_type') do
-        feature(:foreman_database).
-          query(
-            <<-SQL
+        query(
+          <<-SQL
               select public, owner_type, count(*)
               from bookmarks
               group by public, owner_type
-            SQL
-          ).
+          SQL
+        ).
           to_h do |row|
-            [
-              "#{row['public'] ? 'public' : 'private'}#{flatten_separator}#{row['owner_type']}",
-              row['count'].to_i,
-            ]
-          end
+          [
+            "#{row['public'] ? 'public' : 'private'}#{flatten_separator}#{row['owner_type']}",
+            row['count'].to_i,
+          ]
+        end
       end
       # bookmarks_by_owner =
-      #   feature(:foreman_database).
       #   query(
       #     <<-SQL
       #       select owner_type, owner_id, count(*)

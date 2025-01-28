@@ -26,7 +26,7 @@ module Reports
       flavored_query_base = query_base(flavor)
       data["ldap_auth_source_#{flavor}_count"] = sql_count(flavored_query_base)
 
-      users = feature(:foreman_database).query(user_query(flavor))
+      users = query(user_query(flavor))
       data["users_authenticated_through_ldap_auth_source_#{flavor}"] = users.count
 
       data["last_login_on_through_ldap_auth_source_#{flavor}_in_days"] = last_login(users)

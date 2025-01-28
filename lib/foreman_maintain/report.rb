@@ -7,6 +7,10 @@ module ForemanMaintain
 
     attr_accessor :data
 
+    def query(sql)
+      feature(:foreman_database).query(sql)
+    end
+
     def sql_count(sql, column: '*', cte: '')
       sql_as_count("COUNT(#{column})", sql, cte: cte)
     end
@@ -56,7 +60,7 @@ module ForemanMaintain
     end
 
     def run
-      raise NoMethodError.new('method not implemented on abstract report classes')
+      raise NoMethodError, 'method not implemented on abstract report classes'
     end
 
     # internal method called by executor
