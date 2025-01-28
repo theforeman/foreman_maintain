@@ -56,7 +56,7 @@ module ForemanMaintain
     end
 
     def run
-      raise NotImplementedError
+      raise NoMethodError.new('method not implemented on abstract report classes')
     end
 
     # internal method called by executor
