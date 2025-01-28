@@ -14,44 +14,40 @@ module Reports
 
     # Hosts
     def hosts_by_type_count
-      feature(:foreman_database).
-        query("select type, count(*) from hosts group by type").
+      query("select type, count(*) from hosts group by type").
         to_h { |row| [(row['type'] || '').sub('Host::', ''), row['count'].to_i] }
     end
 
     # OS usage
     def hosts_by_os_count
-      feature(:foreman_database).
-        query(
-          <<-SQL
+      query(
+        <<-SQL
             select max(operatingsystems.name) as os_name, count(*) as hosts_count
             from hosts inner join operatingsystems on operatingsystem_id = operatingsystems.id
             group by operatingsystem_id
-          SQL
-        ).
+        SQL
+      ).
         to_h { |row| [row['os_name'], row['hosts_count'].to_i] }
     end
 
     # Facts usage
     def facts_by_type
-      feature(:foreman_database).
-        query(
-          <<-SQL
+      query(
+        <<-SQL
             select fact_names.type,
                     min(fact_values.updated_at) as min_update_time,
                     max(fact_values.updated_at) as max_update_time,
                     count(fact_values.id) as values_count
             from fact_values inner join fact_names on fact_name_id = fact_names.id
             group by fact_names.type
-          SQL
-        ).
+        SQL
+      ).
         to_h { |row| [row['type'].sub('FactName', ''), to_fact_hash(row)] }
     end
 
     # Audits
     def audits
       audits_query =
-        feature(:foreman_database).
         query(
           <<-SQL
             select count(*) as records_count,
@@ -65,8 +61,7 @@ module Reports
 
     # Parameters
     def parameters
-      feature(:foreman_database).
-        query("select type, count(*) from parameters group by type").
+      query("select type, count(*) from parameters group by type").
         to_h { |row| [row['type'], row['count'].to_i] }
     end
 

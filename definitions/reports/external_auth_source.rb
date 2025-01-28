@@ -16,7 +16,7 @@ module Reports
         WHERE auth_sources.type = 'AuthSourceExternal' AND users.last_login_on IS NOT NULL
         ORDER BY users.last_login_on DESC LIMIT 1
       SQL
-      user = feature(:foreman_database).query(sql).first
+      user = query(sql).first
       if user
         data["last_login_on_through_external_auth_source_in_days"] =
           (Date.today - Date.parse(user['last_login_on'])).to_i
