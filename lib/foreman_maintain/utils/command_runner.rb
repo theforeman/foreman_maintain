@@ -8,7 +8,7 @@ module ForemanMaintain
       attr_reader :logger, :command
 
       def initialize(logger, command, options)
-        options.validate_options!(:stdin, :interactive, :valid_exit_statuses, :env)
+        options.validate_options!(:stdin, :interactive, :valid_exit_statuses, :env, :merge_stderr)
         options[:valid_exit_statuses] ||= [0]
         options[:env] ||= {}
         @logger = logger
@@ -18,6 +18,7 @@ module ForemanMaintain
         @options = options
         @valid_exit_statuses = options[:valid_exit_statuses]
         @env = options[:env]
+        @merge_stderr = options.fetch(:merge_stderr, true)
         raise ArgumentError, 'Can not pass stdin for interactive command' if @interactive && @stdin
       end
 
@@ -93,7 +94,11 @@ module ForemanMaintain
       end
 
       def full_command
-        "#{@command} 2>&1"
+        if @merge_stderr
+          "#{@command} 2>&1"
+        else
+          @command
+        end
       end
     end
   end

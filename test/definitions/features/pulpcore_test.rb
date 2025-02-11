@@ -7,13 +7,14 @@ describe Features::Pulpcore do
 
   describe '.cli' do
     it 'returns hash result when getting JSON reply' do
-      subject.expects(:execute!).with('pulp --format json status').returns('{"versions": []}')
+      subject.expects(:execute!).with('pulp --format json status',
+        merge_stderr: false).returns('{"versions": []}')
       expected = { 'versions' => [] }
       assert_equal expected, subject.cli('status')
     end
 
     it 'passes on ExecutionError' do
-      subject.expects(:execute!).with('pulp --format json status').
+      subject.expects(:execute!).with('pulp --format json status', merge_stderr: false).
         raises(ForemanMaintain::Error::ExecutionError.new('', 1, '', ''))
       assert_raises(ForemanMaintain::Error::ExecutionError) do
         subject.cli('status')
@@ -24,20 +25,25 @@ describe Features::Pulpcore do
   describe '.running_tasks' do
     it 'returns an empty list when there are no tasks' do
       subject.expects(:execute!).
-        with('pulp --format json task list --state-in running --state-in canceling').returns('[]')
+        with('pulp --format json task list --state-in running --state-in canceling',
+          merge_stderr: false).
+        returns('[]')
       assert_empty subject.running_tasks
     end
 
     it 'returns an empty list when pulp cli failed' do
       subject.expects(:execute!).
-        with('pulp --format json task list --state-in running --state-in canceling').
+        with('pulp --format json task list --state-in running --state-in canceling',
+          merge_stderr: false).
         raises(ForemanMaintain::Error::ExecutionError.new('', 1, '', ''))
       assert_empty subject.running_tasks
     end
 
     it 'returns an empty list when pulp cli returned unparseable json' do
       subject.expects(:execute!).
-        with('pulp --format json task list --state-in running --state-in canceling').returns('JZon')
+        with('pulp --format json task list --state-in running --state-in canceling',
+          merge_stderr: false).
+        returns('JZon')
       assert_empty subject.running_tasks
     end
   end

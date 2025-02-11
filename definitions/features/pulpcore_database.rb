@@ -31,7 +31,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
       from django.conf import settings; import json; print(json.dumps(settings.DATABASES["default"]))
     PYTHON
     manager_command = pulpcore_manager("shell --command '#{python_command}'")
-    manager_result = execute!(manager_command)
+    manager_result = execute!(manager_command, merge_stderr: false)
     db_config = JSON.parse(manager_result)
 
     @configuration = {}
