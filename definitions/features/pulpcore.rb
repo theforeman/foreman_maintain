@@ -21,7 +21,7 @@ class Features::Pulpcore < ForemanMaintain::Feature
   end
 
   def cli(args)
-    parse_json(execute!("pulp --format json #{args}"))
+    parse_json(execute!("pulp --format json #{args}", merge_stderr: false))
   end
 
   def running_tasks

@@ -13,7 +13,7 @@ describe Features::PulpcoreDatabase do
       manager_return = <<~JSON
         {"ENGINE": "django.db.backends.postgresql", "NAME": "pulpcore", "USER": "pulp", "PASSWORD": "password", "HOST": "remotedb", "PORT": "5432"}
       JSON
-      subject.expects(:execute!).with(expected_command).returns(manager_return)
+      subject.expects(:execute!).with(expected_command, merge_stderr: false).returns(manager_return)
       expected = { "adapter" => "postgresql", "host" => "remotedb", "port" => "5432",
                    "database" => "pulpcore", "username" => "pulp", "password" => "password" }
       assert_equal expected, subject.configuration
