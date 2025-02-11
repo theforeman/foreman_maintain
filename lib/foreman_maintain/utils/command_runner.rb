@@ -1,4 +1,4 @@
-require 'English'
+require 'open3'
 require 'tempfile'
 
 module ForemanMaintain
@@ -46,6 +46,11 @@ module ForemanMaintain
         @exit_status
       end
 
+      def stderr
+        raise 'Command not yet executed' unless defined? @stderr
+        @stderr
+      end
+
       def success?
         @valid_exit_statuses.include? exit_status
       end
@@ -83,14 +88,8 @@ module ForemanMaintain
       end
 
       def run_non_interactively
-        IO.popen(@env, full_command, 'r+') do |f|
-          if @stdin
-            f.puts(@stdin)
-            f.close_write
-          end
-          @output = f.read.strip
-        end
-        @exit_status = $CHILD_STATUS.exitstatus
+        @output, @stderr, status = Open3.capture3(@env, full_command, :stdin_data => @stdin)
+        @exit_status = status.exitstatus
       end
 
       def full_command
