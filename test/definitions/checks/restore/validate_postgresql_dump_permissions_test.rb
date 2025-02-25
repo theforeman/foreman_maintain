@@ -12,6 +12,8 @@ describe Checks::Restore::ValidatePostgresqlDumpPermissions do
       :foreman_dump => { :present => true, :path => '/nonexistant/foreman.dump' },
       :candlepin_dump => { :present => true, :path => '/nonexistant/candlepin.dump' },
       :pulpcore_dump => { :present => true, :path => '/nonexistant/pulpcore.dump' },
+      :container_gateway_dump =>
+        { :present => true, :path => '/nonexistant/container_gateway.dump' },
     }
     ForemanMaintain::Utils::Backup.any_instance.stubs(:file_map).returns(file_map)
   end
@@ -53,7 +55,8 @@ describe Checks::Restore::ValidatePostgresqlDumpPermissions do
     result = run_check(subject)
     refute result.success?, 'Check expected to fail'
     expected = "The 'postgres' user needs read access to the following files:\n" \
-      "/nonexistant/candlepin.dump\n/nonexistant/foreman.dump\n/nonexistant/pulpcore.dump"
+      "/nonexistant/candlepin.dump\n/nonexistant/foreman.dump\n" \
+      "/nonexistant/pulpcore.dump\n/nonexistant/container_gateway.dump"
     assert_equal result.output, expected
   end
 
@@ -65,6 +68,9 @@ describe Checks::Restore::ValidatePostgresqlDumpPermissions do
     subject.stubs(:system).with("runuser - postgres -c 'test -r /nonexistant/pulpcore.dump'").
       returns(true)
     subject.stubs(:system).with("runuser - postgres -c 'test -r /nonexistant/foreman.dump'").
+      returns(true)
+    subject.stubs(:system).
+      with("runuser - postgres -c 'test -r /nonexistant/container_gateway.dump'").
       returns(true)
     result = run_check(subject)
     refute result.success?, 'Check expected to fail'
