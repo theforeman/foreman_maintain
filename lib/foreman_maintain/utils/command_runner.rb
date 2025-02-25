@@ -89,6 +89,7 @@ module ForemanMaintain
 
       def run_non_interactively
         @output, @stderr, status = Open3.capture3(@env, full_command, :stdin_data => @stdin)
+        @output.strip!
         @exit_status = status.exitstatus
       end
 
