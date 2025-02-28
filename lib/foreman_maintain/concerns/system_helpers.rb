@@ -46,8 +46,7 @@ module ForemanMaintain
       end
 
       def execute?(command, options = {})
-        execute(command, options)
-        $CHILD_STATUS.success?
+        execute_runner(command, options).success?
       end
 
       def command_present?(command_name)
