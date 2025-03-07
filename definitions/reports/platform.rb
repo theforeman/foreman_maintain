@@ -57,7 +57,7 @@ module Reports
 
     def settings_fields
       data_field('modified_settings') do
-        query("select name from settings").
+        query("select name from settings WHERE value IS NOT NULL").
           map { |setting_line| setting_line['name'] }.
           join(',')
       end
