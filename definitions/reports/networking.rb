@@ -17,8 +17,10 @@ module Reports
     # How many ipv4 subnets are defined in Foreman?
     # How many ipv6 subnets are defined in Foreman?
     def subnet_counts_by_type
-      %w(ipv4 ipv6).each do |type|
-        data_field("subnet_#{type}_count") { sql_count("subnets where type = 'Subnet::Ipv#{type}'") }
+      %w[ipv4 ipv6].each do |type|
+        data_field("subnet_#{type}_count") do
+          sql_count("subnets where type = 'Subnet::Ipv#{type}'")
+        end
       end
     end
 
@@ -28,8 +30,7 @@ module Reports
     def hosts_by_address_family
       { 'ipv4-only': 'nics.ip IS NOT NULL AND nics.ip6 IS NULL',
         'ipv6-only': 'nics.ip IS NULL AND nics.ip6 IS NOT NULL',
-        'dualstack': 'nics.ip IS NOT NULL AND nics.ip6 IS NOT NULL'
-      }.each do |kind, condition|
+        'dualstack': 'nics.ip IS NOT NULL AND nics.ip6 IS NOT NULL' }.each do |kind, condition|
         query = <<~SQL
           hosts
           INNER JOIN nics on nics.host_id = hosts.id
@@ -39,9 +40,11 @@ module Reports
       end
     end
 
-    # How many of Foreman's interfaces only have a non-loopback, non-multicast ipv4 address?
-    # How many of Foreman's interfaces only have a non-loopback, non-multicast, non-link-local ipv6 address?
-    # How many of Foreman's interfaces have a non-loopback, non-multicast ipv4 address as well as a non-loopback, non-multicast, non-link-local ipv6 address?
+    # How many of Foreman's interfaces:
+    # - only have a non-loopback, non-multicast ipv4 address?
+    # - only have a non-loopback, non-multicast, non-link-local ipv6 address?
+    # - have a non-loopback, non-multicast ipv4 address
+    #   as well as a non-loopback, non-multicast, non-link-local ipv6 address?
     def interfaces_by_address_family
       by_name = Socket.getifaddrs.group_by(&:name).transform_values { |addrs| addrs.map(&:addr) }
       with_ipv4, without_ipv4 = by_name.partition { |_name, addrs| relevant_ipv4?(addrs) }
@@ -58,7 +61,9 @@ module Reports
     end
 
     def relevant_ipv6?(addrs)
-      addrs.any? { |addr| addr.ipv6? && !(addr.ipv6_loopback? || addr.ipv6_multicast? || addr.ipv6_linklocal?) }
+      addrs.any? do |addr|
+        addr.ipv6? && !(addr.ipv6_loopback? || addr.ipv6_multicast? || addr.ipv6_linklocal?)
+      end
     end
   end
 end
