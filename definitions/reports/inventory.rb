@@ -10,6 +10,7 @@ module Reports
       merge_data('facts_by_type') { facts_by_type }
       merge_data('audits') { audits }
       merge_data('parameters_count') { parameters }
+      hosts_running_rhel_ai
     end
 
     # Hosts
@@ -79,6 +80,17 @@ module Reports
         min_created_at: row['min_created_at'],
         max_created_at: row['max_created_at'],
       }
+    end
+
+    def hosts_running_rhel_ai
+      query = <<~SQL
+        hosts
+        INNER JOIN katello_subscription_facets AS ksf ON hosts.id = ksf.host_id
+        INNER JOIN katello_subscription_facet_installed_products AS ksfip ON ksfip.subscription_facet_id = ksf.id
+        INNER JOIN katello_installed_products AS kip ON ksfip.installed_product_id = kip.id
+        WHERE kip.name = 'Red Hat Enterprise Linux AI'
+      SQL
+      data_field('rhel_ai_workload_host_count') { sql_count(query) }
     end
   end
 end
