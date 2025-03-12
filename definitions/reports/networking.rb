@@ -29,8 +29,8 @@ module Reports
     # How many hosts in Foreman have an interface with no ipv4 address but an ipv6 address?
     # How many hosts in Foreman have an interface with both ipv4 and ipv6 addresses?
     def hosts_by_address_family
-      { 'ipv4-only': 'nics.ip IS NOT NULL AND nics.ip6 IS NULL',
-        'ipv6-only': 'nics.ip IS NULL AND nics.ip6 IS NOT NULL',
+      { 'ipv4only': 'nics.ip IS NOT NULL AND nics.ip6 IS NULL',
+        'ipv6only': 'nics.ip IS NULL AND nics.ip6 IS NOT NULL',
         'dualstack': 'nics.ip IS NOT NULL AND nics.ip6 IS NOT NULL' }.each do |kind, condition|
         query = <<~SQL
           hosts
@@ -52,8 +52,8 @@ module Reports
       dualstack, ipv4_only = with_ipv4.partition { |_name, addrs| relevant_ipv6?(addrs) }
       ipv6_only = without_ipv4.select { |_name, addrs| relevant_ipv6?(addrs) }
 
-      data_field("foreman_interfaces_ipv4-only_count") { ipv4_only.count }
-      data_field("foreman_interfaces_ipv6-only_count") { ipv6_only.count }
+      data_field("foreman_interfaces_ipv4only_count") { ipv4_only.count }
+      data_field("foreman_interfaces_ipv6only_count") { ipv6_only.count }
       data_field("foreman_interfaces_dualstack_count") { dualstack.count }
     end
 
