@@ -10,6 +10,7 @@ module Reports
       subnet_counts_by_type
       hosts_by_address_family
       interfaces_by_address_family
+      preference_settings
     end
 
     private
@@ -63,6 +64,15 @@ module Reports
     def relevant_ipv6?(addrs)
       addrs.any? do |addr|
         addr.ipv6? && !(addr.ipv6_loopback? || addr.ipv6_multicast? || addr.ipv6_linklocal?)
+      end
+    end
+
+    def preference_settings
+      %w[remote_execution_connect_by_ip_prefer_ipv6 discovery_prefer_ipv6].each do |setting|
+        data_field("setting_#{setting}") do
+          value = sql_setting(setting)
+          value.nil? ? false : YAML.safe_load(value)
+        end
       end
     end
   end
