@@ -51,63 +51,27 @@ module Checks
       end
 
       def library_container_repositories
-        query =
-          query(
-            <<-SQL
-              SELECT count(*) as container_count FROM "katello_root_repositories" WHERE "katello_root_repositories"."content_type" = 'docker'
-            SQL
-          )
-        query.first['container_count'].to_i
+        sql_count("katello_root_repositories WHERE content_type = 'docker'")
       end
 
       def library_ostree_repositories
-        query =
-          query(
-            <<-SQL
-              SELECT count(*) as ostree_count FROM "katello_root_repositories" WHERE "katello_root_repositories"."content_type" = 'ostree'
-            SQL
-          )
-        query.first['ostree_count'].to_i
+        sql_count("katello_root_repositories WHERE content_type = 'ostree'")
       end
 
       def library_ansible_collection_repositories
-        query =
-          query(
-            <<-SQL
-              SELECT count(*) as ansible_collection_count FROM "katello_root_repositories" WHERE "katello_root_repositories"."content_type" = 'ansible_collection'
-            SQL
-          )
-        query.first['ansible_collection_count'].to_i
+        sql_count("katello_root_repositories WHERE content_type = 'ansible_collection'")
       end
 
       def library_file_repositories
-        query =
-          query(
-            <<-SQL
-              SELECT count(*) as file_count FROM "katello_root_repositories" WHERE "katello_root_repositories"."content_type" = 'file'
-            SQL
-          )
-        query.first['file_count'].to_i
+        sql_count("katello_root_repositories WHERE content_type = 'file'")
       end
 
       def library_python_repositories
-        query =
-          query(
-            <<-SQL
-              SELECT count(*) as python_count FROM "katello_root_repositories" WHERE "katello_root_repositories"."content_type" = 'python'
-            SQL
-          )
-        query.first['python_count'].to_i
+        sql_count("katello_root_repositories WHERE content_type = 'python'")
       end
 
       def library_debian_repositories
-        query =
-          query(
-            <<-SQL
-              SELECT count(*) as debian_count FROM "katello_root_repositories" WHERE "katello_root_repositories"."content_type" = 'deb'
-            SQL
-          )
-        query.first['debian_count'].to_i
+        sql_count("katello_root_repositories WHERE content_type = 'deb'")
       end
     end
   end
