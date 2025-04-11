@@ -7,6 +7,7 @@ module Reports
     def run
       merge_data('hosts_by_type_count') { hosts_by_type_count }
       merge_data('hosts_by_os_count') { hosts_by_os_count }
+      merge_data('hosts_by_family_count') { hosts_by_family_count}
       merge_data('facts_by_type') { facts_by_type }
       merge_data('audits') { audits }
       merge_data('parameters_count') { parameters }
@@ -28,6 +29,17 @@ module Reports
         SQL
       ).
         to_h { |row| [row['os_name'], row['hosts_count'].to_i] }
+    end
+
+    def hosts_by_family_count
+      query(
+        <<-SQL
+            select max(operatingsystems.type) as os_family, count(*) as hosts_count
+            from hosts inner join operatingsystems on operatingsystem_id = operatingsystems.id
+            group by operatingsystem_id
+        SQL
+      ).
+        to_h { |row| [row['os_family'], row['hosts_count'].to_i] }
     end
 
     # Facts usage
