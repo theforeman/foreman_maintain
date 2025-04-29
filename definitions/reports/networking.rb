@@ -18,9 +18,9 @@ module Reports
     # How many ipv4 subnets are defined in Foreman?
     # How many ipv6 subnets are defined in Foreman?
     def subnet_counts_by_type
-      %w[ipv4 ipv6].each do |type|
-        data_field("subnet_#{type}_count") do
-          sql_count("subnets where type = 'Subnet::Ipv#{type}'")
+      %w[Ipv4 Ipv6].each do |type|
+        data_field("subnet_#{type.downcase}_count") do
+          sql_count("subnets where type = 'Subnet::#{type}'")
         end
       end
     end
