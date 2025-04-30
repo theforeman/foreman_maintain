@@ -34,8 +34,7 @@ module Reports
         'dualstack': 'nics.ip IS NOT NULL AND nics.ip6 IS NOT NULL' }.each do |kind, condition|
         query = <<~SQL
           hosts
-          INNER JOIN nics on nics.host_id = hosts.id
-          WHERE #{condition}
+          WHERE id IN (SELECT host_id FROM nics WHERE #{condition})
         SQL
         data_field("hosts_with_#{kind}_interface_count") { sql_count(query) }
       end
