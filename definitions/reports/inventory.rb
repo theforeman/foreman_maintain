@@ -7,7 +7,7 @@ module Reports
     def run
       merge_data('hosts_by_type_count') { hosts_by_type_count }
       merge_data('hosts_by_os_count') { hosts_by_os_count }
-      merge_data('hosts_by_family_count') { hosts_by_family_count}
+      merge_data('hosts_by_family_count') { hosts_by_family_count }
       merge_data('facts_by_type') { facts_by_type }
       merge_data('audits') { audits }
       merge_data('parameters_count') { parameters }
