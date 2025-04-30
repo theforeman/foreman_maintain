@@ -34,7 +34,7 @@ module ForemanMaintain
       option '--input', 'FILE', 'Input the report from FILE'
       option '--output', 'FILE', 'Output the condense report into FILE'
       option '--max-age', 'HOURS', 'Max age of the report in hours'
-      subcommand 'condense', 'Condense the report' do
+      subcommand 'condense', 'Generate a JSON formatted report with condensed data from the original report.' do
         def execute
           data = if fresh_enough?(@input, @max_age)
                    YAML.load_file(@input)
