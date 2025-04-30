@@ -48,7 +48,9 @@ module ForemanMaintain
         end
 
         def condense_report(data)
-          result = data.slice('advisor_on_prem_remediations', 'rhel_ai_workload_host_count')
+          result = {}
+          result['advisor_on_prem_remediations'] = data['advisor_on_prem_remediations'] || 0
+          result['rhel_ai_workload_host_count'] = data['rhel_ai_workload_host_count'] || 0
           result.merge!(aggregate_host_count(data))
           result.merge!(aggregate_image_mode_host_count(data))
           result.merge!(aggregate_networking_metrics(data))
@@ -61,9 +63,11 @@ module ForemanMaintain
         # - Other hosts
         def aggregate_host_count(data)
           result = {}
-          result['host_rhel_count'] = data['hosts_by_os_count|RedHat']
-          result['host_redhat_count'] = data['hosts_by_family_count|Redhat'] - data['hosts_by_os_count|RedHat']
-          result['host_other_count'] = data.select { |k, _| k.start_with?('hosts_by_os_count') }.values.sum - result['host_rhel_count'] - result['host_redhat_count']
+          rhel_count = data['hosts_by_os_count|RedHat'] || 0
+          rh_count = data['hosts_by_family_count|Redhat'] || 0
+          result['host_rhel_count'] = rhel_count
+          result['host_redhat_count'] = rh_count - rhel_count
+          result['host_other_count'] = data.select { |k, _| k.start_with?('hosts_by_os_count') }.values.sum - rhel_count - rh_count
           result
         end
 
