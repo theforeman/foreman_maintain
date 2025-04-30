@@ -49,7 +49,7 @@ module ForemanMaintain
 
         def condense_report(data)
           result = {}
-          result['advisor_on_prem_remediations'] = data['advisor_on_prem_remediations'] || 0
+          result['advisor_on_prem_remediations_count'] = data['advisor_on_prem_remediations_count'] || 0
           result['rhel_ai_workload_host_count'] = data['rhel_ai_workload_host_count'] || 0
           result.merge!(aggregate_host_count(data))
           result.merge!(aggregate_image_mode_host_count(data))
