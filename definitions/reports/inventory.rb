@@ -24,7 +24,7 @@ module Reports
         <<-SQL
             select max(operatingsystems.name) as os_name, count(*) as hosts_count
             from hosts inner join operatingsystems on operatingsystem_id = operatingsystems.id
-            group by operatingsystem_id
+            group by operatingsystems.name
         SQL
       ).
         to_h { |row| [row['os_name'], row['hosts_count'].to_i] }
