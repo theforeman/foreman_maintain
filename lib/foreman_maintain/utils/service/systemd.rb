@@ -50,12 +50,12 @@ module ForemanMaintain::Utils
       end
 
       def exist?
-        ['enabled', 'disabled'].include?(service_enabled_status)
+        ['enabled', 'disabled', 'generated'].include?(service_enabled_status)
       end
 
       def enabled?
         if @sys.systemd_installed?
-          service_enabled_status == 'enabled'
+          ['enabled', 'generated'].include?(service_enabled_status)
         end
       end
 
