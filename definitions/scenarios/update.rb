@@ -68,6 +68,7 @@ module Scenarios::Update
           :assumeyes => true,
           :download_only => true
         ),
+        Procedures::Iop::Update,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
         Procedures::SyncPlans::Disable
