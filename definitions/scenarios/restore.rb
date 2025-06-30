@@ -52,6 +52,7 @@ module ForemanMaintain::Scenarios
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
+    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
     def restore_sql_dumps(backup)
       if feature(:instance).postgresql_local?
         add_step(Procedures::Service::Start.new(:only => ['postgresql']))
@@ -62,6 +63,15 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:foreman_dump][:present]
         add_steps_with_context(Procedures::Restore::ForemanDump)
       end
+      if backup.file_map[:iop_inventory_dump][:present]
+        add_steps_with_context(Procedures::Restore::IopInventoryDump)
+      end
+      if backup.file_map[:iop_vmaas_dump][:present]
+        add_steps_with_context(Procedures::Restore::IopVmaasDump)
+      end
+      if backup.file_map[:iop_vulnerability_dump][:present]
+        add_steps_with_context(Procedures::Restore::IopVulnerabilityDump)
+      end
       if backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::PulpcoreDump)
       end
@@ -69,6 +79,7 @@ module ForemanMaintain::Scenarios
         add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
     end
+    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
     def set_context_mapping
       context.map(:backup_dir,
@@ -81,6 +92,9 @@ module ForemanMaintain::Scenarios
         Procedures::Restore::DropDatabases => :backup_dir,
         Procedures::Restore::CandlepinDump => :backup_dir,
         Procedures::Restore::ForemanDump => :backup_dir,
+        Procedures::Restore::IopInventoryDump => :backup_dir,
+        Procedures::Restore::IopVmaasDump => :backup_dir,
+        Procedures::Restore::IopVulnerabilityDump => :backup_dir,
         Procedures::Restore::PulpcoreDump => :backup_dir,
         Procedures::Restore::ExtractFiles => :backup_dir)
     end
