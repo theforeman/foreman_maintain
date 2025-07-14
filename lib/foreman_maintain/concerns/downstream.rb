@@ -2,6 +2,7 @@ module ForemanMaintain
   module Concerns
     module Downstream
       SATELLITE_MAINTAIN_CONFIG = '/usr/share/satellite-maintain/config.yml'.freeze
+      REDHAT_REPO_FILE = '/etc/yum.repos.d/redhat.repo'.freeze
 
       def current_version
         raise NotImplementedError
@@ -55,6 +56,10 @@ module ForemanMaintain
       def satellite_upgrade_allowed?
         current_minor_version == satellite_maintain_config['previous_satellite_version'] ||
           ForemanMaintain.upgrade_in_progress == satellite_maintain_target_version
+      end
+
+      def connected?
+        File.exist?(REDHAT_REPO_FILE) && File.new(REDHAT_REPO_FILE).read.include?('https://cdn.redhat.com')
       end
 
       private
