@@ -36,6 +36,7 @@ module Scenarios::Satellite
         Checks::CheckHotfixInstalled,
         Checks::CheckTmout,
         Checks::CheckUpstreamRepository,
+        Checks::Container::PodmanLogin, # if downstream, connected, containers used
         Checks::Disk::AvailableSpace,
         Checks::Disk::AvailableSpaceCandlepin, # if candlepin
         Checks::Disk::PostgresqlMountpoint,

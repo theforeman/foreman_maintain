@@ -35,6 +35,7 @@ module Scenarios::Update
         Checks::CheckTmout,
         Checks::CheckIpv6Disable,
         Checks::CheckUpstreamRepository,
+        Checks::Container::PodmanLogin, # if downstream, connected, containers used
         Checks::Disk::AvailableSpace,
         Checks::Disk::AvailableSpaceCandlepin, # if candlepin
         Checks::Foreman::ValidateExternalDbVersion, # if external database
