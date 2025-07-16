@@ -20,8 +20,9 @@ module ForemanMaintain
         end
       end
 
-      option '--output', 'FILE', 'Output the generate report into FILE'
       subcommand 'generate', 'Generates the usage reports' do
+        option '--output', 'FILE', 'Output the generate report into FILE'
+
         def execute
           report_data = generate_report
           yaml = report_data.to_yaml
@@ -31,11 +32,12 @@ module ForemanMaintain
         end
       end
 
-      option '--input', 'FILE', 'Input the report from FILE'
-      option '--output', 'FILE', 'Output the condense report into FILE'
-      option '--max-age', 'HOURS', 'Max age of the report in hours'
       subcommand 'condense',
         'Generate a JSON formatted report with condensed data from the original report.' do
+        option '--input', 'FILE', 'Input the report from FILE'
+        option '--output', 'FILE', 'Output the condense report into FILE'
+        option '--max-age', 'HOURS', 'Max age of the report in hours'
+
         def execute
           data = if fresh_enough?(@input, @max_age)
                    YAML.load_file(@input)
