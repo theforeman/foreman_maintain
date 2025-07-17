@@ -97,6 +97,7 @@ module Scenarios::Satellite
           :assumeyes => true,
           :download_only => true
         ),
+        Procedures::Iop::Update,
         Procedures::Service::Stop,
         Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false),
       )
