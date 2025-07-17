@@ -39,7 +39,6 @@ class Features::Iop < ForemanMaintain::Feature
       system_service('iop-service-vuln-listener', 20),
       system_service('iop-service-vuln-manager', 20),
       system_service('iop-service-vuln-taskomatic', 20),
-      system_service('iop-service-vuln-vmaas-sync', 20),
     ]
   end
   # rubocop:enable Metrics/MethodLength
