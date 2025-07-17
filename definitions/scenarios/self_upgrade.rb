@@ -74,8 +74,6 @@ module ForemanMaintain::Scenarios
         )
       end
 
-      ForemanMaintain.enable_maintenance_module
-
       add_step(Procedures::Packages::Update.new(packages: pkgs_to_update, assumeyes: true,
         enabled_repos: req_repos_to_update_pkgs))
     end
