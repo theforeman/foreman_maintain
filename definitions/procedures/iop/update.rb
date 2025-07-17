@@ -1,10 +1,10 @@
 module Procedures::Iop
   class Update < ForemanMaintain::Procedure
     metadata do
-      description 'Update Advisor engine'
+      description 'Update IoP containers'
 
       confine do
-        feature(:iop_advisor_engine)
+        feature(:iop)
       end
     end
 
@@ -13,7 +13,7 @@ module Procedures::Iop
     end
 
     def pull_image
-      execute_with_status("podman pull #{feature(:iop_advisor_engine).container_image}")
+      execute_with_status("podman pull #{feature(:iop).container_image}")
     end
   end
 end
