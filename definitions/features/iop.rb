@@ -8,6 +8,22 @@ class Features::Iop < ForemanMaintain::Feature
     end
   end
 
+  CONTAINER_NAMES =
+    [
+      'insights-engine',
+      'gateway',
+      'host-inventory',
+      'ingress',
+      'puptoo',
+      'yuptoo',
+      'advisor-backend',
+      'advisor-frontend',
+      'remediations',
+      'vmaas',
+      'vulnerability-engine',
+      'vulnerability-frontend',
+    ].freeze
+
   def config_files
     [
       '/var/lib/containers/storage/volumes/iop-core-kafka-data',
@@ -47,15 +63,15 @@ class Features::Iop < ForemanMaintain::Feature
     if feature(:instance).downstream
       'registry.redhat.io/satellite'
     else
-      'ghcr.io/redhatinsights'
+      'quay.io/iop'
     end
   end
 
-  def container_name
+  def container_names
     if feature(:instance).downstream
-      'iop-advisor-engine-rhel9'
+      CONTAINER_NAMES.map { |container_name| "#{container_name}-rhel9" }
     else
-      'iop-advisor-engine'
+      CONTAINER_NAMES
     end
   end
 
@@ -67,7 +83,9 @@ class Features::Iop < ForemanMaintain::Feature
     end
   end
 
-  def container_image
-    "#{container_base}/#{container_name}:#{container_version}"
+  def container_images
+    container_names.map do |container_name|
+      "#{container_base}/#{container_name}:#{container_version}"
+    end
   end
 end

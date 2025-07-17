@@ -9,11 +9,13 @@ module Procedures::Iop
     end
 
     def run
-      pull_image
+      pull_images
     end
 
-    def pull_image
-      execute_with_status("podman pull #{feature(:iop).container_image}")
+    def pull_images
+      feature(:iop).container_images.each do |container_image|
+        execute_with_status("podman pull #{container_image}")
+      end
     end
   end
 end
