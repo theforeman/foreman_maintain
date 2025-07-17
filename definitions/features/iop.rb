@@ -43,11 +43,31 @@ class Features::Iop < ForemanMaintain::Feature
   end
   # rubocop:enable Metrics/MethodLength
 
-  def container_image
+  def container_base
     if feature(:instance).downstream
-      'registry.redhat.io/satellite/iop-advisor-engine-rhel9:6.17'
+      'registry.redhat.io/satellite'
     else
-      'ghcr.io/redhatinsights/iop-advisor-engine:latest'
+      'ghcr.io/redhatinsights'
     end
+  end
+
+  def container_name
+    if feature(:instance).downstream
+      'iop-advisor-engine-rhel9'
+    else
+      'iop-advisor-engine'
+    end
+  end
+
+  def container_version
+    if feature(:instance).downstream
+      '6.17'
+    else
+      'latest'
+    end
+  end
+
+  def container_image
+    "#{container_base}/#{container_name}:#{container_version}"
   end
 end
