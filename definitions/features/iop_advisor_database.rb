@@ -24,7 +24,7 @@ class Features::IopAdvisorDatabase < ForemanMaintain::Feature
   private
 
   def load_configuration
-    podman_command = "podman exec iop-service-advisor-api bash -c 'env |grep DB_'"
+    podman_command = "podman exec iop-service-advisor-backend-api bash -c 'env |grep DB_'"
     podman_result = execute!(podman_command, merge_stderr: false).lines.map do |l|
       l.strip.split('=')
     end.to_h
