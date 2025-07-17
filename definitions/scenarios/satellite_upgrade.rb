@@ -125,6 +125,7 @@ module Scenarios::Satellite
         Procedures::Crond::Start,
         Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
+        Procedures::Iop::ImagePrune,
       )
     end
   end
