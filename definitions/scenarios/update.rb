@@ -106,7 +106,8 @@ module Scenarios::Update
         Procedures::Service::Start,
         Procedures::Crond::Start,
         Procedures::SyncPlans::Enable,
-        Procedures::MaintenanceMode::DisableMaintenanceMode
+        Procedures::MaintenanceMode::DisableMaintenanceMode,
+        Procedures::Iop::ImagePrune,
       )
     end
   end
