@@ -70,7 +70,7 @@ module ForemanMaintain
           rhel_count = data['hosts_by_os_count|RedHat'] || 0
           rh_count = data['hosts_by_family_count|Redhat'] || 0
           result['host_rhel_count'] = rhel_count
-          result['host_redhat_count_without_rhel'] = rh_count - rhel_count
+          result['host_redhat_without_rhel_count'] = rh_count - rhel_count
           result['host_other_count'] = data.select do |k, _|
             k.start_with?('hosts_by_os_count')
           end.values.sum - rh_count
