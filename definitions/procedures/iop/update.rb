@@ -4,7 +4,7 @@ module Procedures::Iop
       description 'Update IoP containers'
 
       confine do
-        feature(:iop)
+        feature(:iop) && (feature(:satellite)&.connected? || !feature(:satellite))
       end
     end
 
