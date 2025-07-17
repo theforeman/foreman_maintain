@@ -54,10 +54,6 @@ module ForemanMaintain
         File.exist?('/etc/redhat-release')
       end
 
-      def el8?
-        el_major_version == 8
-      end
-
       def debian?
         os_id == 'debian'
       end

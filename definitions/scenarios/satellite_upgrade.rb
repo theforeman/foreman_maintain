@@ -92,12 +92,6 @@ module Scenarios::Satellite
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => target_version))
-      if el8?
-        modules_to_switch = ['postgresql:13']
-        add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))
-        modules_to_enable = ["#{feature(:instance).downstream.module_name}:#{el_short_name}"]
-        add_step(Procedures::Packages::EnableModules.new(:module_names => modules_to_enable))
-      end
       add_steps(
         Procedures::Packages::Update.new(
           :assumeyes => true,

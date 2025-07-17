@@ -31,37 +31,6 @@ describe "update scenarios" do
         Scenarios::Update::PreUpdateCheck.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PreUpdateCheck.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Checks::Foreman::FactsNames,
-          Checks::ForemanTasks::NotPaused,
-          Checks::ServerPing,
-          Checks::ServicesUp,
-          Checks::SystemRegistration,
-          Checks::CheckHotfixInstalled,
-          Checks::CheckTmout,
-          Checks::CheckUpstreamRepository,
-          Checks::Disk::AvailableSpace,
-          Checks::Disk::AvailableSpaceCandlepin,
-          Checks::Foreman::CheckCorruptedRoles,
-          Checks::Foreman::CheckDuplicatePermissions,
-          Checks::Foreman::TuningRequirements,
-          Checks::ForemanTasks::Invalid::CheckOld,
-          Checks::ForemanTasks::Invalid::CheckPendingState,
-          Checks::ForemanTasks::Invalid::CheckPlanningState,
-          Checks::ForemanTasks::NotRunning,
-          Checks::NonRhPackages,
-          Checks::PackageManager::Dnf::ValidateDnfConfig,
-          Checks::Repositories::CheckNonRhRepository,
-          Checks::CheckIpv6Disable,
-          Checks::Repositories::Validate,
-          Checks::Pulpcore::NoRunningTasks,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PreUpdateCheck.any_instance.stubs(:el_major_version).returns(9)
 
@@ -99,18 +68,6 @@ describe "update scenarios" do
         Scenarios::Update::PreMigrations.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PreMigrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::Packages::Update,
-          Procedures::MaintenanceMode::EnableMaintenanceMode,
-          Procedures::Crond::Stop,
-          Procedures::SyncPlans::Disable,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PreMigrations.any_instance.stubs(:el_major_version).returns(9)
 
@@ -127,18 +84,6 @@ describe "update scenarios" do
     describe Scenarios::Update::Migrations do
       let(:scenario) do
         Scenarios::Update::Migrations.new
-      end
-
-      it 'composes all steps on EL8' do
-        Scenarios::Update::Migrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::Service::Stop,
-          Procedures::Packages::Update,
-          Procedures::Installer::Run,
-          Procedures::Installer::UpgradeRakeTask,
-        )
       end
 
       it 'composes all steps on EL9' do
@@ -159,19 +104,6 @@ describe "update scenarios" do
         Scenarios::Update::PostMigrations.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PostMigrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::RefreshFeatures,
-          Procedures::Service::Start,
-          Procedures::Crond::Start,
-          Procedures::SyncPlans::Enable,
-          Procedures::MaintenanceMode::DisableMaintenanceMode,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PostMigrations.any_instance.stubs(:el_major_version).returns(9)
 
@@ -189,20 +121,6 @@ describe "update scenarios" do
     describe Scenarios::Update::PostUpdateChecks do
       let(:scenario) do
         Scenarios::Update::PostUpdateChecks.new
-      end
-
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PostUpdateChecks.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Checks::Foreman::FactsNames,
-          Checks::ForemanTasks::NotPaused,
-          Checks::ServerPing,
-          Checks::ServicesUp,
-          Checks::SystemRegistration,
-          Procedures::Packages::CheckForReboot,
-        )
       end
 
       it 'composes all steps on EL9' do
@@ -231,37 +149,6 @@ describe "update scenarios" do
         Scenarios::Update::PreUpdateCheck.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PreUpdateCheck.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Checks::Foreman::FactsNames,
-          Checks::ForemanTasks::NotPaused,
-          Checks::ServerPing,
-          Checks::ServicesUp,
-          Checks::SystemRegistration,
-          Checks::CheckHotfixInstalled,
-          Checks::CheckTmout,
-          Checks::CheckUpstreamRepository,
-          Checks::Disk::AvailableSpace,
-          Checks::Disk::AvailableSpaceCandlepin,
-          Checks::Foreman::CheckCorruptedRoles,
-          Checks::Foreman::CheckDuplicatePermissions,
-          Checks::Foreman::TuningRequirements,
-          Checks::ForemanTasks::Invalid::CheckOld,
-          Checks::ForemanTasks::Invalid::CheckPendingState,
-          Checks::ForemanTasks::Invalid::CheckPlanningState,
-          Checks::ForemanTasks::NotRunning,
-          Checks::NonRhPackages,
-          Checks::PackageManager::Dnf::ValidateDnfConfig,
-          Checks::Repositories::CheckNonRhRepository,
-          Checks::CheckIpv6Disable,
-          Checks::Repositories::Validate,
-          Checks::Pulpcore::NoRunningTasks,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PreUpdateCheck.any_instance.stubs(:el_major_version).returns(9)
 
@@ -299,18 +186,6 @@ describe "update scenarios" do
         Scenarios::Update::PreMigrations.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PreMigrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::Packages::Update,
-          Procedures::MaintenanceMode::EnableMaintenanceMode,
-          Procedures::Crond::Stop,
-          Procedures::SyncPlans::Disable,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PreMigrations.any_instance.stubs(:el_major_version).returns(9)
 
@@ -327,18 +202,6 @@ describe "update scenarios" do
     describe Scenarios::Update::Migrations do
       let(:scenario) do
         Scenarios::Update::Migrations.new
-      end
-
-      it 'composes all steps on EL8' do
-        Scenarios::Update::Migrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::Service::Stop,
-          Procedures::Packages::Update,
-          Procedures::Installer::Run,
-          Procedures::Installer::UpgradeRakeTask,
-        )
       end
 
       it 'composes all steps on EL9' do
@@ -359,19 +222,6 @@ describe "update scenarios" do
         Scenarios::Update::PostMigrations.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PostMigrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::RefreshFeatures,
-          Procedures::Service::Start,
-          Procedures::Crond::Start,
-          Procedures::SyncPlans::Enable,
-          Procedures::MaintenanceMode::DisableMaintenanceMode,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PostMigrations.any_instance.stubs(:el_major_version).returns(9)
 
@@ -389,20 +239,6 @@ describe "update scenarios" do
     describe Scenarios::Update::PostUpdateChecks do
       let(:scenario) do
         Scenarios::Update::PostUpdateChecks.new
-      end
-
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PostUpdateChecks.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Checks::Foreman::FactsNames,
-          Checks::ForemanTasks::NotPaused,
-          Checks::ServerPing,
-          Checks::ServicesUp,
-          Checks::SystemRegistration,
-          Procedures::Packages::CheckForReboot,
-        )
       end
 
       it 'composes all steps on EL9' do
@@ -431,37 +267,6 @@ describe "update scenarios" do
         Scenarios::Update::PreUpdateCheck.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PreUpdateCheck.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Checks::Foreman::FactsNames,
-          Checks::ForemanTasks::NotPaused,
-          Checks::ServerPing,
-          Checks::ServicesUp,
-          Checks::SystemRegistration,
-          Checks::CheckHotfixInstalled,
-          Checks::CheckTmout,
-          Checks::CheckUpstreamRepository,
-          Checks::Disk::AvailableSpace,
-          Checks::Disk::AvailableSpaceCandlepin,
-          Checks::Foreman::CheckCorruptedRoles,
-          Checks::Foreman::CheckDuplicatePermissions,
-          Checks::Foreman::TuningRequirements,
-          Checks::ForemanTasks::Invalid::CheckOld,
-          Checks::ForemanTasks::Invalid::CheckPendingState,
-          Checks::ForemanTasks::Invalid::CheckPlanningState,
-          Checks::ForemanTasks::NotRunning,
-          Checks::NonRhPackages,
-          Checks::PackageManager::Dnf::ValidateDnfConfig,
-          Checks::Repositories::CheckNonRhRepository,
-          Checks::CheckIpv6Disable,
-          Checks::Repositories::Validate,
-          Checks::Pulpcore::NoRunningTasks,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PreUpdateCheck.any_instance.stubs(:el_major_version).returns(9)
 
@@ -499,18 +304,6 @@ describe "update scenarios" do
         Scenarios::Update::PreMigrations.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PreMigrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::Packages::Update,
-          Procedures::MaintenanceMode::EnableMaintenanceMode,
-          Procedures::Crond::Stop,
-          Procedures::SyncPlans::Disable,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PreMigrations.any_instance.stubs(:el_major_version).returns(9)
 
@@ -527,18 +320,6 @@ describe "update scenarios" do
     describe Scenarios::Update::Migrations do
       let(:scenario) do
         Scenarios::Update::Migrations.new
-      end
-
-      it 'composes all steps on EL8' do
-        Scenarios::Update::Migrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::Service::Stop,
-          Procedures::Packages::Update,
-          Procedures::Installer::Run,
-          Procedures::Installer::UpgradeRakeTask,
-        )
       end
 
       it 'composes all steps on EL9' do
@@ -559,19 +340,6 @@ describe "update scenarios" do
         Scenarios::Update::PostMigrations.new
       end
 
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PostMigrations.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Procedures::RefreshFeatures,
-          Procedures::Service::Start,
-          Procedures::Crond::Start,
-          Procedures::SyncPlans::Enable,
-          Procedures::MaintenanceMode::DisableMaintenanceMode,
-        )
-      end
-
       it 'composes all steps on EL9' do
         Scenarios::Update::PostMigrations.any_instance.stubs(:el_major_version).returns(9)
 
@@ -589,20 +357,6 @@ describe "update scenarios" do
     describe Scenarios::Update::PostUpdateChecks do
       let(:scenario) do
         Scenarios::Update::PostUpdateChecks.new
-      end
-
-      it 'composes all steps on EL8' do
-        Scenarios::Update::PostUpdateChecks.any_instance.stubs(:el_major_version).returns(8)
-
-        assert_scenario_has_steps(
-          scenario,
-          Checks::Foreman::FactsNames,
-          Checks::ForemanTasks::NotPaused,
-          Checks::ServerPing,
-          Checks::ServicesUp,
-          Checks::SystemRegistration,
-          Procedures::Packages::CheckForReboot,
-        )
       end
 
       it 'composes all steps on EL9' do
