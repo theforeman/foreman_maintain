@@ -28,59 +28,6 @@ describe ForemanMaintain do
     end
   end
 
-  describe 'enable_maintenance_module' do
-    before do
-      subject.stubs(:el8?).returns(true)
-      subject.stubs(:el?).returns(true)
-    end
-
-    let(:package_manager) { ForemanMaintain::PackageManager::Dnf }
-
-    it 'should enable the maintenance module' do
-      package_manager.any_instance.stubs(:module_exists?).returns(true)
-      package_manager.any_instance.stubs(:module_enabled?).returns(false)
-
-      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').once
-
-      assert_output("\nEnabling satellite-maintenance:el8 module\n") do
-        subject.enable_maintenance_module
-      end
-    end
-
-    it 'should not enable the maintenance module if module does not exist' do
-      package_manager.any_instance.stubs(:module_exists?).returns(false)
-
-      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
-
-      assert_output('') do
-        subject.enable_maintenance_module
-      end
-    end
-
-    it 'should not enable the maintenance module if module is already enabled' do
-      package_manager.any_instance.stubs(:module_exists?).returns(true)
-      package_manager.any_instance.stubs(:module_enabled?).returns(true)
-
-      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
-
-      assert_output('') do
-        subject.enable_maintenance_module
-      end
-    end
-
-    it 'should not enable the maintenance module on el9' do
-      subject.stubs(:el8?).returns(false)
-      package_manager.any_instance.stubs(:module_exists?).returns(false)
-      package_manager.any_instance.stubs(:module_enabled?).returns(false)
-
-      package_manager.any_instance.expects(:enable_module).with('satellite-maintenance:el8').never
-
-      assert_output('') do
-        subject.enable_maintenance_module
-      end
-    end
-  end
-
   describe '#main_package_name' do
     it 'should return rubygem-foreman_maintain on EL systems' do
       subject.stubs(:el?).returns(true)
