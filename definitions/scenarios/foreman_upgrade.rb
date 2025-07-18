@@ -90,10 +90,6 @@ module Scenarios::Foreman
 
     def compose
       add_step(Procedures::Repositories::Setup.new(:version => 'nightly'))
-      if el8?
-        modules_to_switch = ['postgresql:13']
-        add_step(Procedures::Packages::SwitchModules.new(:module_names => modules_to_switch))
-      end
 
       add_step(Procedures::Packages::Update.new(
         :assumeyes => true,

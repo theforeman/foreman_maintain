@@ -191,7 +191,6 @@ module ForemanMaintain
 
       puts "Checking for new version of #{packages_to_update_str}..."
 
-      enable_maintenance_module
       package_manager = ForemanMaintain.package_manager
 
       if package_manager.update_available?(packages_to_update)
@@ -202,19 +201,6 @@ module ForemanMaintain
         exit 75
       end
       puts "Nothing to update, can't find new version of #{packages_to_update_str}."
-    end
-
-    def enable_maintenance_module
-      return unless el8?
-
-      maintenance_module = 'satellite-maintenance:el8'
-      package_manager = ForemanMaintain.package_manager
-
-      if package_manager.module_exists?(maintenance_module) &&
-         !package_manager.module_enabled?(maintenance_module)
-        puts "\nEnabling #{maintenance_module} module"
-        package_manager.enable_module(maintenance_module)
-      end
     end
 
     def main_package_name
