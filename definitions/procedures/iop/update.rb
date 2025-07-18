@@ -18,7 +18,7 @@ module Procedures::Iop
 
     def pull_images
       feature(:iop).container_images(@version).each do |container_image|
-        execute_with_status("podman pull #{container_image}")
+        execute!("podman pull #{container_image}")
       end
     end
   end

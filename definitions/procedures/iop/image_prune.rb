@@ -13,7 +13,7 @@ module Procedures::Iop
     end
 
     def prune_images
-      execute_with_status("podman image prune --force")
+      execute!("podman image prune --force")
     end
   end
 end
