@@ -103,6 +103,7 @@ module Scenarios::Satellite
           :assumeyes => true,
           :download_only => true
         ),
+        Procedures::Iop::Update.new(:version => target_version),
         Procedures::Service::Stop,
         Procedures::Packages::Update.new(:assumeyes => true, :clean_cache => false),
       )
@@ -124,6 +125,7 @@ module Scenarios::Satellite
         Procedures::Crond::Start,
         Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
+        Procedures::Iop::ImagePrune,
       )
     end
   end
