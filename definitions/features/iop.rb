@@ -75,15 +75,7 @@ class Features::Iop < ForemanMaintain::Feature
     end
   end
 
-  def container_version
-    if feature(:instance).downstream
-      '6.17'
-    else
-      'latest'
-    end
-  end
-
-  def container_images
+  def container_images(container_version)
     container_names.map do |container_name|
       "#{container_base}/#{container_name}:#{container_version}"
     end

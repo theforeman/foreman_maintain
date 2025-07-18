@@ -6,6 +6,10 @@ module Procedures::Iop
       confine do
         feature(:iop) && (feature(:satellite)&.connected? || !feature(:satellite))
       end
+
+      param :version,
+        'Version of the containers to pull',
+        :required => true
     end
 
     def run
@@ -13,7 +17,7 @@ module Procedures::Iop
     end
 
     def pull_images
-      feature(:iop).container_images.each do |container_image|
+      feature(:iop).container_images(@version).each do |container_image|
         execute_with_status("podman pull #{container_image}")
       end
     end
