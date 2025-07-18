@@ -69,7 +69,7 @@ module Scenarios::Update
           :assumeyes => true,
           :download_only => true
         ),
-        Procedures::Iop::Update,
+        Procedures::Iop::Update.new(:version => feature(:instance).current_major_version),
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
         Procedures::SyncPlans::Disable
