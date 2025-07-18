@@ -11,3 +11,7 @@ end
 if RUBY_VERSION >= '3.0'
   gem 'rexml' # rexml was a default gem in ruby < 3.0, and is a bundled gem in >= 3.0
 end
+
+if RUBY_VERSION >= '3.4'
+  gem 'csv' # csv was a default gem in ruby < 3.4, and is a bundled gem in >= 3.4
+end
