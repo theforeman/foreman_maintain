@@ -23,13 +23,19 @@ class Features::IopInventoryDatabase < ForemanMaintain::Feature
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def load_configuration
     podman_command = "podman exec iop-core-host-inventory bash -c 'env |grep INVENTORY_DB_'"
-    podman_result = execute!(podman_command, merge_stderr: false).lines.map do |l|
-      l.strip.split('=')
-    end.to_h
+    podman_result = begin
+      execute!(podman_command, merge_stderr: false).lines.map do |l|
+        l.strip.split('=')
+      end.to_h
+    rescue ForemanMaintain::Error::ExecutionError
+      {}
+    end
 
-    db_host = if podman_result['INVENTORY_DB_HOST'].start_with?('/var/run/postgresql')
+    db_host = if podman_result['INVENTORY_DB_HOST'].nil? ||
+                 podman_result['INVENTORY_DB_HOST'].start_with?('/var/run/postgresql')
                 'localhost'
               else
                 podman_result['INVENTORY_DB_HOST']
@@ -42,4 +48,5 @@ class Features::IopInventoryDatabase < ForemanMaintain::Feature
       'username' => podman_result['INVENTORY_DB_USER'],
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end
