@@ -42,13 +42,6 @@ class Features::Service < ForemanMaintain::Feature
     service_list
   end
 
-  def unit_file_available?(name)
-    cmd = "systemctl --no-legend --no-pager list-unit-files --type=service #{name} |\
-           grep --word-regexp --quiet #{name}"
-    exit_status, = execute_with_status(cmd)
-    exit_status == 0
-  end
-
   private
 
   def use_system_service(action, options, spinner)
