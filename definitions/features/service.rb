@@ -13,10 +13,7 @@ class Features::Service < ForemanMaintain::Feature
 
   def existing_services
     ForemanMaintain.available_features.flat_map(&:services).
-      sort.
-      inject([]) do |pool, service| # uniq(&:to_s) for ruby 1.8.7
-        (pool.last.nil? || !pool.last.matches?(service)) ? pool << service : pool
-      end.
+      sort.uniq(&:to_s).
       select(&:exist?)
   end
 
