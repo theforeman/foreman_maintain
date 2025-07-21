@@ -10,7 +10,7 @@ class Features::Iop < ForemanMaintain::Feature
 
   def config_files
     [
-      '/var/lib/kafka',
+      '/var/lib/containers/storage/volumes/iop-core-kafka-data',
       '/var/lib/vmaas',
     ]
   end
