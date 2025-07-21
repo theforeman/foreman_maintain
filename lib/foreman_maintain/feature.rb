@@ -25,6 +25,15 @@ module ForemanMaintain
       []
     end
 
+    # Override method with list of applicable timers for feature.
+    # Services have a number for priority in order to ensure
+    # they are started and stopped in the correct order.
+    # example:
+    # [ system_service('foo', 10), system_service('bar', 20) ]
+    def timers
+      []
+    end
+
     # Override to generate additional feature instances that can't be
     # autodetected directly
     def additional_features
