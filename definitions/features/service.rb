@@ -175,8 +175,4 @@ class Features::Service < ForemanMaintain::Feature
       action
     end
   end
-
-  def exclude_services_only(options)
-    existing_services - filtered_services(options)
-  end
 end
