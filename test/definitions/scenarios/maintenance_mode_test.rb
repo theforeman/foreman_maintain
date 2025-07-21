@@ -13,6 +13,7 @@ describe "maintenance mode scenarios" do
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
         Procedures::SyncPlans::Disable,
       )
     end
@@ -28,6 +29,7 @@ describe "maintenance mode scenarios" do
         scenario,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
         Procedures::SyncPlans::Enable,
       )
     end

@@ -71,6 +71,7 @@ module Scenarios::Update
         ),
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
         Procedures::SyncPlans::Disable
       )
     end
@@ -104,6 +105,7 @@ module Scenarios::Update
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
         Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode
       )
