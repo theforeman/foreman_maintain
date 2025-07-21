@@ -23,13 +23,19 @@ class Features::IopVmaasDatabase < ForemanMaintain::Feature
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def load_configuration
     podman_command = "podman exec iop-service-vmaas-reposcan bash -c 'env |grep POSTGRESQL_'"
-    podman_result = execute!(podman_command, merge_stderr: false).lines.map do |l|
-      l.strip.split('=')
-    end.to_h
+    podman_result = begin
+      execute!(podman_command, merge_stderr: false).lines.map do |l|
+        l.strip.split('=')
+      end.to_h
+    rescue ForemanMaintain::Error::ExecutionError
+      {}
+    end
 
-    db_host = if podman_result['POSTGRESQL_HOST'].start_with?('/var/run/postgresql')
+    db_host = if podman_result['POSTGRESQL_HOST'].nil? ||
+                 podman_result['POSTGRESQL_HOST'].start_with?('/var/run/postgresql')
                 'localhost'
               else
                 podman_result['POSTGRESQL_HOST']
@@ -42,4 +48,5 @@ class Features::IopVmaasDatabase < ForemanMaintain::Feature
       'username' => podman_result['POSTGRESQL_USER'],
     }
   end
+  # rubocop:enable Metrics/MethodLength
 end
