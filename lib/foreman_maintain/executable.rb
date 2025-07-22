@@ -139,7 +139,11 @@ module ForemanMaintain
       setup_execution_state(execution)
       unless skipped?
         if defined?(self.class.present?)
-          run if self.class.present?
+          if self.class.present?
+            run
+          else
+            skip
+          end
         else
           run
         end
