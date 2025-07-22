@@ -5,7 +5,7 @@ module Checks::Container
       confine do
         feature(:satellite)&.connected? && feature(:containers)
       end
-      description 'Check whether podman is logged in to registry'
+      description 'Check whether podman needs to be logged in to the registry'
       tags :pre_upgrade
     end
 
