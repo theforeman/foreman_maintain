@@ -72,6 +72,7 @@ module Scenarios::Update
         Procedures::Iop::Update.new(:version => feature(:instance).current_major_version),
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
         Procedures::SyncPlans::Disable
       )
     end
@@ -105,6 +106,7 @@ module Scenarios::Update
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
         Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
         Procedures::Iop::ImagePrune,

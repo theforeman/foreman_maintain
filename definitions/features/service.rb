@@ -13,10 +13,7 @@ class Features::Service < ForemanMaintain::Feature
 
   def existing_services
     ForemanMaintain.available_features.flat_map(&:services).
-      sort.
-      inject([]) do |pool, service| # uniq(&:to_s) for ruby 1.8.7
-        (pool.last.nil? || !pool.last.matches?(service)) ? pool << service : pool
-      end.
+      sort.uniq(&:to_s).
       select(&:exist?)
   end
 
@@ -43,13 +40,6 @@ class Features::Service < ForemanMaintain::Feature
       service_list.select! { |service| !service.respond_to?(:enabled?) || service.enabled? }
     end
     service_list
-  end
-
-  def unit_file_available?(name)
-    cmd = "systemctl --no-legend --no-pager list-unit-files --type=service #{name} |\
-           grep --word-regexp --quiet #{name}"
-    exit_status, = execute_with_status(cmd)
-    exit_status == 0
   end
 
   private
@@ -174,9 +164,5 @@ class Features::Service < ForemanMaintain::Feature
     else
       action
     end
-  end
-
-  def exclude_services_only(options)
-    existing_services - filtered_services(options)
   end
 end
