@@ -12,8 +12,9 @@ module ForemanMaintain::Utils
       def command(action)
         all = @options.fetch(:all, false)
         skip_enablement = @options.fetch(:skip_enablement, false)
-        if skip_enablement && %w[enable disable].include?(action)
-          return skip_enablement_message(action, @name)
+        if %w[enable disable].include?(action)
+          return skip_enablement_message(action, @name) if skip_enablement
+          return if generated?
         end
 
         cmd = "systemctl #{action} #{@name}"
@@ -57,6 +58,10 @@ module ForemanMaintain::Utils
         if @sys.systemd_installed?
           ['enabled', 'generated'].include?(service_enabled_status)
         end
+      end
+
+      def generated?
+        service_enabled_status == 'generated'
       end
 
       def matches?(service)
