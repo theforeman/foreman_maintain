@@ -24,6 +24,7 @@ describe "update scenarios" do
   context 'Satellite update' do
     before(:each) do
       assume_satellite_present
+      Features::Instance.any_instance.stubs(:current_version).returns('6.17')
     end
 
     describe Scenarios::Update::PreUpdateCheck do
@@ -142,6 +143,7 @@ describe "update scenarios" do
   context 'Foreman update' do
     before(:each) do
       assume_foreman_present
+      Features::Instance.any_instance.stubs(:current_version).returns('3.16')
     end
 
     describe Scenarios::Update::PreUpdateCheck do
@@ -260,6 +262,7 @@ describe "update scenarios" do
   context 'Katello update' do
     before(:each) do
       assume_katello_present
+      Features::Instance.any_instance.stubs(:current_version).returns('3.16')
     end
 
     describe Scenarios::Update::PreUpdateCheck do

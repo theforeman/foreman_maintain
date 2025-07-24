@@ -8,6 +8,22 @@ class Features::Iop < ForemanMaintain::Feature
     end
   end
 
+  CONTAINER_NAMES =
+    [
+      'insights-engine',
+      'gateway',
+      'host-inventory',
+      'ingress',
+      'puptoo',
+      'yuptoo',
+      'advisor-backend',
+      'advisor-frontend',
+      'remediations',
+      'vmaas',
+      'vulnerability-engine',
+      'vulnerability-frontend',
+    ].freeze
+
   def config_files
     [
       '/var/lib/containers/storage/volumes/iop-core-kafka-data',
@@ -42,4 +58,26 @@ class Features::Iop < ForemanMaintain::Feature
     ]
   end
   # rubocop:enable Metrics/MethodLength
+
+  def container_base
+    if feature(:instance).downstream
+      'registry.redhat.io/satellite'
+    else
+      'quay.io/iop'
+    end
+  end
+
+  def container_names
+    if feature(:instance).downstream
+      CONTAINER_NAMES.map { |container_name| "#{container_name}-rhel9" }
+    else
+      CONTAINER_NAMES
+    end
+  end
+
+  def container_images(container_version)
+    container_names.map do |container_name|
+      "#{container_base}/#{container_name}:#{container_version}"
+    end
+  end
 end
