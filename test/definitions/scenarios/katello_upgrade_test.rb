@@ -59,6 +59,7 @@ describe "katello upgrade scenarios" do
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
         Procedures::SyncPlans::Disable,
       )
     end
@@ -96,6 +97,7 @@ describe "katello upgrade scenarios" do
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
         Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
       )

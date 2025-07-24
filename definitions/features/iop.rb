@@ -42,4 +42,10 @@ class Features::Iop < ForemanMaintain::Feature
     ]
   end
   # rubocop:enable Metrics/MethodLength
+
+  def timers
+    [
+      system_service('iop-service-vuln-vmaas-sync.timer', 20),
+    ]
+  end
 end

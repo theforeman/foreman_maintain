@@ -45,6 +45,7 @@ describe "foreman upgrade scenarios" do
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
       )
     end
   end
@@ -82,6 +83,7 @@ describe "foreman upgrade scenarios" do
         Procedures::Service::Start,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
       )
     end
   end

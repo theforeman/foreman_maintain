@@ -50,6 +50,7 @@ describe "capsule upgrade scenarios" do
         scenario,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
       )
     end
   end
@@ -88,6 +89,7 @@ describe "capsule upgrade scenarios" do
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
       )
     end
