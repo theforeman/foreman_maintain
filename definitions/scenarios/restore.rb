@@ -48,7 +48,7 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Timer::Start)
     end
 
-    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity
     def restore_sql_dumps(backup)
       if feature(:instance).postgresql_local?
         add_step(Procedures::Service::Start.new(:only => ['postgresql']))

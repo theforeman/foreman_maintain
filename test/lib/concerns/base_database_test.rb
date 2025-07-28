@@ -37,14 +37,24 @@ module ForemanMaintain
         assert db.local?
       end
 
-      it 'fetches server version' do
+      it 'fetches server version remotely' do
+        db.expects(:local?).returns(false)
         db.expects(:ping!)
         db.expects(:execute!).with(
           'psql --tuples-only --no-align',
           stdin: 'SHOW server_version',
           env: expected_env
         ).returns('13.16')
-        db.expects(:localdb).returns(false)
+
+        assert db.db_version
+      end
+
+      it 'fetches server version locally' do
+        db.expects(:local?).returns(true)
+        db.expects(:ping!)
+        db.expects(:execute!).with(
+          "runuser - postgres -c 'psql --tuples-only --no-align -c \"SHOW server_version\"'"
+        ).returns('13.16')
 
         assert db.db_version
       end
@@ -81,7 +91,9 @@ module ForemanMaintain
       it 'pings db locally' do
         db.expects(:local?).returns(true)
         db.expects(:execute?).with(
-          "runuser - postgres -c 'psql -d fakedb -c \"SELECT 1 as ping\"'"
+          "runuser - postgres -c 'psql -d fakedb'",
+          stdin: 'SELECT 1 as ping',
+          env: nil
         ).returns(true)
 
         assert db.ping

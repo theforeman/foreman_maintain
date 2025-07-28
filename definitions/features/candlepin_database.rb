@@ -47,6 +47,10 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
       'driver_class' => full_config['jpa.config.hibernate.connection.driver_class'],
       'url' => url,
     }
+
+    # Build connection string for pg_dump (only used for local databases)
+    @configuration['connection_string'] = "postgres:///#{@configuration['database']}"
+    @configuration
   end
 
   def extend_with_db_options
