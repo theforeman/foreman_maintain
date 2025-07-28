@@ -32,7 +32,7 @@ class Features::ContainerGatewayDatabase < ForemanMaintain::Feature
     if connection_string
       uri = URI.parse(connection_string)
       @configuration['connection_string'] = connection_string
-      @configuration['database'] = uri.path[1..]
+      @configuration['database'] = uri.path.delete_prefix('/')
     end
     @configuration
   end

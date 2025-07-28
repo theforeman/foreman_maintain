@@ -69,14 +69,13 @@ module ForemanMaintain
 
       def ping
         if local?
-          execute?(
-            "runuser - postgres -c 'psql -d #{configuration['database']} -c \"SELECT 1 as ping\"'"
-          )
+          command = "runuser - postgres -c 'psql -d #{configuration['database']}'"
+          env = nil
         else
-          execute?('psql',
-            :stdin => 'SELECT 1 as ping',
-            :env => base_env)
+          command = 'psql'
+          env = base_env
         end
+        execute?(command, stdin: 'SELECT 1 as ping', env: env)
       end
 
       def dump_db(file)
@@ -143,7 +142,7 @@ module ForemanMaintain
 
         query = 'SHOW server_version'
         server_version_cmd = 'psql --tuples-only --no-align'
-        version_string = if localdb
+        version_string = if local?
                            execute!("runuser - postgres -c '#{server_version_cmd} -c \"#{query}\"'")
                          else
                            execute!(server_version_cmd, :stdin => query, :env => base_env)

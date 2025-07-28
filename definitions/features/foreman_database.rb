@@ -43,6 +43,9 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
 
     @configuration = config['production']
     @configuration['host'] ||= 'localhost'
+
+    # Build connection string for pg_dump (only used for local databases)
+    @configuration['connection_string'] = "postgres:///#{@configuration['database']}"
     @configuration
   end
 end

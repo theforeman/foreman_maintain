@@ -11,7 +11,7 @@ module Checks
       end
 
       def run
-        current_db_version = feature(:foreman_database).db_version(feature(:foreman_database).local?)
+        current_db_version = feature(:foreman_database).db_version
         fail!(db_upgrade_message(current_db_version)) if current_db_version.major < 13
       end
 
