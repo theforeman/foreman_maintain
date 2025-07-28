@@ -91,7 +91,7 @@ module ForemanMaintain
       end
 
       def restore_dump(file, localdb)
-        if local?
+        if localdb
           dump_cmd = "runuser - postgres -c 'pg_restore -C -d postgres #{file}'"
           execute!(dump_cmd)
         else
@@ -143,11 +143,11 @@ module ForemanMaintain
 
         query = 'SHOW server_version'
         server_version_cmd = 'psql --tuples-only --no-align'
-        if local?
-          version_string = execute!("runuser - postgres -c '#{server_version_cmd} -c \"#{query}\"'")
-        else
-          version_string = execute!(server_version_cmd, :stdin => query, :env => base_env)
-        end
+        version_string = if localdb
+                           execute!("runuser - postgres -c '#{server_version_cmd} -c \"#{query}\"'")
+                         else
+                           execute!(server_version_cmd, :stdin => query, :env => base_env)
+                         end
         version(version_string)
       end
 

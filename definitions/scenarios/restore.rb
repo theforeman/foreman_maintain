@@ -50,7 +50,6 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Installer::UpgradeRakeTask)
       add_step_with_context(Procedures::Crond::Start)
     end
-    # rubocop:enable Metrics/MethodLength
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
     def restore_sql_dumps(backup)
