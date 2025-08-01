@@ -50,9 +50,8 @@ module ForemanMaintain::Scenarios
       add_step_with_context(Procedures::Installer::UpgradeRakeTask)
       add_step_with_context(Procedures::Crond::Start)
     end
-    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
-    # rubocop:disable Metrics/MethodLength,Metrics/AbcSize,Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/CyclomaticComplexity
     def restore_sql_dumps(backup)
       if feature(:instance).postgresql_local?
         add_step(Procedures::Service::Start.new(:only => ['postgresql']))
@@ -84,6 +83,9 @@ module ForemanMaintain::Scenarios
       if backup.file_map[:pulpcore_dump][:present]
         add_steps_with_context(Procedures::Restore::PulpcoreDump)
       end
+      if backup.file_map[:container_gateway_dump][:present]
+        add_steps_with_context(Procedures::Restore::ContainerGatewayDump)
+      end
       if feature(:instance).postgresql_local?
         add_step(Procedures::Service::Stop.new(:only => ['postgresql']))
       end
@@ -107,6 +109,7 @@ module ForemanMaintain::Scenarios
         Procedures::Restore::IopVmaasDump => :backup_dir,
         Procedures::Restore::IopVulnerabilityDump => :backup_dir,
         Procedures::Restore::PulpcoreDump => :backup_dir,
+        Procedures::Restore::ContainerGatewayDump => :backup_dir,
         Procedures::Restore::ExtractFiles => :backup_dir)
     end
   end
