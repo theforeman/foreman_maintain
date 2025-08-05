@@ -26,6 +26,38 @@ module Reports
       if table_exists('config_groups')
         data_field('config_group_count') { sql_count('config_groups') }
       end
+
+      # Calculate maximum usergroup nesting level
+      data_field('usergroup_max_nesting_level') { usergroup_max_nesting_level }
+    end
+
+    private
+
+    def usergroup_max_nesting_level
+      # Use recursive CTE to find maximum nesting level of usergroups
+      cte_sql = <<~SQL
+        WITH RECURSIVE usergroup_hierarchy AS (
+          -- Base case: root usergroups (not members of any other usergroup)
+          SELECT id, 1 as level
+          FROM usergroups 
+          WHERE id NOT IN (
+            SELECT member_id 
+            FROM usergroup_members 
+            WHERE member_type = 'Usergroup'
+          )
+          
+          UNION ALL
+          
+          -- Recursive case: usergroups that are members of other usergroups
+          SELECT ug.id, uh.level + 1
+          FROM usergroups ug
+          INNER JOIN usergroup_members ugm ON ug.id = ugm.member_id
+          INNER JOIN usergroup_hierarchy uh ON ugm.usergroup_id = uh.id
+          WHERE ugm.member_type = 'Usergroup'
+        )
+      SQL
+      
+      sql_as_count('COALESCE(MAX(level) - 1, 0)', 'usergroup_hierarchy', cte: cte_sql)
     end
   end
 end
