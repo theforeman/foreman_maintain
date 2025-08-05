@@ -10,7 +10,7 @@ module Reports
       data_field('lab_features_enabled') do
         lab_features_setting = sql_setting('lab_features')
         return false if lab_features_setting.nil?
-        
+
         # Parse the YAML setting value and convert to boolean
         YAML.safe_load(lab_features_setting) == true
       end

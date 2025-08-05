@@ -9,12 +9,12 @@ module Reports
     def run
       data_field('disconnected_environment') do
         subscription_connection_setting = sql_setting('subscription_connection_enabled')
-        
+
         # If setting doesn't exist, assume connected (not disconnected)
         if subscription_connection_setting.nil?
           false
         else
-          # Parse the YAML setting value - disconnected when subscription_connection_enabled is false
+          # disconnected when subscription_connection_enabled is false
           YAML.safe_load(subscription_connection_setting) == false
         end
       end

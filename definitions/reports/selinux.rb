@@ -15,7 +15,7 @@ module Reports
     def selinux_enforced?
       # Check if getenforce command exists and SELinux is installed
       return false unless command_present?('getenforce')
-      
+
       # Execute getenforce command and check if SELinux is enforcing
       status = execute('getenforce').strip.downcase
       status == 'enforcing'

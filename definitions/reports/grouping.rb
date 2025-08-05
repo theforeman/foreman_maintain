@@ -4,6 +4,7 @@ module Reports
       description 'Check how resources are grouped'
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def run
       self.data = {}
       data_field('host_collections_count') { sql_count('katello_host_collections') }
@@ -27,14 +28,13 @@ module Reports
         data_field('config_group_count') { sql_count('config_groups') }
       end
 
-      # Calculate maximum usergroup nesting level
       data_field('usergroup_max_nesting_level') { usergroup_max_nesting_level }
 
-      # Calculate user group roles statistics
       usergroup_roles_stats = usergroup_roles_statistics
       data['user_group_roles_max_count'] = usergroup_roles_stats[:max_count]
       data['user_group_roles_min_count'] = usergroup_roles_stats[:min_count]
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     private
 
@@ -44,15 +44,15 @@ module Reports
         WITH RECURSIVE usergroup_hierarchy AS (
           -- Base case: root usergroups (not members of any other usergroup)
           SELECT id, 1 as level
-          FROM usergroups 
+          FROM usergroups#{' '}
           WHERE id NOT IN (
-            SELECT member_id 
-            FROM usergroup_members 
+            SELECT member_id#{' '}
+            FROM usergroup_members#{' '}
             WHERE member_type = 'Usergroup'
           )
-          
+        #{'  '}
           UNION ALL
-          
+        #{'  '}
           -- Recursive case: usergroups that are members of other usergroups
           SELECT ug.id, uh.level + 1
           FROM usergroups ug
@@ -61,7 +61,7 @@ module Reports
           WHERE ugm.member_type = 'Usergroup'
         )
       SQL
-      
+
       sql_as_count('COALESCE(MAX(level) - 1, 0)', 'usergroup_hierarchy', cte: cte_sql)
     end
 
@@ -73,7 +73,7 @@ module Reports
           FROM usergroups ug
           LEFT JOIN (
             SELECT owner_id, COUNT(*) as role_count
-            FROM user_roles 
+            FROM user_roles#{' '}
             WHERE owner_type = 'Usergroup'
             GROUP BY owner_id
           ) ur ON ug.id = ur.owner_id
