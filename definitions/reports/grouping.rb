@@ -29,6 +29,11 @@ module Reports
 
       # Calculate maximum usergroup nesting level
       data_field('usergroup_max_nesting_level') { usergroup_max_nesting_level }
+
+      # Calculate user group roles statistics
+      usergroup_roles_stats = usergroup_roles_statistics
+      data['user_group_roles_max_count'] = usergroup_roles_stats[:max_count]
+      data['user_group_roles_min_count'] = usergroup_roles_stats[:min_count]
     end
 
     private
@@ -58,6 +63,29 @@ module Reports
       SQL
       
       sql_as_count('COALESCE(MAX(level) - 1, 0)', 'usergroup_hierarchy', cte: cte_sql)
+    end
+
+    def usergroup_roles_statistics
+      # Query to get role counts per usergroup, including usergroups with 0 roles
+      roles_per_usergroup = query(
+        <<~SQL
+          SELECT ug.id, COALESCE(ur.role_count, 0) as role_count
+          FROM usergroups ug
+          LEFT JOIN (
+            SELECT owner_id, COUNT(*) as role_count
+            FROM user_roles 
+            WHERE owner_type = 'Usergroup'
+            GROUP BY owner_id
+          ) ur ON ug.id = ur.owner_id
+        SQL
+      )
+
+      if roles_per_usergroup.empty?
+        { max_count: 0, min_count: 0 }
+      else
+        role_counts = roles_per_usergroup.map { |row| row['role_count'].to_i }
+        { max_count: role_counts.max, min_count: role_counts.min }
+      end
     end
   end
 end
