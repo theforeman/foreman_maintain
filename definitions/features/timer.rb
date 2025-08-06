@@ -1,4 +1,7 @@
+require 'foreman_maintain/concerns/systemd'
+
 class Features::Timer < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::Systemd
   metadata do
     label :timer
   end
@@ -23,14 +26,6 @@ class Features::Timer < ForemanMaintain::Feature
     return timers unless options[:reverse]
 
     Hash[timers.sort_by { |k, _| k.to_i }.reverse]
-  end
-
-  def action_noun(action)
-    action_word_modified(action) + 'ing'
-  end
-
-  def action_past_tense(action)
-    action_word_modified(action) + 'ed'
   end
 
   def filter_disabled_timers!(action, timer_list)
@@ -84,28 +79,6 @@ class Features::Timer < ForemanMaintain::Feature
     timers_and_statuses.map! { |timer, status| [timer, status.value] }
   end
 
-  def format_status(output, exit_code, options)
-    status = ''
-    if !options[:failing] || exit_code > 0
-      if options[:brief]
-        status += format_brief_status(exit_code)
-      elsif !(output.nil? || output.empty?)
-        status += "\n" + output
-      end
-    end
-    status
-  end
-
-  def format_brief_status(exit_code)
-    result = (exit_code == 0) ? reporter.status_label(:success) : reporter.status_label(:fail)
-    padding = reporter.max_length - reporter.last_line.to_s.length - 30
-    "#{' ' * padding} #{result}"
-  end
-
-  def allowed_action?(action)
-    %w[start stop restart status enable disable].include?(action)
-  end
-
   def filter_timers(timer_list, options, action)
     if options[:only]&.any?
       timer_list = timer_list.select do |timer|
@@ -119,18 +92,5 @@ class Features::Timer < ForemanMaintain::Feature
 
     timer_list = filter_disabled_timers!(action, timer_list)
     timer_list.group_by(&:priority).to_h
-  end
-
-  def action_word_modified(action)
-    case action
-    when 'status'
-      'display'
-    when 'enable', 'disable'
-      action.chomp('e')
-    when 'stop'
-      action + 'p'
-    else
-      action
-    end
   end
 end
