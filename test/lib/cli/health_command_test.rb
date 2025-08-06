@@ -89,13 +89,13 @@ module ForemanMaintain
 
       it 'raises errors on empty arguments' do
         assert_cmd <<~OUTPUT, %w[--label]
-          ERROR: option '--label': value not specified
+          ERROR: option '--label': no value provided
 
           See: 'foreman-maintain health check --help'
         OUTPUT
 
         assert_cmd <<~OUTPUT, %w[--tags]
-          ERROR: option '--tags': value not specified
+          ERROR: option '--tags': no value provided
 
           See: 'foreman-maintain health check --help'
         OUTPUT
