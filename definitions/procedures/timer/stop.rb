@@ -4,6 +4,10 @@ module Procedures::Timer
       description 'Stop systemd timers'
 
       for_feature :timer
+      confine do
+        feature(:timer)&.existing_timers&.any?
+      end
+
       tags :pre_migrations
     end
 
