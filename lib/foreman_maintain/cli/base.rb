@@ -137,7 +137,7 @@ module ForemanMaintain
         option '--label', 'label',
           'Run only a specific check with a label. ' \
             '(Use "list" command to see available labels)' do |label|
-          raise ArgumentError, 'value not specified' if label.nil? || label.empty?
+          raise ArgumentError, 'no value provided' if label.nil? || label.empty?
           underscorize(label).to_sym
         end
       end
@@ -147,7 +147,7 @@ module ForemanMaintain
           'Run only those with all specific set of tags. ' \
             '(Use list-tags command to see available tags)',
           :multivalued => true) do |tags|
-          raise ArgumentError, 'value not specified' if tags.nil? || tags.empty?
+          raise ArgumentError, 'no value provided' if tags.nil? || tags.empty?
           tags.map { |tag| underscorize(tag).to_sym }
         end
       end
@@ -166,7 +166,7 @@ module ForemanMaintain
         if opts.include?('whitelist')
           option(['-w', '--whitelist'], 'whitelist',
             'Comma-separated list of labels of steps to be skipped') do |whitelist|
-            raise ArgumentError, 'value not specified' if whitelist.nil? || whitelist.empty?
+            raise ArgumentError, 'no value provided' if whitelist.nil? || whitelist.empty?
             whitelist.split(',').map(&:strip)
           end
         end
