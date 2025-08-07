@@ -1,4 +1,7 @@
+require 'foreman_maintain/concerns/systemd'
+
 class Features::Service < ForemanMaintain::Feature
+  include ForemanMaintain::Concerns::Systemd
   metadata do
     label :service
   end
@@ -13,10 +16,7 @@ class Features::Service < ForemanMaintain::Feature
 
   def existing_services
     ForemanMaintain.available_features.flat_map(&:services).
-      sort.
-      inject([]) do |pool, service| # uniq(&:to_s) for ruby 1.8.7
-        (pool.last.nil? || !pool.last.matches?(service)) ? pool << service : pool
-      end.
+      sort.uniq(&:to_s).
       select(&:exist?)
   end
 
@@ -30,26 +30,11 @@ class Features::Service < ForemanMaintain::Feature
     Hash[services.sort_by { |k, _| k.to_i }.reverse]
   end
 
-  def action_noun(action)
-    action_word_modified(action) + 'ing'
-  end
-
-  def action_past_tense(action)
-    action_word_modified(action) + 'ed'
-  end
-
   def filter_disabled_services!(action, service_list)
     if %w[start stop restart status].include?(action)
       service_list.select! { |service| !service.respond_to?(:enabled?) || service.enabled? }
     end
     service_list
-  end
-
-  def unit_file_available?(name)
-    cmd = "systemctl --no-legend --no-pager list-unit-files --type=service #{name} |\
-           grep --word-regexp --quiet #{name}"
-    exit_status, = execute_with_status(cmd)
-    exit_status == 0
   end
 
   private
@@ -96,28 +81,6 @@ class Features::Service < ForemanMaintain::Feature
     services_and_statuses.map! { |service, status| [service, status.value] }
   end
 
-  def format_status(output, exit_code, options)
-    status = ''
-    if !options[:failing] || exit_code > 0
-      if options[:brief]
-        status += format_brief_status(exit_code)
-      elsif !(output.nil? || output.empty?)
-        status += "\n" + output
-      end
-    end
-    status
-  end
-
-  def format_brief_status(exit_code)
-    result = (exit_code == 0) ? reporter.status_label(:success) : reporter.status_label(:fail)
-    padding = reporter.max_length - reporter.last_line.to_s.length - 30
-    "#{' ' * padding} #{result}"
-  end
-
-  def allowed_action?(action)
-    %w[start stop restart status enable disable].include?(action)
-  end
-
   def extend_service_list_with_sockets(service_list, options)
     return service_list unless options[:include_sockets]
 
@@ -161,22 +124,5 @@ class Features::Service < ForemanMaintain::Feature
 
     service_list.concat(unregistered_service_list)
     service_list
-  end
-
-  def action_word_modified(action)
-    case action
-    when 'status'
-      'display'
-    when 'enable', 'disable'
-      action.chomp('e')
-    when 'stop'
-      action + 'p'
-    else
-      action
-    end
-  end
-
-  def exclude_services_only(options)
-    existing_services - filtered_services(options)
   end
 end

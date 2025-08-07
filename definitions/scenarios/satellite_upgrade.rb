@@ -74,6 +74,7 @@ module Scenarios::Satellite
       add_steps(
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
+        Procedures::Timer::Stop,
         Procedures::SyncPlans::Disable,
       )
     end
@@ -117,6 +118,7 @@ module Scenarios::Satellite
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
         Procedures::Crond::Start,
+        Procedures::Timer::Start,
         Procedures::SyncPlans::Enable,
         Procedures::MaintenanceMode::DisableMaintenanceMode,
         Procedures::Iop::ImagePrune,
