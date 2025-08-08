@@ -44,15 +44,13 @@ module Reports
         WITH RECURSIVE usergroup_hierarchy AS (
           -- Base case: root usergroups (not members of any other usergroup)
           SELECT id, 1 as level
-          FROM usergroups#{' '}
+          FROM usergroups
           WHERE id NOT IN (
-            SELECT member_id#{' '}
-            FROM usergroup_members#{' '}
+            SELECT member_id
+            FROM usergroup_members
             WHERE member_type = 'Usergroup'
           )
-        #{'  '}
           UNION ALL
-        #{'  '}
           -- Recursive case: usergroups that are members of other usergroups
           SELECT ug.id, uh.level + 1
           FROM usergroups ug
@@ -73,7 +71,7 @@ module Reports
           FROM usergroups ug
           LEFT JOIN (
             SELECT owner_id, COUNT(*) as role_count
-            FROM user_roles#{' '}
+            FROM user_roles
             WHERE owner_type = 'Usergroup'
             GROUP BY owner_id
           ) ur ON ug.id = ur.owner_id

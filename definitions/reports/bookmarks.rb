@@ -35,12 +35,12 @@ module Reports
         <<~SQL
           bookmarks b
           WHERE (
-            b.owner_type = 'User'#{' '}
+            b.owner_type = 'User'
             #{public_condition}
             AND b.owner_id NOT IN (
-              SELECT u.id#{' '}
-              FROM users u#{' '}
-              INNER JOIN auth_sources a ON u.auth_source_id = a.id#{' '}
+              SELECT u.id
+              FROM users u
+              INNER JOIN auth_sources a ON u.auth_source_id = a.id
               WHERE a.type = 'AuthSourceHidden'
             )
           )
