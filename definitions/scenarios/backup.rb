@@ -18,8 +18,6 @@ module ForemanMaintain::Scenarios
 
     def compose
       check_valid_strategy
-      add_step_with_context(Checks::Backup::IncrementalParentType,
-        :online_backup => strategy == :online)
       add_step(Checks::ForemanTasks::NotRunning.new(:wait_for_tasks => wait_for_tasks?))
       add_step(Checks::Pulpcore::NoRunningTasks.new(:wait_for_tasks => wait_for_tasks?))
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
@@ -55,7 +53,6 @@ module ForemanMaintain::Scenarios
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
-        Checks::Backup::IncrementalParentType => :incremental_dir,
         Procedures::Backup::PrepareDirectory => :incremental_dir,
         Procedures::Backup::Metadata => :incremental_dir)
       context.map(:proxy_features,

@@ -29,7 +29,7 @@ module Scenarios
     end
 
     let(:checks) do
-      [Checks::Backup::IncrementalParentType] + task_checks
+      task_checks
     end
 
     describe 'offline' do

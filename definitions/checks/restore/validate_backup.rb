@@ -41,31 +41,26 @@ module Checks::Restore
 
     def required_katello_files(backup)
       backup_files_message(
-        backup.katello_online_files.join(', '),
-        backup.katello_offline_files.join(', ')
+        backup.katello_online_files.join(', ')
       )
     end
 
     def required_fpc_files(backup)
       backup_files_message(
-        backup.fpc_online_files.join(', '),
-        backup.fpc_offline_files.join(', ')
+        backup.fpc_online_files.join(', ')
       )
     end
 
     def required_foreman_files(backup)
       backup_files_message(
-        backup.foreman_online_files.join(', '),
-        backup.foreman_offline_files.join(', ')
+        backup.foreman_online_files.join(', ')
       )
     end
 
-    def backup_files_message(online_files, offline_files)
+    def backup_files_message(online_files)
       message = ''
-      message += 'An online or remote database backup directory contains: '
+      message += 'A backup directory contains: '
       message += "#{online_files}\n"
-      message += 'An offline backup directory contains: '
-      message += "#{offline_files}\n"
       message
     end
   end
