@@ -13,7 +13,7 @@ proxy_features:
 - puppetca
 - script
 incremental: false
-online: false
+online: true
 hostname: sat-6.example.com
 proxy_config:
   dhcp: false

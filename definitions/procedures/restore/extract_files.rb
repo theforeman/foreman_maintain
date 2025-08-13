@@ -15,10 +15,6 @@ module Procedures::Restore
           spinner.update('Extracting pulp data')
           extract_pulp_data(backup)
         end
-        if backup.file_map[:pgsql_data][:present]
-          spinner.update('Extracting pgsql data')
-          extract_pgsql_data(backup)
-        end
       end
     end
 
@@ -50,20 +46,6 @@ module Procedures::Restore
 
     def any_database
       feature(:foreman_database) || feature(:candlepin_database) || feature(:pulpcore_database)
-    end
-
-    def extract_pgsql_data(backup)
-      pgsql_data_tar = base_tar.merge(
-        :archive => backup.file_map[:pgsql_data][:path],
-        :gzip => true
-      )
-      feature(:tar).run(pgsql_data_tar)
-      del_data_dir_param if el?
-    end
-
-    def del_data_dir_param
-      # workaround for https://tickets.puppetlabs.com/browse/MODULES-11160
-      execute("sed -i '/data_directory/d' #{any_database.postgresql_conf}")
     end
   end
 end
