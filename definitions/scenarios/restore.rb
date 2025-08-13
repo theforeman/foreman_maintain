@@ -34,12 +34,13 @@ module ForemanMaintain::Scenarios
         add_steps_with_context(Procedures::Restore::InstallerReset)
       end
       add_step_with_context(Procedures::Service::Stop)
-      add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
 
       if backup.sql_needs_dump_restore?
         add_steps_with_context(Procedures::Restore::DropDatabases)
         restore_sql_dumps(backup)
       end
+
+      add_steps_with_context(Procedures::Restore::ExtractFiles) if backup.tar_backups_exist?
 
       add_step(Procedures::Installer::Run.new(:assumeyes => true))
       add_step_with_context(Procedures::Installer::UpgradeRakeTask)
