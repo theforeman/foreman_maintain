@@ -140,6 +140,40 @@ module ForemanMaintain
                 ' Make sure system has psql utility installed.'
       end
 
+      def amcheck
+        # executing the check requires superuser privileges
+        return unless local?
+
+        return unless amcheck_installed?
+
+        psqlcmd = "runuser - postgres -c 'psql --set=ON_ERROR_STOP=on #{configuration['database']}'"
+
+        amcheck_query = <<~SQL
+          SELECT bt_index_check(index => c.oid, heapallindexed => i.indisunique),
+               c.relname,
+               c.relpages
+          FROM pg_index i
+          JOIN pg_opclass op ON i.indclass[0] = op.oid
+          JOIN pg_am am ON op.opcmethod = am.oid
+          JOIN pg_class c ON i.indexrelid = c.oid
+          JOIN pg_namespace n ON c.relnamespace = n.oid
+          WHERE am.amname = 'btree' AND n.nspname = 'public'
+          -- Don't check temp tables, which may be from another session:
+          AND c.relpersistence != 't'
+          -- Function may throw an error when this is omitted:
+          AND c.relkind = 'i' AND i.indisready AND i.indisvalid
+          ORDER BY c.relpages DESC;
+        SQL
+
+        execute_with_status(psqlcmd, :stdin => amcheck_query)
+      end
+
+      def amcheck_installed?
+        sql = "select 'amcheck_installed' from pg_extension where extname='amcheck'"
+        result = query(sql)
+        !result.nil? && !result.empty?
+      end
+
       private
 
       def base_env
