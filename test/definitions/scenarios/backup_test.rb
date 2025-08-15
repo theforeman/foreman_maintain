@@ -29,7 +29,11 @@ module Scenarios
     end
 
     let(:checks) do
-      task_checks
+      task_checks + [
+        Checks::Foreman::DBIndex,
+        Checks::Candlepin::DBIndex,
+        Checks::Pulpcore::DBIndex,
+      ]
     end
 
     describe 'offline' do

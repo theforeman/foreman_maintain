@@ -18,6 +18,9 @@ module ForemanMaintain::Scenarios
 
     def compose
       check_valid_strategy
+      add_step(Checks::Foreman::DBIndex)
+      add_step(Checks::Candlepin::DBIndex)
+      add_step(Checks::Pulpcore::DBIndex)
       add_step(Checks::ForemanTasks::NotRunning.new(:wait_for_tasks => wait_for_tasks?))
       add_step(Checks::Pulpcore::NoRunningTasks.new(:wait_for_tasks => wait_for_tasks?))
       add_step_with_context(Procedures::Backup::AccessibilityConfirmation) if strategy == :offline
