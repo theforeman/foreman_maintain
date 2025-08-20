@@ -10,9 +10,11 @@ class Checks::SystemRegistration < ForemanMaintain::Check
   end
 
   def run
-    if rhsm_hostname_eql_hostname?
-      warn! 'System is self registered'
-    end
+    assert(!rhsm_hostname_eql_hostname?, 'System is self registered',
+      {
+        :warn => true,
+        :next_steps => [Procedures::KnowledgeBaseArticle.new(:doc => 'self_registered')],
+      })
   end
 
   def rhsm_hostname

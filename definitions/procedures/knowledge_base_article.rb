@@ -26,6 +26,7 @@ class Procedures::KnowledgeBaseArticle < ForemanMaintain::Procedure
       'fix_cpdb_validate_failure' => 'https://access.redhat.com/solutions/3362821',
       'fix_db_migrate_failure_on_duplicate_roles' => 'https://access.redhat.com/solutions/3998941',
       'many_fact_values' => 'https://access.redhat.com/solutions/4163891',
+      'self_registered' => 'https://access.redhat.com/solutions/3225941',
     }
   end
 end
