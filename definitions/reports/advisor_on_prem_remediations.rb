@@ -11,9 +11,7 @@ module Reports
 
     def advisor_on_prem_remediations_enabled
       if @iop_enabled.nil?
-        @iop_enabled = feature(:installer)&.answers&.dig(
-          'foreman::plugin::rh_cloud', 'enable_iop_advisor_engine'
-        ) || false
+        @iop_enabled = feature(:installer)&.answers&.fetch('iop', false) != false
       end
       @iop_enabled
     end
