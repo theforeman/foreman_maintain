@@ -1,23 +1,23 @@
 module Reports
-  class AdvisorOnPremRemediations < ForemanMaintain::Report
+  class IopRemediations < ForemanMaintain::Report
     metadata do
-      description 'Report number of remediations based on advisor rules from advisor on premise'
+      description 'Report number of remediations based on advisor rules from IoP'
     end
 
     def run
-      data_field('advisor_on_prem_remediations_enabled') { advisor_on_prem_remediations_enabled }
-      data_field('advisor_on_prem_remediations_count') { advisor_on_prem_remediations_count }
+      data_field('iop_remediations_enabled') { iop_remediations_enabled }
+      data_field('iop_remediations_count') { iop_remediations_count }
     end
 
-    def advisor_on_prem_remediations_enabled
+    def iop_remediations_enabled
       if @iop_enabled.nil?
         @iop_enabled = feature(:installer)&.answers&.fetch('iop', false) != false
       end
       @iop_enabled
     end
 
-    def advisor_on_prem_remediations_count
-      if advisor_on_prem_remediations_enabled
+    def iop_remediations_count
+      if iop_remediations_enabled
         return sql_count('
           job_invocations AS jobs
           INNER JOIN remote_execution_features AS rexf ON jobs.remote_execution_feature_id = rexf.id
