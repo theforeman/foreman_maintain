@@ -8,7 +8,7 @@ module ForemanMaintain
 
         # description can be used too
         report_data = scenario.steps.map(&:data).compact.reduce(&:merge).transform_keys(&:to_s)
-        report_data['version'] = 1
+        report_data['version'] = 2
         report_data
       end
 
