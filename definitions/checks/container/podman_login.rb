@@ -10,7 +10,9 @@ module Checks::Container
     end
 
     def run
-      login_status, _output = execute_with_status('podman login --get-login registry.redhat.io')
+      login_status, _output = execute_with_status(
+        'podman login --get-login --authfile /etc/foreman/registry-auth.json registry.redhat.io'
+      )
       assert(
         login_status == 0,
         failure_message
