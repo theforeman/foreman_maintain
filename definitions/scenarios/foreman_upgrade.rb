@@ -70,6 +70,7 @@ module Scenarios::Foreman
 
     def compose
       add_steps(
+        Procedures::Repositories::CleanupDuplicateErratumPackages,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
         Procedures::Timer::Stop,

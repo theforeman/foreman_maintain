@@ -106,6 +106,7 @@ describe "satellite upgrade scenarios" do
 
       assert_scenario_has_steps(
         scenario,
+        Procedures::Repositories::CleanupDuplicateErratumPackages,
         Procedures::MaintenanceMode::EnableMaintenanceMode,
         Procedures::Crond::Stop,
         Procedures::Timer::Stop,
