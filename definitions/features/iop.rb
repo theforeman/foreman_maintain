@@ -75,7 +75,7 @@ class Features::Iop < ForemanMaintain::Feature
 
   def container_names
     if feature(:instance).downstream
-      CONTAINER_NAMES.map { |container_name| "#{container_name}-rhel9" }
+      CONTAINER_NAMES.map { |container_name| "iop-#{container_name}-rhel9" }
     else
       CONTAINER_NAMES
     end
