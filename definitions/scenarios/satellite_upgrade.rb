@@ -117,6 +117,7 @@ module Scenarios::Satellite
       add_steps(
         Procedures::RefreshFeatures,
         Procedures::Service::Start,
+        Procedures::Pulpcore::RpmDatarepair,
         Procedures::Crond::Start,
         Procedures::Timer::Start,
         Procedures::SyncPlans::Enable,
