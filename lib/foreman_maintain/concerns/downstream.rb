@@ -21,8 +21,14 @@ module ForemanMaintain
           execute!(%(subscription-manager register #{org_options}\
                       --activationkey #{shellescape(activation_key)} --force))
         else
+          had_utils_enabled = repository_manager.enabled_repos.keys.any? { |r| r.start_with?("satellite-utils-") }
+
           repository_manager.rhsm_disable_repos(['*'])
-          repository_manager.rhsm_enable_repos(rh_repos(version))
+
+          repos = rh_repos(version)
+          repos << utils_repo(version) if had_utils_enabled
+
+          repository_manager.rhsm_enable_repos(repos)
         end
       end
 
@@ -63,6 +69,12 @@ module ForemanMaintain
       end
 
       private
+
+      def utils_repo(server_version)
+        server_version = version(server_version)
+        full_version   = "#{server_version.major}.#{server_version.minor}"
+        "satellite-utils-#{full_version}-for-rhel-#{el_major_version}-x86_64-rpms"
+      end
 
       def satellite_maintain_config
         if File.exist?(SATELLITE_MAINTAIN_CONFIG)
