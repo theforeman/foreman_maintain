@@ -7,7 +7,8 @@ module ForemanMaintain
         scenario = run_scenario(Scenarios::Report::Generate.new({}, [:reports])).first
 
         # description can be used too
-        report_data = scenario.steps.map(&:data).compact.reduce(&:merge).transform_keys(&:to_s)
+        report_data = scenario.steps.map(&:data).compact.reduce(&:merge).
+                      transform_keys(&:to_s).sort.to_h
         report_data['version'] = 2
         report_data
       end
