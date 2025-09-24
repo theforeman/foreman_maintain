@@ -21,7 +21,9 @@ module ForemanMaintain
           execute!(%(subscription-manager register #{org_options}\
                       --activationkey #{shellescape(activation_key)} --force))
         else
-          had_utils_enabled = repository_manager.enabled_repos.keys.any? { |r| r.start_with?("satellite-utils-") }
+          had_utils_enabled = repository_manager.enabled_repos.keys.any? do |r|
+            r.start_with?("satellite-utils-")
+          end
 
           repository_manager.rhsm_disable_repos(['*'])
 
