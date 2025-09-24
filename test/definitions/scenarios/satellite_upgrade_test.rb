@@ -87,7 +87,6 @@ describe "satellite upgrade scenarios" do
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
         Checks::CheckIpv6Disable,
-        Checks::Disk::AvailableSpacePostgresql13,
         Checks::Disk::PostgresqlMountpoint,
         Checks::CheckOrganizationContentAccessMode,
         Checks::CheckSha1CertificateAuthority,
