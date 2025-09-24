@@ -25,7 +25,6 @@ describe "foreman upgrade scenarios" do
         Checks::Foreman::CheckCorruptedRoles,
         Checks::Foreman::CheckDuplicatePermissions,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
-        Checks::Disk::AvailableSpacePostgresql13,
         Checks::Disk::PostgresqlMountpoint,
         Checks::Repositories::Validate,
         Checks::Pulpcore::NoRunningTasks,
