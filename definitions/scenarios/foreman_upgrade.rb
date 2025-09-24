@@ -53,7 +53,6 @@ module Scenarios::Foreman
         Checks::NonRhPackages,
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
-        Checks::CheckOrganizationContentAccessMode,
         Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate
       )
