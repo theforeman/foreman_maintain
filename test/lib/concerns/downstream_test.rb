@@ -65,5 +65,46 @@ module ForemanMaintain
           system.send(:main_rh_repos)
       end
     end
+
+    describe '.utils_repo' do
+      it 'returns correct utils repo for 6.11 on el8' do
+        system.stubs(:el_major_version).returns(8)
+        assert_equal 'satellite-utils-6.11-for-rhel-8-x86_64-rpms',
+          system.send(:utils_repo, '6.11')
+      end
+    end
+
+    describe '.setup_repositories' do
+      it 'enables utils repo if it was enabled before upgrade' do
+        system.stubs(:el_major_version).returns(8)
+
+        repo_manager = mock('repo_manager')
+        system.stubs(:repository_manager).returns(repo_manager)
+
+        repo_manager.stubs(:enabled_repos).
+          returns({ 'satellite-utils-6.11-for-rhel-8-x86_64-rpms' => 'url' })
+
+        repo_manager.expects(:rhsm_disable_repos).with(['*']).once
+        repo_manager.expects(:rhsm_enable_repos).
+          with(includes('satellite-utils-6.11-for-rhel-8-x86_64-rpms')).once
+
+        system.setup_repositories('6.11')
+      end
+
+      it 'does not enable utils repo if it was not enabled before' do
+        system.stubs(:el_major_version).returns(8)
+
+        repo_manager = mock('repo_manager')
+        system.stubs(:repository_manager).returns(repo_manager)
+
+        repo_manager.stubs(:enabled_repos).returns({})
+
+        repo_manager.expects(:rhsm_disable_repos).with(['*']).once
+        repo_manager.expects(:rhsm_enable_repos).
+          with(Not(includes('satellite-utils-6.11-for-rhel-8-x86_64-rpms'))).once
+
+        system.setup_repositories('6.11')
+      end
+    end
   end
 end
