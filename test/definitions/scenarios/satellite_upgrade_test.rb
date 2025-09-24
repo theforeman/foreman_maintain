@@ -88,7 +88,6 @@ describe "satellite upgrade scenarios" do
         Checks::Repositories::CheckNonRhRepository,
         Checks::CheckIpv6Disable,
         Checks::Disk::PostgresqlMountpoint,
-        Checks::CheckOrganizationContentAccessMode,
         Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate,
       )

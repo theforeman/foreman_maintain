@@ -39,7 +39,6 @@ describe "katello upgrade scenarios" do
         Checks::PackageManager::Dnf::ValidateDnfConfig,
         Checks::Repositories::CheckNonRhRepository,
         Checks::Disk::PostgresqlMountpoint,
-        Checks::CheckOrganizationContentAccessMode,
         Checks::CheckSha1CertificateAuthority,
         Checks::Repositories::Validate,
       )
