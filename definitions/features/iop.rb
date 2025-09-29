@@ -3,8 +3,7 @@ class Features::Iop < ForemanMaintain::Feature
     label :iop
 
     confine do
-      File.exist?('/etc/containers/networks/iop-core-network.json') ||
-        File.exist?('/etc/containers/systemd/iop-core.network')
+      feature(:installer)&.answers&.dig('iop', 'ensure') == 'present'
     end
   end
 

@@ -5,8 +5,7 @@ class Features::IopRemediationsDatabase < ForemanMaintain::Feature
     label :iop_remediations_database
 
     confine do
-      File.exist?('/etc/containers/networks/iop-core-network.json') ||
-        File.exist?('/etc/containers/systemd/iop-core.network')
+      feature(:iop)
     end
   end
 
