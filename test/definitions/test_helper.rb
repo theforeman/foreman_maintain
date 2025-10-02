@@ -136,7 +136,7 @@ module DefinitionsTestHelper
   end
 
   def installer_config_dir(dirs)
-    Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
+    Features::Installer.stubs(:config_directory).returns(dirs)
   end
 
   def stub_foreman_proxy_config

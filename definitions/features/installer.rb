@@ -3,7 +3,7 @@ class Features::Installer < ForemanMaintain::Feature
     label :installer
 
     confine do
-      find_package('foreman-installer')
+      find_package('foreman-installer') && !config_file.nil?
     end
   end
 
@@ -12,33 +12,33 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def configuration
-    @configuration ||= YAML.load_file(config_file)
+    @configuration ||= YAML.load_file(self.class.config_file)
   end
 
-  def config_file
+  def self.config_file
     last_scenario_config
   end
 
-  def config_directory
+  def self.config_directory
     '/etc/foreman-installer'
   end
 
   def custom_hiera_file
-    @custom_hiera_file ||= File.join(config_directory, 'custom-hiera.yaml')
+    @custom_hiera_file ||= File.join(self.class.config_directory, 'custom-hiera.yaml')
   end
 
   def config_files
     paths = [
-      config_directory,
+      self.class.config_directory,
       '/opt/puppetlabs/puppet/cache/foreman_cache_data',
       '/opt/puppetlabs/puppet/cache/pulpcore_cache_data',
     ]
-    paths << answer_file unless answer_file.start_with?("#{config_directory}/")
+    paths << answer_file unless answer_file.start_with?("#{self.class.config_directory}/")
     paths
   end
 
   def last_scenario
-    File.basename(last_scenario_config).split('.')[0]
+    File.basename(self.class.last_scenario_config).split('.')[0]
   end
 
   def installer_command
@@ -80,13 +80,19 @@ class Features::Installer < ForemanMaintain::Feature
     !(configuration[:custom] && configuration[:custom][:lock_package_versions]).nil?
   end
 
+  def self.last_scenario_config
+    if File.exist?(last_scenario_yaml)
+      Pathname.new(last_scenario_yaml).realpath.to_s
+    end
+  end
+
+  def self.last_scenario_yaml
+    File.join(config_directory, 'scenarios.d/last_scenario.yaml')
+  end
+
   private
 
   def answer_file
     configuration[:answer_file]
-  end
-
-  def last_scenario_config
-    Pathname.new(File.join(config_directory, 'scenarios.d/last_scenario.yaml')).realpath.to_s
   end
 end
