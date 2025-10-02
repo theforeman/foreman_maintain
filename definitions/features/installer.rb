@@ -1,9 +1,12 @@
 class Features::Installer < ForemanMaintain::Feature
+  CONFIG_DIRECTORY = '/etc/foreman-installer'.freeze
+  LAST_SCENARIO_YAML = File.join(CONFIG_DIRECTORY, 'scenarios.d/last_scenario.yaml').freeze
+
   metadata do
     label :installer
 
     confine do
-      find_package('foreman-installer')
+      find_package('foreman-installer') && file_exists?(LAST_SCENARIO_YAML)
     end
   end
 
@@ -20,7 +23,7 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def config_directory
-    '/etc/foreman-installer'
+    CONFIG_DIRECTORY
   end
 
   def custom_hiera_file
@@ -87,6 +90,12 @@ class Features::Installer < ForemanMaintain::Feature
   end
 
   def last_scenario_config
-    Pathname.new(File.join(config_directory, 'scenarios.d/last_scenario.yaml')).realpath.to_s
+    if File.exist?(last_scenario_yaml)
+      Pathname.new(last_scenario_yaml).realpath.to_s
+    end
+  end
+
+  def last_scenario_yaml
+    LAST_SCENARIO_YAML
   end
 end

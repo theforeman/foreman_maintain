@@ -137,6 +137,8 @@ module DefinitionsTestHelper
 
   def installer_config_dir(dirs)
     Features::Installer.any_instance.stubs(:config_directory).returns(dirs)
+    Features::Installer.any_instance.stubs(:last_scenario_yaml).returns(File.join(dirs,
+      'scenarios.d/last_scenario.yaml'))
   end
 
   def stub_foreman_proxy_config
