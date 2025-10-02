@@ -49,4 +49,15 @@ describe Features::Installer do
       end
     end
   end
+
+  context 'before first installer run' do
+    before do
+      installer_config_dir("#{data_dir}/installer/non_existant_config")
+      mock_installer_package('foreman-installer')
+    end
+
+    it 'has no config file' do
+      _(subject.config_file).must_equal(nil)
+    end
+  end
 end
