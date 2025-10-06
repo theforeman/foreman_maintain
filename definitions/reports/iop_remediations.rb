@@ -11,7 +11,7 @@ module Reports
 
     def iop_remediations_enabled
       if @iop_enabled.nil?
-        @iop_enabled = feature(:installer)&.answers&.dig('iop', 'ensure') == 'present'
+        @iop_enabled = !!feature(:iop)
       end
       @iop_enabled
     end

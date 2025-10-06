@@ -3,7 +3,8 @@ class Features::Iop < ForemanMaintain::Feature
     label :iop
 
     confine do
-      feature(:installer)&.answers&.dig('iop', 'ensure') == 'present'
+      feature(:installer)&.answers&.fetch('iop', nil).is_a?(Hash) and
+        feature(:installer)&.answers&.dig('iop', 'ensure') == 'present'
     end
   end
 
