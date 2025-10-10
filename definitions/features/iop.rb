@@ -13,6 +13,7 @@ class Features::Iop < ForemanMaintain::Feature
       'insights-engine',
       'gateway',
       'host-inventory',
+      'host-inventory-frontend',
       'ingress',
       'puptoo',
       'yuptoo',
