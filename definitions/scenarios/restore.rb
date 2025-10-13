@@ -26,14 +26,16 @@ module ForemanMaintain::Scenarios
       end
 
       add_steps_with_context(Procedures::Restore::Confirmation,
-        Procedures::Restore::RequiredPackages,
-        Procedures::Restore::Configs)
+        Procedures::Restore::RequiredPackages)
+      add_step_with_context(Procedures::Service::Stop)
       add_step_with_context(Procedures::Crond::Stop)
       add_step_with_context(Procedures::Timer::Stop)
+      add_step_with_context(Procedures::Restore::Configs)
+
       unless backup.incremental?
         add_steps_with_context(Procedures::Restore::InstallerReset)
+        add_step_with_context(Procedures::Service::Stop)
       end
-      add_step_with_context(Procedures::Service::Stop)
 
       if backup.sql_needs_dump_restore?
         add_steps_with_context(Procedures::Restore::DropDatabases)
