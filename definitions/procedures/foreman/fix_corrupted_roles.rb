@@ -34,8 +34,7 @@ module Procedures::Foreman
     def update_records(set)
       new_filter = create_filter set.first['role_id'],
         set.first['search'],
-        set.first['taxonomy_search'],
-        set.first['override']
+        set.first['taxonomy_search']
       set.each do |item|
         destroy_filtering item
         next if !new_filter || new_filter.empty?
@@ -43,9 +42,9 @@ module Procedures::Foreman
       end
     end
 
-    def create_filter(role_id, search, taxonomy_search, override)
+    def create_filter(role_id, search, taxonomy_search)
       feature(:foreman_database).query(
-        create_filter_query(search, role_id, taxonomy_search, override)
+        create_filter_query(search, role_id, taxonomy_search)
       ).first
     end
 
@@ -53,11 +52,11 @@ module Procedures::Foreman
       value ? "'#{value}'" : 'NULL'
     end
 
-    def create_filter_query(search, role_id, taxonomy_search, override)
+    def create_filter_query(search, role_id, taxonomy_search)
       <<-SQL
         WITH rows AS (
-          INSERT INTO filters (search, role_id, taxonomy_search, override, created_at, updated_at)
-          VALUES (#{escape_val(search)}, #{role_id}, #{escape_val(taxonomy_search)}, '#{override}', '#{Time.now}', '#{Time.now}')
+          INSERT INTO filters (search, role_id, taxonomy_search, created_at, updated_at)
+          VALUES (#{escape_val(search)}, #{role_id}, #{escape_val(taxonomy_search)}, '#{Time.now}', '#{Time.now}')
           RETURNING id
           )
         SELECT id

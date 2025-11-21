@@ -32,7 +32,6 @@ module Checks
                  filters.role_id,
                  filters.search,
                  filters.taxonomy_search,
-                 filters.override,
                  filterings.id AS filtering_id,
                  permissions.id AS permission_id,
                  permissions.name AS permission_name,
@@ -52,8 +51,7 @@ module Checks
                           first.permission_name,
                           first.resource_type,
                           first.search,
-                          first.taxonomy_search,
-                          first.override
+                          first.taxonomy_search
           FROM (#{subquery}) first JOIN (#{subquery}) second
             ON first.filter_id = second.filter_id AND
               ((first.resource_type IS NOT NULL AND second.resource_type IS NULL)
