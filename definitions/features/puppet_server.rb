@@ -3,7 +3,10 @@ class Features::PuppetServer < ForemanMaintain::Feature
     label :puppet_server
 
     confine do
-      find_package('puppet-server') || find_package('puppetserver') || find_package('puppet')
+      find_package('puppet-server') ||
+        find_package('openvox-server') ||
+        find_package('puppetserver') ||
+        find_package('puppet')
     end
   end
 
@@ -23,7 +26,13 @@ class Features::PuppetServer < ForemanMaintain::Feature
     # We only check puppetserver and not puppet-server, as puppet-server
     # is a part of httpd and relies on httpd service to restart, therefore
     # not requiring a separate service to restart
-    find_package('puppetserver') ? [system_service('puppetserver', 30)] : []
+    return [system_service('puppetserver', 30)] if find_package('puppetserver') ||
+                                                   find_package('openvox-server')
+    []
+  end
+
+  def openvox?
+    find_package('openvox-server')
   end
 
   def find_empty_cacert_request_files
