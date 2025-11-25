@@ -179,6 +179,10 @@ module ForemanMaintain
         installed_rpms.any? { |rpm| rpm.start_with?('puppetserver-') }
       end
 
+      def with_openvoxserver?
+        installed_rpms.any? { |rpm| rpm.start_with?('openvox-server-') }
+      end
+
       def source_os_version
         metadata.fetch('os_version', 'unknown')
       end
