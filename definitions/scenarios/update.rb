@@ -33,6 +33,7 @@ module Scenarios::Update
         Checks::SystemRegistration,
         Checks::CheckHotfixInstalled,
         Checks::CheckTmout,
+        Checks::CheckSubscriptionManagerRelease,
         Checks::CheckIpv6Disable,
         Checks::CheckUpstreamRepository,
         Checks::Container::PodmanLogin, # if downstream, connected, containers used
