@@ -35,6 +35,7 @@ module Scenarios::Satellite
         Checks::SystemRegistration,
         Checks::CheckHotfixInstalled,
         Checks::CheckTmout,
+        Checks::CheckSubscriptionManagerRelease,
         Checks::CheckUpstreamRepository,
         Checks::Container::PodmanLogin, # if downstream, connected, containers used
         Checks::Disk::AvailableSpace,
