@@ -57,7 +57,7 @@ describe Features::Installer do
     end
 
     it 'has no config file' do
-      _(subject.config_file).must_equal(nil)
+      _(subject.config_file).must_be_nil
     end
   end
 end

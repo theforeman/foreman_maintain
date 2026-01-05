@@ -33,7 +33,7 @@ module ForemanMaintain
 
       it 'runs purge-puppet' do
         Cli::PluginCommand.any_instance.expects(:run_scenario).with do |scenario|
-          _(scenario.context.get(:remove_data)).must_equal nil
+          _(scenario.context.get(:remove_data)).must_be_nil
           _(scenario.label).must_equal :puppet_disable
         end
         run_cmd
