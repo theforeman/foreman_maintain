@@ -23,6 +23,7 @@ describe "capsule upgrade scenarios" do
         Checks::SystemRegistration,
         Checks::CheckHotfixInstalled,
         Checks::CheckTmout,
+        Checks::CheckSubscriptionManagerRelease,
         Checks::CheckUpstreamRepository,
         Checks::Disk::AvailableSpace,
         Checks::NonRhPackages,
