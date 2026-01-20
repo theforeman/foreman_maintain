@@ -12,6 +12,7 @@ module Procedures::Restore
       backup = ForemanMaintain::Utils::Backup.new(@backup_dir)
       required_packages = []
       required_packages << 'puppetserver' if backup.with_puppetserver?
+      required_packages << 'openvox-server' if backup.with_openvoxserver?
       if required_packages.any?
         with_spinner('Installing required packages') do
           ForemanMaintain.package_manager.install(required_packages, assumeyes: true)
