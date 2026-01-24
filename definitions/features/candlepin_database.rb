@@ -1,3 +1,6 @@
+require 'uri'
+require 'cgi'
+
 class Features::CandlepinDatabase < ForemanMaintain::Feature
   CANDLEPIN_DB_CONFIG = '/etc/candlepin/candlepin.conf'.freeze
 
@@ -19,7 +22,7 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
   end
 
   def configuration
-    @configuration || load_configuration
+    @configuration ||= load_configuration
   end
 
   def check_option_using_cpdb_help(option_name, parent_cmd = '')
@@ -30,20 +33,23 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
 
   private
 
+  def raw_config
+    File.read(CANDLEPIN_DB_CONFIG)
+  end
+
   def load_configuration
-    raw_config = File.read(CANDLEPIN_DB_CONFIG)
     full_config = Hash[raw_config.scan(/(^[^#\n][^=]*)=(.*)/)]
-    uri_regexp = %r{://(([^/:]*):?([^/]*))/([^?]*)\??(ssl=([^&]*))?}
     url = full_config['jpa.config.hibernate.connection.url']
-    uri = uri_regexp.match(url)
-    @configuration = {
+    uri = URI.parse(url.delete_prefix('jdbc:'))
+    query = uri.query ? CGI.parse(uri.query) : {}
+    {
       'username' => full_config['jpa.config.hibernate.connection.username'],
       'password' => full_config['jpa.config.hibernate.connection.password'],
-      'database' => uri[4],
-      'host' => uri[2],
-      'port' => uri[3] || '5432',
-      'ssl' => (fetch_extra_param(url, 'ssl') == 'true'),
-      'sslfactory' => fetch_extra_param(url, 'sslfactory'),
+      'database' => uri.path,
+      'host' => uri.host,
+      'port' => uri.port || '5432',
+      'ssl' => query['ssl']&.first == 'true',
+      'sslfactory' => query['sslfactory']&.first,
       'driver_class' => full_config['jpa.config.hibernate.connection.driver_class'],
       'url' => url,
     }
@@ -56,12 +62,5 @@ class Features::CandlepinDatabase < ForemanMaintain::Feature
       db_options['--dbport'] = configuration['port']
     end
     db_options
-  end
-
-  def fetch_extra_param(url, key_name)
-    query_string = url.split('?')[1]
-    return nil unless query_string
-    output = /#{key_name}=([^&]*)?/.match(query_string)
-    output[1] if output
   end
 end
