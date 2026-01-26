@@ -37,12 +37,23 @@ module ForemanMaintain
         assert db.local?
       end
 
-      it 'fetches server version' do
+      it 'fetches server version remotely' do
+        db.expects(:local?).returns(false)
         db.expects(:ping!)
         db.expects(:execute!).with(
           'psql --tuples-only --no-align',
           stdin: 'SHOW server_version',
           env: expected_env
+        ).returns('13.16')
+
+        assert db.db_version
+      end
+
+      it 'fetches server version locally' do
+        db.expects(:local?).returns(true)
+        db.expects(:ping!)
+        db.expects(:execute!).with(
+          "runuser - postgres -c 'psql --tuples-only --no-align -c \"SHOW server_version\"'"
         ).returns('13.16')
 
         assert db.db_version
@@ -63,25 +74,58 @@ module ForemanMaintain
         assert db.restore_dump(file, true)
       end
 
-      it 'dumps db' do
+      it 'dumps db locally and uses the postgres user' do
         file = '/backup/fake.dump'
 
         db.expects(:execute!).with(
-          "pg_dump -Fc -f /backup/fake.dump",
-          env: expected_env
+          "chown -R postgres:postgres #{File.dirname(file)}",
+        ).returns('')
+
+        db.expects(:execute!).with(
+          "runuser - postgres -c 'pg_dump --format=c  -f /backup/fake.dump'",
         ).returns('')
 
         assert db.dump_db(file)
       end
 
-      it 'pings db' do
+      it 'pings db locally' do
+        db.expects(:local?).returns(true)
+        db.expects(:execute?).with(
+          "runuser - postgres -c 'psql -d fakedb'",
+          stdin: 'SELECT 1 as ping',
+          env: nil
+        ).returns(true)
+
+        assert db.ping
+      end
+
+      it 'pings db remotely' do
+        db.expects(:local?).returns(false)
         db.expects(:execute?).with("psql",
           stdin: "SELECT 1 as ping", env: expected_env).returns(true)
 
         assert db.ping
       end
 
-      it 'runs db queries' do
+      it 'runs db queries locally' do
+        db.expects(:local?).returns(true)
+        psql_return = <<~PSQL
+           test
+          ------
+             42
+          (1 row)
+        PSQL
+
+        db.expects(:ping!)
+        db.expects(:execute).with(
+          "runuser - postgres -c 'psql -d fakedb' -c 'SELECT 42 as test'",
+        ).returns(psql_return)
+
+        assert db.psql('SELECT 42 as test')
+      end
+
+      it 'runs db queries remotely' do
+        db.expects(:local?).returns(false)
         psql_return = <<~PSQL
            test
           ------
