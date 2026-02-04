@@ -15,7 +15,8 @@ describe Features::PulpcoreDatabase do
       JSON
       subject.expects(:execute!).with(expected_command, merge_stderr: false).returns(manager_return)
       expected = { "adapter" => "postgresql", "host" => "remotedb", "port" => "5432",
-                   "database" => "pulpcore", "username" => "pulp", "password" => "password" }
+                   "database" => "pulpcore", "username" => "pulp", "password" => "password",
+                   "connection_string" => "postgres:///pulpcore" }
       assert_equal expected, subject.configuration
     end
   end
