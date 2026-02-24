@@ -5,7 +5,6 @@ module Reports
     end
 
     def run
-      general_fields
       rbac_fields
       settings_fields
       bookmarks_fields
@@ -33,14 +32,6 @@ module Reports
 
     def user_groups_fields
       data_field('user_groups_count') { sql_count('usergroups') }
-    end
-
-    def general_fields
-      data_field('smart_proxies_count') { sql_count('smart_proxies') }
-      merge_data('smart_proxies_creation_date') do
-        query("select id, created_at from smart_proxies").
-          to_h { |row| [row['id'], row['created_at']] }
-      end
     end
 
     def rbac_fields
