@@ -1,7 +1,7 @@
 module Reports
   class Compliance < ForemanMaintain::Report
     metadata do
-      description 'Check if OpenSCAP is used'
+      description 'Report metrics related to OpenSCAP'
     end
 
     def run

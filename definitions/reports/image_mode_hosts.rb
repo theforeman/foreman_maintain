@@ -9,7 +9,13 @@ module Reports
 
     def run
       merge_data('image_mode_hosts_by_os_count') { image_mode_hosts_by_os_count }
-      data['remote_execution_transient_package_actions_count'] = transient_actions_count
+      data_field('remote_execution_transient_package_actions_count') { transient_actions_count }
+      data_field('host_installed_packages_transient_count') do
+        host_installed_packages_transient_count
+      end
+      data_field('host_installed_packages_persistent_count') do
+        host_installed_packages_persistent_count
+      end
     end
 
     # OS usage on image mode hosts
@@ -45,6 +51,14 @@ module Reports
       SQL
 
       sql_count(sql, cte: cte)
+    end
+
+    def host_installed_packages_transient_count
+      sql_count("katello_host_installed_packages WHERE persistence = 'transient'")
+    end
+
+    def host_installed_packages_persistent_count
+      sql_count("katello_host_installed_packages WHERE persistence = 'persistent'")
     end
   end
 end
