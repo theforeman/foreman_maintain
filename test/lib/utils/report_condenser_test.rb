@@ -7,11 +7,11 @@ module ForemanMaintain
     describe '#condense_report' do
       it 'condenses the report' do
         data = {
-          'advisor_on_prem_remediations_count' => 10,
+          'iop_remediations_count' => 10,
           'rhel_ai_workload_host_count' => 20,
         }
         result = Utils::ReportCondenser.condense_report(data)
-        _(result['advisor_on_prem_remediations_count']).must_equal 10
+        _(result['iop_remediations_count']).must_equal 10
         _(result['rhel_ai_workload_host_count']).must_equal 20
       end
     end
