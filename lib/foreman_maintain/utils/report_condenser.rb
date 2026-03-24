@@ -3,7 +3,7 @@ module ForemanMaintain::Utils
     class << self
       def condense_report(data)
         result = {}
-        %w[advisor_on_prem_remediations_count rhel_ai_workload_host_count].each do |key|
+        %w[iop_remediations_count rhel_ai_workload_host_count].each do |key|
           result[key] = data[key] || 0
         end
         result.merge!(aggregate_host_count(data))
