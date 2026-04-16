@@ -52,7 +52,8 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::IopRemediationsDB => :backup_dir,
         Procedures::Backup::Online::IopVmaasDB => :backup_dir,
         Procedures::Backup::Online::IopVulnerabilityDB => :backup_dir,
-        Procedures::Backup::Online::PulpcoreDB => :backup_dir)
+        Procedures::Backup::Online::PulpcoreDB => :backup_dir,
+        Procedures::Backup::Online::ContainerGatewayDB => :backup_dir)
       context.map(:preserve_dir,
         Procedures::Backup::PrepareDirectory => :preserve_dir)
       context.map(:incremental_dir,
@@ -112,7 +113,8 @@ module ForemanMaintain::Scenarios
         Procedures::Backup::Online::IopRemediationsDB,
         Procedures::Backup::Online::IopVmaasDB,
         Procedures::Backup::Online::IopVulnerabilityDB,
-        Procedures::Backup::Online::PulpcoreDB
+        Procedures::Backup::Online::PulpcoreDB,
+        Procedures::Backup::Online::ContainerGatewayDB
       )
     end
 

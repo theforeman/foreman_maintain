@@ -13,7 +13,8 @@ module Procedures::Restore
           feature(:iop_inventory_database) ||
           feature(:iop_remediations_database) ||
           feature(:iop_vmaas_database) ||
-          feature(:iop_vulnerability_database)
+          feature(:iop_vulnerability_database) ||
+          feature(:container_gateway_database)
       end
     end
 
@@ -30,6 +31,7 @@ module Procedures::Restore
         drop_iop_remediations(backup, spinner)
         drop_iop_vmaas(backup, spinner)
         drop_iop_vulnerability(backup, spinner)
+        drop_container_gateway(backup, spinner)
       end
     end
 
@@ -86,6 +88,13 @@ module Procedures::Restore
       if backup.file_map[:iop_vulnerability_dump][:present]
         spinner.update('Dropping iop_vulnerability database')
         feature(:iop_vulnerability_database).dropdb
+      end
+    end
+
+    def drop_container_gateway(backup, spinner)
+      if backup.file_map[:container_gateway_dump][:present]
+        spinner.update('Dropping container gateway database')
+        feature(:container_gateway_database).dropdb
       end
     end
   end
