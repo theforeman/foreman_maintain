@@ -1,3 +1,5 @@
+require "etc"
+
 class Features::ForemanTasks < ForemanMaintain::Feature
   MIN_AGE = 30
   TIMEOUT_FOR_TASKS_STATUS = 300
@@ -177,7 +179,13 @@ class Features::ForemanTasks < ForemanMaintain::Feature
       f.write(csv_output)
       f.close
     end
-    execute("bzip2 #{filepath} -c -9 > #{filepath}.bz2")
+
+    # only if pbzip2, use max 8 threads, but at least 1 thread
+    cpu_count = Etc.nprocessors
+    threads = [[cpu_count / 2, 1].max, 8].min
+
+    compressor = system("which pbzip2 >/dev/null 2>&1") ? "pbzip2 -p#{threads}" : "bzip2"
+    execute("nice -n 10 #{compressor} #{filepath} -c -9 > #{filepath}.bz2")
     FileUtils.rm_rf(filepath)
   end
 
