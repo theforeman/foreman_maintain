@@ -179,7 +179,6 @@ class Features::Instance < ForemanMaintain::Feature
   def component_features_map
     {
       'candlepin_auth' => %w[candlepin candlepin_database],
-      'candlepin_events' => %w[candlepin candlepin_database],
       'candlepin' => %w[candlepin candlepin_database],
       'pulp3' => %w[pulpcore pulpcore_database],
       'pulp3_content' => %w[pulpcore pulpcore_database],
