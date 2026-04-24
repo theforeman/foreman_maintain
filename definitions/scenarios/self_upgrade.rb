@@ -4,7 +4,10 @@ module ForemanMaintain::Scenarios
     include ForemanMaintain::Concerns::Versions
 
     def target_version
-      feature(:instance).target_version
+      @target_version ||= begin
+        v = Gem::Version.new(feature(:instance).target_version)
+        "#{v.segments[0]}.#{v.segments[1] + 1}"
+      end
     end
 
     def current_version
@@ -39,19 +42,30 @@ module ForemanMaintain::Scenarios
       true
     end
 
+    def maintain_version
+      @maintain_version ||= feature(:instance).target_version
+    end
+
+    def current_major
+      Gem::Version.new(current_version).segments[0..1].join('.')
+    end
+
+    def upgrade_repo_version
+      Gem::Version.new(current_version).bump.segments[0..1].join('.')
+    end
+
     def req_repos_to_update_pkgs
+      version = upgrade_repo_version
       if use_rhsm?
-        main_rh_repos + [maintenance_repo_id(target_version)]
+        main_rh_repos + [maintenance_repo_id(version)]
       else
-        [maintenance_repo_id(target_version)]
+        [maintenance_repo_id(version)]
       end
     end
 
     def self_upgrade_allowed?
-      target = Gem::Version.new(target_version).version
-
-      Gem::Version.new(current_version).segments[0..1].join('.') == target ||
-        Gem::Version.new(current_version).bump.segments[0..1].join('.') == target
+      current_major == maintain_version ||
+        Gem::Version.new(current_version).bump.segments[0..1].join('.') == maintain_version
     end
   end
 
@@ -67,10 +81,10 @@ module ForemanMaintain::Scenarios
       unless self_upgrade_allowed?
         raise(
           ForemanMaintain::Error::Warn,
-          "foreman-maintain is too many versions ahead. The target " \
-          "version is #{target_version} while the currently installed " \
-          "version is #{current_version}. Please rollback " \
-          "foreman-maintain to the proper version."
+          "foreman-maintain does not support the installed version of Satellite." \
+          "The currently installed version in #{current_version}," \
+          "while foreman-maintain only supports #{maintain_version}." \
+          "Please install the right version of foreman-maintain."
         )
       end
 
