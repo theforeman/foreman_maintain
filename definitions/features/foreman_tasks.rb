@@ -177,7 +177,7 @@ class Features::ForemanTasks < ForemanMaintain::Feature
       f.write(csv_output)
       f.close
     end
-    execute("bzip2 #{filepath} -c -9 > #{filepath}.bz2")
+    execute("pbzip2 #{filepath} -c -9 > #{filepath}.bz2")
     FileUtils.rm_rf(filepath)
   end
 
