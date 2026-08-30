@@ -14,7 +14,7 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
   end
 
   def configuration
-    @configuration || load_configuration
+    @configuration ||= load_configuration
   end
 
   def services
@@ -34,13 +34,13 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
     manager_result = execute!(manager_command, merge_stderr: false)
     db_config = JSON.parse(manager_result)
 
-    @configuration = {}
-    @configuration['adapter'] = 'postgresql'
-    @configuration['host'] = db_config['HOST']
-    @configuration['port'] = db_config['PORT']
-    @configuration['database'] = db_config['NAME']
-    @configuration['username'] = db_config['USER']
-    @configuration['password'] = db_config['PASSWORD']
-    @configuration
+    {
+      'adapter' => 'postgresql',
+      'host' => db_config['HOST'],
+      'port' => db_config['PORT'],
+      'database' => db_config['NAME'],
+      'username' => db_config['USER'],
+      'password' => db_config['PASSWORD'],
+    }
   end
 end
