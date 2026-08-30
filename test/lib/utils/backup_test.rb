@@ -49,6 +49,7 @@ module ForemanMaintain
 
     it 'Validates fpc online backup' do
       assume_feature_present(:pulpcore_database)
+      assume_feature_present(:container_gateway_database)
       fpc_online_backup = subject.new(fpc_online)
       refute fpc_online_backup.katello_online_backup?
       refute fpc_online_backup.foreman_online_backup?

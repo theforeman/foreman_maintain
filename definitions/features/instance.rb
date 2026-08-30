@@ -47,7 +47,8 @@ class Features::Instance < ForemanMaintain::Feature
   def postgresql_local?
     database_local?(:candlepin_database) ||
       database_local?(:foreman_database) ||
-      database_local?(:pulpcore_database)
+      database_local?(:pulpcore_database) ||
+      database_local?(:container_gateway_database)
   end
 
   def foreman_proxy_with_content?

@@ -36,5 +36,21 @@ describe Features::CandlepinDatabase do
         refute_includes url, 'sslrootcert=/usr/share/foreman/root.crt'
       end
     end
+
+    it 'Sets connection_string for local database backups with SSL' do
+      stub_with_ssl_config do
+        config = subject.configuration
+        assert_equal 'candlepin1db', config['database']
+        assert_equal 'postgres:///candlepin1db', config['connection_string']
+      end
+    end
+
+    it 'Sets connection_string for local database backups without SSL' do
+      stub_without_ssl_config do
+        config = subject.configuration
+        assert_equal 'candlepin', config['database']
+        assert_equal 'postgres:///candlepin', config['connection_string']
+      end
+    end
   end
 end

@@ -41,6 +41,9 @@ class Features::PulpcoreDatabase < ForemanMaintain::Feature
     @configuration['database'] = db_config['NAME']
     @configuration['username'] = db_config['USER']
     @configuration['password'] = db_config['PASSWORD']
+
+    # Build connection string for pg_dump (only used for local databases)
+    @configuration['connection_string'] = "postgres:///#{db_config['NAME']}"
     @configuration
   end
 end
