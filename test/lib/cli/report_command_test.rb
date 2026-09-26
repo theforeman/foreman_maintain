@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'minitest/stub_const'
 
 require 'foreman_maintain/cli'
 
@@ -39,8 +40,31 @@ module ForemanMaintain
 
           Options:
               --output FILE    Output the generate report into FILE
+              --quiet          Suppress progress output and only print the report
               -h, --help       print help
         OUTPUT
+      end
+
+      it 'suppresses reporter output in quiet mode' do
+        step = stub(:data => { 'foo' => 'bar' })
+        scenario = stub(:steps => [step])
+        runner = stub(:run => [scenario], :exit_code => 0)
+        generate = Class.new
+        generate.stubs(:new).returns(scenario)
+        report = Module.new
+        report.const_set(:Generate, generate)
+
+        Runner.expects(:new).with do |reporter, _scenarios, _options|
+          reporter.instance_of?(Reporter)
+        end.returns(runner)
+
+        Scenarios.stub_const(:Report, report) do
+          assert_cmd <<~OUTPUT, %w[--quiet]
+            ---
+            foo: bar
+            version: 3
+          OUTPUT
+        end
       end
     end
 
@@ -58,6 +82,7 @@ module ForemanMaintain
               --input FILE       Input the report from FILE
               --output FILE      Output the condense report into FILE
               --max-age HOURS    Max age of the report in hours
+              --quiet            Suppress progress output and only print the report
               -h, --help         print help
         OUTPUT
       end
