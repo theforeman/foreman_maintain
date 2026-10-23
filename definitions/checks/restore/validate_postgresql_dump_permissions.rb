@@ -16,7 +16,8 @@ module Checks::Restore
         [:candlepin_dump, :foreman_dump, :pulpcore_dump].each do |dump|
           next unless backup.file_map[dump][:present]
 
-          unless system("runuser - postgres -c 'test -r #{backup.file_map[dump][:path]}'")
+          unless system('runuser', '--user', 'postgres', '--', 'test', '-r',
+            backup.file_map[dump][:path])
             errors << backup.file_map[dump][:path]
           end
         end
