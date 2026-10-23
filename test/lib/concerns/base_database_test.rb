@@ -49,16 +49,41 @@ module ForemanMaintain
       end
 
       it 'drops db' do
-        db.expects(:execute!).with("runuser - postgres -c 'dropdb fakedb'").returns('')
+        db.expects(:execute!).with(
+          "runuser - postgres -c #{Shellwords.escape('dropdb fakedb')}"
+        ).returns('')
 
         assert db.dropdb
+      end
+
+      it 'escapes a database name when dropping a local db' do
+        db_name = "fake db; touch /tmp/pwn"
+        db_with_untrusted_name = FakeDatabase.new(config.merge('database' => db_name))
+        inner_command = "dropdb #{Shellwords.escape(db_name)}"
+        db_with_untrusted_name.expects(:execute!).with(
+          "runuser - postgres -c #{Shellwords.escape(inner_command)}"
+        ).returns('')
+
+        assert db_with_untrusted_name.dropdb
       end
 
       it 'restores db' do
         file = '/backup/fake.dump'
 
-        db.expects(:execute!).with("runuser - postgres -c 'pg_restore -C -d postgres #{file}'").
-          returns('')
+        inner_command = "pg_restore -C -d postgres #{Shellwords.escape(file)}"
+        db.expects(:execute!).with(
+          "runuser - postgres -c #{Shellwords.escape(inner_command)}"
+        ).returns('')
+
+        assert db.restore_dump(file, true)
+      end
+
+      it 'escapes a local restore path passed through the postgres shell' do
+        file = '/backup/fake dump; touch /tmp/pwn'
+        inner_command = "pg_restore -C -d postgres #{Shellwords.escape(file)}"
+        db.expects(:execute!).with(
+          "runuser - postgres -c #{Shellwords.escape(inner_command)}"
+        ).returns('')
 
         assert db.restore_dump(file, true)
       end
@@ -68,6 +93,16 @@ module ForemanMaintain
 
         db.expects(:execute!).with(
           "pg_dump -Fc -f /backup/fake.dump",
+          env: expected_env
+        ).returns('')
+
+        assert db.dump_db(file)
+      end
+
+      it 'escapes a dump path' do
+        file = '/backup/fake dump; touch /tmp/pwn'
+        db.expects(:execute!).with(
+          "pg_dump -Fc -f #{Shellwords.escape(file)}",
           env: expected_env
         ).returns('')
 
@@ -146,6 +181,21 @@ module ForemanMaintain
         ).returns('')
 
         assert db.restore_dump(file, false)
+      end
+
+      it 'escapes database names and backup paths on remote restore' do
+        db_name = 'fake db; touch /tmp/pwn'
+        file = '/backup/fake dump; touch /tmp/pwn'
+        db_with_untrusted_name = FakeDatabase.new(config.merge('database' => db_name))
+        restore_cmd = 'pg_restore --no-privileges --clean --disable-triggers -n public ' \
+                      "-d #{Shellwords.escape(db_name)} #{Shellwords.escape(file)}"
+        db_with_untrusted_name.expects(:execute!).with(
+          restore_cmd,
+          valid_exit_statuses: [0, 1],
+          env: expected_env.merge('PGDATABASE' => db_name)
+        ).returns('')
+
+        assert db_with_untrusted_name.restore_dump(file, false)
       end
 
       it 'dumps remote db' do
