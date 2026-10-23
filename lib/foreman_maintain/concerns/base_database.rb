@@ -114,7 +114,7 @@ module ForemanMaintain
           execute!(run_as_postgres("dropdb #{shellescape(configuration['database'].to_s)}"))
         else
           delete_statement = psql(<<~SQL)
-            select string_agg('drop table if exists \"' || tablename || '\" cascade;', '')
+            select string_agg(format('drop table if exists %I cascade;', tablename), '')
             from pg_tables
             where schemaname = 'public';
           SQL

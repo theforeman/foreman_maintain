@@ -158,7 +158,7 @@ module ForemanMaintain
 
       it 'drops db' do
         select_statement = <<~SQL
-          select string_agg('drop table if exists \"' || tablename || '\" cascade;', '')
+          select string_agg(format('drop table if exists %I cascade;', tablename), '')
           from pg_tables
           where schemaname = 'public';
         SQL
