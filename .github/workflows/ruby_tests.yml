@@ -7,22 +7,6 @@ jobs:
     with:
       command: bundle exec rubocop --parallel --format github
   test_ruby:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby-version:
-          - '3.0.2'
-          - '3.1.3'
-          - '3.2.1'
-          - '3.3.5'
-    steps:
-      - uses: actions/checkout@v7
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true
-      - name: Run tests
-        run: |
-          bundle exec rake test
+    uses: theforeman/actions/.github/workflows/test-gem.yml@v1
+    with:
+      command: bundle exec rake test
