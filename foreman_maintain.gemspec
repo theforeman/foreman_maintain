@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.name = 'foreman_maintain'
   s.authors = ['Ivan Nečas']
   s.email = 'inecas@redhat.com'
-  s.licenses = ['GPL-3.0']
+  s.licenses = ['GPL-3.0-only']
   s.homepage = 'https://github.com/theforeman/foreman_maintain'
   s.version = ForemanMaintain::VERSION
   s.platform = Gem::Platform::RUBY
@@ -21,14 +21,14 @@ the Foreman/Satellite up and running."
   s.executables = ['foreman-maintain', 'foreman-maintain-complete']
   s.required_ruby_version = ">= 2.7", "< 4"
 
-  s.add_dependency 'clamp'
-  s.add_dependency 'highline'
+  s.add_dependency 'clamp', '~> 1.0'
+  s.add_dependency 'highline', '>= 2.0', '< 4'
 
-  s.add_development_dependency 'bundler', '>= 1.17'
+  s.add_development_dependency 'bundler', '>= 1.17', '< 5'
   s.add_development_dependency 'minitest', '~> 5.0'
-  s.add_development_dependency 'minitest-reporters'
-  s.add_development_dependency 'minitest-stub-const'
-  s.add_development_dependency 'mocha'
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'theforeman-rubocop'
+  s.add_development_dependency 'minitest-reporters', '~> 1.0'
+  s.add_development_dependency 'minitest-stub-const', '~> 0.6'
+  s.add_development_dependency 'mocha', '~> 3.0'
+  s.add_development_dependency 'rake', '~> 13.0'
+  s.add_development_dependency 'theforeman-rubocop', '~> 0.1'
 end
