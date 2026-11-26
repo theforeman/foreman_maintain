@@ -12,7 +12,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
   end
 
   def configuration
-    @configuration || load_configuration
+    @configuration ||= load_configuration
   end
 
   def config_files
@@ -41,8 +41,7 @@ class Features::ForemanDatabase < ForemanMaintain::Feature
                { 'production' => {} }
              end
 
-    @configuration = config['production']
-    @configuration['host'] ||= 'localhost'
-    @configuration
+    config['production']['host'] ||= 'localhost'
+    config['production']
   end
 end
