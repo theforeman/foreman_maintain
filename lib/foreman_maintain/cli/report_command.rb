@@ -3,6 +3,14 @@ module ForemanMaintain
     class ReportCommand < Base
       extend Concerns::Finders
 
+      def self.quiet_option
+        option '--quiet', :flag, 'Suppress progress output and only print the report'
+      end
+
+      def reporter
+        @reporter ||= quiet? ? ForemanMaintain::Reporter.new : super
+      end
+
       def generate_report
         scenario = run_scenario(Scenarios::Report::Generate.new({}, [:reports])).first
 
@@ -23,6 +31,7 @@ module ForemanMaintain
 
       subcommand 'generate', 'Generates the usage reports' do
         option '--output', 'FILE', 'Output the generate report into FILE'
+        quiet_option
 
         def execute
           report_data = generate_report
@@ -38,6 +47,7 @@ module ForemanMaintain
         option '--input', 'FILE', 'Input the report from FILE'
         option '--output', 'FILE', 'Output the condense report into FILE'
         option '--max-age', 'HOURS', 'Max age of the report in hours'
+        quiet_option
 
         def execute
           data = if fresh_enough?(@input, @max_age)
