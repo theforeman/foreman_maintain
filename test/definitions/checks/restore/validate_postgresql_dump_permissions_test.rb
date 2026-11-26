@@ -60,16 +60,33 @@ describe Checks::Restore::ValidatePostgresqlDumpPermissions do
   it 'fails when the backup is online and the DB is local and one file is not readable' do
     assume_feature_present(:instance, :postgresql_local? => true)
     ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(true)
-    subject.stubs(:system).with("runuser - postgres -c 'test -r /nonexistant/candlepin.dump'").
-      returns(false)
-    subject.stubs(:system).with("runuser - postgres -c 'test -r /nonexistant/pulpcore.dump'").
-      returns(true)
-    subject.stubs(:system).with("runuser - postgres -c 'test -r /nonexistant/foreman.dump'").
-      returns(true)
+    subject.stubs(:system).with('runuser', '--user', 'postgres', '--', 'test', '-r',
+      '/nonexistant/candlepin.dump').returns(false)
+    subject.stubs(:system).with('runuser', '--user', 'postgres', '--', 'test', '-r',
+      '/nonexistant/pulpcore.dump').returns(true)
+    subject.stubs(:system).with('runuser', '--user', 'postgres', '--', 'test', '-r',
+      '/nonexistant/foreman.dump').returns(true)
     result = run_check(subject)
     refute result.success?, 'Check expected to fail'
     expected = "The 'postgres' user needs read access to the following files:\n" \
       '/nonexistant/candlepin.dump'
     assert_equal result.output, expected
+  end
+
+  it 'passes dump paths to runuser without shell interpolation' do
+    assume_feature_present(:instance, :postgresql_local? => true)
+    ForemanMaintain::Utils::Backup.any_instance.stubs(:online_backup?).returns(true)
+    path = "/backup/foreman dump; touch /tmp/pwn"
+    ForemanMaintain::Utils::Backup.any_instance.stubs(:file_map).returns(
+      :foreman_dump => { :present => true, :path => path },
+      :candlepin_dump => { :present => false },
+      :pulpcore_dump => { :present => false }
+    )
+    subject.expects(:system).with('runuser', '--user', 'postgres', '--', 'test', '-r', path).
+      returns(true)
+
+    result = run_check(subject)
+
+    assert result.success?, 'Check expected to succeed'
   end
 end

@@ -69,19 +69,20 @@ module ForemanMaintain
       end
 
       def dump_db(file)
-        dump_command = "pg_dump -Fc -f #{file}"
+        dump_command = "pg_dump -Fc -f #{shellescape(file)}"
         execute!(dump_command, :env => base_env)
       end
 
       def restore_dump(file, localdb)
         if localdb
-          dump_cmd = "runuser - postgres -c 'pg_restore -C -d postgres #{file}'"
+          restore_command = "pg_restore -C -d postgres #{shellescape(file)}"
+          dump_cmd = run_as_postgres(restore_command)
           execute!(dump_cmd)
         else
           # TODO: figure out how to completely ignore errors. Currently this
           # sometimes exits with 1 even though errors are ignored by pg_restore
           dump_cmd = 'pg_restore --no-privileges --clean --disable-triggers -n public ' \
-                     "-d #{configuration['database']} #{file}"
+                     "-d #{shellescape(configuration['database'].to_s)} #{shellescape(file)}"
           execute!(dump_cmd, :env => base_env,
             :valid_exit_statuses => [0, 1])
         end
@@ -110,10 +111,10 @@ module ForemanMaintain
 
       def dropdb
         if local?
-          execute!("runuser - postgres -c 'dropdb #{configuration['database']}'")
+          execute!(run_as_postgres("dropdb #{shellescape(configuration['database'].to_s)}"))
         else
           delete_statement = psql(<<~SQL)
-            select string_agg('drop table if exists \"' || tablename || '\" cascade;', '')
+            select string_agg(format('drop table if exists %I cascade;', tablename), '')
             from pg_tables
             where schemaname = 'public';
           SQL
@@ -184,6 +185,10 @@ module ForemanMaintain
           'PGPASSWORD' => configuration['password'],
           'PGDATABASE' => configuration['database'],
         }
+      end
+
+      def run_as_postgres(command)
+        "runuser - postgres -c #{shellescape(command)}"
       end
 
       def ping!
