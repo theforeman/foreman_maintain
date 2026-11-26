@@ -473,9 +473,9 @@ Every command returns an exit code. Any other exit status than 0 indicates a fai
 ## How to contribute?
 
 Generally, follow the [Foreman guidelines](https://theforeman.org/contribute.html). For code-related contributions, fork this project and send a pull request with all changes. Some things to keep in mind:
-* [Follow the rules](https://theforeman.org/contribute.html#SubmitPatches) about commit message style and create a [Redmine issue](http://projects.theforeman.org/projects/foreman-maintain/issues/new). Doing this right will help reviewers to get your contribution merged faster.
+* [Follow the rules](https://theforeman.org/contribute.html#SubmitPatches) about commit message style and create a [GitHub issue](https://github.com/theforeman/foreman_maintain/issues/new). Doing this right will help reviewers to get your contribution merged faster.
 * We have a [development handbook](https://theforeman.org/handbook.html) to help developers understand how Foreman developers code.
-* All of our pull requests run the full test suite in our [Travis CI system](https://travis-ci.org/theforeman/foreman_maintain). Please include tests in your pull requests for any additions or changes in functionality
+* All of our pull requests run the full test suite in [GitHub Actions](https://github.com/theforeman/foreman_maintain/actions/workflows/ruby_tests.yml). Please include tests in your pull requests for any additions or changes in functionality.
 
 
 ## License
