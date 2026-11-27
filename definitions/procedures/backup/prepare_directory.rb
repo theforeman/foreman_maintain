@@ -30,6 +30,11 @@ module Procedures::Backup
         end
       end
 
+      if @preserve_dir && !Dir.exist?(@backup_dir)
+        raise "Backup directory #{@backup_dir} does not exist. "\
+              'When using --preserve-directory, the directory must already exist.'
+      end
+
       FileUtils.rm(Dir.glob(File.join(@backup_dir, '.*.snar'))) if @preserve_dir
       if @incremental_dir
         if (snar_files = Dir.glob(File.join(@incremental_dir, '.*.snar'))).empty?
